@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductSettings {
   type: string;
@@ -101,88 +102,131 @@ export const ProductsSettings = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mr-auto">
+    <div className="p-6 max-w-5xl mr-auto lg:ml-10" dir="rtl">
       <h2 className="text-2xl font-bold mb-6">تنظیمات محصول</h2>
-      
-      <div className="space-y-6">
-        {/* Basic Information */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">اطلاعات اصلی</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block mb-2">تصویر محصول</label>
-              <input
-                type="file"
-                value={settings.blocks.imageSrc}
-                onChange={(e) => handleChange('blocks', 'imageSrc', e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-2">نام محصول</label>
-              <input
-                type="text"
-                value={settings.blocks.name}
-                onChange={(e) => handleChange('blocks', 'name', e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            {/* Add more basic fields here */}
-          </div>
-        </div>
 
-        {/* Style Settings */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">تنظیمات ظاهری</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block mb-2">عرض تصویر</label>
-              <input
-                type="text"
-                value={settings.blocks.setting.imageWidth}
-                onChange={(e) => handleNestedChange('blocks', 'setting', 'imageWidth', e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-2">ارتفاع تصویر</label>
-              <input
-                type="text"
-                value={settings.blocks.setting.imageHeight}
-                onChange={(e) => handleNestedChange('blocks', 'setting', 'imageHeight', e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            {/* Add more style fields here */}
-          </div>
-        </div>
 
-        {/* Layout Settings */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">تنظیمات چیدمان</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block mb-2">فاصله از بالا</label>
-              <input
-                type="text"
-                value={settings.setting.paddingTop}
-                onChange={(e) => handleChange('setting', 'paddingTop', e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div>
-              <label className="block mb-2">فاصله از پایین</label>
-              <input
-                type="text"
-                value={settings.setting.paddingBottom}
-                onChange={(e) => handleChange('setting', 'paddingBottom', e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            {/* Add more layout fields here */}
-          </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block mb-2">تصویر محصول</label>
+          <input
+            type="file"
+            onChange={(e) => handleChange('blocks', 'imageSrc', e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-2">متن جایگزین تصویر</label>
+          <input
+            type="text"
+            value={settings.blocks.imageAlt}
+            onChange={(e) => handleChange('blocks', 'imageAlt', e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-2">نام محصول</label>
+          <input
+            type="text"
+            value={settings.blocks.name}
+            onChange={(e) => handleChange('blocks', 'name', e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-2">توضیحات</label>
+          <textarea
+            value={settings.blocks.description}
+            onChange={(e) => handleChange('blocks', 'description', e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        {/* Add remaining basic fields */}
+      </div>
+
+
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block mb-2">عرض تصویر</label>
+          <input
+            type="text"
+            value={settings.blocks.setting.imageWidth}
+            onChange={(e) => handleNestedChange('blocks', 'setting', 'imageWidth', e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div className='flex flex-wrap gap-x-2'>
+          <h1 className='w-full' >رنگ بندی</h1>
+          <label className="block  text-nowrap">رنگ نام محصول</label>
+          <input
+            type="color"
+            value={settings.blocks.setting.productNameColor}
+            onChange={(e) => handleNestedChange('blocks', 'setting', 'productNameColor', e.target.value)}
+            className="h-5 ro border rounded-lg w-12"
+          />
+
+          <label className="block text-nowrap">رنگ پس زمینه</label>
+          <input
+            type="color"
+            value={settings.setting.backgroundColor}
+            onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
+            className="h-5 ro border rounded-lg w-12"
+          />
+           <label className="block text-nowrap">رنگ پس زمینه</label>
+          <input
+            type="color"
+            value={settings.setting.backgroundColor}
+            onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
+            className="h-5 ro border rounded-lg w-12"
+          />
+           <label className="block text-nowrap">رنگ پس زمینه</label>
+          <input
+            type="color"
+            value={settings.setting.backgroundColor}
+            onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
+            className="h-5 ro border rounded-lg w-12"
+          />
+        </div>
+        <div>
+          <label className="block mb-2">سایز فونت نام محصول</label>
+          <input
+            type="text"
+            value={settings.blocks.setting.productNameFontSize}
+            onChange={(e) => handleNestedChange('blocks', 'setting', 'productNameFontSize', e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div>
+
         </div>
       </div>
+
+
+
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block mb-2">فاصله از بالا</label>
+          <input
+            type="text"
+            value={settings.setting.paddingTop}
+            onChange={(e) => handleChange('setting', 'paddingTop', e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-2">فاصله از پایین</label>
+          <input
+            type="text"
+            value={settings.setting.paddingBottom}
+            onChange={(e) => handleChange('setting', 'paddingBottom', e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+      </div>
+
     </div>
   );
 };
+
