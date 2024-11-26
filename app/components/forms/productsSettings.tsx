@@ -1,5 +1,5 @@
 'use client';
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 
 interface ProductSettings {
   type: string;
@@ -18,23 +18,22 @@ interface ProductSettings {
       imageWidth: string;
       imageHeight: string;
       imageRadius: string;
-      productNameColor: string;
-      productNameFontSize: string;
-      productNameFontWeight: string;
+      nameColor: string;
+      nameFontSize: string;
+      nameFontWeight: string;
       priceColor: string;
       priceFontSize: string;
       descriptionColor: string;
       descriptionFontSize: string;
       btnBackgroundColor: string;
       btnTextColor: string;
+      paddingTop: string;
+      paddingBottom: string;
+      marginTop: string;
+      marginBottom: string;
+      cardBackground: string;
+      cardBorderRadius: string;
     };
-  };
-  setting: {
-    paddingTop: string;
-    paddingBottom: string;
-    marginTop: string;
-    marginBottom: string;
-    backgroundColor: string;
   };
 }
 
@@ -56,184 +55,263 @@ export const ProductsSettings = () => {
         imageWidth: '500px',
         imageHeight: '500px',
         imageRadius: '20px',
-        productNameColor: '#FCA311',
-        productNameFontSize: '30px',
-        productNameFontWeight: 'bold',
+        nameColor: '#FCA311',
+        nameFontSize: '30px',
+        nameFontWeight: 'bold',
         priceColor: '#2ECC71',
         priceFontSize: '24px',
         descriptionColor: '#333333',
         descriptionFontSize: '16px',
         btnBackgroundColor: '#3498DB',
-        btnTextColor: '#FFFFFF'
+        btnTextColor: '#FFFFFF',
+        paddingTop: '20',
+        paddingBottom: '20',
+        marginTop: '10',
+        marginBottom: '10',
+        cardBackground: '#FFFFFF',
+        cardBorderRadius: '10px',
       }
     },
-    setting: {
-      paddingTop: '20',
-      paddingBottom: '20',
-      marginTop: '10',
-      marginBottom: '10',
-      backgroundColor: '#FFFFFF'
-    }
   });
-  //changes settings general
+
+  // Changes settings general
   const handleChange = (section: string, field: string, value: string) => {
     setSettings(prev => ({
       ...prev,
-      [section]: {
-
-        ...(prev[section as keyof ProductSettings] as Record<string, {}>),
-        [field]: value
-      }
-    }));
-    console.log(settings.blocks.setting);
-
-  };
- // changes settings nested in blocks object
-  const handleNestedChange = (section: string, subSection: string, field: string, value: string) => {
-    
-    setSettings(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section as keyof ProductSettings] as Record<string, {}>,
-        [subSection]: {
-          ...((prev[section as keyof ProductSettings] as any)[subSection]),
+      blocks: {
+        ...prev.blocks,
+        setting: {
+          ...prev.blocks.setting,
           [field]: value
         }
       }
-      
-      
     }));
-    console.log(settings.blocks.setting.btnBackgroundColor);
+    console.log(settings.blocks.setting);
     
+  };
+  
+
+  const handelSave = async () => {
+    try {
+      const response = await fetch(`/api/products`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings),
+      });
+    
+      if (response.ok) {
+        console.log('Product updated successfully');
+      } 
+    } catch (error) {
+      console.error('Error updating product:', error);
+    }
   };
 
   return (
-    <div className="p-6  mx-auto lg:mx-10" dir="rtl">
-      <h2 className="text-2xl font-bold mb-6">تنظیمات محصول</h2>
+    <div className="p-6 mx-auto lg:mx-10 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4" dir="rtl">
+      <h2 className="text-2xl font-bold mb-6 lg:col-span-2 col-span-1">تنظیمات محصول</h2>
 
+      <div>
+        <label className="block mb-2">تصویر محصول</label>
+        <input
+          type="file"
+          onChange={(e) => handleChange('blocks', 'imageSrc', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-2">متن جایگزین تصویر</label>
+        <input
+          type="text"
+          value={settings.blocks.imageAlt}
+          onChange={(e) => handleChange('blocks', 'imageAlt', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-2">نام محصول</label>
+        <input
+          type="text"
+          value={settings.blocks.name}
+          onChange={(e) => handleChange('blocks', 'name', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-2">توضیحات</label>
+        <textarea
+          value={settings.blocks.description}
+          onChange={(e) => handleChange('blocks', 'description', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
 
-      <div className="grid lg:grid-cols-2 gap-4 ">
-        <div>
-          <label className="block mb-2">تصویر محصول</label>
-          <input
-            type="file"
-            onChange={(e) => handleChange('blocks', 'imageSrc', e.target.value)}
-            className="w-full p-2 border rounded"
-          />
+      <div className='flex flex-wrap gap-x-2 col-span-1'>
+        <h1 className='w-full'>رنگ بندی</h1>
+        <div className='grid grid-cols-3  gap-2 w-full border p-2 rounded-lg'>
+          <div>
+            <label className="block text-nowrap">رنگ پس زمینه</label>
+            <input
+              type="color"
+              value={settings.blocks.setting.cardBackground}
+              onChange={(e) => handleChange('setting', 'cardBackground', e.target.value)}
+              className="h-5 border rounded-lg w-12"
+            />
+          </div>
+          <div>
+            <label className="block text-nowrap">رنگ نام محصول</label>
+            <input
+              type="color"
+              value={settings.blocks.setting.nameColor}
+              onChange={(e) => handleChange('setting', 'nameColor', e.target.value)}
+              className="h-5 border rounded-lg w-12"
+            />
+          </div>
+          <div>
+            <label className="block text-nowrap">رنگ قیمت</label>
+            <input
+              type="color"
+              value={settings.blocks.setting.priceColor}
+              onChange={(e) => handleChange('setting', 'priceColor', e.target.value)}
+              className="h-5 border rounded-lg w-12"
+            />
+          </div>
+          <div>
+            <label className="block text-nowrap">رنگ پس زمینه دکمه</label>
+            <input
+              type="color"
+              value={settings.blocks.setting.btnBackgroundColor}
+              onChange={(e) => handleChange('setting', 'btnBackgroundColor', e.target.value)}
+              className="h-5 border rounded-lg w-12"
+            />
+          </div>
+          <div>
+            <label className="block">رنگ توضیحات</label>
+            <input
+              type="color"
+              value={settings.blocks.setting.descriptionColor}
+              onChange={(e) => handleChange('setting', 'descriptionColor', e.target.value)}
+              className="h-5 border rounded-lg w-12"
+            />
+          </div>
+
+          <div>
+            <label className="block ">رنگ متن دکمه</label>
+            <input
+              type="color"
+              value={settings.blocks.setting.btnTextColor}
+              onChange={(e) => handleChange('setting', 'btnTextColor', e.target.value)}
+              className="h-5 border rounded-lg w-12"
+            />
+          </div>
         </div>
-        <div>
-          <label className="block mb-2">متن جایگزین تصویر</label>
-          <input
-            type="text"
-            value={settings.blocks.imageAlt}
-            onChange={(e) => handleChange('blocks', 'imageAlt', e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label className="block mb-2">نام محصول</label>
-          <input
-            type="text"
-            value={settings.blocks.name}
-            onChange={(e) => handleChange('blocks', 'name', e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label className="block mb-2">توضیحات</label>
-          <textarea
-            value={settings.blocks.description}
-            onChange={(e) => handleChange('blocks', 'description', e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        {/* Add remaining basic fields */}
+      </div>
+
+      <div>
+        <label className="block mb-2">عرض تصویر</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.imageWidth}
+          onChange={(e) => handleChange('setting', 'imageWidth', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+         <label className="block mb-2">شعاع تصویر</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.imageRadius}
+          onChange={(e) => handleChange('setting', 'imageRadius', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+      
+
+      <div>
+        <label className="block mb-2">ارتفاع تصویر</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.imageHeight}
+          onChange={(e) => handleChange('setting', 'imageHeight', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
       </div>
 
 
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-2">عرض تصویر</label>
-          <input
-            type="text"
-            value={settings.blocks.setting.imageWidth}
-            onChange={(e) => handleNestedChange('blocks', 'setting', 'imageWidth', e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div className='flex flex-wrap gap-x-2'>
-          <h1 className='w-full' >رنگ بندی</h1>
-          <label className="block text-nowrap">رنگ پس زمینه</label>
-          <input
-            type="color"
-            value={settings.setting.backgroundColor}
-            onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
-            className="h-5 ro border rounded-lg w-12"
-          />
-          <label className="block  text-nowrap">رنگ نام محصول</label>
-          <input
-            type="color"
-            value={settings.blocks.setting.productNameColor}
-            onChange={(e) => handleNestedChange('blocks', 'setting', 'productNameColor', e.target.value)}
-            className="h-5 ro border rounded-lg w-12"
-          />
-
-        
-           <label className="block text-nowrap">price color   </label>
-           <input
-            type="color"
-            value={settings.blocks.setting.priceColor}
-            onChange={(e) => handleNestedChange('blocks', 'setting', 'priceColor', e.target.value)}
-            className="h-5 ro border rounded-lg w-12"
-          />
-           <label className="block text-nowrap"> رنگ پس زمینه دکمه</label>
-           <input
-            type="color"
-            value={settings.blocks.setting.btnBackgroundColor}
-            onChange={(e) => handleNestedChange('blocks', 'setting', 'btnBackgroundColor', e.target.value)}
-            className="h-5 ro border rounded-lg w-12"
-          />
-        </div>
-        <div>
-          <label className="block mb-2">سایز فونت نام محصول</label>
-          <input
-            type="text"
-            value={settings.blocks.setting.productNameFontSize}
-            onChange={(e) => handleNestedChange('blocks', 'setting', 'productNameFontSize', e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-
-        </div>
+      <div>
+        <label className="block mb-2">وزن فونت نام محصول</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.nameFontWeight}
+          onChange={(e) => handleChange('setting', 'nameFontWeight', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
       </div>
 
 
 
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-2">فاصله از بالا</label>
-          <input
-            type="text"
-            value={settings.setting.paddingTop}
-            onChange={(e) => handleChange('setting', 'paddingTop', e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label className="block mb-2">فاصله از پایین</label>
-          <input
-            type="text"
-            value={settings.setting.paddingBottom}
-            onChange={(e) => handleChange('setting', 'paddingBottom', e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+      <div>
+        <label className="block mb-2">سایز فونت توضیحات</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.descriptionFontSize}
+          onChange={(e) => handleChange('setting', 'descriptionFontSize', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
       </div>
 
+
+      <div>
+        <label className="block mb-2">فاصله از بالا</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.paddingTop}
+          onChange={(e) => handleChange('setting', 'paddingTop', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      <div>
+        <label className="block mb-2">فاصله از پایین</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.paddingBottom}
+          onChange={(e) => handleChange('setting', 'paddingBottom', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      <div>
+        <label className="block mb-2">فاصله از بالا کارت</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.marginTop}
+          onChange={(e) => handleChange('setting', 'marginTop', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      <div>
+        <label className="block mb-2">فاصله از پایین کارت</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.marginBottom}
+          onChange={(e) => handleChange('setting', 'marginBottom', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      <div>
+        <label className="block mb-2">شعاع حاشیه کارت</label>
+        <input
+          type="range"
+          value={settings.blocks.setting.cardBorderRadius}
+          onChange={(e) => handleChange('setting', 'cardBorderRadius', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+      <button className='w-full bg-green-500 hover:bg-green-600 text-white mt-5 rounded-full py-2 mx-auto' onClick={handelSave}>save</button>
     </div>
   );
 };
-
