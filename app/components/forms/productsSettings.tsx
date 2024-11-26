@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductSettings {
@@ -76,7 +76,7 @@ export const ProductsSettings = () => {
       backgroundColor: '#FFFFFF'
     }
   });
-
+ 
   const handleChange = (section: string, field: string, value: string) => {
     setSettings(prev => ({
       ...prev,
@@ -86,9 +86,12 @@ export const ProductsSettings = () => {
         [field]: value
       }
     }));
+    console.log(settings.blocks.setting.priceColor);
+
   };
 
   const handleNestedChange = (section: string, subSection: string, field: string, value: string) => {
+    
     setSettings(prev => ({
       ...prev,
       [section]: {
@@ -98,7 +101,11 @@ export const ProductsSettings = () => {
           [field]: value
         }
       }
+      
+      
     }));
+    console.log(settings.blocks.setting.priceColor);
+    
   };
 
   return (
@@ -173,18 +180,18 @@ export const ProductsSettings = () => {
             onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
             className="h-5 ro border rounded-lg w-12"
           />
-           <label className="block text-nowrap">رنگ پس زمینه</label>
+           <label className="block text-nowrap">price color   </label>
           <input
             type="color"
-            value={settings.setting.backgroundColor}
+            value={settings.blocks.setting.priceColor}
             onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
             className="h-5 ro border rounded-lg w-12"
           />
-           <label className="block text-nowrap">رنگ پس زمینه</label>
+           <label className="block text-nowrap"> رنگ پس زمینه دکمه</label>
           <input
             type="color"
-            value={settings.setting.backgroundColor}
-            onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
+            value={settings.blocks.setting.btnBackgroundColor}
+            onChange={(e) => handleChange('setting', 'btnBackgroundColor', e.target.value)}
             className="h-5 ro border rounded-lg w-12"
           />
         </div>
