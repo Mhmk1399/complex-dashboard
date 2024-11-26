@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const dashboardMenuItems = [
@@ -46,11 +46,18 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isOpen, 
   );
 };
 
+
+
 const Form = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleSection = (sectionId: string) => {
     setActiveSection(activeSection === sectionId ? null : sectionId);
+  };
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
   };
 
   const renderAccordionContent = (item: { subMenuItems?: Array<{ title: string, value: string }> }) => {
@@ -66,22 +73,65 @@ const Form = () => {
   };
 
   return (
-    <div className="fixed right-0 top-0 h-screen w-80 bg-white shadow-lg overflow-y-auto p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6" dir="rtl">
-        منوی مدیریت
-      </h2>
-
-      {dashboardMenuItems.map((item) => (
-        <AccordionItem
-          key={item.id}
-          title={item.title}
-          isOpen={activeSection === item.id}
-          onToggle={() => toggleSection(item.id)}
+    <>
+      {/* Menu Toggle Button */}
+      <button 
+        onClick={toggleMenu}
+        className="fixed left-4 top-4 z-50 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 "
+      >
+        <svg 
+          className="w-6 h-6" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
         >
-          {renderAccordionContent(item)}
-        </AccordionItem>
-      ))}
-    </div>
+          {isOpen ? (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          ) : (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          )}
+        </svg>
+      </button>
+
+      <AnimatePresence>
+        {(isOpen ) && (
+          <>
+            {/* Overlay for mobile */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={toggleMenu}
+              className="fixed inset-0 bg-black  z-40"
+            />
+
+            {/* Sliding Menu Panel */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+              className="fixed right-0 top-0 h-screen w-80 bg-white shadow-lg overflow-y-auto p-6 z-50"
+            >
+              <h2 className="text-2xl font-bold text-gray-800 mb-6" dir="rtl">
+                منوی مدیریت
+              </h2>
+
+              {dashboardMenuItems.map((item) => (
+                <AccordionItem
+                  key={item.id}
+                  title={item.title}
+                  isOpen={activeSection === item.id}
+                  onToggle={() => toggleSection(item.id)}
+                >
+                  {renderAccordionContent(item)}
+                </AccordionItem>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 

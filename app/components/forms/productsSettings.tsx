@@ -1,6 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, {  useState } from 'react';
 
 interface ProductSettings {
   type: string;
@@ -76,7 +75,7 @@ export const ProductsSettings = () => {
       backgroundColor: '#FFFFFF'
     }
   });
- 
+  //changes settings general
   const handleChange = (section: string, field: string, value: string) => {
     setSettings(prev => ({
       ...prev,
@@ -86,10 +85,10 @@ export const ProductsSettings = () => {
         [field]: value
       }
     }));
-    console.log(settings.blocks.setting.priceColor);
+    console.log(settings.blocks.setting);
 
   };
-
+ // changes settings nested in blocks object
   const handleNestedChange = (section: string, subSection: string, field: string, value: string) => {
     
     setSettings(prev => ({
@@ -104,16 +103,16 @@ export const ProductsSettings = () => {
       
       
     }));
-    console.log(settings.blocks.setting.priceColor);
+    console.log(settings.blocks.setting.btnBackgroundColor);
     
   };
 
   return (
-    <div className="p-6 max-w-5xl mr-auto lg:ml-10" dir="rtl">
+    <div className="p-6  mx-auto lg:mx-10" dir="rtl">
       <h2 className="text-2xl font-bold mb-6">تنظیمات محصول</h2>
 
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid lg:grid-cols-2 gap-4 ">
         <div>
           <label className="block mb-2">تصویر محصول</label>
           <input
@@ -165,6 +164,13 @@ export const ProductsSettings = () => {
         </div>
         <div className='flex flex-wrap gap-x-2'>
           <h1 className='w-full' >رنگ بندی</h1>
+          <label className="block text-nowrap">رنگ پس زمینه</label>
+          <input
+            type="color"
+            value={settings.setting.backgroundColor}
+            onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
+            className="h-5 ro border rounded-lg w-12"
+          />
           <label className="block  text-nowrap">رنگ نام محصول</label>
           <input
             type="color"
@@ -173,25 +179,19 @@ export const ProductsSettings = () => {
             className="h-5 ro border rounded-lg w-12"
           />
 
-          <label className="block text-nowrap">رنگ پس زمینه</label>
-          <input
-            type="color"
-            value={settings.setting.backgroundColor}
-            onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
-            className="h-5 ro border rounded-lg w-12"
-          />
+        
            <label className="block text-nowrap">price color   </label>
-          <input
+           <input
             type="color"
             value={settings.blocks.setting.priceColor}
-            onChange={(e) => handleChange('setting', 'backgroundColor', e.target.value)}
+            onChange={(e) => handleNestedChange('blocks', 'setting', 'priceColor', e.target.value)}
             className="h-5 ro border rounded-lg w-12"
           />
            <label className="block text-nowrap"> رنگ پس زمینه دکمه</label>
-          <input
+           <input
             type="color"
             value={settings.blocks.setting.btnBackgroundColor}
-            onChange={(e) => handleChange('setting', 'btnBackgroundColor', e.target.value)}
+            onChange={(e) => handleNestedChange('blocks', 'setting', 'btnBackgroundColor', e.target.value)}
             className="h-5 ro border rounded-lg w-12"
           />
         </div>

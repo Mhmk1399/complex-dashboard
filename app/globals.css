@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 :root {
-
+  @media (min-width: 768px) {
+    .md\:hidden {
+      display: none;
+    }
+  }
+  
 }
 
 @media (prefers-color-scheme: dark) {
