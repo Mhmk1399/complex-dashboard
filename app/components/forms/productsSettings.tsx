@@ -16,21 +16,18 @@ interface ProductSettings {
     innventory: string;
     setting: {
       imageWidth: string;
-      imageHeight: string;
+      imageheight: string;
       imageRadius: string;
       nameColor: string;
       nameFontSize: string;
       nameFontWeight: string;
-      priceColor: string;
+      pricecolor: string;
       priceFontSize: string;
       descriptionColor: string;
       descriptionFontSize: string;
+      descriptionFontWeight: string;
       btnBackgroundColor: string;
       btnTextColor: string;
-      paddingTop: string;
-      paddingBottom: string;
-      marginTop: string;
-      marginBottom: string;
       cardBackground: string;
       cardBorderRadius: string;
     };
@@ -46,33 +43,31 @@ export const ProductsSettings = () => {
       name: 'نام محصول',
       description: 'توضیحات محصول',
       category: 'دسته بندی',
-      price: 'قیمت محصول',
-      status: 'وضعیت محصول',
-      discount: 'تخفیف محصول',
-      id: 'شناسه محصول',
-      innventory: 'موجودی محصول',
+      price: '0',
+      status: 'available',
+      discount: '0',
+      id: '1',
+      innventory: '0',
       setting: {
         imageWidth: '500px',
-        imageHeight: '500px',
+        imageheight: '500px', // Fix typo from imageHeight to imageheight
         imageRadius: '20px',
         nameColor: '#FCA311',
         nameFontSize: '30px',
         nameFontWeight: 'bold',
-        priceColor: '#2ECC71',
+        pricecolor: '#2ECC71', // Fix typo from priceColor to pricecolor
         priceFontSize: '24px',
         descriptionColor: '#333333',
         descriptionFontSize: '16px',
+        descriptionFontWeight: 'normal',
         btnBackgroundColor: '#3498DB',
         btnTextColor: '#FFFFFF',
-        paddingTop: '20',
-        paddingBottom: '20',
-        marginTop: '10',
-        marginBottom: '10',
         cardBackground: '#FFFFFF',
-        cardBorderRadius: '10px',
+        cardBorderRadius: '10px'
       }
-    },
+    }
   });
+  
 
   // Changes settings general
   const handleChange = (section: string, field: string, value: string) => {
@@ -80,34 +75,53 @@ export const ProductsSettings = () => {
       ...prev,
       blocks: {
         ...prev.blocks,
+        ...(section === 'blocks' ? { [field]: value } : {}),
         setting: {
           ...prev.blocks.setting,
-          [field]: value
+          ...(section === 'setting' ? { [field]: value } : {})
         }
       }
     }));
-    console.log(settings.blocks.setting);
+    console.log(settings.blocks);
     
   };
+  
   
 
   const handelSave = async () => {
     try {
-      const response = await fetch(`/api/products`, {
+      const productData = {
+        images: {
+          imageSrc: settings.blocks.imageSrc,
+          imageAlt: settings.blocks.imageAlt
+        },
+        name: settings.blocks.name,
+        description: settings.blocks.description,
+        category: settings.blocks.category,
+        price: settings.blocks.price,
+        status: settings.blocks.status,
+        discount: settings.blocks.discount,
+        id: settings.blocks.id,
+        innventory: settings.blocks.innventory,
+        setting: settings.blocks.setting
+      };
+  
+      const response = await fetch('/api/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(settings),
+        body: JSON.stringify(productData),
       });
-    
+  
       if (response.ok) {
         console.log('Product updated successfully');
-      } 
+      }
     } catch (error) {
       console.error('Error updating product:', error);
     }
   };
+  
 
   return (
     <div className="p-6 mx-auto lg:mx-10 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4" dir="rtl">
@@ -173,7 +187,7 @@ export const ProductsSettings = () => {
             <label className="block text-nowrap">رنگ قیمت</label>
             <input
               type="color"
-              value={settings.blocks.setting.priceColor}
+              value={settings.blocks.setting.pricecolor}
               onChange={(e) => handleChange('setting', 'priceColor', e.target.value)}
               className="h-5 border rounded-lg w-12"
             />
@@ -231,8 +245,8 @@ export const ProductsSettings = () => {
         <label className="block mb-2">ارتفاع تصویر</label>
         <input
           type="range"
-          value={settings.blocks.setting.imageHeight}
-          onChange={(e) => handleChange('setting', 'imageHeight', e.target.value)}
+          value={settings.blocks.setting.imageheight}
+          onChange={(e) => handleChange('setting', 'imageheight', e.target.value)}
           className="w-full p-2 border rounded"
         />
       </div>
@@ -262,45 +276,17 @@ export const ProductsSettings = () => {
       </div>
 
 
-      <div>
-        <label className="block mb-2">فاصله از بالا</label>
+   <div>
+        <label className="block mb-2"> فونت توضیحات</label>
         <input
           type="range"
-          value={settings.blocks.setting.paddingTop}
-          onChange={(e) => handleChange('setting', 'paddingTop', e.target.value)}
+          value={settings.blocks.setting.descriptionFontWeight}
+          onChange={(e) => handleChange('setting', 'descriptionFontWeight', e.target.value)}
           className="w-full p-2 border rounded"
         />
       </div>
 
-      <div>
-        <label className="block mb-2">فاصله از پایین</label>
-        <input
-          type="range"
-          value={settings.blocks.setting.paddingBottom}
-          onChange={(e) => handleChange('setting', 'paddingBottom', e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <div>
-        <label className="block mb-2">فاصله از بالا کارت</label>
-        <input
-          type="range"
-          value={settings.blocks.setting.marginTop}
-          onChange={(e) => handleChange('setting', 'marginTop', e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <div>
-        <label className="block mb-2">فاصله از پایین کارت</label>
-        <input
-          type="range"
-          value={settings.blocks.setting.marginBottom}
-          onChange={(e) => handleChange('setting', 'marginBottom', e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
+    
 
       <div>
         <label className="block mb-2">شعاع حاشیه کارت</label>
