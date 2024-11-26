@@ -80,42 +80,35 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
 
     try {
         const body = await req.json();
-        const {
-            imageSrc,
-            imageAlt,
-            name,
-            description,
-            category,
-            price,
-            status,
-            discount,
-            innventory,
-            setting
-        } = body;
-
         const updateData = {
-            imageSrc,
-            imageAlt,
-            name,
-            description,
-            category,
-            price,
-            status,
-            discount,
-            innventory,
+            images: {
+                imageSrc: body.images.imageSrc,
+                imageAlt: body.images.imageAlt,
+            },
+            name: body.name,
+            description: body.description,
+            category: body.category,
+            price: body.price,
+            status: body.status,
+            discount: body.discount,
+            id: body.id,
+            innventory: body.innventory,
             setting: {
-                imageWidth: setting?.imageWidth,
-                imageHeight: setting?.imageHeight,
-                imageRadius: setting?.imageRadius,
-                productNameColor: setting?.productNameColor,
-                productNameFontSize: setting?.productNameFontSize,
-                productNameFontWeight: setting?.productNameFontWeight,
-                priceColor: setting?.priceColor,
-                priceFontSize: setting?.priceFontSize,
-                descriptionColor: setting?.descriptionColor,
-                descriptionFontSize: setting?.descriptionFontSize,
-                btnBackgroundColor: setting?.btnBackgroundColor,
-                btnTextColor: setting?.btnTextColor
+                cardBorderRadius: body.setting.cardBorderRadius,
+                cardBackground: body.setting.cardBackground,
+                imageWidth: body.setting.imageWidth,
+                imageheight: body.setting.imageheight,
+                imageRadius: body.setting.imageRadius,
+                nameFontSize: body.setting.nameFontSize,
+                nameFontWeight: body.setting.nameFontWeight,
+                nameColor: body.setting.nameColor,
+                descriptionFontSize: body.setting.descriptionFontSize,
+                descriptionFontWeight: body.setting.descriptionFontWeight,
+                descriptionColor: body.setting.descriptionColor,
+                priceFontSize: body.setting.priceFontSize,
+                pricecolor: body.setting.pricecolor,
+                btnBackgroundColor: body.setting.btnBackgroundColor,
+                btnTextColor: body.setting.btnTextColor
             }
         };
 
