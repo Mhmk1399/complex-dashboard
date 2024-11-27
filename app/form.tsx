@@ -3,12 +3,11 @@ import  React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const dashboardMenuItems = [
-  { id: 'store', title: ' فروشگاه', subMenuItems: [{title:'product setting',value:'productsSetting'}, {title:'blogs setting',value:'blogs setting'}, {title:'collections setting',value:'collections setting'}, {title:'layout setting',value:'layout setting'}] },
-  { id: 'seo', title: 'سئو', subMenuItems: [{title:'add blogs',value:'add blogs'}, {title:'add metadata',value:'add metadata'}]  },
-  { id: 'acountant and inventory', title: 'حسابداری و انبارداری' , subMenuItems: [{title:'server acountant',value:'server acountant'}, {title:'inventory ',value:'inventory'}, {title:'sale and orders ',value:'sale and orders '}] },
-  { id: 'advertising and customers', title: ' تبلیغات و مشتریان' , subMenuItems: [{title:'create campagin',value:'create campagin'}, {title:'chat setting',value:'chat setting'}, {title:'CRM ',value:'CRM'}] },
-  { id: 'user data', title:  'اطلاعات کاربری' },
-];
+  { id: 'store', title: ' products', subMenuItems: [{title:'add product',value:'addProduct'}, {title:'inventory',value:'inventory'}, {title:'collections ',value:'collections '}, {title:'transfer',value:'transfer'}, {title:'discount',value:'discount'}] },
+  { id: 'orders', title: 'orders', subMenuItems: [{title:'orders',value:'orders '}, {title:'shipping',value:'shipping'}, {title:'aboundend Checkouts',value:'aboundendCheckouts'}]  },
+  { id: 'customers', title: 'customers' , subMenuItems: [{title:'customers',value:'customers'}, {title:'segment ',value:'segment'}] },
+  { id: 'media', title: 'media' , subMenuItems: [{title:'add file',value:'addFile'}] },
+  { id: 'addBlogs', title: 'Add blogs' , subMenuItems: [{title:'add Blogs',value:'addBlogs'},{title:'add Meta Data',value:'addMetaData'}] },];
 interface FormProps {
   setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -67,7 +66,7 @@ const Form:React.FC<FormProps> = ({setSelectedMenu}) => {
     return (
       <>
         {item.subMenuItems?.map((subItem, index) => (
-          <div key={index} className='text-right transition-all delay-100 ease-in-out cursor-pointer hover:font-bold text-gray-600 m-2' onClick={() => setSelectedMenu(subItem.value)}>
+          <div key={index} className='text-right  transition-all delay-100 ease-in-out cursor-pointer hover:font-bold text-gray-600 m-2' onClick={() => setSelectedMenu(subItem.value)}>
              <span className='mx-2 '>{`<`}</span>{subItem.title}
           </div>
         ))}

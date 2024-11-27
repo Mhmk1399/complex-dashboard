@@ -14,23 +14,7 @@ interface ProductSettings {
     discount: string;
     id: string;
     innventory: string;
-    setting: {
-      imageWidth: string;
-      imageheight: string;
-      imageRadius: string;
-      nameColor: string;
-      nameFontSize: string;
-      nameFontWeight: string;
-      pricecolor: string;
-      priceFontSize: string;
-      descriptionColor: string;
-      descriptionFontSize: string;
-      descriptionFontWeight: string;
-      btnBackgroundColor: string;
-      btnTextColor: string;
-      cardBackground: string;
-      cardBorderRadius: string;
-    };
+   
   };
 }
 
@@ -48,23 +32,7 @@ export const ProductsSettings = () => {
       discount: '0',
       id: '1',
       innventory: '0',
-      setting: {
-        imageWidth: '500px',
-        imageheight: '500px', // Fix typo from imageHeight to imageheight
-        imageRadius: '20px',
-        nameColor: '#FCA311',
-        nameFontSize: '30px',
-        nameFontWeight: 'bold',
-        pricecolor: '#2ECC71', // Fix typo from priceColor to pricecolor
-        priceFontSize: '24px',
-        descriptionColor: '#333333',
-        descriptionFontSize: '16px',
-        descriptionFontWeight: 'normal',
-        btnBackgroundColor: '#3498DB',
-        btnTextColor: '#FFFFFF',
-        cardBackground: '#FFFFFF',
-        cardBorderRadius: '10px'
-      }
+     
     }
   });
   
@@ -76,10 +44,7 @@ export const ProductsSettings = () => {
       blocks: {
         ...prev.blocks,
         ...(section === 'blocks' ? { [field]: value } : {}),
-        setting: {
-          ...prev.blocks.setting,
-          ...(section === 'setting' ? { [field]: value } : {})
-        }
+      
       }
     }));
     console.log(settings.blocks);
@@ -103,7 +68,6 @@ export const ProductsSettings = () => {
         discount: settings.blocks.discount,
         id: settings.blocks.id,
         innventory: settings.blocks.innventory,
-        setting: settings.blocks.setting
       };
   
       const response = await fetch('/api/products', {
@@ -135,6 +99,7 @@ export const ProductsSettings = () => {
           className="w-full p-2 border rounded"
         />
       </div>
+     
       <div>
         <label className="block mb-2">متن جایگزین تصویر</label>
         <input
@@ -161,144 +126,42 @@ export const ProductsSettings = () => {
           className="w-full p-2 border rounded"
         />
       </div>
-
-      <div className='flex flex-wrap gap-x-2 col-span-1'>
-        <h1 className='w-full'>رنگ بندی</h1>
-        <div className='grid grid-cols-3  gap-2 w-full border p-2 rounded-lg'>
-          <div>
-            <label className="block text-nowrap">رنگ پس زمینه</label>
-            <input
-              type="color"
-              value={settings.blocks.setting.cardBackground}
-              onChange={(e) => handleChange('setting', 'cardBackground', e.target.value)}
-              className="h-5 border rounded-lg w-12"
-            />
-          </div>
-          <div>
-            <label className="block text-nowrap">رنگ نام محصول</label>
-            <input
-              type="color"
-              value={settings.blocks.setting.nameColor}
-              onChange={(e) => handleChange('setting', 'nameColor', e.target.value)}
-              className="h-5 border rounded-lg w-12"
-            />
-          </div>
-          <div>
-            <label className="block text-nowrap">رنگ قیمت</label>
-            <input
-              type="color"
-              value={settings.blocks.setting.pricecolor}
-              onChange={(e) => handleChange('setting', 'priceColor', e.target.value)}
-              className="h-5 border rounded-lg w-12"
-            />
-          </div>
-          <div>
-            <label className="block text-nowrap">رنگ پس زمینه دکمه</label>
-            <input
-              type="color"
-              value={settings.blocks.setting.btnBackgroundColor}
-              onChange={(e) => handleChange('setting', 'btnBackgroundColor', e.target.value)}
-              className="h-5 border rounded-lg w-12"
-            />
-          </div>
-          <div>
-            <label className="block">رنگ توضیحات</label>
-            <input
-              type="color"
-              value={settings.blocks.setting.descriptionColor}
-              onChange={(e) => handleChange('setting', 'descriptionColor', e.target.value)}
-              className="h-5 border rounded-lg w-12"
-            />
-          </div>
-
-          <div>
-            <label className="block ">رنگ متن دکمه</label>
-            <input
-              type="color"
-              value={settings.blocks.setting.btnTextColor}
-              onChange={(e) => handleChange('setting', 'btnTextColor', e.target.value)}
-              className="h-5 border rounded-lg w-12"
-            />
-          </div>
-        </div>
-      </div>
-
       <div>
-        <label className="block mb-2">عرض تصویر</label>
+        <label className="block mb-2"> category</label>
         <input
-          type="range"
-          value={settings.blocks.setting.imageWidth}
-          onChange={(e) => handleChange('setting', 'imageWidth', e.target.value)}
+          type="text"
+          value={settings.blocks.category}
+          onChange={(e) => handleChange('blocks', 'category', e.target.value)}
           className="w-full p-2 border rounded"
         />
-         <label className="block mb-2">شعاع تصویر</label>
+      </div>
+      <div>
+        <label className="block mb-2"> price</label>
         <input
-          type="range"
-          value={settings.blocks.setting.imageRadius}
-          onChange={(e) => handleChange('setting', 'imageRadius', e.target.value)}
+          type="text"
+          value={settings.blocks.price}
+          onChange={(e) => handleChange('blocks', 'price', e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-2"> Status</label>
+       <select name="status" id="status" className='w-full p-2 border rounded'
+        value={settings.blocks.status} onChange={(e) => handleChange('blocks', 'status', e.target.value)}>
+        <option value="available">available</option>
+        <option value="unavailable">unavailable</option>
+       </select>
+      </div>
+      <div>
+        <label className="block mb-2"> inventory</label>
+        <input
+          type="text"
+          value={settings.blocks.innventory}
+          onChange={(e) => handleChange('blocks', 'innventory', e.target.value)}
           className="w-full p-2 border rounded"
         />
       </div>
       
-
-      <div>
-        <label className="block mb-2">ارتفاع تصویر</label>
-        <input
-          type="range"
-          value={settings.blocks.setting.imageheight}
-          onChange={(e) => handleChange('setting', 'imageheight', e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-
-
-      <div>
-        <label className="block mb-2">وزن فونت نام محصول</label>
-        <input
-          type="range"
-          value={settings.blocks.setting.nameFontWeight}
-          onChange={(e) => handleChange('setting', 'nameFontWeight', e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-
-
-      <div>
-        <label className="block mb-2">سایز فونت توضیحات</label>
-        <input
-        max={50}
-        min={10}
-          type="range"
-          value={settings.blocks.setting.descriptionFontSize}
-          onChange={(e) => handleChange('setting', 'descriptionFontSize', e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-
-   <div>
-        <label className="block mb-2"> فونت توضیحات</label>
-        <input
-          type="range"
-          value={settings.blocks.setting.descriptionFontWeight}
-          onChange={(e) => handleChange('setting', 'descriptionFontWeight', e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-    
-
-      <div>
-        <label className="block mb-2">شعاع حاشیه کارت</label>
-        <input
-          type="range"
-          value={settings.blocks.setting.cardBorderRadius}
-          onChange={(e) => handleChange('setting', 'cardBorderRadius', e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
       <button className='w-full bg-green-500 hover:bg-green-600 text-white mt-5 text-2xl font-bold rounded-full py-2 mx-auto' onClick={handelSave}>save</button>
     </div>
   );

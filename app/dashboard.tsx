@@ -13,7 +13,7 @@ export const Dashboard = () => {
   }, [selectedMenu]);
   const RenderForms=()=>{
     switch (selectedMenu) {
-      case 'productsSetting':
+      case 'addProduct':
         return <ProductsSettings />;
       case 'inventory':
         return <Inventory />;
