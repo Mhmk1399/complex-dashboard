@@ -125,7 +125,7 @@ export const ProductsSettings = () => {
 
   return (
     <div className="p-6 mx-auto lg:mx-10 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4" dir="rtl">
-      <h2 className="text-2xl font-bold mb-6 lg:col-span-2 col-span-1">تنظیمات محصول</h2>
+      <h2 className="text-2xl font-bold mb-2 lg:col-span-2 col-span-1">تنظیمات محصول</h2>
 
       <div>
         <label className="block mb-2">تصویر محصول</label>
@@ -268,6 +268,8 @@ export const ProductsSettings = () => {
       <div>
         <label className="block mb-2">سایز فونت توضیحات</label>
         <input
+        max={50}
+        min={10}
           type="range"
           value={settings.blocks.setting.descriptionFontSize}
           onChange={(e) => handleChange('setting', 'descriptionFontSize', e.target.value)}
@@ -297,7 +299,7 @@ export const ProductsSettings = () => {
           className="w-full p-2 border rounded"
         />
       </div>
-      <button className='w-full bg-green-500 hover:bg-green-600 text-white mt-5 rounded-full py-2 mx-auto' onClick={handelSave}>save</button>
+      <button className='w-full bg-green-500 hover:bg-green-600 text-white mt-5 text-2xl font-bold rounded-full py-2 mx-auto' onClick={handelSave}>save</button>
     </div>
   );
 };

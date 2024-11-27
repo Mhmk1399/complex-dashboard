@@ -1,14 +1,17 @@
 'use client'
-import  { useState } from 'react';
+import  React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const dashboardMenuItems = [
-  { id: 'store', title: ' فروشگاه', subMenuItems: [{title:'product setting',value:'products setting'}, {title:'blogs setting',value:'blogs setting'}, {title:'collections setting',value:'collections setting'}, {title:'layout setting',value:'layout setting'}] },
+  { id: 'store', title: ' فروشگاه', subMenuItems: [{title:'product setting',value:'productsSetting'}, {title:'blogs setting',value:'blogs setting'}, {title:'collections setting',value:'collections setting'}, {title:'layout setting',value:'layout setting'}] },
   { id: 'seo', title: 'سئو', subMenuItems: [{title:'add blogs',value:'add blogs'}, {title:'add metadata',value:'add metadata'}]  },
   { id: 'acountant and inventory', title: 'حسابداری و انبارداری' , subMenuItems: [{title:'server acountant',value:'server acountant'}, {title:'inventory ',value:'inventory'}, {title:'sale and orders ',value:'sale and orders '}] },
   { id: 'advertising and customers', title: ' تبلیغات و مشتریان' , subMenuItems: [{title:'create campagin',value:'create campagin'}, {title:'chat setting',value:'chat setting'}, {title:'CRM ',value:'CRM'}] },
   { id: 'user data', title:  'اطلاعات کاربری' },
 ];
+interface FormProps {
+  setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
+}
 
 interface AccordionItemProps {
   title: string;
@@ -19,13 +22,13 @@ interface AccordionItemProps {
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isOpen, onToggle }) => {
   return (
-    <div className="rounded-lg mb-2">
+    <div className="rounded-lg mb-2" dir='rtl'>
       <button
         className="w-full p-4 text-right bg-gray-50 hover:bg-gray-100 rounded-full flex justify-between items-center"
         onClick={onToggle}
       >
         <span className="font-semibold">{title}</span>
-        <span className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+        <span className={`transform transition-transform ${isOpen ? 'rotate-180 text-red-400' : ''}`}>
           ▼
         </span>
       </button>
@@ -48,7 +51,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isOpen, 
 
 
 
-const Form = () => {
+const Form:React.FC<FormProps> = ({setSelectedMenu}) => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -60,11 +63,11 @@ const Form = () => {
     setIsOpen(!isOpen);
   };
 
-  const renderAccordionContent = (item: { subMenuItems?: Array<{ title: string, value: string }> }) => {
+  const renderAccordionContent = (item: { subMenuItems?: Array<{ title: string, value: string }> },setSelectedMenu: React.Dispatch<React.SetStateAction<string>>) => {
     return (
       <>
         {item.subMenuItems?.map((subItem, index) => (
-          <div key={index} className='text-right transition-all delay-100 ease-in-out cursor-pointer hover:font-bold text-gray-600 m-2'>
+          <div key={index} className='text-right transition-all delay-100 ease-in-out cursor-pointer hover:font-bold text-gray-600 m-2' onClick={() => setSelectedMenu(subItem.value)}>
              <span className='mx-2 '>{`<`}</span>{subItem.title}
           </div>
         ))}
@@ -117,14 +120,15 @@ const Form = () => {
                 منوی مدیریت
               </h2>
 
-              {dashboardMenuItems.map((item) => (
+              {dashboardMenuItems.map((item ) => (
                 <AccordionItem
                   key={item.id}
                   title={item.title}
                   isOpen={activeSection === item.id}
                   onToggle={() => toggleSection(item.id)}
+                  
                 >
-                  {renderAccordionContent(item)}
+                  {renderAccordionContent(item,setSelectedMenu)}
                 </AccordionItem>
               ))}
             </motion.div>
