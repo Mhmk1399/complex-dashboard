@@ -63,7 +63,10 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
     }
 }   
 
-export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export async function PATCH(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     const productId = params.id;
     logOperation('PATCH_ATTEMPT', productId);
 
@@ -71,11 +74,6 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
     if(!connect) {
         logOperation('PATCH_ERROR', productId, 'Database connection failed');
         return new NextResponse('Database connection error', { status: 500 });
-    }
-
-    if (!productId) {
-        logOperation('PATCH_ERROR', productId, 'Missing product ID');
-        return new NextResponse('Product ID is required', { status: 400 });
     }
 
     try {
@@ -91,25 +89,7 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
             price: body.price,
             status: body.status,
             discount: body.discount,
-            id: body.id,
-            innventory: body.innventory,
-            setting: {
-                cardBorderRadius: body.setting.cardBorderRadius,
-                cardBackground: body.setting.cardBackground,
-                imageWidth: body.setting.imageWidth,
-                imageheight: body.setting.imageheight,
-                imageRadius: body.setting.imageRadius,
-                nameFontSize: body.setting.nameFontSize,
-                nameFontWeight: body.setting.nameFontWeight,
-                nameColor: body.setting.nameColor,
-                descriptionFontSize: body.setting.descriptionFontSize,
-                descriptionFontWeight: body.setting.descriptionFontWeight,
-                descriptionColor: body.setting.descriptionColor,
-                priceFontSize: body.setting.priceFontSize,
-                pricecolor: body.setting.pricecolor,
-                btnBackgroundColor: body.setting.btnBackgroundColor,
-                btnTextColor: body.setting.btnTextColor
-            }
+            innventory: body.innventory
         };
 
         const updatedProduct = await products.findByIdAndUpdate(
@@ -119,17 +99,16 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
         );
 
         if (!updatedProduct) {
-            logOperation('PATCH_ERROR', productId, 'Product not found');
-            return new NextResponse('Product not found', { status: 404 });
+            return NextResponse.json({ message: 'Product not found' }, { status: 404 });
         }
 
-        logOperation('PATCH_SUCCESS', productId, updatedProduct);
-        return new NextResponse(JSON.stringify({ 
+        return NextResponse.json({ 
             message: 'Product updated successfully',
             product: updatedProduct 
-        }), { status: 200 });
+        }, { status: 200 });
     } catch (error) {
         logOperation('PATCH_ERROR', productId, error);
-        return new NextResponse('Error updating product', { status: 500 });
+        return NextResponse.json({ message: 'Error updating product' }, { status: 500 });
     }
 }
+
