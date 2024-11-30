@@ -1,37 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { TrashIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline'
+import EditModal from './editModal';
 
 
-interface ProductSetting {
-    imageWidth: string;
-    imageHeight?: string;
-    imageheight?: string;
-    imageRadius: string;
-    productNameColor?: string;
-    productNameFontSize?: string;
-    productNameFontWeight?: string;
-    nameColor?: string;
-    nameFontSize?: string;
-    nameFontWeight?: string;
-    priceColor?: string;
-    pricecolor?: string;
-    priceFontSize: string;
-    descriptionColor: string;
-    descriptionFontSize: string;
-    descriptionFontWeight?: string;
-    btnBackgroundColor: string;
-    btnTextColor: string;
-    cardBorderRadius?: string;
-    cardBackground?: string;
-  }
-  
-  interface ProductImages {
+
+
+interface ProductImages {
     imageSrc: string;
     imageAlt: string;
-  }
-  
-  interface Product {
-    setting: ProductSetting;
+}
+
+interface Product {
     images?: ProductImages;
     _id: string;
     imageSrc?: string;
@@ -47,26 +26,33 @@ interface ProductSetting {
     createdAt: string;
     updatedAt: string;
     __v: number;
-  }
-  
+}
 
-  export const Inventory = () => {
+
+
+export const Inventory = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const handleEdit = (product: Product) => {
+        setSelectedProduct(product);
+        setIsEditModalOpen(true);
+    };
 
     useEffect(() => {
         fetch('/api/products', {
             method: 'GET',
         })
-        .then(result => result.json())
-        .then(data => {
-            setProducts(data.products);
-            setIsLoading(false);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            setIsLoading(false);
-        });
+            .then(result => result.json())
+            .then(data => {
+                setProducts(data.products);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setIsLoading(false);
+            });
     }, []);
 
     const handleDelete = async (id: string) => {
@@ -91,7 +77,22 @@ interface ProductSetting {
     }
 
     return (
+        
         <div className="container mx-auto px-4 py-8">
+            {isEditModalOpen && selectedProduct && (
+    <EditModal
+        product={selectedProduct}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={() => {
+            // Refresh the products list
+            fetch('/api/products')
+                .then(res => res.json())
+                .then(data => setProducts(data.products));
+        }}
+    />
+)}
+
             <h2 className="text-2xl font-bold mb-6">Product Inventory</h2>
             <div className="overflow-x-auto bg-white rounded-lg shadow">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -111,9 +112,9 @@ interface ProductSetting {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
                                         <div className="h-10 w-10 flex-shrink-0">
-                                            <img 
-                                                className="h-10 w-10 rounded-full object-cover" 
-                                                src={product.images?.imageSrc || '/placeholder.png'} 
+                                            <img
+                                                className="h-10 w-10 rounded-full object-cover"
+                                                src={product.images?.imageSrc || '/placeholder.png'}
                                                 alt={product.images?.imageAlt || product.name}
                                             />
                                         </div>
@@ -131,9 +132,8 @@ interface ProductSetting {
                                     )}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                        product.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                    }`}>
+                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                        }`}>
                                         {product.status}
                                     </span>
                                 </td>
@@ -143,10 +143,14 @@ interface ProductSetting {
                                         <button className="text-blue-600 hover:text-blue-900">
                                             <EyeIcon className="h-5 w-5" />
                                         </button>
-                                        <button className="text-indigo-600 hover:text-indigo-900">
+                                        <button
+                                            onClick={() => handleEdit(product)}
+                                            className="text-indigo-600 hover:text-indigo-900"
+                                        >
                                             <PencilIcon className="h-5 w-5" />
                                         </button>
-                                        <button 
+
+                                        <button
                                             onClick={() => handleDelete(product._id)}
                                             className="text-red-600 hover:text-red-900"
                                         >
