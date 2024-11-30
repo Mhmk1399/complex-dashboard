@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Form from './form'
 import { ProductsSettings } from './components/forms/productsSettings'
 import { Inventory } from './components/forms/inventory'
+import { Collection } from './components/forms/collections'
  
 
 
@@ -17,6 +18,8 @@ export const Dashboard = () => {
         return <ProductsSettings />;
       case 'inventory':
         return <Inventory />;
+      case'collections':
+      return <Collection />;
       default:
         return null;
     }
