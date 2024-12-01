@@ -1,64 +1,168 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
+import { Color } from '@tiptap/extension-color'
+import TextStyle from '@tiptap/extension-text-style'
+import Highlight from '@tiptap/extension-highlight'
+import TextAlign from '@tiptap/extension-text-align'
+import BulletList from '@tiptap/extension-bullet-list'
+import OrderedList from '@tiptap/extension-ordered-list'
+
 
 export const AddBlog = () => {
   const [title, setTitle] = useState('');
-  
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-500 underline hover:text-blue-700',
-          rel: 'follow'
-        },
-      }),
-    ],
-  });
+  const [wordCount, setWordCount] = useState(0);
+  const [showTextColorPicker, setShowTextColorPicker] = useState(false);
+const [showBgColorPicker, setShowBgColorPicker] = useState(false);
 
-  const setLink = () => {
-    if (editor) {
-      if (!editor.isActive('link')) {
-        const url = window.prompt('URL');
-        if (url) {
-          editor
-            .chain()
-            .focus()
-            .setLink({ href: url })
-            .run();
-        }
-      } else {
-        editor
-          .chain()
-          .focus()
-          .setLink({ href: '' })
-          .insertContent(' ')
-          .run();
-      }
-    }
-  };  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && editor?.isActive('link')) {
-        editor
-          .chain()
-          .focus()
-          .setLink({ href: '' })
-          .insertContent(' ')
-          .run();
+// Add this component for the color picker dropdown
+const ColorPickerDropdown = ({ 
+  isOpen, 
+  onClose, 
+  onColorSelect 
+}: { 
+  isOpen: boolean, 
+  onClose: () => void, 
+  onColorSelect: (color: string) => void 
+}) => {
+  const colors = [
+    '#000000', '#434343', '#666666', '#999999', '#b7b7b7', '#cccccc', '#d9d9d9', '#efefef', '#f3f3f3', '#ffffff',
+    '#980000', '#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#4a86e8', '#0000ff', '#9900ff', '#ff00ff',
+    '#e6b8af', '#f4cccc', '#fce5cd', '#fff2cc', '#d9ead3', '#d0e0e3', '#c9daf8', '#cfe2f3', '#d9d2e9', '#ead1dc',
+  ];
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="absolute mt-2 p-2 bg-white rounded-lg shadow-xl border z-50 w-48">
+      <div className="grid grid-cols-10 gap-1">
+        {colors.map((color) => (
+          <button
+            key={color}
+            className="w-6 h-6 rounded-sm border border-gray-200 hover:scale-110 transition-transform"
+            style={{ backgroundColor: color }}
+            onClick={() => {
+              onColorSelect(color);
+              onClose();
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+const ImageUploadButton = () => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files?.length) {
+        const file = e.target.files[0];
+        const alt = window.prompt('Enter alt text for image');
+        
+        // Here you would typically upload the file to your server
+        // This is a placeholder for demonstration
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            editor?.chain().focus().setImage({ 
+              src: reader.result,
+              alt: alt || '',
+            }).run();
+          }
+        };
+        reader.readAsDataURL(file);
       }
     };
+  
+    return (
+      <div className="relative">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        />
+        <MenuButton onClick={() => {}}>
+          <i className="fas fa-upload"></i>
+        </MenuButton>
+      </div>
+    );
+  };
+   
+  const editor = useEditor({
+    extensions: [
+        StarterKit.configure({
+            paragraph: {
+              HTMLAttributes: {
+                dir: 'auto',
+              },
+            },
+            bulletList: false, // Disable the StarterKit version
+            orderedList: false, // Disable the StarterKit version
+          }),
+          BulletList.configure({
+            keepMarks: true,
+            HTMLAttributes: {
+              class: 'list-disc ml-4',
+            },
+          }),
+          OrderedList.configure({
+            keepMarks: true,
+            HTMLAttributes: {
+              class: 'list-decimal ml-4',
+            },
+          }),
+      
+        TextStyle,
+        Color,
+        Highlight.configure({ multicolor: true }), // Add this extension
+        Link.configure({
+          openOnClick: false,
+          HTMLAttributes: {
+            class: 'text-blue-500 underline hover:text-blue-700',
+          },
+        }),
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+            alignments: ['left', 'center', 'right'],
+            defaultAlignment: 'left',
+          }),
+      ],
+    content: '',
+    editorProps: {
+      attributes: {
+        class: 'prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl',
+      },
+    },
+    onUpdate: ({ editor }) => {
+      const text = editor.getText();
+      const words = text.trim().split(/\s+/).filter(word => word !== '');
+      setWordCount(words.length);
+    },
+  });
+  
+  const setLink = () => {
+    const previousUrl = editor?.getAttributes('link').href;
+    const url = window.prompt('URL', previousUrl);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [editor]);
+    if (url === null) {
+      return;
+    }
+
+    if (url === '') {
+      editor?.chain().focus().unsetLink().run();
+      return;
+    }
+
+    editor?.chain().focus().setLink({ href: url }).run();
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const content = editor?.getHTML();
+    console.log('Raw HTML:', content); // This will show the heading tags
     console.log({ title, content });
   };
+  
 
   const MenuButton = ({ onClick, active, children }: { onClick: () => void, active?: boolean, children: React.ReactNode }) => (
     <button
@@ -93,7 +197,7 @@ export const AddBlog = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 text-right mb-2">
+          <label className="block  text-sm font-medium text-gray-700 text-right mb-2">
             محتوای بلاگ
           </label>
           <div className="border border-gray-300 rounded-lg overflow-hidden">
@@ -113,11 +217,11 @@ export const AddBlog = () => {
               </MenuButton>
               
               <MenuButton 
-  onClick={setLink}
-  active={editor?.isActive('link')}
->
-  <i className="fas fa-link"></i>
-</MenuButton>
+                onClick={setLink}
+                active={editor?.isActive('link')}
+              >
+                <i className="fas fa-link"></i>
+              </MenuButton>
               
               <MenuButton 
                 onClick={() => editor?.chain().focus().unsetLink().run()}
@@ -125,11 +229,112 @@ export const AddBlog = () => {
               >
                 <i className="fas fa-unlink"></i>
               </MenuButton>
+              <MenuButton 
+                onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+                active={editor?.isActive('heading', { level: 1 })}
+              >
+                H1
+              </MenuButton>
+              
+              <MenuButton 
+                onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+                active={editor?.isActive('heading', { level: 2 })}
+              >
+                H2
+              </MenuButton>
+              
+              <MenuButton 
+                onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
+                active={editor?.isActive('heading', { level: 3 })}
+              >
+                H3
+              </MenuButton>
+              
+              <MenuButton 
+                onClick={() => editor?.chain().focus().toggleHeading({ level: 4 }).run()}
+                active={editor?.isActive('heading', { level: 4 })}
+              >
+                H4
+              </MenuButton>
+              
+              <MenuButton 
+                onClick={() => editor?.chain().focus().toggleHeading({ level: 5 }).run()}
+                active={editor?.isActive('heading', { level: 5 })}
+              >
+                H5
+              </MenuButton>
+              <div className="relative">
+    <MenuButton 
+      onClick={() => setShowTextColorPicker(!showTextColorPicker)}
+      active={showTextColorPicker}
+    >
+      <i className="fas fa-font"></i>
+    </MenuButton>
+    <ColorPickerDropdown
+      isOpen={showTextColorPicker}
+      onClose={() => setShowTextColorPicker(false)}
+      onColorSelect={(color) => editor?.chain().focus().setColor(color).run()}
+    />
+  </div>
+
+  <div className="relative">
+    <MenuButton 
+      onClick={() => setShowBgColorPicker(!showBgColorPicker)}
+      active={showBgColorPicker}
+    >
+      <i className="fas fa-fill-drip"></i>
+    </MenuButton>
+    <ColorPickerDropdown
+      isOpen={showBgColorPicker}
+      onClose={() => setShowBgColorPicker(false)}
+      onColorSelect={(color) => editor?.chain().focus().setHighlight({ color }).run()}
+      />
+  </div>
+  <MenuButton 
+    onClick={() => editor?.chain().focus().setTextAlign('left').run()}
+    active={editor?.isActive({ textAlign: 'left' })}
+  >
+    <i className="fas fa-align-left"></i>
+  </MenuButton>
+
+  <MenuButton 
+    onClick={() => editor?.chain().focus().setTextAlign('center').run()}
+    active={editor?.isActive({ textAlign: 'center' })}
+  >
+    <i className="fas fa-align-center"></i>
+  </MenuButton>
+
+  <MenuButton 
+    onClick={() => editor?.chain().focus().setTextAlign('right').run()}
+    active={editor?.isActive({ textAlign: 'right' })}
+  >
+    <i className="fas fa-align-right"></i>
+  </MenuButton>
+  <MenuButton 
+  onClick={() => editor?.chain().focus().toggleBulletList().run()}
+  active={editor?.isActive('bulletList')}
+>
+  <i className="fas fa-list-ul"></i>
+</MenuButton>
+
+<MenuButton 
+  onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+  active={editor?.isActive('orderedList')}
+>
+  <i className="fas fa-list-ol"></i>
+</MenuButton>
+<ImageUploadButton />
+
+
             </div>
+            
             
             <div className="p-4 bg-white">
               <EditorContent editor={editor} />
             </div>
+            <div className="mt-2 text-sm text-gray-500 text-right border-t p-2">
+            تعداد کلمات: {wordCount}
+          </div>
           </div>
         </div>
 
