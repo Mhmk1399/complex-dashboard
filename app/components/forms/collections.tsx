@@ -7,10 +7,11 @@ import { EditCollectionModal } from './editCollectionModal';
 interface Collection {
     _id: string;
     name: string;
-    products: string[];
+    products: Product[]; // Changed from string[] to Product[]
     createdAt: string;
     updatedAt: string;
 }
+
 interface Product {
     images?: ProductImages;
     _id: string;
@@ -137,15 +138,14 @@ export const Collection = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(editedCollection),
+                body: JSON.stringify({
+                    ...editedCollection,
+                    products: editedCollection.products.map(product => product._id) // Convert Product objects to IDs
+                }),
             });
-            console.log(response);
             
             if (response.ok) {
-                setCollections(collections.map(c => 
-                    c._id === editedCollection._id ? editedCollection : c
-                    
-                ));
+                await fetchCollections(); // Refresh the collections data
                 setIsEditModalOpen(false);
                 toast.success('Collection updated successfully');
             } else {
@@ -155,9 +155,8 @@ export const Collection = () => {
             console.log('Error updating collection:', error);
             toast.error('Error updating collection');
         }
-        fetchCollections();
-
     };
+    
     
     return (
         <div className="container mx-auto px-4 py-8">

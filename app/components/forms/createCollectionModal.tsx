@@ -33,7 +33,10 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
     const [products, setProducts] = useState<Product[]>([]);
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
     const [collectionName, setCollectionName] = useState('');
-
+    const [searchQuery, setSearchQuery] = useState('');
+    const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
+    const [selectedPriceRange, setSelectedPriceRange] = useState({ min: 0, max: 0 });
+    
     useEffect(() => {
         fetch('/api/products')
             .then(res => res.json())
@@ -56,7 +59,16 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
         );
     };
     
-
+    useEffect(() => {
+        if (products.length > 0) {
+            const prices = products.map(p => parseFloat(p.price));
+            const min = Math.min(...prices);
+            const max = Math.max(...prices);
+            setPriceRange({ min, max });
+            setSelectedPriceRange({ min, max });
+        }
+    }, [products]);
+    
     if (!isOpen) return null;
 
     return (
@@ -80,9 +92,53 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
                             required
                         />
                     </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                        {products.map((product) => (
+                    <div className="flex flex-col md:flex-row items-center gap-2 mb-4 justify-evenly">
+    <div className="items-center">
+        <input
+            type="text"
+            placeholder="Search products by name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full p-2 border rounded mb-2 text-sm"
+        />
+    </div>
+    <div className="flex flex-col items-center">
+        <span className="text-sm mr-2">Min: {selectedPriceRange.min}</span>
+        <input
+            type="range"
+            min={priceRange.min}
+            max={priceRange.max}
+            value={selectedPriceRange.min}
+            onChange={(e) => setSelectedPriceRange(prev => ({
+                ...prev,
+                min: Math.min(parseFloat(e.target.value), prev.max)
+            }))}
+            className="w-24"
+        />
+    </div>
+    <div className="flex flex-col items-center">
+        <span className="text-sm mr-2">Max: {selectedPriceRange.max}</span>
+        <input
+            type="range"
+            min={priceRange.min}
+            max={priceRange.max}
+            value={selectedPriceRange.max}
+            onChange={(e) => setSelectedPriceRange(prev => ({
+                ...prev,
+                max: Math.max(parseFloat(e.target.value), prev.min)
+            }))}
+            className="w-24"
+        />
+    </div>
+</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                    {products
+    .filter(product => 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        parseFloat(product.price) >= selectedPriceRange.min &&
+        parseFloat(product.price) <= selectedPriceRange.max
+    )
+    .map((product) => (
                             <div
                                 key={product._id}
                                 className={`border rounded p-3 cursor-pointer ${
