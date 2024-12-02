@@ -7,9 +7,9 @@ export async function GET(
     { params }: { params: { id: string } }
 ) {
     try {
-        const id = params.id;
+        const id = await params.id;
         await connect();
-        const blog = await blogs.findOne({ id });
+        const blog = await blogs.findOne({ _id: id });  // Changed from { id } to { _id: id }
         
         if (!blog) {
             return NextResponse.json({ message: 'Blog not found' }, { status: 404 });
@@ -21,17 +21,19 @@ export async function GET(
     }
 }
 
+
+
 export async function PUT(
     request: NextRequest,
     { params }: { params: { id: string } }
 ) {
     try {
-        const id = params.id;
+        const id = await params.id;
         const body = await request.json();
         
         await connect();
         const updatedBlog = await blogs.findOneAndUpdate(
-            { id },
+            { _id: id },  // Changed from { id } to { _id: id }
             body,
             { new: true, runValidators: true }
         );
@@ -45,3 +47,4 @@ export async function PUT(
         return NextResponse.json({ message: 'Error updating blog' }, { status: 500 });
     }
 }
+

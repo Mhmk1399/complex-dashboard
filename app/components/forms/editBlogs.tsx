@@ -187,7 +187,7 @@ export const EditBlogs = () => {
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const content = editor?.getHTML() ?? '';
-console.log(content);
+console.log(selectedBlog);
 
 
         if (!selectedBlog) return;

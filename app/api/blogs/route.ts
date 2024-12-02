@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import connect from "@/lib/data";
+import Blog from "@/models/blogs";
 
 const blogsFile = path.join(process.cwd(), 'data', 'blogs.json');
 
@@ -31,7 +32,6 @@ export async function POST(req: Request) {
 
     // Add new blog
     blogs.push(blog);
-
     // Ensure directory exists
     const dir = path.dirname(blogsFile);
     if (!fs.existsSync(dir)) {
@@ -57,13 +57,7 @@ export const GET = async () => {
     }
 
     try {
-        const data = fs.readFileSync(blogsFile, 'utf8');
-        const blogs = JSON.parse(data);
-        
-        if (!blogs) {
-            return new NextResponse('No blogs found', { status: 404 });
-        }
-
+        const blogs = await Blog.find({});
         return NextResponse.json({ blogs }, { status: 200 });
     } catch (error) {
         return new NextResponse('Error fetching blogs', { status: 500 });
