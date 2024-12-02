@@ -5,6 +5,7 @@ import { ProductsSettings } from './components/forms/productsSettings'
 import { Inventory } from './components/forms/inventory'
 import { Collection } from './components/forms/collections'
 import { AddBlog } from './components/forms/addBlog'
+import { EditBlogs } from './components/forms/editBlogs'
  
 
 
@@ -23,6 +24,8 @@ export const Dashboard = () => {
       return <Collection />;
       case 'addBlogs': 
       return <AddBlog />;
+      case 'editBlogs':
+        return <EditBlogs/>
       default:
         return null;
     }

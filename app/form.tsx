@@ -1,13 +1,14 @@
 'use client'
 import  React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { title } from 'process';
 
 const dashboardMenuItems = [
   { id: 'store', title: ' products', subMenuItems: [{title:'add product',value:'addProduct'}, {title:'inventory',value:'inventory'}, {title:'collections ',value:'collections'}, {title:'discount',value:'discount'}] },
   { id: 'orders', title: 'orders', subMenuItems: [{title:'orders',value:'orders '}, {title:'shipping',value:'shipping'}, {title:'aboundend Checkouts',value:'aboundendCheckouts'}]  },
   { id: 'customers', title: 'customers' , subMenuItems: [{title:'customers',value:'customers'}, {title:'segment ',value:'segment'}] },
   { id: 'media', title: 'media' , subMenuItems: [{title:'add file',value:'addFile'}] },
-  { id: 'addBlogs', title: 'Add blogs' , subMenuItems: [{title:'add Blogs',value:'addBlogs'},{title:'add Meta Data',value:'addMetaData'}] },];
+  { id: 'addBlogs', title: 'Add blogs' , subMenuItems: [{title:'add Blogs',value:'addBlogs'},{title:'add Meta Data',value:'addMetaData'},{title:'editBlogs', value:'editBlogs'}] },];
 interface FormProps {
   setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
 }
