@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connect from "@/lib/data";
 import Blog from "@/models/blogs";
+import blogs from "@/models/blogs";
 
 export async function POST(req: Request) {
   const BlogData = await req.json();
@@ -11,11 +12,8 @@ export async function POST(req: Request) {
       console.log("POST_ERROR", "Database connection failed");
       return new NextResponse("Database connection error", { status: 500 });
     }
-    console.log(BlogData);
-    const newBlog = new Blog(BlogData);
-    console.log(newBlog);
-   const savedBlog = await newBlog.save();
-    
+    const newBlog = new blogs(BlogData);
+    await newBlog.save();
     console.log("POST_SUCCESS", "Blog created successfully");
     return NextResponse.json(newBlog, { status: 201 });
   } catch (error) {
