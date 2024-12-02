@@ -160,6 +160,7 @@ export const AddBlog = () => {
     const content = editor?.getHTML();
     
     try {
+      
       const response = await fetch('/api/blogs', {
         method: 'POST',
         headers: {
@@ -168,11 +169,12 @@ export const AddBlog = () => {
         body: JSON.stringify({
           title,
           content,
-        }),
+        })
       });
   
       if (!response.ok) {
-        throw new Error('Failed to create blog post');
+        console.log('Failed to create blog:', response.statusText);
+        
       }
   
       const data = await response.json();

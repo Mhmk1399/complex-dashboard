@@ -1,50 +1,67 @@
-import { NextRequest, NextResponse } from "next/server";
-import connect from "@/lib/data";
 import blogs from "@/models/blogs";
+import connect from "@/lib/data";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-    request: NextRequest,
-    { params }: { params: { id: string } }
-) {
+
+
+export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
+    const blogId = params.id;
+    if (!blogId) {
+        return new NextResponse('Blog ID is required', { status: 400 });
+    }
+    await connect();
+    if(!connect) {
+        return new NextResponse('Database connection error', { status: 500 });
+    }
+
+
     try {
-        const id = await params.id;
-        await connect();
-        const blog = await blogs.findOne({ _id: id });  // Changed from { id } to { _id: id }
-        
+        const blog = await blogs.findById(blogId);
         if (!blog) {
-            return NextResponse.json({ message: 'Blog not found' }, { status: 404 });
+            return new NextResponse('Blog not found', { status: 404 });
         }
-        
-        return NextResponse.json(blog);
+        return new NextResponse(JSON.stringify(blog), { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: 'Error fetching blog' }, { status: 500 });
+        return new NextResponse('Error fetching blog', { status: 500 });
     }
 }
 
-
-
-export async function PUT(
-    request: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
+    const blogId = params.id;
+    if (!blogId) {
+        return new NextResponse('Blog ID is required', { status: 400 });
+    }
+    await connect();
+    if(!connect) {
+        return new NextResponse('Database connection error', { status: 500 });
+    }
     try {
-        const id = await params.id;
-        const body = await request.json();
-        
-        await connect();
-        const updatedBlog = await blogs.findOneAndUpdate(
-            { _id: id },  // Changed from { id } to { _id: id }
-            body,
-            { new: true, runValidators: true }
-        );
-        
-        if (!updatedBlog) {
-            return NextResponse.json({ message: 'Blog not found' }, { status: 404 });
-        }
-        
-        return NextResponse.json(updatedBlog);
+        await blogs.findByIdAndDelete(blogId);
+        return new NextResponse(JSON.stringify({ message: 'Blog deleted successfully' }), { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: 'Error updating blog' }, { status: 500 });
+        return new NextResponse('Error deleting blog', { status: 500 });
+    }
+
+}
+
+export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
+    const blogId = params.id;
+    if (!blogId) {
+        return new NextResponse('Blog ID is required', { status: 400 });
+    }
+    await connect();
+    if(!connect) {
+        return new NextResponse('Database connection error', { status: 500 });
+    }
+    try {
+        const body = await req.json();
+        const updatedBlog = await blogs.findByIdAndUpdate(blogId, body, { new: true });
+        if (!updatedBlog) {
+            return new NextResponse('Blog not found', { status: 404 });
+        }
+        return new NextResponse(JSON.stringify(updatedBlog), { status: 200 });
+    } catch (error) {
+        return new NextResponse('Error updating blog', { status: 500 });
     }
 }
 
