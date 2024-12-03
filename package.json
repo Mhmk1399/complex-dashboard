@@ -27,7 +27,8 @@
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-quill": "^2.0.0",
-    "react-toastify": "^10.0.6"
+    "react-toastify": "^10.0.6",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

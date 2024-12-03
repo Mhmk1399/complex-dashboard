@@ -9,9 +9,11 @@ import TextAlign from '@tiptap/extension-text-align'
 import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'
 interface Blog {
-    id: string;  // Changed from _id to id
+    _id: string;  // Changed from _id to id
     title: string;
     content: string;
+    description: string;
+    seoTitle: string;
 }
 
 
@@ -23,6 +25,8 @@ export const EditBlogs = () => {
     const [showTextColorPicker, setShowTextColorPicker] = useState(false);
     const [showBgColorPicker, setShowBgColorPicker] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [description, setDescription] = useState('');
+    const [seoTitle, setSeoTitle] = useState('');
 
     const ColorPickerDropdown = ({
         isOpen,
@@ -179,47 +183,73 @@ export const EditBlogs = () => {
     const handleBlogSelect = (blog: Blog) => {
         setSelectedBlog(blog);
         setTitle(blog.title);
+        setDescription(blog.description);
+        setSeoTitle(blog.seoTitle);
         editor?.commands.setContent(blog.content);
-        console.log(blog);
+    };
+    // Add this delete handler function inside the EditBlogs component
+    const handleDelete = async () => {
+        if (!selectedBlog?._id) return;
 
+        if (window.confirm('آیا از حذف این بلاگ اطمینان دارید؟')) {
+            try {
+                const response = await fetch(`/api/blogs/${selectedBlog._id}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    setBlogs(prevBlogs => prevBlogs.filter(blog => blog._id !== selectedBlog._id));
+                    setSelectedBlog(null);
+                    setTitle('');
+                    editor?.commands.setContent('');
+                    alert('بلاگ با موفقیت حذف شد');
+                } else {
+                    throw new Error('Failed to delete blog');
+                }
+            } catch (error) {
+                console.error('Error deleting blog:', error);
+                alert('خطا در حذف بلاگ');
+            }
+        }
     };
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const content = editor?.getHTML() ?? '';
-console.log(selectedBlog);
 
-
-        if (!selectedBlog) return;
+        if (!selectedBlog?._id) return;
 
         try {
-            const response = await fetch(`/api/blogs/${selectedBlog.id}`, {
-                method: 'PUT',
+            const response = await fetch(`/api/blogs/${selectedBlog._id}`, {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: selectedBlog.id,
                     title,
                     content,
+                    description,
+                    seoTitle,
                 }),
             });
 
             if (response.ok) {
-                // Update local blogs state
                 const updatedBlog = await response.json();
-                setBlogs(blogs.map(blog =>
-                    blog.id === selectedBlog.id ? updatedBlog : blog
-                ));
+                setBlogs(prevBlogs =>
+                    prevBlogs.map(blog =>
+                        blog._id === selectedBlog._id ? updatedBlog : blog
+                    )
+                );
                 alert('Blog updated successfully');
             } else {
                 throw new Error('Failed to update blog');
             }
         } catch (error) {
-            console.log('Error updating blog:', error);
+            console.error('Error updating blog:', error);
             alert('Failed to update blog');
         }
     };
+
 
     const MenuButton = ({ onClick, active, children }: { onClick: () => void, active?: boolean, children: React.ReactNode }) => (
         <button
@@ -247,13 +277,13 @@ console.log(selectedBlog);
                     <h2 className="text-3xl font-bold mb-8 text-right text-gray-800">ویرایش بلاگ‌ها</h2>
 
                     <div className="mb-6">
-                        <select
+                        <select key={selectedBlog?._id}
                             className="w-full p-2 border rounded-lg"
-                            value={selectedBlog?.id || ''}
+                            value={selectedBlog?._id || ''}
                             onChange={(e) => {
                                 console.log('Selected ID:', e.target.value);
                                 const selectedBlogId = e.target.value;
-                                const blog = blogs.find(blog => blog.id === selectedBlogId);
+                                const blog = blogs.find(blog => blog._id === selectedBlogId);
                                 if (blog) {
                                     handleBlogSelect(blog);
                                 }
@@ -261,9 +291,10 @@ console.log(selectedBlog);
                         >
                             <option value="">انتخاب بلاگ برای ویرایش</option>
                             {blogs.map((blog) => (
-                                <option key={blog.id} value={blog.id}>{blog.title}</option>
+                                <option key={blog._id} value={blog._id}>{blog.title}</option>
                             ))}
                         </select>
+
 
 
 
@@ -272,6 +303,30 @@ console.log(selectedBlog);
                     {selectedBlog && (
                         <form onSubmit={handleUpdate} className="space-y-6">
                             <div>
+                                <div className='border rounded-lg p-2 mb-6'>
+                                    <h1 className='text-2xl'>seo</h1>
+                                    <label className="block text-sm font-medium text-gray-700 text-right mb-2">
+                                        عنوان بلاگ
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={seoTitle}
+                                        onChange={(e) => setSeoTitle(e.target.value)}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                        placeholder="عنوان بلاگ را وارد کنید"
+                                    />
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 text-right mb-2">
+                                            توضیحات کوتاه
+                                        </label>
+                                        <input
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                            placeholder="توضیحات کوتاه بلاگ را وارد کنید"
+                                        />
+                                    </div>
+                                </div>
                                 <label className="block text-sm font-medium text-gray-700 text-right mb-2">
                                     عنوان بلاگ
                                 </label>
@@ -396,7 +451,14 @@ console.log(selectedBlog);
                                 </div>
                             </div>
 
-                            <div className="text-right pt-4">
+                            <div className="text-right pt-4 flex justify-end gap-4">
+                                <button
+                                    type="button"
+                                    onClick={handleDelete}
+                                    className="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 transition-colors font-medium shadow-sm hover:shadow-md"
+                                >
+                                    حذف بلاگ
+                                </button>
                                 <button
                                     type="submit"
                                     className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors font-medium shadow-sm hover:shadow-md"

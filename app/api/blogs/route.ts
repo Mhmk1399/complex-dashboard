@@ -13,6 +13,8 @@ export async function POST(req: Request) {
       return new NextResponse("Database connection error", { status: 500 });
     }
     const newBlog = new blogs(BlogData);
+    console.log(newBlog);
+    
     await newBlog.save();
     console.log("POST_SUCCESS", "Blog created successfully");
     return NextResponse.json(newBlog, { status: 201 });

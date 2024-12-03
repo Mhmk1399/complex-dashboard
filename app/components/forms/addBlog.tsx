@@ -15,7 +15,8 @@ export const AddBlog = () => {
   const [wordCount, setWordCount] = useState(0);
   const [showTextColorPicker, setShowTextColorPicker] = useState(false);
   const [showBgColorPicker, setShowBgColorPicker] = useState(false);
-
+  const [description, setDescription] = useState(''); // Add this state
+  const[seoTitle, setSeoTitle] = useState(''); // Add this state
   // Add this component for the color picker dropdown
   const ColorPickerDropdown = ({
     isOpen,
@@ -160,15 +161,18 @@ export const AddBlog = () => {
     const content = editor?.getHTML();
     
     try {
-      
       const response = await fetch('/api/blogs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          id: crypto.randomUUID(),
           title,
+          description, // Add description to the request body
           content,
+          seoTitle, // Add seoTitle to the request body
+          authorId: '1'
         })
       });
   
@@ -181,18 +185,20 @@ export const AddBlog = () => {
       
       // Clear form
       setTitle('');
+      setDescription(''); // Clear description after successful submission
+      setSeoTitle(''); // Clear seoTitle after successful submission
       editor?.commands.clearContent();
       
       // Show success message or redirect
       alert('Blog posted successfully!');
-      
+      setDescription(''); // Clear description after successful submission
+
     } catch (error) {
       console.error('Error creating blog:', error);
       alert('Failed to post blog');
     }
-  };
-  
 
+  };  
 
   const MenuButton = ({ onClick, active, children }: { onClick: () => void, active?: boolean, children: React.ReactNode }) => (
     <button
@@ -209,9 +215,39 @@ export const AddBlog = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm">
+
       <h2 className="text-3xl font-bold mb-8 text-right text-gray-800">افزودن بلاگ جدید</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+       
+      <div className='border rounded-lg p-2'> 
+        <h1 className='text-2xl'>seo</h1>
+        <label className="block text-sm font-medium text-gray-700 text-right mb-2">
+          عنوان بلاگ
+        </label>
+        <input
+          type="text"
+          value={seoTitle}
+          onChange={(e) => setSeoTitle(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+          placeholder="عنوان بلاگ را وارد کنید"
+        />
+        <div>
+        <label className="block text-sm font-medium text-gray-700 text-right mb-2">
+          توضیحات کوتاه
+        </label>
+        <input
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+          placeholder="توضیحات کوتاه بلاگ را وارد کنید"
+        />
+      </div>
+      </div>
+
+      {/* Add this new input field */}
+      
+      
         <div>
           <label className="block text-sm font-medium text-gray-700 text-right mb-2">
             عنوان بلاگ
@@ -379,3 +415,5 @@ export const AddBlog = () => {
     </div>
   );
 };
+
+
