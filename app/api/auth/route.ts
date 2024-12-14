@@ -23,7 +23,7 @@ export async function login(req: NextRequest) {
 
     return NextResponse.json({ token });
   } catch (error) {
-    return NextResponse.json({ message: "Error logging in" }, { status: 500 });
+    return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
   }
 }
 
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     await connect();
 

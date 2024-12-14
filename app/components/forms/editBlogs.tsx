@@ -9,7 +9,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'
 interface Blog {
-    _id: string;  // Changed from _id to id
+    _id: string;
     title: string;
     content: string;
     description: string;
@@ -64,39 +64,39 @@ export const EditBlogs = () => {
         );
     };
 
-    const ImageUploadButton = ({ editor }: { editor: any }) => {
-        const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files?.length) {
-                const file = e.target.files[0];
-                const alt = window.prompt('Enter alt text for image');
+    // const ImageUploadButton = ({ editor }: { editor: any }) => {
+    //     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //         if (e.target.files?.length) {
+    //             const file = e.target.files[0];
+    //             const alt = window.prompt('Enter alt text for image');
 
-                const reader = new FileReader();
-                reader.onload = () => {
-                    if (typeof reader.result === 'string') {
-                        editor?.chain().focus().setImage({
-                            src: reader.result,
-                            alt: alt || '',
-                        }).run();
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        };
+    //             const reader = new FileReader();
+    //             reader.onload = () => {
+    //                 if (typeof reader.result === 'string') {
+    //                     editor?.chain().focus().setImage({
+    //                         src: reader.result,
+    //                         alt: alt || '',
+    //                     }).run();
+    //                 }
+    //             };
+    //             reader.readAsDataURL(file);
+    //         }
+    //     };
 
-        return (
-            <div className="relative">
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-                <MenuButton onClick={() => { }}>
-                    <i className="fas fa-upload"></i>
-                </MenuButton>
-            </div>
-        );
-    };
+    //     return (
+    //         <div className="relative">
+    //             <input
+    //                 type="file"
+    //                 accept="image/*"
+    //                 onChange={handleFileChange}
+    //                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+    //             />
+    //             <MenuButton onClick={() => { }}>
+    //                 <i className="fas fa-upload"></i>
+    //             </MenuButton>
+    //         </div>
+    //     );
+    // };
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -439,7 +439,7 @@ export const EditBlogs = () => {
                                             <i className="fas fa-list-ol"></i>
                                         </MenuButton>
 
-                                        <ImageUploadButton editor={editor} />
+                                        {/* <ImageUploadButton editor={editor} /> */}
                                     </div>
 
                                     <div className="p-4 bg-white">

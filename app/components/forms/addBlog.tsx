@@ -10,6 +10,7 @@ import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'
 
 
+
 export const AddBlog = () => {
   const [title, setTitle] = useState('');
   const [wordCount, setWordCount] = useState(0);
@@ -53,39 +54,39 @@ export const AddBlog = () => {
       </div>
     );
   };
-  const ImageUploadButton = ({ editor }: { editor: any }) => {
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files?.length) {
-        const file = e.target.files[0];
-        const alt = window.prompt('Enter alt text for image');
+  // const ImageUploadButton = ({ editor }: { editor: any }) => {
+  //   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     if (e.target.files?.length) {
+  //       const file = e.target.files[0];
+  //       const alt = window.prompt('Enter alt text for image');
 
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (typeof reader.result === 'string') {
-            editor?.chain().focus().setImage({
-              src: reader.result,
-              alt: alt || '',
-            }).run();
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    };
+  //       const reader = new FileReader();
+  //       reader.onload = () => {
+  //         if (typeof reader.result === 'string') {
+  //           editor?.chain().focus().setImage({
+  //             src: reader.result,
+  //             alt: alt || '',
+  //           }).run();
+  //         }
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   };
 
-    return (
-      <div className="relative">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        />
-        <MenuButton onClick={() => { }}>
-          <i className="fas fa-upload"></i>
-        </MenuButton>
-      </div>
-    );
-  };
+  //   return (
+  //     <div className="relative">
+  //       <input
+  //         type="file"
+  //         accept="image/*"
+  //         onChange={handleFileChange}
+  //         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+  //       />
+  //       <MenuButton onClick={() => { }}>
+  //         <i className="fas fa-upload"></i>
+  //       </MenuButton>
+  //     </div>
+  //   );
+  // };
 
 
   const editor = useEditor({
@@ -181,7 +182,6 @@ export const AddBlog = () => {
         
       }
   
-      const data = await response.json();
       
       // Clear form
       setTitle('');
@@ -388,7 +388,7 @@ export const AddBlog = () => {
               >
                 <i className="fas fa-list-ol"></i>
               </MenuButton>
-              <ImageUploadButton editor={undefined} />
+              {/* <ImageUploadButton editor={undefined} /> */}
 
 
             </div>

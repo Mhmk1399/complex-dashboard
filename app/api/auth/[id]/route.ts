@@ -3,7 +3,7 @@ import connect from "@/lib/data";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 
-const logOperation = (operation: string, userId: string, details?: any) => {
+const logOperation = (operation: string, userId: string, details?:string | object   )=> {
     console.log(`[${new Date().toISOString()}] ${operation} - User ID: ${userId}`);
     if (details) {
         console.log('Details:', JSON.stringify(details, null, 2));
@@ -30,7 +30,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
         logOperation('DELETE_SUCCESS', userId);
         return new NextResponse(JSON.stringify({ message: 'User deleted successfully' }), { status: 200 });
     } catch (error) {
-        logOperation('DELETE_ERROR', userId, error);
+        logOperation('DELETE_ERROR', userId, error as string | object);
         return new NextResponse('Error deleting user', { status: 500 });
     }
 }
@@ -59,7 +59,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
         logOperation('GET_SUCCESS', userId, user);
         return new NextResponse(JSON.stringify(user), { status: 200 });
     } catch (error) {
-        logOperation('GET_ERROR', userId, error);
+        logOperation('GET_ERROR', userId, error as string | object);
         return new NextResponse('Error fetching user', { status: 500 });
     }
 }   
@@ -83,7 +83,7 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
         const body = await req.json();
         const { name, email, password } = body;
 
-        const updateData: any = {};
+        const updateData: { name?: string; email?: string; password?: string } = {};
         if (name) updateData.name = name;
         if (email) updateData.email = email;
         if (password) {
@@ -107,7 +107,7 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
             user: updatedUser 
         }), { status: 200 });
     } catch (error) {
-        logOperation('PATCH_ERROR', userId, error);
+        logOperation('PATCH_ERROR', userId, error   as string | object);
         return new NextResponse('Error updating user', { status: 500 });
     }
 }

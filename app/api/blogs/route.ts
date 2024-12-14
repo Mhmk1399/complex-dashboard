@@ -19,10 +19,8 @@ export async function POST(req: Request) {
     console.log("POST_SUCCESS", "Blog created successfully");
     return NextResponse.json(newBlog, { status: 201 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to create blog post" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
+
   }
 }
 
@@ -36,6 +34,6 @@ export const GET = async () => {
     const blogs = await Blog.find({});
     return NextResponse.json({ blogs }, { status: 200 });
   } catch (error) {
-    return new NextResponse("Error fetching blogs", { status: 500 });
+    return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
   }
 };

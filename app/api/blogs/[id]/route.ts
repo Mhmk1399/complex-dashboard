@@ -64,7 +64,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
         }
         return new NextResponse(JSON.stringify(blog), { status: 200 });
     } catch (error) {
-        return new NextResponse('Error fetching blog', { status: 500 });
+        return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
     }
 }
 
@@ -81,9 +81,9 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
         await Blog.findByIdAndDelete(blogId);
         return new NextResponse(JSON.stringify({ message: 'Blog deleted successfully' }), { status: 200 });
     } catch (error) {
-        return new NextResponse('Error deleting blog', { status: 500 });
-    }
+        return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
 
 }
 
 
+}

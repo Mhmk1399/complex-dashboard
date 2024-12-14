@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
-
+import Image from 'next/image';
 interface EditCollectionModalProps {
     collection: Collection;
     isOpen: boolean;
@@ -176,10 +176,12 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                                     .map(product => (
                                         <div key={`available-${product._id}`} className="flex items-center border rounded-lg justify-between p-2 hover:bg-gray-50 ">
                                             <div className="flex items-center">
-                                                <img
+                                                <Image
                                                     src={product.images?.imageSrc || '/placeholder.png'}
                                                     alt={product.name}
                                                     className="w-8 h-8 rounded-full object-cover mr-2"
+                                                    width={32}
+                                                    height={32}
                                                 />
                                             </div>
                                             <span>name:{product.name}</span>
@@ -204,10 +206,12 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                                 {availableProducts.map((product, index) => (
                                     <div key={`selected-${product._id}-${index}`} className="flex items-center justify-between p-2 hover:bg-gray-50">
                                         <div className="flex  justify-around gap-x-3">
-                                            <img
+                                            <Image
                                                 src={product.images?.imageSrc || '/placeholder.png'}
                                                 alt={product.name}
                                                 className="w-8 h-8 rounded-full object-cover mr-2"
+                                                width={32}
+                                                height={32}
                                             />
                                         </div>
                                         <span>name:{product.name}</span>

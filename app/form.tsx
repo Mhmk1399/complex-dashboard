@@ -1,7 +1,6 @@
 'use client'
 import  React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { title } from 'process';
 
 const dashboardMenuItems = [
   { id: 'store', title: ' products', subMenuItems: [{title:'add product',value:'addProduct'}, {title:'inventory',value:'inventory'}, {title:'collections ',value:'collections'}, {title:'discount',value:'discount'}] },

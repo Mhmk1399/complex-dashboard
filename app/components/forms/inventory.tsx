@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { TrashIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline'
 import EditModal from './editModal';
-
+import Image from 'next/image';
 
 
 
@@ -112,10 +112,12 @@ export const Inventory = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
                                         <div className="h-10 w-10 flex-shrink-0">
-                                            <img
+                                            <Image
                                                 className="h-10 w-10 rounded-full object-cover"
                                                 src={product.images?.imageSrc || '/placeholder.png'}
                                                 alt={product.images?.imageAlt || product.name}
+                                                width={40}
+                                                height={40}
                                             />
                                         </div>
                                         <div className="ml-4">

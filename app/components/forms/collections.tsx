@@ -66,8 +66,7 @@ export const Collection = () => {
     }, []);
     const fetchProducts = async () => {
         try {
-            const response = await fetch('/api/products');
-            const data = await response.json();
+           
         } catch (error) {
             console.error('Error fetching products:', error);
         }

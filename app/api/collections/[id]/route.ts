@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connect from "@/lib/data";
 import Collections from "@/models/collections";
-import mongoose from 'mongoose';
 
 export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
     const collectionId = params.id;
@@ -46,7 +45,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
         
         return NextResponse.json({ collection }, { status: 200 });
     } catch (error) {
-        return new NextResponse('Error fetching collection', { status: 500 });
+        return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
     }
 };
 
