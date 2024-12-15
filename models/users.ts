@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema(
     targetProjectDirectory: { type: String, required: true },
     templatesDirectory: { type: String, required: true },
     emptyDirectory: { type: String, required: true },
+    storeId: { type: String, required: true, unique: true },
 
 
 

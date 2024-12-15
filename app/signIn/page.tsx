@@ -13,11 +13,17 @@ import {
 import { BiEdit, BiBuildingHouse, BiErrorCircle } from "react-icons/bi";
 
 import { BsAward } from "react-icons/bs";
-import { TemplateContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 
 const emptyDirectory =  "C:\\Users\\msi\\Documents\\GitHub\\userwebsite";  
 const mainProjectDirectory = "C:\\Users\\msi\\Desktop"
+
+
+const generateStoreId = () => {
+  const timestamp = Date.now().toString(36);
+  const randomStr = Math.random().toString(36).substring(2, 8);
+  return `store_${timestamp}${randomStr}`;
+};
 
 
 const SignInForm = () => {
@@ -98,6 +104,7 @@ const SignInForm = () => {
   };
 
   const submitFormData = async () => {
+    const storeId = generateStoreId();
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
@@ -118,6 +125,7 @@ const SignInForm = () => {
             emptyDirectory: emptyDirectory,
             targetDirectory: mainProjectDirectory+"\\"+formData.name,
             templatesDirectory: mainProjectDirectory+"\\"+formData.name+"\\templates",
+            storeId: generateStoreId(),
           
         }),
       });
