@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Cairo } from "next/font/google";
+
 import "./globals.css";
+
+const cairoFont = Cairo({
+  weight: "400",
+  subsets: ["arabic"],
+  variable: "--font-cairo",
+});
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,12 +33,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-
-      <body
-      
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+      <body className={`${cairoFont.variable}  antialiased`}>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
 
         {children}
       </body>
