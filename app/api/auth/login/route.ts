@@ -3,9 +3,9 @@ import connect from "@/lib/data";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { tr } from "framer-motion/client";
 
 export async function POST(request: NextRequest) {
+    const reDirectUrl="localhost:3001";
     await connect();
     try {
         const { phoneNumber, password } = await request.json();
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
             );
         }
         const user = await User.findOne({ phoneNumber });
-        
+
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return NextResponse.json(
                 { message: "Invalid credentials" },
@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
             tokenSecret,
             { expiresIn: "1h" }
         );
+        const redirect = new URL(reDirectUrl);
+        redirect.searchParams.set("token", token);
         return NextResponse.json({ token });
 
 
