@@ -45,7 +45,8 @@ export async function POST(request: Request) {
     category,
     targetProjectDirectory,
     templatesDirectory,
-    emptyDirectory
+    emptyDirectory,
+    storeId
   } = await request.json();
 
   try {
@@ -63,7 +64,8 @@ export async function POST(request: Request) {
       category,
       targetProjectDirectory,
       templatesDirectory,
-      emptyDirectory
+      emptyDirectory,
+      storeId
     });
     
     await newUser.save();
