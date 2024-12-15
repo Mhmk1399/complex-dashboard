@@ -34,32 +34,38 @@ export async function login(req: NextRequest) {
 }
 
 export async function POST(request: Request) {
-  const { name, email, password, role, vendorId } = await request.json();
+  const { 
+    name, 
+    phoneNumber, 
+    password, 
+    title,
+    subdomain,
+    location,
+    socialMedia,
+    category,
+    targetProjectDirectory,
+    templatesDirectory,
+    emptyDirectory
+  } = await request.json();
 
   try {
     await connect();
 
-    // Ensure role is valid
-    if (!["superadmin", "vendor", "user"].includes(role)) {
-      return NextResponse.json({ message: "Invalid role" }, { status: 400 });
-    }
-
-    // Ensure vendorId is provided for users
-    if (role === "user" && !vendorId) {
-      return NextResponse.json(
-        { message: "Vendor ID is required for users" },
-        { status: 400 }
-      );
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       name,
-      email,
+      phoneNumber,
       password: hashedPassword,
-      role,
-      vendorId,
+      title,
+      subdomain,
+      location,
+      socialMedia,
+      category,
+      targetProjectDirectory,
+      templatesDirectory,
+      emptyDirectory
     });
+    
     await newUser.save();
 
     return NextResponse.json(
@@ -74,6 +80,7 @@ export async function POST(request: Request) {
     );
   }
 }
+
 
 export async function GET() {
   try {

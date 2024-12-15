@@ -13,6 +13,18 @@ import { BiEdit, BiBuildingHouse } from "react-icons/bi";
 
 import { BsAward } from "react-icons/bs";
 
+
+const emptyDirectory =  "C:\\Users\\msi\\Documents\\GitHub\\userwebsite";  
+const mainProjectDirectory = "C:\\Users\\msi\\Desktop"
+
+
+const generateStoreId = () => {
+  const timestamp = Date.now().toString(36);
+  const randomStr = Math.random().toString(36).substring(2, 8);
+  return `store_${timestamp}${randomStr}`;
+};
+
+
 const SignInForm = () => {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -88,6 +100,7 @@ const SignInForm = () => {
   };
 
   const submitFormData = async () => {
+    const storeId = generateStoreId();
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
@@ -95,18 +108,20 @@ const SignInForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user: {
+          
             name: formData.name,
             password: formData.password,
             phoneNumber: formData.phoneNumber,
-          },
-          site: {
             title: formData.title,
             subdomain: formData.subdomain,
             location: formData.location,
             socialMedia: formData.socialMedia,
             category: formData.category,
-          },
+            emptyDirectory: emptyDirectory,
+            targetDirectory: mainProjectDirectory+"\\"+formData.name,
+            templatesDirectory: mainProjectDirectory+"\\"+formData.name+"\\templates",
+            storeId: generateStoreId(),
+          
         }),
       });
 
