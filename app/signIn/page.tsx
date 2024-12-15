@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -8,28 +8,28 @@ import {
   FiX,
   FiShoppingCart,
   FiUser,
-  FiAlertCircle,
 } from "react-icons/fi";
-import { BiEdit, BiBuildingHouse, BiErrorCircle } from "react-icons/bi";
+import { BiEdit, BiBuildingHouse } from "react-icons/bi";
 
 import { BsAward } from "react-icons/bs";
 
 const SignInForm = () => {
   const router = useRouter();
   const [step, setStep] = useState(1);
+  const [isExistingUser, setIsExistingUser] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     password: "",
     phoneNumber: "",
-    logo: "",
     title: "",
     subdomain: "",
-    location: "",
+    location: "a",
     socialMedia: {
-      instagram: "",
-      telegram: "",
-      x: "",
-      whatsapp: "",
+      instagram: "i",
+      telegram: "t",
+      x: "x",
+      whatsapp: "w",
     },
     category: "",
   });
@@ -56,10 +56,6 @@ const SignInForm = () => {
         break;
 
       case 2:
-        if (!formData.logo) {
-          setErrors("لوگو سایت الزامی است");
-          return false;
-        }
         if (!formData.title || formData.title.length < 3) {
           setErrors("  عنوان سایت باید حداقل 3 کاراکتر داشته باشد");
           return false;
@@ -105,7 +101,6 @@ const SignInForm = () => {
             phoneNumber: formData.phoneNumber,
           },
           site: {
-            logo: formData.logo,
             title: formData.title,
             subdomain: formData.subdomain,
             location: formData.location,
@@ -132,6 +127,65 @@ const SignInForm = () => {
       setIsSuccess(false);
       setErrors("An unexpected error occurred");
       setShowModal(true);
+    }
+  };
+  // New function to check if user is existing
+  const checkUserStatus = async () => {
+    try {
+      const response = await fetch("/api/auth", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.isExistingUser) {
+        setIsExistingUser(true);
+        // Optionally, pre-fill phone number if available
+        if (result.phoneNumber) {
+          setFormData((prev) => ({
+            ...prev,
+            phoneNumber: result.phoneNumber,
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error checking user status:", error);
+    }
+  };
+
+  // Check user status on component mount
+  useEffect(() => {
+    checkUserStatus();
+  }, []);
+
+  // Modified login function for existing users
+  const handleExistingUserLogin = async () => {
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneNumber: formData.phoneNumber,
+          password: formData.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Redirect to dashboard or home page
+        router.replace("/dashboard");
+      } else {
+        setErrors(result.message || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setErrors("An unexpected error occurred");
     }
   };
 
@@ -192,7 +246,7 @@ const SignInForm = () => {
         به سایت ساز تومک خوش آمدید!
       </h1>
 
-      <motion.div className="bg-white bg-opacity-20 backdrop-blur-3xl rounded-2xl px-10 py-12 w-full max-w-4xl shadow-2xl border-2 border-white/50">
+      <motion.div className="bg-white bg-opacity-15 backdrop-blur-3xl rounded-3xl px-10 py-12 w-full max-w-4xl shadow-2xl border-2 border-white/50">
         <motion.div
           key={step}
           initial={{ x: 20, opacity: 0 }}
@@ -260,21 +314,7 @@ const SignInForm = () => {
               </h2>
               <hr />
               <br />
-              <label
-                htmlFor="logo"
-                className="block text-lg font-medium text-white mb-2"
-              >
-                لوگو سایت*
-              </label>
-              <input
-                id="logo"
-                type="text"
-                placeholder="لینک لوگو سایت"
-                onChange={(e) =>
-                  setFormData({ ...formData, logo: e.target.value })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
-              />
+
               <label
                 htmlFor="title"
                 className="block text-lg font-medium text-white mb-2 mt-4"
@@ -481,7 +521,7 @@ const SignInForm = () => {
           {[1, 2, 3].map((_, idx) => (
             <motion.div
               key={idx}
-              className={`h-[5px] mx-3 shadow-sm shadow-gray-200 rounded-full ${
+              className={`h-[5px] mx-3 shadow-sm shadow-gray-500 rounded-xl ${
                 idx + 1 <= step ? "bg-purple-600" : "bg-gray-200"
               }`}
               style={{ width: `${100 / 3}%` }}

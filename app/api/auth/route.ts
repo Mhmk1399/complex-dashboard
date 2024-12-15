@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 const jwt = require("jsonwebtoken");
 
 export async function login(req: NextRequest) {
-  const { phone, password } = await req.json();
+  const { email, password } = await req.json();
 
   try {
     await connect();
