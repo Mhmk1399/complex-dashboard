@@ -2,6 +2,7 @@ import connect from "@/lib/data";
 import { NextResponse, NextRequest } from "next/server";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
+import { createWebsite } from "../createWebsite/route";
 
 
 
@@ -42,10 +43,29 @@ export async function POST(request: Request) {
     
     await newUser.save();
 
-    return NextResponse.json(
-      { message: "User created successfully" },
-      { status: 201 }
-    );
+    console.log("User created successfully");
+   
+    try {
+      const websiteResult = await createWebsite({
+        emptyDirectory: emptyDirectory as string,
+        targetDirectory: targetProjectDirectory as string
+
+      });
+      websiteResult
+      console.log("Website created successfully");
+      return NextResponse.json(
+        { message: "User created successfully" },
+        { status: 201 }
+      );
+    } catch (error) {
+      console.error("error creating website:", error);
+      return NextResponse.json(
+        { message: "error creating website"},
+        { status: 500 }
+      );
+    }
+    
+    return NextResponse.json({ message: "User created successfully" }, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);
     return NextResponse.json(
@@ -54,7 +74,6 @@ export async function POST(request: Request) {
     );
   }
 }
-
 
 export async function GET() {
   try {
