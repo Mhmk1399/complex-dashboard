@@ -13,6 +13,12 @@ import {
 import { BiEdit, BiBuildingHouse, BiErrorCircle } from "react-icons/bi";
 
 import { BsAward } from "react-icons/bs";
+import { TemplateContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+
+
+const emptyDirectory =  "C:\\Users\\msi\\Documents\\GitHub\\userwebsite";  
+const mainProjectDirectory = "C:\\Users\\msi\\Desktop"
+
 
 const SignInForm = () => {
   const router = useRouter();
@@ -99,19 +105,20 @@ const SignInForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user: {
+          
             name: formData.name,
             password: formData.password,
             phoneNumber: formData.phoneNumber,
-          },
-          site: {
             logo: formData.logo,
             title: formData.title,
             subdomain: formData.subdomain,
             location: formData.location,
             socialMedia: formData.socialMedia,
             category: formData.category,
-          },
+            emptyDirectory: emptyDirectory,
+            targetDirectory: mainProjectDirectory+"\\"+formData.name,
+            templatesDirectory: mainProjectDirectory+"\\"+formData.name+"\\templates",
+          
         }),
       });
 
