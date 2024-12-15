@@ -81,14 +81,36 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
 
     try {
         const body = await req.json();
-        const { name, email, password } = body;
+        const { 
+            name, 
+            phoneNumber, 
+            password,
+            title,
+            subdomain,
+            location,
+            socialMedia,
+            category,
+            targetProjectDirectory,
+            templatesDirectory,
+            emptyDirectory,
+            storeId
+        } = body;
 
-        const updateData: { name?: string; email?: string; password?: string } = {};
+        const updateData: any = {};
         if (name) updateData.name = name;
-        if (email) updateData.email = email;
+        if (phoneNumber) updateData.phoneNumber = phoneNumber;
         if (password) {
             updateData.password = await bcryptjs.hash(password, 10);
         }
+        if (title) updateData.title = title;
+        if (subdomain) updateData.subdomain = subdomain;
+        if (location) updateData.location = location;
+        if (socialMedia) updateData.socialMedia = socialMedia;
+        if (category) updateData.category = category;
+        if (targetProjectDirectory) updateData.targetProjectDirectory = targetProjectDirectory;
+        if (templatesDirectory) updateData.templatesDirectory = templatesDirectory;
+        if (emptyDirectory) updateData.emptyDirectory = emptyDirectory;
+        if (storeId) updateData.storeId = storeId;
 
         const updatedUser = await User.findByIdAndUpdate(
             userId,
@@ -107,7 +129,8 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
             user: updatedUser 
         }), { status: 200 });
     } catch (error) {
-        logOperation('PATCH_ERROR', userId, error   as string | object);
+        logOperation('PATCH_ERROR', userId, error as string | object);
         return new NextResponse('Error updating user', { status: 500 });
     }
 }
+
