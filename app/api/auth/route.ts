@@ -2,36 +2,9 @@ import connect from "@/lib/data";
 import { NextResponse, NextRequest } from "next/server";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
+import { createWebsite } from "../createWebsite/route";
 
-const jwt = require("jsonwebtoken");
 
-export async function login(req: NextRequest) {
-  const { email, password } = await req.json();
-
-  try {
-    await connect();
-    const user = await User.findOne({ email });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return NextResponse.json(
-        { message: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
-
-    const token = jwt.sign(
-      { id: user._id, role: user.role, vendorId: user.vendorId || null },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    return NextResponse.json({ token });
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Error logging in", error },
-      { status: 500 }
-    );
-  }
-}
 
 export async function POST(request: Request) {
   const {
@@ -70,10 +43,29 @@ export async function POST(request: Request) {
 
     await newUser.save();
 
-    return NextResponse.json(
-      { message: "User created successfully" },
-      { status: 201 }
-    );
+    console.log("User created successfully");
+   
+    try {
+      const websiteResult = await createWebsite({
+        emptyDirectory: emptyDirectory as string,
+        targetDirectory: targetProjectDirectory as string
+
+      });
+      websiteResult
+      console.log("Website created successfully");
+      return NextResponse.json(
+        { message: "User created successfully" },
+        { status: 201 }
+      );
+    } catch (error) {
+      console.error("error creating website:", error);
+      return NextResponse.json(
+        { message: "error creating website"},
+        { status: 500 }
+      );
+    }
+    
+    return NextResponse.json({ message: "User created successfully" }, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);
     return NextResponse.json(
