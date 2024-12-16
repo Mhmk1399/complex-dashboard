@@ -34,10 +34,10 @@ export async function login(req: NextRequest) {
 }
 
 export async function POST(request: Request) {
-  const { 
-    name, 
-    phoneNumber, 
-    password, 
+  const {
+    name,
+    phoneNumber,
+    password,
     title,
     subdomain,
     location,
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     targetProjectDirectory,
     templatesDirectory,
     emptyDirectory,
-    storeId
+    storeId,
   } = await request.json();
 
   try {
@@ -65,9 +65,9 @@ export async function POST(request: Request) {
       targetProjectDirectory,
       templatesDirectory,
       emptyDirectory,
-      storeId
+      storeId,
     });
-    
+
     await newUser.save();
 
     return NextResponse.json(
@@ -82,7 +82,6 @@ export async function POST(request: Request) {
     );
   }
 }
-
 
 export async function GET() {
   try {
