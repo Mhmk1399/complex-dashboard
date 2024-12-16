@@ -15,7 +15,10 @@ export async function POST(request: NextRequest) {
                 { status: 401 }
             );
         }
+        console.log(phoneNumber, password);
+        
         const user = await User.findOne({ phoneNumber });
+        console.log(user);
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return NextResponse.json(

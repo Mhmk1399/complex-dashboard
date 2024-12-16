@@ -14,17 +14,14 @@ import { BiEdit, BiBuildingHouse, BiErrorCircle } from "react-icons/bi";
 
 import { BsAward } from "react-icons/bs";
 
-
-const emptyDirectory =  "C:\\Users\\msi\\Documents\\GitHub\\userwebsite";  
-const mainProjectDirectory = "C:\\Users\\msi\\Desktop"
-
+const emptyDirectory = "C:\\Users\\msi\\Documents\\GitHub\\userwebsite";
+const mainProjectDirectory = "C:\\Users\\msi\\Desktop";
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
   const randomStr = Math.random().toString(36).substring(2, 8);
   return `store_${timestamp}${randomStr}`;
 };
-
 
 const SignInForm = () => {
   const router = useRouter();
@@ -112,21 +109,20 @@ const SignInForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          
-            name: formData.name,
-            password: formData.password,
-            phoneNumber: formData.phoneNumber,
-            logo: formData.logo,
-            title: formData.title,
-            subdomain: formData.subdomain,
-            location: formData.location,
-            socialMedia: formData.socialMedia,
-            category: formData.category,
-            emptyDirectory: emptyDirectory,
-            targetDirectory: mainProjectDirectory+"\\"+formData.name,
-            templatesDirectory: mainProjectDirectory+"\\"+formData.name+"\\templates",
-            storeId: storeId
-          
+          name: formData.name,
+          password: formData.password,
+          phoneNumber: formData.phoneNumber,
+          logo: formData.logo,
+          title: formData.title,
+          subdomain: formData.subdomain,
+          location: formData.location,
+          socialMedia: formData.socialMedia,
+          category: formData.category,
+          emptyDirectory: emptyDirectory,
+          targetDirectory: mainProjectDirectory + "\\" + formData.name,
+          templatesDirectory:
+            mainProjectDirectory + "\\" + formData.name + "\\templates",
+          storeId: storeId,
         }),
       });
 
@@ -203,7 +199,7 @@ const SignInForm = () => {
       className="min-h-screen bg-gradient-to-tr from-indigo-500 to-purple-600 flex flex-col items-center justify-center p-4"
       dir="rtl"
     >
-      <h1 className="text-2xl  lg:text-4xl font-bold text-center text-white my-4 lg:my-10">
+      <h1 className="text-2xl  lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-white my-4 lg:my-10">
         به سایت ساز تومک خوش آمدید!
       </h1>
 
