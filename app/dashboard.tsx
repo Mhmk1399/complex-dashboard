@@ -7,12 +7,30 @@ import { Collection } from "./components/forms/collections";
 import { AddBlog } from "./components/forms/addBlog";
 import { EditBlogs } from "./components/forms/editBlogs";
 import { useRouter } from "next/navigation";
+import { 
+  FaEdit, 
+  FaCreditCard, 
+  FaTruck, 
+  FaExternalLinkAlt 
+} from 'react-icons/fa';
 
+const paymentMethods = [
+  { id: 'stripe', name: 'Stripe', icon: <FaCreditCard /> },
+  { id: 'paypal', name: 'PayPal', icon: <FaCreditCard /> },
+  { id: 'bank', name: 'Bank Transfer', icon: <FaCreditCard /> }
+];
+
+const shippingMethods = [
+  { id: 'standard', name: 'Standard Shipping', icon: <FaTruck /> },
+  { id: 'express', name: 'Express Shipping', icon: <FaTruck /> },
+  { id: 'international', name: 'International Shipping', icon: <FaTruck /> }
+];
 export const Dashboard = () => {
   const router = useRouter();
-
   const [selectedMenu, setSelectedMenu] = useState("ProductsSetting");
-
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState('');
+  
   useEffect(() => {
     const token = localStorage.getItem("token"); // Or however you store the token
 
@@ -59,9 +77,12 @@ export const Dashboard = () => {
     }
   };
   return (
-    <div>
+    <div className="h-screen bg-[#caf0f8]">
       <Form setSelectedMenu={setSelectedMenu} />
       <RenderForms />
+      
+      
+    
     </div>
   );
 };
