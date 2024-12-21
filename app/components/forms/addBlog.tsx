@@ -160,7 +160,7 @@ export const AddBlog = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const content = editor?.getHTML();
-    
+    const storeId = localStorage.getItem('storeId');
     try {
       const response = await fetch('/api/blogs', {
         method: 'POST',
@@ -173,7 +173,8 @@ export const AddBlog = () => {
           description, // Add description to the request body
           content,
           seoTitle, // Add seoTitle to the request body
-          authorId: '1'
+          authorId: '1',
+          storeId: storeId
         })
       });
   

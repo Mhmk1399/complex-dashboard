@@ -8,14 +8,13 @@ import {
   FiX,
   FiShoppingCart,
   FiUser,
-  FiAlertCircle,
 } from "react-icons/fi";
-import { BiEdit, BiBuildingHouse, BiErrorCircle } from "react-icons/bi";
-
+import { BiEdit, BiBuildingHouse } from "react-icons/bi";
 import { BsAward } from "react-icons/bs";
 
-const emptyDirectory = "C:\\Users\\msi\\Documents\\GitHub\\userwebsite";
-const mainProjectDirectory = "C:\\Users\\msi\\Desktop";
+const mainProjectDirectory = "//Users//macbook//Desktop";
+const emptyDirectory = "//Users//macbook/Desktop//userwebsite";
+
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -26,22 +25,27 @@ const generateStoreId = () => {
 const SignInForm = () => {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState( {
     name: "",
     password: "",
     phoneNumber: "",
-    logo: "",
     title: "",
+    logo: "",
     subdomain: "",
     location: "",
     socialMedia: {
-      instagram: "",
-      telegram: "",
-      x: "",
-      whatsapp: "",
+        instagram: "",
+        telegram: "",
+        x: "",
+        whatsapp: "",
     },
     category: "",
-  });
+    // These will be added during submission
+    targetProjectDirectory: "",
+    templatesDirectory: "",
+    emptyDirectory: "",
+    storeId: ""
+});
   const [errors, setErrors] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -102,34 +106,29 @@ const SignInForm = () => {
 
   const submitFormData = async () => {
     const storeId = generateStoreId();
+    const targetProjectDirectory = `${mainProjectDirectory}/${formData.name}`;
+    
+    
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: formData.name,
-          password: formData.password,
-          phoneNumber: formData.phoneNumber,
-          logo: formData.logo,
-          title: formData.title,
-          subdomain: formData.subdomain,
-          location: formData.location,
-          socialMedia: formData.socialMedia,
-          category: formData.category,
-          emptyDirectory: emptyDirectory,
-          targetDirectory: mainProjectDirectory + "\\" + formData.name,
-          templatesDirectory:
-            mainProjectDirectory + "\\" + formData.name + "\\templates",
-          storeId: storeId,
+            ...formData,
+            targetProjectDirectory,
+            templatesDirectory: `${targetProjectDirectory}/templates`,
+            emptyDirectory,
+            storeId,
         }),
-      });
+    });
+
 
       const result = await response.json();
 
       if (response.ok) {
-        router.replace("/dasshboard");
+        router.replace("/");
         setErrors("");
         setIsSuccess(true);
         setShowModal(true);

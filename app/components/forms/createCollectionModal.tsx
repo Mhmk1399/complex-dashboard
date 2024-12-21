@@ -17,7 +17,9 @@ interface Product {
     createdAt: string;
     updatedAt: string;
     __v: number;
+    storeId: string;
 }
+
 interface ProductImages {
     imageSrc: string;
     imageAlt: string;
@@ -25,7 +27,7 @@ interface ProductImages {
 interface CreateCollectionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (collection: { name: string; products: Product[] }) => void;
+    onSave: (collection: { name: string; products: Product[]; storeId: string ;description:string}) => void;
 }
 
 
@@ -33,10 +35,13 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
     const [products, setProducts] = useState<Product[]>([]);
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
     const [collectionName, setCollectionName] = useState('');
+    const [collectionDescription, setCollectionDescription] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
     const [selectedPriceRange, setSelectedPriceRange] = useState({ min: 0, max: 0 });
-    
+    const storeId = localStorage.getItem('storeId');
+    console.log(storeId);
+
     useEffect(() => {
         fetch('/api/products')
             .then(res => res.json())
@@ -44,21 +49,27 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
     }, []);
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSave({
-            name: collectionName,
-            products: selectedProducts
-        });
-        onClose();
+        if (storeId) {
+            onSave({
+                name: collectionName,
+                description: collectionDescription,
+                products: selectedProducts,
+                storeId: storeId
+            });
+            onClose();
+        } else {
+            console.error('Store ID is not available');
+        }
     };
-    
+
     const toggleProduct = (product: Product) => {
-        setSelectedProducts(prev => 
+        setSelectedProducts(prev =>
             prev.some(p => p._id === product._id)
                 ? prev.filter(p => p._id !== product._id)
                 : [...prev, product]
         );
     };
-    
+
     useEffect(() => {
         if (products.length > 0) {
             const prices = products.map(p => parseFloat(p.price));
@@ -68,7 +79,7 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
             setSelectedPriceRange({ min, max });
         }
     }, [products]);
-    
+
     if (!isOpen) return null;
 
     return (
@@ -92,75 +103,84 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
                             required
                         />
                     </div>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium mb-2">Collection discription</label>
+                        <input
+                            type="text"
+                            value={collectionDescription}
+                            onChange={(e) => setCollectionDescription(e.target.value)}
+                            className="w-full p-2 border rounded"
+                            required
+                        />
+                    </div>
                     <div className="flex flex-col md:flex-row items-center gap-2 mb-4 justify-evenly">
-    <div className="items-center">
-        <input
-            type="text"
-            placeholder="Search products by name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-2 border rounded mb-2 text-sm"
-        />
-    </div>
-    <div className="flex flex-col items-center">
-        <span className="text-sm mr-2">Min: {selectedPriceRange.min}</span>
-        <input
-            type="range"
-            min={priceRange.min}
-            max={priceRange.max}
-            value={selectedPriceRange.min}
-            onChange={(e) => setSelectedPriceRange(prev => ({
-                ...prev,
-                min: Math.min(parseFloat(e.target.value), prev.max)
-            }))}
-            className="w-24"
-        />
-    </div>
-    <div className="flex flex-col items-center">
-        <span className="text-sm mr-2">Max: {selectedPriceRange.max}</span>
-        <input
-            type="range"
-            min={priceRange.min}
-            max={priceRange.max}
-            value={selectedPriceRange.max}
-            onChange={(e) => setSelectedPriceRange(prev => ({
-                ...prev,
-                max: Math.max(parseFloat(e.target.value), prev.min)
-            }))}
-            className="w-24"
-        />
-    </div>
-</div>
+                        <div className="items-center">
+                            <input
+                                type="text"
+                                placeholder="Search products by name..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full p-2 border rounded mb-2 text-sm"
+                            />
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-sm mr-2">Min: {selectedPriceRange.min}</span>
+                            <input
+                                type="range"
+                                min={priceRange.min}
+                                max={priceRange.max}
+                                value={selectedPriceRange.min}
+                                onChange={(e) => setSelectedPriceRange(prev => ({
+                                    ...prev,
+                                    min: Math.min(parseFloat(e.target.value), prev.max)
+                                }))}
+                                className="w-24"
+                            />
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-sm mr-2">Max: {selectedPriceRange.max}</span>
+                            <input
+                                type="range"
+                                min={priceRange.min}
+                                max={priceRange.max}
+                                value={selectedPriceRange.max}
+                                onChange={(e) => setSelectedPriceRange(prev => ({
+                                    ...prev,
+                                    max: Math.max(parseFloat(e.target.value), prev.min)
+                                }))}
+                                className="w-24"
+                            />
+                        </div>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                    {products
-    .filter(product => 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        parseFloat(product.price) >= selectedPriceRange.min &&
-        parseFloat(product.price) <= selectedPriceRange.max
-    )
-    .map((product) => (
-                            <div
-                                key={product._id}
-                                className={`border rounded p-3 cursor-pointer ${
-                                    selectedProducts.some(p => p._id === product._id) ? 'border-blue-500 bg-blue-50' : ''
-                                }`}
-                                onClick={() => toggleProduct(product)}
-                            >
-                                <div className="flex items-center space-x-3">
-                                    <Image
-                                        src={product.images?.imageSrc || '/placeholder.png'}
-                                        alt={product.name}
-                                        className="w-16 h-16 object-cover rounded"
+                        {products
+                            .filter(product =>
+                                product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                                parseFloat(product.price) >= selectedPriceRange.min &&
+                                parseFloat(product.price) <= selectedPriceRange.max
+                            )
+                            .map((product) => (
+                                <div
+                                    key={product._id}
+                                    className={`border rounded p-3 cursor-pointer ${selectedProducts.some(p => p._id === product._id) ? 'border-blue-500 bg-blue-50' : ''
+                                        }`}
+                                    onClick={() => toggleProduct(product)}
+                                >
+                                    <div className="flex items-center space-x-3">
+                                        <Image
+                                            src={product.images?.imageSrc || '/placeholder.png'}
+                                            alt={product.name}
+                                            className="w-16 h-16 object-cover rounded"
                                             width={64}
                                             height={64}
-                                    />
-                                    <div>
-                                        <p className="font-medium">{product.name}</p>
-                                        <p className="text-sm text-gray-500">${product.price}</p>
+                                        />
+                                        <div>
+                                            <p className="font-medium">{product.name}</p>
+                                            <p className="text-sm text-gray-500">${product.price}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
 
                     <div className="flex justify-end space-x-3">

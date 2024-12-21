@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { FaPhoneAlt, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -27,7 +28,9 @@ export default function LoginPage() {
 
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        router.replace("http://localhost:3000"); // Redirect to dashboard after successful login
+        router.replace("http://localhost:3000");
+        console.log(data);
+         // Redirect to dashboard after successful login
       } else {
         setError(data.message);
       }
@@ -75,7 +78,7 @@ export default function LoginPage() {
                 animate={{ scale: 1, opacity: 1 }}
                 className="text-red-500 text-center text-sm"
               >
-                مشکلی پیش آمد. لطفا دوباره امتحان کنید.
+                {error}
               </motion.div>
             )}
             <div className="space-y-4">
@@ -115,7 +118,14 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-
+            <div className="flex items-center justify-between">
+              <Link href="#" className=" text-gray-500 mr-2 hover:underline underline-offset-4">
+                فراموشی رمز عبور؟
+                </Link>
+                <Link href="/signIn" className=" text-gray-500 ml-2 hover:underline underline-offset-4">
+                  ثبت نام
+                </Link>
+            </div>
             <div>
               <motion.button
                 whileHover={{ scale: 1.05 }}

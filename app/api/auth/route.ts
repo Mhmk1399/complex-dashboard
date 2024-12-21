@@ -48,7 +48,8 @@ export async function POST(request: Request) {
     try {
       const websiteResult = await createWebsite({
         emptyDirectory: emptyDirectory as string,
-        targetDirectory: targetProjectDirectory as string
+        targetDirectory: targetProjectDirectory as string,
+        storeId: storeId as string,
 
       });
       websiteResult
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
         { status: 201 }
       );
     } catch (error) {
-      console.error("error creating website:", error);
+      console.log("error creating website:", error);
       return NextResponse.json(
         { message: "error creating website"},
         { status: 500 }
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
     
     return NextResponse.json({ message: "User created successfully" }, { status: 201 });
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.log("Error creating user:", error);
     return NextResponse.json(
       { message: "Error creating user" },
       { status: 500 }

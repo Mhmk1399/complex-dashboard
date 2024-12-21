@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 const CollectionSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
+        description: { type: String, required: true },
+        storeId: { type: String, required: true },
         products: [{
             _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Products' },
             name: String,

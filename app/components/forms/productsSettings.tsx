@@ -45,6 +45,8 @@ export const ProductsSettings = () => {
     }));
     console.log(settings.blocks);
   };
+const storeId=localStorage.getItem("storeId")
+console.log(storeId);
 
   const handelSave = async () => {
     try {
@@ -61,6 +63,7 @@ export const ProductsSettings = () => {
         discount: settings.blocks.discount,
         id: settings.blocks.id,
         innventory: settings.blocks.innventory,
+        storeId: storeId,
       };
 
       const response = await fetch("/api/products", {

@@ -74,8 +74,8 @@ export const Dashboard = () => {
 
           if (response.ok) {
             const userData = await response.json();
-            console.log("User Data:", userData);
-
+            console.log( userData.storeId);
+            localStorage.setItem("storeId", userData.storeId);
             // Update the greeting with user's name
             setUserName(userData.name || "عزیز");
           }

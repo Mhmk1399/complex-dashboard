@@ -8,6 +8,7 @@ const BlogSchema = new mongoose.Schema(
     content: { type: String, required: true },
     seoTitle: { type: String, required: true }, // Added seoTitle field
     authorId: { type: String, required: false },
+    storeId: { type: String, required: true },
   },
   { timestamps: true }
 );

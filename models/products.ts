@@ -14,7 +14,7 @@ const ProductScema = new mongoose.Schema(
     discount: { type: String, required: true },
     id: { type: String, required: true },
     innventory: { type: String, required: true },
-  
+    storeId: { type: String, required: true },
   },
   { timestamps: true }
 );
