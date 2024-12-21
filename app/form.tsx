@@ -77,22 +77,22 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   icon,
 }) => {
   return (
-    <div className="rounded-lg mb-2" dir="rtl">
+    <div className="rounded-lg mb-2 right-0" dir="rtl">
       <button
         className="w-full p-4 text-right bg-[#90e0ef] hover:bg-[#caf0f8] transition-all duration-500 ease-in-out rounded-full flex justify-between items-center"
         onClick={onToggle}
       >
-        <span className=" text-[#00b4d8] p-0 -ml-32 text-xl">{icon}</span>
+        <span className=" text-[#00b4d8] p-0 text-xl">{icon}</span>
 
-        <span className="font-semibold">{title}</span>
+        <span className="">{title}</span>
 
-        <span
+        {/* <span
           className={`transform transition-transform ${
             isOpen ? "rotate-180 text-[#344e41]" : "text-[#fff]"
           }`}
         >
           ▼
-        </span>
+        </span> */}
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -158,7 +158,7 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
           {/* Sliding Menu Panel */}
           <motion.div
             dir="rtl"
-            className="w-80 bg-[#0077b6] rounded-xl fixed top-12 right-36 h-full shadow-lg flex flex-col overflow-y-auto p-6"
+            className="w-40 bg-[#0077b6] rounded-xl fixed top-0 right-0 h-full shadow-lg flex flex-col overflow-y-auto p-6 "
           >
             <h2 className="text-2xl font-bold text-[#dad7cd] mb-6" dir="rtl">
               منوی مدیریت
