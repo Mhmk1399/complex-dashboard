@@ -1,5 +1,5 @@
 import connect from "@/lib/data";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
 import { createWebsite } from "../createWebsite/route";

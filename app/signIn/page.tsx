@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -118,7 +118,7 @@ const SignInForm = () => {
         body: JSON.stringify({
             ...formData,
             targetProjectDirectory,
-            templatesDirectory: `${targetProjectDirectory}/templates`,
+            templatesDirectory: `${targetProjectDirectory}/public/template`,
             emptyDirectory,
             storeId,
         }),

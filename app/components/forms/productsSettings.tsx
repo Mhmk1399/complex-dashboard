@@ -84,7 +84,7 @@ console.log(storeId);
 
   return (
     <div
-      className="p-6 mx-auto mt-32 w-[1400px] lg:mx-10 grid grid-cols-1 rounded-2xl bg-[#0077b6] md:grid-cols-1 lg:grid-cols-2 gap-4"
+      className="p-6 mx-auto  w-[1200px] lg:mx-10 grid grid-cols-1 rounded-2xl bg-[#0077b6] md:grid-cols-1 lg:grid-cols-2 gap-4"
       dir="rtl"
     >
       <h2 className="text-2xl font-bold mb-2 text-white lg:col-span-2 col-span-1">
