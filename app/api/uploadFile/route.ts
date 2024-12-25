@@ -28,13 +28,13 @@ export async function POST(request: Request) {
                 { status: 401 }
             );
         }
-        const verifiedtoken = jwt.verify(token, process.env.JWT_SECRET!);
-        if (!verifiedtoken) {
-            return NextResponse.json(
-                { message: "Unauthorized" },
-                { status: 401 }
-            );
-        }
+        // const verifiedtoken = jwt.verify(token, process.env.JWT_SECRET!);
+        // if (!verifiedtoken) {
+        //     return NextResponse.json(
+        //         { message: "Unauthorized" },
+        //         { status: 401 }
+        //     );
+        // }
         const decodedToken = jwt.decode(token) as CustomJwtPayload;
         if (!decodedToken) {
             return NextResponse.json(
@@ -96,4 +96,19 @@ export async function POST(request: Request) {
             { status: 500 }
         );
     }
+}
+
+export async function GET(request: Request) {
+    await connect();
+    if (!connect) {
+        return NextResponse.json(
+            { message: "Database connection error" },
+            { status: 500 }
+        );
+    }
+
+    const files = await Files.find();
+    return NextResponse.json(files, { status: 200 });
+    
+
 }
