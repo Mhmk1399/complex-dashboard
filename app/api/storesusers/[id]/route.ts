@@ -1,8 +1,7 @@
 import connect from "@/lib/data";
 import { NextRequest, NextResponse } from "next/server";
-import Order from "@/models/orders";
+import StoreUsers from "@/models/storesUsers";
 import Jwt, { JwtPayload } from "jsonwebtoken";
-
 
 interface CustomJwtPayload extends JwtPayload {
     storeId: string;
@@ -33,19 +32,22 @@ export async function GET(res: NextResponse, request: NextRequest) {
             );
         }
         const sotreId = decodedToken.storeId;
-        if (!sotreId)
+        if (!sotreId) {
             return NextResponse.json(
                 { message: "Unauthorized" },
                 { status: 401 }
             );
-        const order = await Order.findOne({ _id: id });
-        return NextResponse.json({ order }, { status: 200 })
+        }
+        const user = await StoreUsers.findOne({ _id: id, storeId: sotreId });
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 })
+        }
+        return NextResponse.json({ user }, { status: 200 })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 }
-
 export async function DELETE(res: NextResponse, request: NextRequest) {
     await connect();
     if (!connect)
@@ -77,19 +79,16 @@ export async function DELETE(res: NextResponse, request: NextRequest) {
                 { status: 401 }
             );
         }
-
-        const order = await Order.findOne({ _id: id, storeId: sotreId });
-        if (!order) {
-            return NextResponse.json({ error: "Order not found" }, { status: 404 })
+        const user = await StoreUsers.findByIdAndDelete({ _id: id, storeId: sotreId });
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 })
         }
-        await Order.findByIdAndDelete(id);
-        return NextResponse.json({ message: "Order deleted successfully" }, { status: 200 })
+        return NextResponse.json({ message: "User deleted successfully" }, { status: 200 })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 }
-
 export async function PATCH(res: NextResponse, request: NextRequest) {
     await connect();
     if (!connect)
@@ -121,13 +120,11 @@ export async function PATCH(res: NextResponse, request: NextRequest) {
                 { status: 401 }
             );
         }
-        const order = await Order.findOneAndUpdate({ _id: id, storeId: sotreId });
-        if (!order) {
-            return NextResponse.json({ error: "Order not found" }, { status: 404 })
+        const user = await StoreUsers.findByIdAndUpdate({ _id: id, storeId: sotreId });
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 })
         }
-        const body = await request.json();
-        const updatedOrder = await Order.findOneAndUpdate({ _id: id, storeId: sotreId }, body, { new: true });
-        return NextResponse.json({ order: updatedOrder }, { status: 200 })
+        return NextResponse.json({ message: "User updated successfully" }, { status: 200 })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: "Internal server error" }, { status: 500 })
