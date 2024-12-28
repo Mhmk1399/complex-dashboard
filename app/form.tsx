@@ -26,7 +26,7 @@ const dashboardMenuItems = [
     title: "سفارشات",
     icon: <OrdersIcon />,
     subMenuItems: [
-      { title: "orders", value: "orders " },
+      { title: "orders", value: "orders" },
       { title: "shipping", value: "shipping" },
       { title: "aboundend Checkouts", value: "aboundendCheckouts" },
     ],

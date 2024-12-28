@@ -9,6 +9,7 @@ import { EditBlogs } from "./components/forms/editBlogs";
 import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken"; 
 import Link from "next/link";
+import { Orders } from "./components/forms/orders";
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -110,6 +111,8 @@ export const Dashboard = () => {
         return <AddBlog />;
       case "editBlogs":
         return <EditBlogs />;
+      case 'orders':
+        return <Orders />;
       default:
         return null;
     }
