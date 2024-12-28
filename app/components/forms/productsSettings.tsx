@@ -75,7 +75,7 @@ console.log(storeId);
       });
 
       if (response.ok) {
-        console.log("Product updated successfully");
+        console.log("Product created successfully");
       }
     } catch (error) {
       console.error("Error updating product:", error);
