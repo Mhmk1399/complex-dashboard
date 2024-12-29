@@ -18,3 +18,8 @@ body {
   background: var(--background);
   font-family: var(--font-cairo), sans-serif;
 }
+
+
+.spinner {
+  @apply border-4 border-t-4 border-blue-500 rounded-full w-16 h-16 animate-spin;
+}

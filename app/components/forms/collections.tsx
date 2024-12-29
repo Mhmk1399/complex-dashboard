@@ -161,12 +161,6 @@ export const Collection = () => {
         <div className=" mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Collections</h2>
-                <button 
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                    Create Collection
-                </button>
             </div>
             {isCreateModalOpen && (
     <CreateCollectionModal
@@ -184,14 +178,23 @@ export const Collection = () => {
                 />
             )}
             <div className="lg:w-[1100px] md:w-[700px] overflow-x-auto bg-white rounded-lg shadow ml-10">
+            <button 
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className="bg-green-500 absolute -ml-8 text-white text-2xl font-extrabold px-2 p-1 rounded-lg hover:bg-green-600 transition-colors"
+                >
+                    +
+                </button>
                 <table className="min-w-full divide-y divide-gray-200 ">
                     <thead className="bg-gray-500">
                         <tr>
+                            
                             <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Name</th>
                             <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Products Count</th>
                             <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Created At</th>
                             <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Actions</th>
+                          
                         </tr>
+                        
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {collections.map((collection) => (
@@ -210,9 +213,6 @@ export const Collection = () => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div className="flex space-x-3">
-                                        <button className="text-blue-600 hover:text-blue-900">
-                                            <EyeIcon className="h-5 w-5" />
-                                        </button>
                                         <button className="text-indigo-600 hover:text-indigo-900">
                                             <PencilIcon className="h-5 w-5" onClick={() => handleEdit(collection)} />
                                         </button>

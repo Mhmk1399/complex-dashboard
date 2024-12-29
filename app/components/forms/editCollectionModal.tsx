@@ -108,7 +108,7 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                 <div className="fixed inset-0 bg-black opacity-30" />
 
                 <div className="relative bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
-                    <Dialog.Title className="text-xl font-bold mb-4">Edit Collection</Dialog.Title>
+                    <h3 className="text-xl font-bold mb-4">Edit Collection</h3>
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
@@ -176,13 +176,13 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                                     .map(product => (
                                         <div key={`available-${product._id}`} className="flex items-center border rounded-lg justify-between p-2 hover:bg-gray-50 ">
                                             <div className="flex items-center">
-                                                <Image
+                                                {/* <Image
                                                     src={product.images?.imageSrc || '/placeholder.png'}
                                                     alt={product.name}
                                                     className="w-8 h-8 rounded-full object-cover mr-2"
                                                     width={32}
                                                     height={32}
-                                                />
+                                                /> */}
                                             </div>
                                             <span>name:{product.name}</span>
                                             <span> category:{product.category}</span>
@@ -206,13 +206,13 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                                 {availableProducts.map((product, index) => (
                                     <div key={`selected-${product._id}-${index}`} className="flex items-center justify-between p-2 hover:bg-gray-50">
                                         <div className="flex  justify-around gap-x-3">
-                                            <Image
+                                            {/* <Image
                                                 src={product.images?.imageSrc || '/placeholder.png'}
                                                 alt={product.name}
                                                 className="w-8 h-8 rounded-full object-cover mr-2"
                                                 width={32}
                                                 height={32}
-                                            />
+                                            /> */}
                                         </div>
                                         <span>name:{product.name}</span>
                                         <span> category:{product.category}</span>
