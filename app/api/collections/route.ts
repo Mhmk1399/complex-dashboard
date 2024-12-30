@@ -26,12 +26,14 @@ export async function GET() {
         return NextResponse.json({ message: "Error fetching collections" }, { status: 500 });
     }
 }
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
-    const collectionId = params.id;
+
+export const DELETE = async (req: NextRequest) => {
+    const { searchParams } = new URL(req.url);
+    const collectionId = searchParams.get('id');
     console.log('DELETE_ATTEMPT', collectionId);
 
     await connect();
-    if(!connect) {
+    if (!connect) {
         console.log('DELETE_ERROR', collectionId, 'Database connection failed');
         return new NextResponse('Database connection error', { status: 500 });
     }
@@ -50,9 +52,9 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
         }
 
         console.log('DELETE_SUCCESS', collectionId);
-        return new NextResponse(JSON.stringify({ message: 'Collection deleted successfully' }), { status: 200 });
+        return new NextResponse('Collection deleted successfully', { status: 200 });
     } catch (error) {
         console.log('DELETE_ERROR', collectionId, error);
         return new NextResponse('Error deleting collection', { status: 500 });
     }
-}
+};

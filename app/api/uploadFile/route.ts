@@ -60,13 +60,15 @@ export async function POST(request: Request) {
 
         // Create uploads directory path
 
-        const filePath = join(uploadsDir, file.name);
+        const filePath = join(uploadsDir);
 
         // Save file to directory
+        console.log(filePath);
+        
         await writeFile(filePath, buffer);
 
         // Create file URL
-        const fileUrl = `/public/uploads/${file.name}`;
+        const fileUrl = `//Users//macbook//Desktop//mohammad//public//assets//images//${file.name}`;
 
         // Save file info to MongoDB
         const newFile = new Files({
