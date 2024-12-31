@@ -12,8 +12,8 @@ import {
 import { BiEdit, BiBuildingHouse } from "react-icons/bi";
 import { BsAward } from "react-icons/bs";
 
-const mainProjectDirectory = "//Users//macbook//Desktop";
-const emptyDirectory = "//Users//macbook/Desktop//userwebsite";
+const mainProjectDirectory = "E://react";
+const emptyDirectory = "E://react//userwebsite";
 
 
 const generateStoreId = () => {
