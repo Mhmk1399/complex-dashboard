@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { TrashIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline'
+import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline'
 import EditModal from './editModal';
 import Image from 'next/image';
+import Modal from './Modal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -35,9 +38,61 @@ export const Inventory = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [productIdToDelete, setProductIdToDelete] = useState<string | null>(null);
+
     const handleEdit = (product: Product) => {
         setSelectedProduct(product);
         setIsEditModalOpen(true);
+    };
+
+    const openModal = (productId: string) => {
+        setProductIdToDelete(productId);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setProductIdToDelete(null);
+    };
+
+    const confirmDelete = () => {
+        handleDelete(productIdToDelete);
+        closeModal();
+    };
+
+    const handleDelete = (productId: string | null) => {
+        if (productId) {
+            try {
+                 fetch(`/api/products/${productId}`, {
+                    method: 'DELETE',
+                });
+                setProducts(products.filter(product => product._id !== productId));
+            } catch (error) {
+                console.error('Error deleting product:', error);
+            }
+            const isSuccess = true; // Replace with actual success/failure logic
+
+            if (isSuccess) {
+                toast.success(`Product with ID ${productId} deleted successfully.`);
+            } else {
+                toast.error(`Failed to delete product with ID ${productId}.`);
+            }
+        }
+    };
+
+    const handleSaveEdit = (product: Product) => {
+        // Your edit logic here
+        // Simulate edit success
+        const isSuccess = true; // Replace with actual success/failure logic
+
+        if (isSuccess) {
+            toast.success(`Product with ID ${product._id} edited successfully.`);
+        } else {
+            toast.error(`Failed to edit product with ID ${product._id}.`);
+        }
+
+        setIsEditModalOpen(false);
     };
 
     useEffect(() => {
@@ -55,19 +110,6 @@ export const Inventory = () => {
             });
     }, []);
 
-    const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            try {
-                await fetch(`/api/products/${id}`, {
-                    method: 'DELETE',
-                });
-                setProducts(products.filter(product => product._id !== id));
-            } catch (error) {
-                console.error('Error deleting product:', error);
-            }
-        }
-    };
-
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -77,28 +119,28 @@ export const Inventory = () => {
     }
 
     return (
-        
+
         <div className="container mx-auto px-4 py-8">
             {isEditModalOpen && selectedProduct && (
-    <EditModal
-        product={selectedProduct}
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSave={() => {
-            // Refresh the products list
-            fetch('/api/products')
-                .then(res => res.json())
-                .then(data => setProducts(data.products));
-        }}
-    />
-)}
+                <EditModal
+                    product={selectedProduct}
+                    isOpen={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onSave={() => {
+                        // Refresh the products list
+                        fetch('/api/products')
+                            .then(res => res.json())
+                            .then(data => setProducts(data.products));
+                    }}
+                />
+            )}
 
             <h2 className="text-2xl font-bold mb-6">Product Inventory</h2>
             <div className="overflow-x-auto w-[1100px] bg-white rounded-lg shadow">
                 <table className="w-full divide-y divide-gray-200">
                     <thead className="bg-gray-500">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Product</th>
+                            <th className="px-10 py-3  text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Product</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Category</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Price</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Status</th>
@@ -111,15 +153,7 @@ export const Inventory = () => {
                             <tr key={product._id} className="hover:bg-gray-50 transition-colors">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
-                                        <div className="h-10 w-10 flex-shrink-0">
-                                            <Image
-                                                className="h-10 w-10 rounded-full object-cover"
-                                                src={product.images?.imageSrc || '/placeholder.png'}
-                                                alt={product.images?.imageAlt || product.name}
-                                                width={40}
-                                                height={40}
-                                            />
-                                        </div>
+
                                         <div className="ml-4">
                                             <div className="text-sm font-medium text-gray-900">{product.name}</div>
                                             <div className="text-sm text-gray-500">{product.description.substring(0, 50)}...</div>
@@ -142,10 +176,9 @@ export const Inventory = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.innventory}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div className="flex space-x-3">
-                                        <button className="text-blue-600 hover:text-blue-900">
-                                            <EyeIcon className="h-5 w-5" />
-                                        </button>
+
                                         <button
+                                            title='edit'
                                             onClick={() => handleEdit(product)}
                                             className="text-indigo-600 hover:text-indigo-900"
                                         >
@@ -153,7 +186,8 @@ export const Inventory = () => {
                                         </button>
 
                                         <button
-                                            onClick={() => handleDelete(product._id)}
+                                            title='delete'
+                                            onClick={() => openModal(product._id)}
                                             className="text-red-600 hover:text-red-900"
                                         >
                                             <TrashIcon className="h-5 w-5" />
@@ -165,6 +199,15 @@ export const Inventory = () => {
                     </tbody>
                 </table>
             </div>
+
+            <Modal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                onConfirm={confirmDelete}
+            />
+            <ToastContainer />
         </div>
     )
 }
+
+export default Inventory;

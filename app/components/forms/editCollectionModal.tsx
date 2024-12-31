@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
-import Image from 'next/image';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 interface EditCollectionModalProps {
     collection: Collection;
     isOpen: boolean;
     onClose: () => void;
-    onSave: (updatedCollection: Collection) => void;
+    fetchCollections: ()=>void
+
 }
+
 interface Collection {
     _id: string;
     name: string;
@@ -14,6 +18,7 @@ interface Collection {
     createdAt: string;
     updatedAt: string;
 }
+
 interface Product {
     images?: ProductImages;
     _id: string;
@@ -30,13 +35,15 @@ interface Product {
     createdAt: string;
     updatedAt: string;
     __v: number;
+    storeId:string
 }
+
 interface ProductImages {
     imageSrc: string;
     imageAlt: string;
 }
 
-export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: EditCollectionModalProps) => {
+export const EditCollectionModal = ({ collection, isOpen, onClose,fetchCollections }: EditCollectionModalProps) => {
     const [name, setName] = useState(collection.name);
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
     const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
@@ -44,6 +51,7 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
     const [searchQuery, setSearchQuery] = useState('');
     const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
     const [selectedPriceRange, setSelectedPriceRange] = useState({ min: 0, max: 0 });
+
     useEffect(() => {
         if (allProducts.length > 0) {
             const prices = allProducts.map(p => parseFloat(p.price));
@@ -66,6 +74,7 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
             .then(res => res.json())
             .then(data => setAllProducts(data.products));
     }, [collection._id]);
+
     const handleRemoveProduct = (product: Product) => {
         setAvailableProducts(prev => prev.filter(p => p._id !== product._id));
         setSelectedProducts(prev => prev.filter(p => p._id !== product._id));
@@ -75,7 +84,6 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
         setAvailableProducts(prev => [...prev, product]);
         setSelectedProducts(prev => [...prev, product]);
     }
-
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -93,12 +101,15 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
             });
 
             if (response.ok) {
-                const updatedCollection = await response.json();
-                onSave(updatedCollection);
+                toast.success('Collection updated successfully');
                 onClose();
+                fetchCollections()
+            } else {
+                toast.error('Failed to update collection');
             }
         } catch (error) {
             console.error('Error updating collection:', error);
+            toast.error('Error updating collection');
         }
     };
 
@@ -108,7 +119,7 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                 <div className="fixed inset-0 bg-black opacity-30" />
 
                 <div className="relative bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
-                    <Dialog.Title className="text-xl font-bold mb-4">Edit Collection</Dialog.Title>
+                    <h3 className="text-xl font-bold mb-4">Edit Collection</h3>
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
@@ -122,7 +133,6 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                         </div>
                         <div className="flex items-center gap-2 mb-4 justify-evenly">
                             <div className="items-center">
-
                                 <input
                                     type="text"
                                     placeholder="Search products by name..."
@@ -162,27 +172,24 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                         </div>
 
                         <div className="mb-4">
-                           
                             <div className="mb-4 h-[150px] border p-1 overflow-y-auto">
                                 {allProducts
                                     .filter(product =>
-                                        // Existing filters
                                         !availableProducts.some(existingProduct => existingProduct._id === product._id) &&
                                         product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                                        // Add price range filter
                                         parseFloat(product.price) >= selectedPriceRange.min &&
                                         parseFloat(product.price) <= selectedPriceRange.max
                                     )
                                     .map(product => (
                                         <div key={`available-${product._id}`} className="flex items-center border rounded-lg justify-between p-2 hover:bg-gray-50 ">
                                             <div className="flex items-center">
-                                                <Image
+                                                {/* <Image
                                                     src={product.images?.imageSrc || '/placeholder.png'}
                                                     alt={product.name}
                                                     className="w-8 h-8 rounded-full object-cover mr-2"
                                                     width={32}
                                                     height={32}
-                                                />
+                                                /> */}
                                             </div>
                                             <span>name:{product.name}</span>
                                             <span> category:{product.category}</span>
@@ -196,27 +203,25 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                                                 </svg>
                                             </button>
                                         </div>
-                                    ))}</div>
-
+                                    ))}
+                            </div>
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium mb-2">Select Products</label>
-
                             <div className="max-h-60 overflow-y-auto border rounded-lg p-2">
                                 {availableProducts.map((product, index) => (
                                     <div key={`selected-${product._id}-${index}`} className="flex items-center justify-between p-2 hover:bg-gray-50">
                                         <div className="flex  justify-around gap-x-3">
-                                            <Image
+                                            {/* <Image
                                                 src={product.images?.imageSrc || '/placeholder.png'}
                                                 alt={product.name}
                                                 className="w-8 h-8 rounded-full object-cover mr-2"
                                                 width={32}
                                                 height={32}
-                                            />
+                                            /> */}
                                         </div>
                                         <span>name:{product.name}</span>
                                         <span> category:{product.category}</span>
-
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveProduct(product)}
@@ -229,9 +234,7 @@ export const EditCollectionModal = ({ collection, isOpen, onClose, onSave }: Edi
                                     </div>
                                 ))}
                             </div>
-
                         </div>
-
                         <div className="flex justify-end gap-2">
                             <button
                                 type="button"

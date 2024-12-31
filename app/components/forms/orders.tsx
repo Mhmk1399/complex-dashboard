@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import './orders.css';
+import React, { useEffect, useState } from 'react';
 
 interface Order {
   _id: string;
@@ -53,17 +52,17 @@ export const Orders = () => {
     fetchOrders();
   }, []);
 
-  if (loading) return <div className="spinner"></div>;
-  if (error) return <div className="error-message">Error: {error}</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen"><div className="spinner border-t-4 border-blue-500 rounded-full w-16 h-16 animate-spin"></div></div>;
+  if (error) return <div className="text-red-500 text-center mt-4">Error: {error}</div>;
 
   return (
-    <div className="orders-container">
-      {orders.length === 0 ? (
-        <div className="no-orders">No orders found</div>
+    <div className="orders-container p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mr-56">
+      {!orders ? (
+        <div className="text-center text-gray-500">No orders found</div>
       ) : (
         orders.map(order => (
-          <div key={order._id} className="order-card">
-            <h3>Order ID: {order._id}</h3>
+          <div key={order._id} className="order-card bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <h3 className="text-xl font-semibold mb-2">Order ID: {order._id}</h3>
             <p><strong>User ID:</strong> {order.userId}</p>
             <p><strong>Store ID:</strong> {order.storeId}</p>
             <p><strong>Status:</strong> {order.status}</p>
@@ -71,11 +70,11 @@ export const Orders = () => {
             <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
             <p><strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}</p>
             <p><strong>Updated At:</strong> {new Date(order.updatedAt).toLocaleString()}</p>
-            <h4>Shipping Address</h4>
+            <h4 className="text-lg font-medium mt-4">Shipping Address</h4>
             <p>{order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.state}, {order.shippingAddress.postalCode}</p>
-            <h4>Products</h4>
+            <h4 className="text-lg font-medium mt-4">Products</h4>
             {order.products.map(product => (
-              <div key={product._id} className="product-card">
+              <div key={product._id} className="product-card bg-gray-100 p-4 rounded-lg mt-2">
                 <p><strong>Product ID:</strong> {product.productId}</p>
                 <p><strong>Quantity:</strong> {product.quantity}</p>
                 <p><strong>Price:</strong> {product.price.toLocaleString()} تومان</p>
@@ -86,6 +85,7 @@ export const Orders = () => {
       )}
     </div>
   );
-}
+};
+
 
 

@@ -32,11 +32,11 @@ const dashboardMenuItems = [
     ],
   },
   {
-    id: "customers",
+    id: "costumers",
     title: "کاربران",
     icon: <CustomersIcon />,
     subMenuItems: [
-      { title: "customers", value: "customers" },
+      { title: "costumers", value: "costumers" },
       { title: "segment ", value: "segment" },
     ],
   },

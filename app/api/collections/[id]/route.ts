@@ -32,6 +32,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
         return new NextResponse('Error deleting collection', { status: 500 });
     }
 }
+
 export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
     const collectionId = params.id;
     
@@ -45,13 +46,13 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
         
         return NextResponse.json({ collection }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
+        return NextResponse.json({ message: "Error logging in", error }, { status: 500 });
     }
 };
 
 export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
-    const collectionId = params.id;
     await connect();
+    const collectionId = params.id;
 
     try {
         const body = await req.json();
@@ -64,6 +65,13 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
             },
             { new: true, runValidators: true }
         );
+
+        if (!updatedCollection) {
+            return new NextResponse(JSON.stringify({ message: 'Collection not found' }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
 
         return new NextResponse(JSON.stringify(updatedCollection), {
             status: 200,

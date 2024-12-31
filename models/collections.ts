@@ -17,7 +17,8 @@ const CollectionSchema = new mongoose.Schema(
             category: String,
             status: String,
             discount: String,
-            innventory: String
+            innventory: String,
+            storeId:String,
         }]
     },
     { timestamps: true }

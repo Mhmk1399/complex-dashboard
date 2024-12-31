@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { TrashIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline'
 import { CreateCollectionModal } from './createCollectionModal';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { EditCollectionModal } from './editCollectionModal';
+import DeleteModal from './DeleteModal';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Collection {
     _id: string;
@@ -28,18 +30,36 @@ interface Product {
     createdAt: string;
     updatedAt: string;
     __v: number;
+    storeId:string
 }
 interface ProductImages {
     imageSrc: string;
     imageAlt: string;
 }
-export const Collection = () => {
+export const Collections = () => {
     const [collections, setCollections] = useState<Collection[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
-    
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [collectionIdToDelete, setCollectionIdToDelete] = useState<string | null>(null);
+
+    const openDeleteModal = (collectionId: string) => {
+        setCollectionIdToDelete(collectionId);
+        setIsDeleteModalOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setIsDeleteModalOpen(false);
+        setCollectionIdToDelete(null);
+    };
+
+    const confirmDelete = () => {
+        handleDelete(collectionIdToDelete);
+        closeDeleteModal();
+    };
+
     const handleCreateCollection = async (collectionData: { name: string; products: Product[] }) => {
         try {
             const response = await fetch('/api/collections', {
@@ -53,9 +73,14 @@ export const Collection = () => {
             if (response.ok) {
                 fetchCollections();
                 setIsCreateModalOpen(false);
+                toast.success('Collection created successfully');
+
+
             }
         } catch (error) {
             console.error('Error creating collection:', error);
+            toast.error('faild to create collection')
+
         }
     };
     
@@ -85,8 +110,8 @@ export const Collection = () => {
     };
 
 
-    const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this collection?')) {
+    const handleDelete = async (id: string | null) => {
+        if (id) {
             try {
                 const response = await fetch(`/api/collections/${id}`, {
                     method: 'DELETE',
@@ -120,53 +145,25 @@ export const Collection = () => {
             const data = await response.json();
             setSelectedCollection({
                 ...collection,
-                products: data.products // This will contain only the products in this collection
+         // This will contain only the products in this collection
+                products: data.products 
             });
             setIsEditModalOpen(true);
+           
+                fetchCollections()
+
+            
         } catch (error) {
             console.error('Error fetching collection details:', error);
         }
     };
     
     
-
-    const handleSaveEdit = async (editedCollection: Collection) => {
-        try {
-            const response = await fetch(`/api/collections/${editedCollection._id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...editedCollection,
-                    products: editedCollection.products.map(product => product._id) // Convert Product objects to IDs
-                }),
-            });
-            
-            if (response.ok) {
-                await fetchCollections(); // Refresh the collections data
-                setIsEditModalOpen(false);
-                toast.success('Collection updated successfully');
-            } else {
-                toast.error('Failed to update collection');
-            }
-        } catch (error) {
-            console.log('Error updating collection:', error);
-            toast.error('Error updating collection');
-        }
-    };
-    
     
     return (
         <div className=" mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Collections</h2>
-                <button 
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                    Create Collection
-                </button>
             </div>
             {isCreateModalOpen && (
     <CreateCollectionModal
@@ -180,18 +177,27 @@ export const Collection = () => {
                     isOpen={isEditModalOpen}
                     onClose={() => setIsEditModalOpen(false)}
                     collection={selectedCollection}
-                    onSave={handleSaveEdit}
+                    fetchCollections={fetchCollections}
                 />
             )}
             <div className="lg:w-[1100px] md:w-[700px] overflow-x-auto bg-white rounded-lg shadow ml-10">
+            <button 
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className="bg-green-500 absolute -ml-8 text-white text-2xl font-extrabold px-2 p-1 rounded-lg hover:bg-green-600 transition-colors"
+                >
+                    +
+                </button>
                 <table className="min-w-full divide-y divide-gray-200 ">
                     <thead className="bg-gray-500">
                         <tr>
+                            
                             <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Name</th>
                             <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Products Count</th>
                             <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Created At</th>
                             <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">Actions</th>
+                          
                         </tr>
+                        
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {collections.map((collection) => (
@@ -210,14 +216,11 @@ export const Collection = () => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div className="flex space-x-3">
-                                        <button className="text-blue-600 hover:text-blue-900">
-                                            <EyeIcon className="h-5 w-5" />
-                                        </button>
                                         <button className="text-indigo-600 hover:text-indigo-900">
                                             <PencilIcon className="h-5 w-5" onClick={() => handleEdit(collection)} />
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(collection._id)}
+                                            onClick={() => openDeleteModal(collection._id)}
                                             className="text-red-600 hover:text-red-900"
                                         >
                                             <TrashIcon className="h-5 w-5" />
@@ -229,6 +232,14 @@ export const Collection = () => {
                     </tbody>
                 </table>
             </div>
+            <DeleteModal
+                isOpen={isDeleteModalOpen}
+                onClose={closeDeleteModal}
+                onConfirm={confirmDelete}
+            />
+            <ToastContainer />
         </div>
     )
 }
+
+export default Collections;

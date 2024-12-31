@@ -1,5 +1,8 @@
 "use client";
+import React from 'react';
 import { useState } from "react";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface ProductSettings {
   type: string;
@@ -75,10 +78,15 @@ console.log(storeId);
       });
 
       if (response.ok) {
-        console.log("Product created successfully");
+        toast.success('Product created successfully');
+      } else {
+        toast.error('Error creating product');
       }
     } catch (error) {
-      console.error("Error updating product:", error);
+      toast.error('Error updating product'  );
+      console.log(error);
+      
+      
     }
   };
 
@@ -97,6 +105,7 @@ console.log(storeId);
           type="file"
           onChange={(e) => handleChange("blocks", "imageSrc", e.target.value)}
           className="w-full p-2 border rounded-xl"
+          required
         />
       </div>
 
@@ -109,6 +118,7 @@ console.log(storeId);
           value={settings.blocks.imageAlt}
           onChange={(e) => handleChange("blocks", "imageAlt", e.target.value)}
           className="w-full p-2 border rounded-xl"
+          required
         />
       </div>
       <div>
@@ -128,6 +138,7 @@ console.log(storeId);
             handleChange("blocks", "description", e.target.value)
           }
           className="w-full p-2 border rounded-xl"
+          required
         />
       </div>
       <div>
@@ -137,6 +148,7 @@ console.log(storeId);
           value={settings.blocks.category}
           onChange={(e) => handleChange("blocks", "category", e.target.value)}
           className="w-full p-2 border rounded-xl"
+          required
         />
       </div>
       <div>
@@ -146,6 +158,7 @@ console.log(storeId);
           value={settings.blocks.price}
           onChange={(e) => handleChange("blocks", "price", e.target.value)}
           className="w-full p-2 border rounded-xl"
+          required
         />
       </div>
       <div>
@@ -172,11 +185,12 @@ console.log(storeId);
       </div>
 
       <button
-        className="w-full bg-[#03045e] hover:bg-transparent text-white mt-5 text-xl font-bold rounded-full mx-auto"
+        className="w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 text-xl font-bold rounded-full mx-auto"
         onClick={handelSave}
       >
         save
       </button>
+      <ToastContainer />
     </div>
   );
 };

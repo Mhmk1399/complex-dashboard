@@ -167,13 +167,13 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
                                     onClick={() => toggleProduct(product)}
                                 >
                                     <div className="flex items-center space-x-3">
-                                        <Image
+                                        {/* <Image
                                             src={product.images?.imageSrc || '/placeholder.png'}
                                             alt={product.name}
                                             className="w-16 h-16 object-cover rounded"
                                             width={64}
                                             height={64}
-                                        />
+                                        /> */}
                                         <div>
                                             <p className="font-medium">{product.name}</p>
                                             <p className="text-sm text-gray-500">${product.price}</p>

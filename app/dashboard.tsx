@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 import Form from "./form";
 import { ProductsSettings } from "./components/forms/productsSettings";
 import { Inventory } from "./components/forms/inventory";
-import { Collection } from "./components/forms/collections";
+import { Collections } from "./components/forms/collections";
 import { AddBlog } from "./components/forms/addBlog";
 import { EditBlogs } from "./components/forms/editBlogs";
 import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken"; 
 import Link from "next/link";
 import { Orders } from "./components/forms/orders";
+import { Costumers } from "./components/forms/costumers";
+import UploadPage from './components/forms/uploads'
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -106,13 +108,17 @@ export const Dashboard = () => {
       case "inventory":
         return <Inventory />;
       case "collections":
-        return <Collection />;
+        return <Collections />;
       case "addBlogs":
         return <AddBlog />;
       case "editBlogs":
         return <EditBlogs />;
       case 'orders':
         return <Orders />;
+      case 'costumers':
+        return <Costumers />;
+      case 'addFile':
+        return <UploadPage/>
       default:
         return null;
     }

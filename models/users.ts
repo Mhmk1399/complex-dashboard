@@ -15,8 +15,6 @@ const UserSchema = new mongoose.Schema(
     emptyDirectory: { type: String, required: true },
     storeId: { type: String, required: true, unique: true },
 
-
-
   },
   { timestamps: true }
 );

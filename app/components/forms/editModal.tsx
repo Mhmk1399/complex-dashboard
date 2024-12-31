@@ -1,4 +1,6 @@
-import  { useState } from 'react';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Product {
     images?: ProductImages;
@@ -67,11 +69,14 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
             });
 
             if (response.ok) {
+                toast.success(`Product with ID ${product._id} edited successfully.`);
                 onSave();
                 onClose();
+            } else {
+                toast.error(`Failed to edit product with ID ${product._id}.`);
             }
         } catch (error) {
-            console.error('Error updating product:', error);
+            toast.error(`Error updating product`);
         }
     };
 
