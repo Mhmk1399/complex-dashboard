@@ -15,7 +15,6 @@ import { BsAward } from "react-icons/bs";
 const mainProjectDirectory = "E://react";
 const emptyDirectory = "E://react//userwebsite";
 
-
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
   const randomStr = Math.random().toString(36).substring(2, 8);
@@ -25,27 +24,17 @@ const generateStoreId = () => {
 const SignInForm = () => {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState( {
+  const [formData, setFormData] = useState({
     name: "",
     password: "",
     phoneNumber: "",
-    title: "",
-    logo: "",
-    subdomain: "",
-    location: "",
-    socialMedia: {
-        instagram: "",
-        telegram: "",
-        x: "",
-        whatsapp: "",
-    },
     category: "",
     // These will be added during submission
     targetProjectDirectory: "",
     templatesDirectory: "",
     emptyDirectory: "",
-    storeId: ""
-});
+    storeId: "",
+  });
   const [errors, setErrors] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -69,20 +58,6 @@ const SignInForm = () => {
         break;
 
       case 2:
-        if (!formData.logo) {
-          setErrors("لوگو سایت الزامی است");
-          return false;
-        }
-        if (!formData.title || formData.title.length < 3) {
-          setErrors("  عنوان سایت باید حداقل 3 کاراکتر داشته باشد");
-          return false;
-        }
-        if (!formData.subdomain) {
-          setErrors("زیردامنه نامعتبر است");
-          return false;
-        }
-        break;
-      case 3:
         if (!formData.category) {
           setErrors("لطفا دسته‌بندی سایت را انتخاب کنید");
         }
@@ -95,7 +70,7 @@ const SignInForm = () => {
 
   const handleNext = () => {
     if (validateCurrentStep()) {
-      if (step < 3) {
+      if (step < 2) {
         setStep(step + 1);
         setErrors("");
       } else {
@@ -107,23 +82,21 @@ const SignInForm = () => {
   const submitFormData = async () => {
     const storeId = generateStoreId();
     const targetProjectDirectory = `${mainProjectDirectory}/${formData.name}`;
-    
-    
+
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            ...formData,
-            targetProjectDirectory,
-            templatesDirectory: `${targetProjectDirectory}/public/template`,
-            emptyDirectory,
-            storeId,
+          ...formData,
+          targetProjectDirectory,
+          templatesDirectory: `${targetProjectDirectory}/public/template`,
+          emptyDirectory,
+          storeId,
         }),
-    });
-
+      });
 
       const result = await response.json();
 
@@ -266,139 +239,6 @@ const SignInForm = () => {
           {step === 2 && (
             <>
               <h2 className="text-2xl text-center font-bold text-white mb-6 drop-shadow-md">
-                اطلاعات سایت
-              </h2>
-              <hr />
-              <br />
-              <label
-                htmlFor="logo"
-                className="block text-lg font-medium text-white mb-2"
-              >
-                لوگو سایت*
-              </label>
-              <input
-                id="logo"
-                type="text"
-                placeholder="لینک لوگو سایت"
-                onChange={(e) =>
-                  setFormData({ ...formData, logo: e.target.value })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
-              />
-              <label
-                htmlFor="title"
-                className="block text-lg font-medium text-white mb-2 mt-4"
-              >
-                عنوان سایت*
-              </label>
-              <input
-                id="title"
-                type="text"
-                placeholder="عنوان سایت"
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
-              />
-              <label
-                htmlFor="subdomain"
-                className="block text-lg font-medium text-white mb-2 mt-4"
-              >
-                زیر دامنه*
-              </label>
-              <input
-                id="subdomain"
-                type="text"
-                placeholder="زیر دامنه"
-                onChange={(e) =>
-                  setFormData({ ...formData, subdomain: e.target.value })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
-              />
-              <label
-                htmlFor="location"
-                className="block text-lg font-medium text-white mb-2 mt-4"
-              >
-                موقعیت مکانی (Google Maps)
-              </label>
-              <input
-                id="location"
-                type="text"
-                placeholder="لینک موقعیت مکانی"
-                onChange={(e) =>
-                  setFormData({ ...formData, location: e.target.value })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
-              />
-              <label
-                htmlFor="socialMedia"
-                className="block text-lg font-medium text-white mb-2 mt-4"
-              >
-                شبکه‌های اجتماعی
-              </label>
-              <input
-                id="instagram"
-                type="text"
-                placeholder="Instagram ID"
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    socialMedia: {
-                      ...formData.socialMedia,
-                      instagram: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
-              />
-              <input
-                id="telegram"
-                type="text"
-                placeholder="Telegram ID"
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    socialMedia: {
-                      ...formData.socialMedia,
-                      telegram: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80 mt-2"
-              />
-              <input
-                id="x"
-                type="text"
-                placeholder="X ID"
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    socialMedia: { ...formData.socialMedia, x: e.target.value },
-                  })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80 mt-2"
-              />
-              <input
-                id="whatsapp"
-                type="text"
-                placeholder="WhatsApp ID"
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    socialMedia: {
-                      ...formData.socialMedia,
-                      whatsapp: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80 mt-2"
-              />
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <h2 className="text-2xl text-center font-bold text-white mb-6 drop-shadow-md">
                 دسته‌بندی سایت
               </h2>
               <hr />
@@ -429,7 +269,7 @@ const SignInForm = () => {
                         backdrop-blur-sm bg-transparent shadow-md
                         ${
                           formData.category === option.value
-                            ? " bg-purple-800 hover:bg-purple-700 "
+                            ? " bg-purple-700 hover:bg-purple-700 "
                             : " hover:bg-white/10 hover:text-white"
                         }
                       `}
@@ -481,20 +321,20 @@ const SignInForm = () => {
               className="ml-1 px-6 py-3 rounded-lg bg-purple-600 text-white font-medium flex items-center gap-1 shadow-lg hover:shadow-purple-500"
               onClick={handleNext}
             >
-              {step === 3 ? "Complete" : "Next"}
+              {step === 2 ? "Complete" : "Next"}
               <FiArrowLeft />
             </motion.button>
           </div>
         </motion.div>
 
         <div className="flex gap-2 mt-8 justify-center">
-          {[1, 2, 3].map((_, idx) => (
+          {[1, 2].map((_, idx) => (
             <motion.div
               key={idx}
               className={`h-[5px] mx-3 shadow-sm shadow-gray-200 rounded-full ${
                 idx + 1 <= step ? "bg-purple-600" : "bg-gray-200"
               }`}
-              style={{ width: `${100 / 3}%` }}
+              style={{ width: `${100 / 2}%` }}
             />
           ))}
         </div>
