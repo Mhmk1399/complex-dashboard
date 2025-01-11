@@ -24,27 +24,19 @@ const generateStoreId = () => {
 const SignInForm = () => {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState( {
+  const [formData, setFormData] = useState({
     name: "",
     password: "",
     phoneNumber: "",
+    category: "",
+    subdomain: "",
     title: "",
     logo: "",
-    subdomain: "",
-    location: "",
-    socialMedia: {
-        instagram: "",
-        telegram: "",
-        x: "",
-        whatsapp: "",
-    },
-    category: "",
-    // These will be added during submission
     targetProjectDirectory: "",
     templatesDirectory: "",
     emptyDirectory: "",
-    storeId: ""
-});
+    storeId: "",
+  });
   const [errors, setErrors] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -67,7 +59,6 @@ const SignInForm = () => {
         }
         break;
 
-     
       case 2:
         if (!formData.category) {
           setErrors("لطفا دسته‌بندی سایت را انتخاب کنید");
@@ -96,7 +87,6 @@ const SignInForm = () => {
     formData.title = formData.name;
     formData.subdomain = formData.name;
     formData.logo = formData.name;
-    
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
@@ -252,8 +242,6 @@ const SignInForm = () => {
             </>
           )}
 
-          
-
           {step === 2 && (
             <>
               <h2 className="text-2xl text-center font-bold text-white mb-6 drop-shadow-md">
@@ -287,7 +275,7 @@ const SignInForm = () => {
                         backdrop-blur-sm bg-transparent shadow-md
                         ${
                           formData.category === option.value
-                            ? " bg-purple-800 hover:bg-purple-700 "
+                            ? " bg-purple-700 hover:bg-purple-700 "
                             : " hover:bg-white/10 hover:text-white"
                         }
                       `}
@@ -350,9 +338,9 @@ const SignInForm = () => {
             <motion.div
               key={idx}
               className={`h-[5px] mx-3 shadow-sm shadow-gray-200 rounded-full ${
-                idx  == step ? "bg-purple-600" : "bg-gray-200"
+                idx == step ? "bg-purple-600" : "bg-gray-200"
               }`}
-              style={{ width: `${100 / 3}%` }}
+              style={{ width: `${100 / 2}%` }}
             />
           ))}
         </div>
