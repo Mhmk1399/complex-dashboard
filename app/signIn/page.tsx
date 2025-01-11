@@ -12,8 +12,8 @@ import {
 import { BiEdit, BiBuildingHouse } from "react-icons/bi";
 import { BsAward } from "react-icons/bs";
 
-const mainProjectDirectory = "E://react";
-const emptyDirectory = "E://react//userwebsite";
+const mainProjectDirectory = "//Users//macbook//Desktop";
+const emptyDirectory = "//Users//macbook/Desktop//userwebsite";
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -29,7 +29,9 @@ const SignInForm = () => {
     password: "",
     phoneNumber: "",
     category: "",
-    // These will be added during submission
+    subdomain: "",
+    title: "",
+    logo: "",
     targetProjectDirectory: "",
     templatesDirectory: "",
     emptyDirectory: "",
@@ -82,6 +84,9 @@ const SignInForm = () => {
   const submitFormData = async () => {
     const storeId = generateStoreId();
     const targetProjectDirectory = `${mainProjectDirectory}/${formData.name}`;
+    formData.title = formData.name;
+    formData.subdomain = formData.name;
+    formData.logo = formData.name;
 
     try {
       const response = await fetch("/api/auth", {
@@ -332,7 +337,7 @@ const SignInForm = () => {
             <motion.div
               key={idx}
               className={`h-[5px] mx-3 shadow-sm shadow-gray-200 rounded-full ${
-                idx + 1 <= step ? "bg-purple-600" : "bg-gray-200"
+                idx == step ? "bg-purple-600" : "bg-gray-200"
               }`}
               style={{ width: `${100 / 2}%` }}
             />
