@@ -2,9 +2,8 @@ import connect from "@/lib/data";
 import { NextResponse } from "next/server";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { createWebsite } from "../createWebsite/route";
-
-
 
 export async function POST(request: Request) {
   const {
@@ -43,30 +42,33 @@ export async function POST(request: Request) {
 
     await newUser.save();
 
-    console.log("User created successfully");
-   
-    try {
-      const websiteResult = await createWebsite({
-        emptyDirectory: emptyDirectory as string,
-        targetDirectory: targetProjectDirectory as string,
-        storeId: storeId as string,
+    const token = jwt.sign(
+      { 
+        id: newUser._id,
+        pass: hashedPassword,
+        targetDirectory: targetProjectDirectory,
+        templatesDirectory,
+        emptyDirectory,
+        storeId
+      },
+      process.env.JWT_SECRET!,
+      { expiresIn: "1h" }
+    );
 
-      });
-      websiteResult
-      console.log("Website created successfully");
-      return NextResponse.json(
-        { message: "User created successfully" },
-        { status: 201 }
-      );
-    } catch (error) {
-      console.log("error creating website:", error);
-      return NextResponse.json(
-        { message: "error creating website"},
-        { status: 500 }
-      );
-    }
-    
-    return NextResponse.json({ message: "User created successfully" }, { status: 201 });
+    const websiteResult = await createWebsite({
+      emptyDirectory,
+      targetDirectory: targetProjectDirectory,
+      storeId,
+    });
+
+    return NextResponse.json(
+      { 
+        message: "User created successfully",
+        token,
+        userId: newUser._id 
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.log("Error creating user:", error);
     return NextResponse.json(
@@ -75,6 +77,7 @@ export async function POST(request: Request) {
     );
   }
 }
+
 
 export async function GET() {
   try {

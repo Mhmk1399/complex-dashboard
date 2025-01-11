@@ -13,7 +13,7 @@ import { BiEdit, BiBuildingHouse } from "react-icons/bi";
 import { BsAward } from "react-icons/bs";
 
 const mainProjectDirectory = "//Users//macbook//Desktop";
-const emptyDirectory = "//Users//macbook/Desktop//userwebsite";
+const emptyDirectory = "//Users//macbook/Desktop//userwebsite"
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -93,30 +93,29 @@ const SignInForm = () => {
   const submitFormData = async () => {
     const storeId = generateStoreId();
     const targetProjectDirectory = `${mainProjectDirectory}/${formData.name}`;
-    formData.title=formData.name
-    formData.subdomain=formData.name
-    formData.logo=formData.name
-
+    formData.title = formData.name;
+    formData.subdomain = formData.name;
+    formData.logo = formData.name;
     
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            ...formData,
-            targetProjectDirectory,
-            templatesDirectory: `${targetProjectDirectory}/public/template`,
-            emptyDirectory,
-            storeId,
+          ...formData,
+          targetProjectDirectory,
+          templatesDirectory: `${targetProjectDirectory}/public/template`,
+          emptyDirectory,
+          storeId,
         }),
-    });
-
+      });
 
       const result = await response.json();
 
       if (response.ok) {
+        localStorage.setItem("token", result.token);
         router.replace("/");
         setErrors("");
         setIsSuccess(true);
@@ -133,6 +132,7 @@ const SignInForm = () => {
       setShowModal(true);
     }
   };
+
 
   const Modal = () => (
     <AnimatePresence>

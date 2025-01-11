@@ -29,8 +29,7 @@ export default function LoginPage() {
       if (response.ok) {
         localStorage.setItem("token", data.token);
         router.replace("http://localhost:3000");
-        console.log(data);
-         // Redirect to dashboard after successful login
+        console.log(data.token);
       } else {
         setError(data.message);
       }

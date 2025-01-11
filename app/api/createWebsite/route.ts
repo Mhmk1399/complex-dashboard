@@ -37,7 +37,6 @@ export async function createWebsite({
           "node_modules",
           ".git",
           ".next",
-          ".env",
           ".env.local",
         ];
         return !skipPaths.some((skip) => src.includes(skip));
