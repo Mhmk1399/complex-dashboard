@@ -8,6 +8,8 @@ import Highlight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'
+import { toast, ToastContainer } from 'react-toastify';
+
 interface Blog {
     _id: string;
     title: string;
@@ -101,14 +103,24 @@ export const EditBlogs = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const response = await fetch('/api/blogs');
+                const response = await fetch('/api/blogs', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+
+                        
+                    },
+                }
+
+                );
                 const data = await response.json();
                 setBlogs(data.blogs); // Access the blogs array from the response
                 console.log(data.blogs);
 
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching blogs:', error);
+                console.log('Error fetching blogs:', error);
                 setLoading(false); // Make sure to set loading to false even on error
             }
         };
@@ -191,10 +203,15 @@ export const EditBlogs = () => {
     const handleDelete = async () => {
         if (!selectedBlog?._id) return;
 
-        if (window.confirm('آیا از حذف این بلاگ اطمینان دارید؟')) {
+        
             try {
-                const response = await fetch(`/api/blogs/${selectedBlog._id}`, {
+                const response = await fetch(`/api/blogs/`, {
                     method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'id': selectedBlog._id,
+                    }
                 });
 
                 if (response.ok) {
@@ -202,15 +219,15 @@ export const EditBlogs = () => {
                     setSelectedBlog(null);
                     setTitle('');
                     editor?.commands.setContent('');
-                    alert('بلاگ با موفقیت حذف شد');
+                    toast.success('بلاگ با موفقیت حذف شد');
                 } else {
                     throw new Error('Failed to delete blog');
                 }
             } catch (error) {
-                console.error('Error deleting blog:', error);
-                alert('خطا در حذف بلاگ');
+                console.log('Error deleting blog:', error);
+                toast.error('خطا در حذف بلاگ');
             }
-        }
+        
     };
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -220,10 +237,12 @@ export const EditBlogs = () => {
         if (!selectedBlog?._id) return;
 
         try {
-            const response = await fetch(`/api/blogs/${selectedBlog._id}`, {
+            const response = await fetch(`/api/blogs/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'id': selectedBlog._id,
                 },
                 body: JSON.stringify({
                     title,
@@ -240,13 +259,13 @@ export const EditBlogs = () => {
                         blog._id === selectedBlog._id ? updatedBlog : blog
                     )
                 );
-                alert('Blog updated successfully');
+                toast.success('Blog updated successfully');
             } else {
                 throw new Error('Failed to update blog');
             }
         } catch (error) {
             console.error('Error updating blog:', error);
-            alert('Failed to update blog');
+            toast.error('Failed to update blog');
         }
     };
 
@@ -265,7 +284,8 @@ export const EditBlogs = () => {
     );
 
     return (
-        <>
+        <>  
+        <ToastContainer/>
             {loading ? (
                 <div>
                     <div className="flex justify-center items-center h-screen">

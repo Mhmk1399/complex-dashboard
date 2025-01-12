@@ -99,9 +99,15 @@ export const Collections = () => {
 
     const fetchCollections = async () => {
         try {
-            const response = await fetch('/api/collections');
+            const response = await fetch('/api/collections', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
             const data = await response.json();
-            setCollections(data.collections);
+            setCollections(data.collections);            
             setIsLoading(false);
         } catch (error) {
             console.log('Error fetching collections:', error);

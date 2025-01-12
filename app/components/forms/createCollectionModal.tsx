@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+
 interface Product {
     images?: ProductImages;
     _id: string;
@@ -27,7 +28,7 @@ interface ProductImages {
 interface CreateCollectionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (collection: { name: string; products: Product[]; storeId: string ;description:string}) => void;
+    onSave: (collection: { name: string; products: Product[]; storeId: string; description: string }) => void;
 }
 
 
@@ -43,7 +44,15 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
     console.log(storeId);
 
     useEffect(() => {
-        fetch('/api/products')
+        fetch('/api/products',
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            }
+        )
             .then(res => res.json())
             .then(data => setProducts(data.products));
     }, []);
@@ -81,7 +90,19 @@ export const CreateCollectionModal = ({ isOpen, onClose, onSave }: CreateCollect
     }, [products]);
 
     if (!isOpen) return null;
+    if (products.length === 0) return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+            <div className=" bg-white rounded-lg p-6 w-fit max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div className="flex flex-col justify-center items-center space-y-5 h-full">
+                    <p className="text-2xl text-red-600 font-bold">No products found.</p>
+                    <div className="flex text-lg justify-center items-center h-full">
+                        addproducts to your store to create a collection
+                    </div>
+                </div>
+            </div>
+        </div>
 
+    );
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">

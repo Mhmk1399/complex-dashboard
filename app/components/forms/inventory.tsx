@@ -81,23 +81,15 @@ export const Inventory = () => {
         }
     };
 
-    const handleSaveEdit = (product: Product) => {
-        // Your edit logic here
-        // Simulate edit success
-        const isSuccess = true; // Replace with actual success/failure logic
-
-        if (isSuccess) {
-            toast.success(`Product with ID ${product._id} edited successfully.`);
-        } else {
-            toast.error(`Failed to edit product with ID ${product._id}.`);
-        }
-
-        setIsEditModalOpen(false);
-    };
+  
 
     useEffect(() => {
         fetch('/api/products', {
             method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         })
             .then(result => result.json())
             .then(data => {

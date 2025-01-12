@@ -48,8 +48,8 @@ export const ProductsSettings = () => {
     }));
     console.log(settings.blocks);
   };
-const storeId=localStorage.getItem("storeId")
-console.log(storeId);
+  const storeId = localStorage.getItem("storeId")
+  console.log(storeId);
 
   const handelSave = async () => {
     try {
@@ -83,10 +83,10 @@ console.log(storeId);
         toast.error('Error creating product');
       }
     } catch (error) {
-      toast.error('Error updating product'  );
+      toast.error('Error updating product');
       console.log(error);
-      
-      
+
+
     }
   };
 
@@ -139,6 +139,7 @@ console.log(storeId);
           }
           className="w-full p-2 border rounded-xl"
           required
+
         />
       </div>
       <div>
@@ -151,16 +152,7 @@ console.log(storeId);
           required
         />
       </div>
-      <div>
-        <label className="block mb-2 text-white font-bold"> قیمت</label>
-        <input
-          type="text"
-          value={settings.blocks.price}
-          onChange={(e) => handleChange("blocks", "price", e.target.value)}
-          className="w-full p-2 border rounded-xl"
-          required
-        />
-      </div>
+
       <div>
         <label className="block mb-2 text-white font-bold"> وضعیت</label>
         <select
@@ -174,6 +166,49 @@ console.log(storeId);
           <option value="unavailable">unavailable</option>
         </select>
       </div>
+      <div className="flex flex-col space-y-2 relative">
+        <label className="block mb-2 text-white font-bold">قیمت</label>
+        <input
+          type="text"
+          value={settings.blocks.price}
+          onChange={(e) => handleChange("blocks", "price", e.target.value)}
+          className="w-full p-2 border rounded-xl "
+          required
+        />
+        {Number(settings.blocks.price) > 0 && Number(settings.blocks.discount) > 0 && (
+          <div className="absolute left-0 bg-white/85 p-3 rounded-xl backdrop-blur-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-black text-sm">قیمت با تخفیف:</span>
+              <span className="text-green-400 font-bold">
+                {(Number(settings.blocks.price) * (1 - Number(settings.blocks.discount) / 100)).toLocaleString()} تومان
+              </span>
+            </div>
+            <div className="flex items-center justify-between mt-2">
+              <span className=" text-sm">میزان تخفیف:</span>
+              <span className="text-red-400 font-bold">
+                {(Number(settings.blocks.price) * (Number(settings.blocks.discount) / 100)).toLocaleString()} تومان
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <div>
+        <label className="block mb-2 text-white font-bold">تخفیف</label>
+        <input
+          dir='rtl'
+          type="range"
+          value={settings.blocks.discount}
+          onChange={(e) => handleChange("blocks", "discount", e.target.value)}
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-500"
+          style={{
+            background: `linear-gradient(to left, #ef4444 ${settings.blocks.discount}%, #e5e7eb ${settings.blocks.discount}%)`,
+          }}
+          max={100}
+          min={0}
+        />
+        <span className="text-white ml-2">{settings.blocks.discount}%</span>
+      </div>
       <div>
         <label className="block mb-2 text-white font-bold"> موجودی</label>
         <input
@@ -183,6 +218,8 @@ console.log(storeId);
           className="w-full p-2 border rounded-xl"
         />
       </div>
+
+
 
       <button
         className="w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 text-xl font-bold rounded-full mx-auto"

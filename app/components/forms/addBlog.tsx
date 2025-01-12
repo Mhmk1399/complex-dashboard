@@ -8,6 +8,8 @@ import Highlight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -54,39 +56,7 @@ export const AddBlog = () => {
       </div>
     );
   };
-  // const ImageUploadButton = ({ editor }: { editor: any }) => {
-  //   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     if (e.target.files?.length) {
-  //       const file = e.target.files[0];
-  //       const alt = window.prompt('Enter alt text for image');
-
-  //       const reader = new FileReader();
-  //       reader.onload = () => {
-  //         if (typeof reader.result === 'string') {
-  //           editor?.chain().focus().setImage({
-  //             src: reader.result,
-  //             alt: alt || '',
-  //           }).run();
-  //         }
-  //       };
-  //       reader.readAsDataURL(file);
-  //     }
-  //   };
-
-  //   return (
-  //     <div className="relative">
-  //       <input
-  //         type="file"
-  //         accept="image/*"
-  //         onChange={handleFileChange}
-  //         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-  //       />
-  //       <MenuButton onClick={() => { }}>
-  //         <i className="fas fa-upload"></i>
-  //       </MenuButton>
-  //     </div>
-  //   );
-  // };
+  
 
 
   const editor = useEditor({
@@ -189,14 +159,13 @@ export const AddBlog = () => {
       setDescription(''); // Clear description after successful submission
       setSeoTitle(''); // Clear seoTitle after successful submission
       editor?.commands.clearContent();
-      
+      toast.success('Blog posted successfully!');
       // Show success message or redirect
-      alert('Blog posted successfully!');
       setDescription(''); // Clear description after successful submission
 
     } catch (error) {
       console.error('Error creating blog:', error);
-      alert('Failed to post blog');
+      toast.error('Failed to create blog. Please try again.');
     }
 
   };  
@@ -214,8 +183,15 @@ export const AddBlog = () => {
     </button>
   );
 
-  return (
+  return (<>
+  <ToastContainer position="top-right" autoClose={3000} />
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm">
+
+
+    
+  
+      {/* rest of your code */}
+
 
       <h2 className="text-3xl font-bold mb-8 text-right text-gray-800">افزودن بلاگ جدید</h2>
 
@@ -414,6 +390,7 @@ export const AddBlog = () => {
         </div>
       </form>
     </div>
+    </>
   );
 };
 

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connect from "@/lib/data";
 import Collections from "@/models/collections";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+interface CustomJwtPayload extends JwtPayload {
+    storeId?: string;
+}
 
 export async function POST(request: Request) {
     const collectionData = await request.json();
@@ -16,10 +20,24 @@ export async function POST(request: Request) {
     }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+
+
     try {
         await connect();
-        const collections = await Collections.find();
+         const token = request.headers.get("Authorization")?.split(" ")[1]
+                if (!token)
+                    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        
+                const decodedToken = jwt.decode(token) as CustomJwtPayload
+                if (!decodedToken)
+                    return NextResponse.json({ error: "Invalid token" }, { status: 401 })
+        
+                const storeId = decodedToken.storeId
+                if (!storeId)
+                    return NextResponse.json({ error: "Invalid token" }, { status: 401 })
+        
+        const collections = await Collections.find({storeId});
         return NextResponse.json({ collections }, { status: 200 });
     } catch (error) {
         console.log("Error fetching collections:", error);

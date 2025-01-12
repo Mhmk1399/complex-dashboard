@@ -132,14 +132,21 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                             rows={3}
                         />
                     </div>
-                    <div>
-                        <label className="block mb-2">Price</label>
+                    <div className=' items-center justify-center pt-2'>
+                        <label className="block mb-2 text-white font-bold">تخفیف</label>
                         <input
-                            type="text"
-                            value={formData.price}
-                            onChange={(e) => handleChange('price', e.target.value)}
-                            className="w-full p-2 border rounded"
+                            dir='rtl'
+                            type="range"
+                            value={formData.discount}
+                            onChange={(e) => handleChange("discount", e.target.value)}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-500"
+                            style={{
+                                background: `linear-gradient(to left, #ef4444 ${formData.discount}%, #e5e7eb ${formData.discount}%)`,
+                            }}
+                            max={100}
+                            min={0}
                         />
+                        <span className="text-white ml-2">{formData.discount}%</span>
                     </div>
                     <div>
                         <label className="block mb-2">Status</label>
@@ -152,14 +159,31 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                             <option value="unavailable">Unavailable</option>
                         </select>
                     </div>
-                    <div>
-                        <label className="block mb-2">Discount</label>
+                    <div className="flex flex-col  relative">
+                        <label className="block mb-2 text-white font-bold">قیمت</label>
                         <input
                             type="text"
-                            value={formData.discount}
-                            onChange={(e) => handleChange('discount', e.target.value)}
-                            className="w-full p-2 border rounded"
+                            value={formData.price}
+                            onChange={(e) => handleChange("price", e.target.value)}
+                            className="w-full p-2 border rounded-xl "
+                            required
                         />
+                        {Number(formData.price) > 0 && Number(formData.discount) > 0 && (
+                            <div className="absolute right-0 bg-white/85 p-3 rounded-xl backdrop-blur-sm">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-black text-sm">قیمت با تخفیف:</span>
+                                    <span className="text-green-400 font-bold">
+                                        {(Number(formData.price) * (1 - Number(formData.discount) / 100)).toLocaleString()} تومان
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between mt-2">
+                                    <span className=" text-sm">میزان تخفیف:</span>
+                                    <span className="text-red-400 font-bold">
+                                        {(Number(formData.price) * (Number(formData.discount) / 100)).toLocaleString()} تومان
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div>
                         <label className="block mb-2">Inventory</label>
