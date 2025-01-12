@@ -7,11 +7,11 @@ import { Collections } from "./components/forms/collections";
 import { AddBlog } from "./components/forms/addBlog";
 import { EditBlogs } from "./components/forms/editBlogs";
 import { useRouter } from "next/navigation";
-import jwt from "jsonwebtoken"; 
+import jwt from "jsonwebtoken";
 import Link from "next/link";
 import { Orders } from "./components/forms/orders";
 import { Costumers } from "./components/forms/costumers";
-import UploadPage from './components/forms/uploads'
+import UploadPage from "./components/forms/uploads";
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -77,7 +77,7 @@ export const Dashboard = () => {
 
           if (response.ok) {
             const userData = await response.json();
-            console.log( userData.storeId);
+            console.log(userData.storeId);
             localStorage.setItem("storeId", userData.storeId);
             // Update the greeting with user's name
             setUserName(userData.name || "عزیز");
@@ -113,56 +113,28 @@ export const Dashboard = () => {
         return <AddBlog />;
       case "editBlogs":
         return <EditBlogs />;
-      case 'orders':
+      case "orders":
         return <Orders />;
-      case 'costumers':
+      case "costumers":
         return <Costumers />;
-      case 'addFile':
-        return <UploadPage/>
+      case "addFile":
+        return <UploadPage />;
       default:
         return null;
     }
   };
   return (
-    <div className="h-screen bg-[#caf0f8] pt-4">
-      <Form setSelectedMenu={setSelectedMenu} />
-      <RenderForms />
-      <div
-        className="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20"
-        dir="rtl"
-      >
-        <div className="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
+    <div className="h-screen">
+      <div className="px-4 py-16 mx-auto" dir="rtl">
+        <div className="max-w-xl mb-10 md:mx-auto text-center">
           <div>
-            <p className="inline-block px-3 py-px mb-4 text-base font-semibold tracking-wider text-purple-900  rounded-full">
-              {userName} عزیز به تومک خوش آمدی!
+            <p className="inline-block px-3 py-4 text-base tracking-wider bg-pink-500/80 text-white rounded-full">
+              <strong className="text-lg">{userName}</strong> عزیز به تومک خوش
+              آمدی!
             </p>
           </div>
+          <br />
           <h2 className="max-w-lg mb-6 text-3xl font-bold leading-none tracking-tight text-[#0077b6] sm:text-4xl md:mx-auto">
-            {/* <span className="relative inline-block">
-              <svg
-                viewBox="0 0 52 24"
-                fill="currentColor"
-                className="absolute top-0 left-0 z-0 hidden w-32 -mt-8 -ml-20 text-blue-gray-100 lg:w-32 lg:-ml-28 lg:-mt-10 sm:block"
-              >
-                <defs>
-                  <pattern
-                    id="9012817d-af60-45bb-9786-89646bc1c945"
-                    x="0"
-                    y="0"
-                    width=".135"
-                    height=".30"
-                  >
-                    <circle cx="1" cy="1" r=".7" />
-                  </pattern>
-                </defs>
-                <rect
-                  fill="url(#9012817d-af60-45bb-9786-89646bc1c945)"
-                  width="52"
-                  height="24"
-                />
-              </svg>
-              <span className="relative">The</span>
-            </span>{" "} */}
             راهنمای راه اندازی
           </h2>
           <p className="text-base text-gray-800 md:text-lg">
@@ -170,8 +142,8 @@ export const Dashboard = () => {
             تومک به فروش نزدیک کنید.
           </p>
         </div>
-        <div className="max-w-lg space-y-3  p-10 sm:mr-44 lg:max-w-5xl bg-[#0077b6]  rounded-2xl shadow-lg">
-          <div className="flex items-center p-2 transition-colors duration-200 border rounded-lg shadow group         hover:border-gray-200 hover:bg-white/60">
+        <div className="space-y-3 p-10 mx-2 lg:mx-32 bg-[#0077b6]  rounded-2xl shadow-lg">
+          <div className="flex items-center p-2 transition-colors duration-200 border rounded-lg shadow group hover:border-gray-200 hover:bg-white/60">
             <div className="mx-2">
               <svg
                 width="25px"
@@ -455,28 +427,10 @@ export const Dashboard = () => {
               افتتاح سایت
             </Link>
           </div>
-          {/* <div className="flex items-center p-2 transition-colors duration-200 border rounded shadow group hover:bg-deep-purple-accent-400 hover:border-deep-purple-accent-400">
-            <div className="mr-2">
-              <svg
-                className="w-6 h-6 transition-colors duration-200 text-deep-purple-accent-400 group-hover:text-white sm:w-8 sm:h-8"
-                stroke="currentColor"
-                viewBox="0 0 52 52"
-              >
-                <polygon
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                  points="29 13 14 29 25 29 23 39 38 23 27 23"
-                />
-              </svg>
-            </div>
-            <span className="text-gray-800 transition-colors duration-200 group-hover:text-white">
-              Yesterday you said tomorrow. Just do it today.
-            </span>
-          </div> */}
         </div>
       </div>
+      <Form setSelectedMenu={setSelectedMenu} />
+      <RenderForms />
     </div>
   );
 };
