@@ -97,6 +97,10 @@ export const Dashboard = () => {
         return <ImageGallery />;
       case "costumers":
         return <Costumers />;
+      case'costumers':
+      return <Costumers />;
+      case'orders':
+      return <Orders />;
       default:
         return <StartComponent />;
     }
