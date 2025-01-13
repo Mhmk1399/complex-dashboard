@@ -122,6 +122,8 @@ export const Dashboard = () => {
         return <UploadPage />;
       case'costumers':
       return <Costumers />;
+      case'orders':
+      return <Orders />;
       default:
         return null;
     }
