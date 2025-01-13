@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Orders } from "./components/forms/orders";
 import { Costumers } from "./components/forms/costumers";
 import UploadPage from "./components/forms/uploads";
+// import TimeLine from "./components/forms/timeLine";
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -128,7 +129,7 @@ export const Dashboard = () => {
       <div className="px-4 py-16 mx-auto" dir="rtl">
         <div className="max-w-xl mb-10 md:mx-auto text-center">
           <div>
-            <p className="inline-block px-3 py-4 text-base tracking-wider bg-pink-500/80 text-white rounded-full">
+            <p className="inline-block px-3 py-4 text-base tracking-wider bg-pink-400 text-white rounded-full">
               <strong className="text-lg">{userName}</strong> عزیز به تومک خوش
               آمدی!
             </p>
@@ -429,8 +430,10 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+      {/* <TimeLine /> */}
       <Form setSelectedMenu={setSelectedMenu} />
       <RenderForms />
+      
     </div>
   );
 };

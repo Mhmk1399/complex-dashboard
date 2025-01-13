@@ -92,7 +92,7 @@ export const ProductsSettings = () => {
 
   return (
     <div
-      className="p-6 mx-auto  w-[1200px] lg:mx-10 grid grid-cols-1 rounded-2xl bg-[#0077b6] md:grid-cols-1 lg:grid-cols-2 gap-4"
+      className="p-6 grid lg:mx-auto lg:max-w-6xl mx-6 grid-cols-1 rounded-2xl bg-[#0077b6]  md:grid-cols-1 lg:grid-cols-2 gap-4"
       dir="rtl"
     >
       <h2 className="text-2xl font-bold mb-2 text-white lg:col-span-2 col-span-1">
@@ -162,8 +162,8 @@ export const ProductsSettings = () => {
           value={settings.blocks.status}
           onChange={(e) => handleChange("blocks", "status", e.target.value)}
         >
-          <option value="available">available</option>
-          <option value="unavailable">unavailable</option>
+          <option value="available">موجود</option>
+          <option value="unavailable">نا موجود</option>
         </select>
       </div>
       <div className="flex flex-col space-y-2 relative">

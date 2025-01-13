@@ -11,7 +11,6 @@ import {
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 
-
 const dashboardMenuItems = [
   {
     id: "store",
@@ -21,7 +20,6 @@ const dashboardMenuItems = [
       { title: "افزودن محصول", value: "addProduct" },
       { title: "موجودی محصول", value: "inventory" },
       { title: "کالکشن ها ", value: "collections" },
-      { title: "تخفیفات", value: "discount" },
     ],
   },
   {
@@ -62,8 +60,7 @@ const dashboardMenuItems = [
   {
     id: "settings",
     title: "تنظیمات",
-    icon: <IoSettings />
-    ,
+    icon: <IoSettings />,
     subMenuItems: [
       { title: "تنظیمات سایت", value: "siteSettings" },
       { title: "تنظیمات حساب", value: "accountSettings" },
