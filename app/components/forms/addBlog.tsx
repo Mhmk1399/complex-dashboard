@@ -226,12 +226,30 @@ export const AddBlog = () => {
       setDescription(""); // Clear description after successful submission
       setSeoTitle(""); // Clear seoTitle after successful submission
       editor?.commands.clearContent();
-      toast.success("Blog posted successfully!");
+      toast.success("وبلاگ با موفقیت ایجاد شد", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
       // Show success message or redirect
       setDescription(""); // Clear description after successful submission
     } catch (error) {
-      console.error("Error creating blog:", error);
-      toast.error("Failed to create blog. Please try again.");
+      console.log("Error creating blog:", error);
+      toast.error("خطا در ایجاد وبلاگ", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 

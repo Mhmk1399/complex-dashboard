@@ -13,6 +13,16 @@ import { IoSettings } from "react-icons/io5";
 
 const dashboardMenuItems = [
   {
+    id: "start",
+    title: "راهنمای سایت",
+    subMenuItems: [
+      {
+        title: "راهنمای سایت",
+        value: "start",
+      },
+    ],
+  },
+  {
     id: "store",
     title: " محصولات",
     icon: <StoreIcon />,
@@ -45,7 +55,10 @@ const dashboardMenuItems = [
     id: "media",
     title: "گالری",
     icon: <MediaIcon />,
-    subMenuItems: [{ title: "افزودن تصویر", value: "addFile" }],
+    subMenuItems: [
+      { title: "افزودن تصویر", value: "addFile" },
+      { title: "مدیریت تصاویر", value: "editFile" },
+    ],
   },
   {
     id: "addBlogs",

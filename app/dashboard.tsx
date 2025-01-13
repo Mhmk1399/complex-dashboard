@@ -8,42 +8,16 @@ import { AddBlog } from "./components/forms/addBlog";
 import { EditBlogs } from "./components/forms/editBlogs";
 import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken";
-import Link from "next/link";
 import { Orders } from "./components/forms/orders";
 import { Costumers } from "./components/forms/costumers";
 import UploadPage from "./components/forms/uploads";
-// import TimeLine from "./components/forms/timeLine";
+import ImageGallery from "./components/forms/editFile";
+import StartComponent from "./components/forms/startComponent";
 
 export const Dashboard = () => {
   const router = useRouter();
   const [selectedMenu, setSelectedMenu] = useState("ProductsSetting");
   const [userName, setUserName] = useState("کاربر");
-  const [isPaymentMethodOpen, setIsPaymentMethodOpen] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>("");
-  const [isShippingMethodOpen, setIsShippingMethodOpen] = useState(false);
-  const [selectedShippingMethod, setSelectedShippingMethod] =
-    useState<string>("");
-
-  const toggleShippingMethodDropdown = () => {
-    setIsShippingMethodOpen(!isShippingMethodOpen);
-  };
-
-  const handleShippingMethodSelect = (method: string) => {
-    console.log(`Selected shipping method: ${method}`);
-    setSelectedShippingMethod(method);
-    setIsShippingMethodOpen(false);
-  };
-
-  const togglePaymentMethodDropdown = () => {
-    setIsPaymentMethodOpen(!isPaymentMethodOpen);
-  };
-  const handlePaymentMethodSelect = (method: string) => {
-    // Logic for selecting payment method
-    console.log(`Selected payment method: ${method}`);
-    setSelectedPaymentMethod(method); // Store the selected method
-    setIsPaymentMethodOpen(false);
-  };
 
   useEffect(() => {
     const token = localStorage.getItem("token"); // Or however you store the token
@@ -99,11 +73,10 @@ export const Dashboard = () => {
     console.log(selectedMenu);
   }, [selectedMenu]);
 
-  const handleOpenProduct = () => {
-    setSelectedMenu("addProduct");
-  };
   const RenderForms = () => {
     switch (selectedMenu) {
+      case "start":
+        return <StartComponent />;
       case "addProduct":
         return <ProductsSettings />;
       case "inventory":
@@ -120,15 +93,17 @@ export const Dashboard = () => {
         return <Costumers />;
       case "addFile":
         return <UploadPage />;
-      case'costumers':
-      return <Costumers />;
+      case "editFile":
+        return <ImageGallery />;
+      case "costumers":
+        return <Costumers />;
       default:
-        return null;
+        return <StartComponent />;
     }
   };
   return (
-    <div className="h-screen">
-      <div className="px-4 py-16 mx-auto" dir="rtl">
+    <div className="h-screen my-12">
+      {/* <div className="px-4 py-16 mx-auto" dir="rtl">
         <div className="max-w-xl mb-10 md:mx-auto text-center">
           <div>
             <p className="inline-block px-3 py-4 text-base tracking-wider bg-pink-400 text-white rounded-full">
@@ -431,8 +406,7 @@ export const Dashboard = () => {
             </Link>
           </div>
         </div>
-      </div>
-      {/* <TimeLine /> */}
+      </div> */}
       <Form setSelectedMenu={setSelectedMenu} />
       <RenderForms />
     </div>
