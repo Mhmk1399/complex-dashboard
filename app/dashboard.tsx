@@ -120,6 +120,8 @@ export const Dashboard = () => {
         return <Costumers />;
       case "addFile":
         return <UploadPage />;
+      case'costumers':
+      return <Costumers />;
       default:
         return null;
     }
