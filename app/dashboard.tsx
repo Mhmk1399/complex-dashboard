@@ -95,12 +95,8 @@ export const Dashboard = () => {
         return <UploadPage />;
       case "editFile":
         return <ImageGallery />;
-      case "costumers":
-        return <Costumers />;
-      case'costumers':
-      return <Costumers />;
-      case'orders':
-      return <Orders />;
+      case "orders":
+        return <Orders />;
       default:
         return <StartComponent />;
     }

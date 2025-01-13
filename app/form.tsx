@@ -7,6 +7,7 @@ import {
   FaUsers as CustomersIcon,
   FaImage as MediaIcon,
   FaBookOpen as BlogIcon,
+  FaHome,
   FaBars, // Add menu icon
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
@@ -15,6 +16,7 @@ const dashboardMenuItems = [
   {
     id: "start",
     title: "راهنمای سایت",
+    icon: <FaHome />,
     subMenuItems: [
       {
         title: "راهنمای سایت",
