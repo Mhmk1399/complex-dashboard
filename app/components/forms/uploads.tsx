@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -43,6 +43,8 @@ export default function UploadPage() {
         throw new Error(data.message);
       }
     } catch (error) {
+      console.log(error);
+      
       setMessage("آپلود با خطا مواجه شد");
       toast.error("Upload failed. Please try again.", {
         autoClose: 3000,

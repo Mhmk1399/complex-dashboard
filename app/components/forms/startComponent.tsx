@@ -6,7 +6,6 @@ import ProfileDate from "./profileDate";
 
 const StartComponent = () => {
   const router = useRouter();
-  const [selectedMenu, setSelectedMenu] = useState("ProductsSetting");
   const [userName, setUserName] = useState("کاربر");
   const [isPaymentMethodOpen, setIsPaymentMethodOpen] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -67,7 +66,6 @@ const StartComponent = () => {
   }, [router]);
 
   const handleOpenProduct = () => {
-    setSelectedMenu("addProduct");
   };
   const toggleShippingMethodDropdown = () => {
     setIsShippingMethodOpen(!isShippingMethodOpen);

@@ -17,7 +17,6 @@ import StartComponent from "./components/forms/startComponent";
 export const Dashboard = () => {
   const router = useRouter();
   const [selectedMenu, setSelectedMenu] = useState("ProductsSetting");
-  const [userName, setUserName] = useState("کاربر");
 
   useEffect(() => {
     const token = localStorage.getItem("token"); // Or however you store the token
@@ -55,7 +54,6 @@ export const Dashboard = () => {
             console.log(userData.storeId);
             localStorage.setItem("storeId", userData.storeId);
             // Update the greeting with user's name
-            setUserName(userData.name || "عزیز");
           }
         } catch (error) {
           console.error("Error fetching user details:", error);

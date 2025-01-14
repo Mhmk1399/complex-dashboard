@@ -11,7 +11,6 @@ import {
   FaBars, // Add menu icon
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
-import { IconBase } from "react-icons";
 
 const dashboardMenuItems = [
   {

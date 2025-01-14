@@ -95,7 +95,16 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
         });
       }
     } catch (error) {
-      toast.error(`محصول ${product.name} ویرایش نشد`);
+      toast.error(`محصول ${product.name} ویرایش نشد ${error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 
