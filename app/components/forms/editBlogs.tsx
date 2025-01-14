@@ -342,7 +342,7 @@ export const EditBlogs = () => {
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer  rtl={true} />
       {loading ? (
         <div>
           <div className="flex justify-center items-center h-screen">

@@ -1,8 +1,8 @@
 "use client";
-import React from 'react';
+import React from "react";
 import { useState } from "react";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ProductSettings {
   type: string;
@@ -48,7 +48,7 @@ export const ProductsSettings = () => {
     }));
     console.log(settings.blocks);
   };
-  const storeId = localStorage.getItem("storeId")
+  const storeId = localStorage.getItem("storeId");
   console.log(storeId);
 
   const handelSave = async () => {
@@ -78,15 +78,13 @@ export const ProductsSettings = () => {
       });
 
       if (response.ok) {
-        toast.success('Product created successfully');
+        toast.success("Product created successfully");
       } else {
-        toast.error('Error creating product');
+        toast.error("Error creating product");
       }
     } catch (error) {
-      toast.error('Error updating product');
+      toast.error("Error updating product");
       console.log(error);
-
-
     }
   };
 
@@ -139,7 +137,6 @@ export const ProductsSettings = () => {
           }
           className="w-full p-2 border rounded-xl"
           required
-
         />
       </div>
       <div>
@@ -175,28 +172,37 @@ export const ProductsSettings = () => {
           className="w-full p-2 border rounded-xl "
           required
         />
-        {Number(settings.blocks.price) > 0 && Number(settings.blocks.discount) > 0 && (
-          <div className="absolute left-0 bg-white/85 p-3 rounded-xl backdrop-blur-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-black text-sm">قیمت با تخفیف:</span>
-              <span className="text-green-400 font-bold">
-                {(Number(settings.blocks.price) * (1 - Number(settings.blocks.discount) / 100)).toLocaleString()} تومان
-              </span>
+        {Number(settings.blocks.price) > 0 &&
+          Number(settings.blocks.discount) > 0 && (
+            <div className="absolute left-0 bg-white/85 p-3 rounded-xl backdrop-blur-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-black text-sm">قیمت با تخفیف:</span>
+                <span className="text-green-400 font-bold">
+                  {(
+                    Number(settings.blocks.price) *
+                    (1 - Number(settings.blocks.discount) / 100)
+                  ).toLocaleString()}{" "}
+                  تومان
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className=" text-sm">میزان تخفیف:</span>
+                <span className="text-red-400 font-bold">
+                  {(
+                    Number(settings.blocks.price) *
+                    (Number(settings.blocks.discount) / 100)
+                  ).toLocaleString()}{" "}
+                  تومان
+                </span>
+              </div>
             </div>
-            <div className="flex items-center justify-between mt-2">
-              <span className=" text-sm">میزان تخفیف:</span>
-              <span className="text-red-400 font-bold">
-                {(Number(settings.blocks.price) * (Number(settings.blocks.discount) / 100)).toLocaleString()} تومان
-              </span>
-            </div>
-          </div>
-        )}
+          )}
       </div>
-      
+
       <div>
         <label className="block mb-2 text-white font-bold">تخفیف</label>
         <input
-          dir='rtl'
+          dir="rtl"
           type="range"
           value={settings.blocks.discount}
           onChange={(e) => handleChange("blocks", "discount", e.target.value)}
@@ -219,15 +225,13 @@ export const ProductsSettings = () => {
         />
       </div>
 
-
-
       <button
         className="w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 text-xl font-bold rounded-full mx-auto"
         onClick={handelSave}
       >
         save
       </button>
-      <ToastContainer />
+      <ToastContainer rtl={true} />
     </div>
   );
 };

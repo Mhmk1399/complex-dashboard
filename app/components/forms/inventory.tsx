@@ -184,7 +184,7 @@ export const Inventory = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      product.status === "active"
+                      product.status === "available"
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }`}
@@ -225,7 +225,7 @@ export const Inventory = () => {
         onClose={closeModal}
         onConfirm={confirmDelete}
       />
-      <ToastContainer />
+      <ToastContainer  rtl={true} />
     </div>
   );
 };

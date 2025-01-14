@@ -122,7 +122,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
             {" "}
             <div className="bg-white/30 backdrop-blur-lg border border-white p-6 rounded-lg shadow-lg mx-2 lg:w-full max-w-4xl max-h-[90vh] overflow-y-scroll">
               <motion.h2
-                className="text-2xl font-bold my-6 text-center text-blue-500 border-b border-white pb-3"
+                className="text-2xl font-bold my-6 text-center text-white border-b border-white pb-3"
                 initial={{ y: -20 }}
                 animate={{ y: 0 }}
               >

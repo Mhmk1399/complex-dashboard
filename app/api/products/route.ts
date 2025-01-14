@@ -27,7 +27,6 @@ export async function POST(request: Request) {
 
 export async function GET(request: NextRequest) {
   await connect();
-
   try {
     const authHeader = request.headers.get("Authorization");
     if (!authHeader) {
@@ -40,12 +39,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const decodedToken = jwt.decode(token) as CustomJwtPayload;
+
     if (!decodedToken)
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
     const storeId = decodedToken.storeId;
     console.log(storeId, "storeId");
-    
+
     if (!storeId)
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
