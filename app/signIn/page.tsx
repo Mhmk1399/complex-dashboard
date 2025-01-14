@@ -42,7 +42,7 @@ const SignInForm = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const validateCurrentStep = () => {
-    let error = "";
+    
     switch (step) {
       case 1:
         if (!formData.name || formData.name.length < 3) {
@@ -66,8 +66,7 @@ const SignInForm = () => {
         break;
       default:
     }
-    setErrors(error);
-    return !error;
+   
   };
 
   const handleNext = () => {

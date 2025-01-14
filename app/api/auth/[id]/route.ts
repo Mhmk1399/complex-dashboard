@@ -36,7 +36,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
 }
 
 export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
-    const userId = params.id;
+    const userId = await params.id;
     logOperation('GET_ATTEMPT', userId);
 
     await connect();
@@ -96,7 +96,20 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
             storeId
         } = body;
 
-        const updateData: any = {};
+        const updateData: Partial<{
+            name: string;
+            phoneNumber: string;
+            password: string;
+            title: string;
+            subdomain: string;
+            location: string;
+            socialMedia: string;
+            category: string;
+            targetProjectDirectory: string;
+            templatesDirectory: string;
+            emptyDirectory: string;
+            storeId: string;
+        }> = {};
         if (name) updateData.name = name;
         if (phoneNumber) updateData.phoneNumber = phoneNumber;
         if (password) {

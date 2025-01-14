@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import EditModal from "./editModal";
-import Image from "next/image";
 import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

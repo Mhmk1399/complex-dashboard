@@ -34,7 +34,7 @@ export default function LoginPage() {
         setError(data.message);
       }
     } catch (err) {
-      setError("Failed to login. Please try again.");
+      setError("Failed to login. Please try again."+err);
     }
   };
   const togglePasswordVisibility = () => {

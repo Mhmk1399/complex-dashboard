@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
-    const reDirectUrl="localhost:3000";
     await connect();
     try {
         const { phoneNumber, password } = await request.json();

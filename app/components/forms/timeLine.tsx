@@ -53,7 +53,14 @@ const TimeLineData = [
 
 
 const TimeLine = () => {
-  const TimeLineItem = ({ text, position, icon, isLast }: any) => (
+  interface TimeLineItemProps {
+    text: string;
+    position: string;
+    icon: React.ReactNode;
+    isLast: boolean;
+  }
+
+  const TimeLineItem = ({ text, position, icon, isLast }: TimeLineItemProps) => (
     <div className={`mt-6 sm:mt-0 ${!isLast ? 'sm:mb-12' : ''}`}>
       <div className="flex flex-col sm:flex-row items-center">
         <div className={`flex justify-${position} w-full mx-auto items-center`}>

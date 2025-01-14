@@ -131,9 +131,9 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleSection = (sectionId: string) => {
-    setActiveSection(activeSection === sectionId ? null : sectionId);
-  };
+  // const toggleSection = (sectionId: string) => {
+  //   setActiveSection(activeSection === sectionId ? null : sectionId);
+  // };
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);

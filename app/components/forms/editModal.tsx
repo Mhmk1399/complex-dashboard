@@ -76,7 +76,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                 toast.error(`Failed to edit product with ID ${product._id}.`);
             }
         } catch (error) {
-            toast.error(`Error updating product`);
+            toast.error(`Error updating product,${error}`);
         }
     };
 

@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { createWebsite } from "../createWebsite/route";
 
 export async function POST(request: Request) {
   const {
@@ -55,11 +54,7 @@ export async function POST(request: Request) {
       { expiresIn: "1h" }
     );
 
-    const websiteResult = await createWebsite({
-      emptyDirectory,
-      targetDirectory: targetProjectDirectory,
-      storeId,
-    });
+   
 
     return NextResponse.json(
       { 

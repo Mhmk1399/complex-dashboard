@@ -31,7 +31,7 @@ export default function UploadPage() {
         console.log('File URL:', data.fileUrl)
       }
     } catch (error) {
-      setMessage('Upload failed')
+      setMessage('Upload failed'+error)
     } finally {
       setLoading(false)
     }

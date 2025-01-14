@@ -2,7 +2,6 @@ import connect from "@/lib/data";
 import { NextRequest, NextResponse } from "next/server";
 import StoreUsers from "@/models/storesUsers";
 import Jwt, { JwtPayload } from "jsonwebtoken";
-import mongoose from 'mongoose';
 
 interface CustomJwtPayload extends JwtPayload {
     targetDirectory: string;
@@ -10,9 +9,14 @@ interface CustomJwtPayload extends JwtPayload {
 }
 
 export async function GET(request: NextRequest) {
-    if (!mongoose.connection.readyState) {
-        return NextResponse.json({ error: "Database connection error" }, { status: 500 });
+    connect();
+    if(!connect){
+        return NextResponse.json(
+            { message: "Internal Server Error" },
+            { status: 500 }
+        );
     }
+
     try {
         const token = request.headers.get('Authorization');
         if (!token) {
@@ -32,7 +36,7 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const users = await StoreUsers.find({ storeId: sotreId });
+        const users = await StoreUsers.find({ sotreId });
         return NextResponse.json({ users }, { status: 200 })
     } catch (error) {
         console.error(error)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TrashIcon, PencilIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { CreateCollectionModal } from "./createCollectionModal";
 import { toast, ToastContainer } from "react-toastify";
 import { EditCollectionModal } from "./editCollectionModal";
