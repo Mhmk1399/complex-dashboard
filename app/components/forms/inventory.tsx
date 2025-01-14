@@ -37,6 +37,7 @@ export const Inventory = () => {
   const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
     null
   );
+  
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
@@ -78,8 +79,8 @@ export const Inventory = () => {
     }
   };
 
-  useEffect(() => {
-    fetch("/api/products", {
+  const fetchProducts = () => {
+    return fetch("/api/products", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -90,11 +91,16 @@ export const Inventory = () => {
       .then((data) => {
         setProducts(data.products);
         setIsLoading(false);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Error:", error);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchProducts();
   }, []);
 
   if (isLoading) {
@@ -113,35 +119,34 @@ export const Inventory = () => {
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           onSave={() => {
-            // Refresh the products list
-            fetch("/api/products")
-              .then((res) => res.json())
-              .then((data) => setProducts(data.products));
+            fetchProducts();
           }}
         />
       )}
 
-      <h2 className="text-2xl font-bold text-center mx-16 mb-6">موجودی محصول </h2>
+      <h2 className="text-2xl font-bold text-center mx-16 mb-6">
+        موجودی محصول{" "}
+      </h2>
       <div className="overflow-x-auto lg:mx-16 mx-6 bg-white rounded-lg shadow">
         <table className="w-full divide-y divide-gray-200">
           <thead className="bg-gray-500">
             <tr>
-              <th className="px-10 py-3  text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-10 py-3  text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 محصول
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 دسته بندی
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 قیمت
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 وضعیت
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 موجودی
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 عملیات ها
               </th>
             </tr>
@@ -178,7 +183,7 @@ export const Inventory = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      product.status === "active"
+                      product.status === "available"
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }`}
@@ -219,7 +224,7 @@ export const Inventory = () => {
         onClose={closeModal}
         onConfirm={confirmDelete}
       />
-      <ToastContainer />
+      <ToastContainer  rtl={true} />
     </div>
   );
 };

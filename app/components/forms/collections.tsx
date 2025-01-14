@@ -79,11 +79,11 @@ export const Collections = () => {
       if (response.ok) {
         fetchCollections();
         setIsCreateModalOpen(false);
-        toast.success("Collection created successfully");
+        toast.success("کالکشن با موفقیت ایجاد شد");
       }
     } catch (error) {
-      console.error("Error creating collection:", error);
-      toast.error("faild to create collection");
+      console.error(error);
+      toast.error("خطا در ایجاد کالکشن");
     }
   };
 
@@ -128,13 +128,13 @@ export const Collections = () => {
           setCollections(
             collections.filter((collection) => collection._id !== id)
           );
-          toast.success("Collection deleted successfully");
+          toast.success("کالکشن با موفقیت حذف شد");
         } else {
-          toast.error("Failed to delete collection");
+          toast.error("خطا در حذف کالکشن");
         }
       } catch (error) {
-        console.error("Error deleting collection:", error);
-        toast.error("Error deleting collection");
+        console.log(error);
+        toast.error("خطا در حذف کالکشن");
       }
     }
   };
@@ -194,16 +194,16 @@ export const Collections = () => {
         <table className="min-w-full divide-y divide-gray-200 ">
           <thead className="bg-gray-500">
             <tr>
-              <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-8 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 نام
               </th>
-              <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-8 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 تعداد محصولات
               </th>
-              <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-8 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 تاریخ ایجاد
               </th>
-              <th className="px-8 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-8 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
                 عملیات
               </th>
             </tr>
@@ -256,7 +256,7 @@ export const Collections = () => {
         onClose={closeDeleteModal}
         onConfirm={confirmDelete}
       />
-      <ToastContainer />
+      <ToastContainer rtl={true} />
     </div>
   );
 };

@@ -149,7 +149,7 @@ if(users.length === 0) return (
           </tbody>
         </table>
       </div>
-      <ToastContainer />
+      <ToastContainer rtl={true} />
     </div>
   );
 };

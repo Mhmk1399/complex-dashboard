@@ -7,11 +7,24 @@ import {
   FaUsers as CustomersIcon,
   FaImage as MediaIcon,
   FaBookOpen as BlogIcon,
+  FaHome,
   FaBars, // Add menu icon
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
+import { IconBase } from "react-icons";
 
 const dashboardMenuItems = [
+  {
+    id: "start",
+    title: "راهنمای سایت",
+    icon: <FaHome />,
+    subMenuItems: [
+      {
+        title: "راهنمای سایت",
+        value: "start",
+      },
+    ],
+  },
   {
     id: "store",
     title: " محصولات",
@@ -45,7 +58,10 @@ const dashboardMenuItems = [
     id: "media",
     title: "گالری",
     icon: <MediaIcon />,
-    subMenuItems: [{ title: "افزودن تصویر", value: "addFile" }],
+    subMenuItems: [
+      { title: "افزودن تصویر", value: "addFile" },
+      { title: "مدیریت تصاویر", value: "editFile" },
+    ],
   },
   {
     id: "addBlogs",
@@ -94,7 +110,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         className="w-full py-4 px-2 text-right bg-[#90e0ef] hover:bg-[#0077b6] hover:bg-opacity-10 group transition-all duration-500 ease-in-out rounded-lg flex justify-between items-center"
         onClick={onToggle}
       >
-        <span className=" text-[#fff] p-0 text-xl transition-all duration-500 ease-in-out">
+        <span className=" text-[#fff] group-hover:text-blue-400 p-0 text-xl transition-all duration-500 ease-in-out">
           {icon}
         </span>
 
@@ -207,7 +223,7 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 150, damping: 20 }}
               dir="rtl"
-              className="w-64 bg-[#0077b6] backdrop-blur-sm bg-opacity-70 rounded-xl fixed top-0 right-0 h-full shadow-lg flex flex-col overflow-y-auto p-6 z-50"
+              className="w-64 bg-[#0077b6] backdrop-blur-sm bg-opacity-60 rounded-xl fixed top-0 right-0 h-full shadow-lg flex flex-col overflow-y-auto p-6 z-50"
             >
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-[#fff]" dir="rtl">

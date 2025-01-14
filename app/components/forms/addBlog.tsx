@@ -226,12 +226,30 @@ export const AddBlog = () => {
       setDescription(""); // Clear description after successful submission
       setSeoTitle(""); // Clear seoTitle after successful submission
       editor?.commands.clearContent();
-      toast.success("Blog posted successfully!");
+      toast.success("وبلاگ با موفقیت ایجاد شد", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
       // Show success message or redirect
       setDescription(""); // Clear description after successful submission
     } catch (error) {
-      console.error("Error creating blog:", error);
-      toast.error("Failed to create blog. Please try again.");
+      console.log("Error creating blog:", error);
+      toast.error("خطا در ایجاد وبلاگ", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 
@@ -257,7 +275,7 @@ export const AddBlog = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} rtl={true} />
       <div className="max-w-4xl mx-6 lg:mx-auto p-6 bg-gray-100 rounded-xl shadow-sm">
         {/* rest of your code */}
 

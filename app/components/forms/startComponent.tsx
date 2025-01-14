@@ -1,23 +1,19 @@
-"use client";
-import { useEffect, useState } from "react";
-import Form from "./form";
-import { ProductsSettings } from "./components/forms/productsSettings";
-import { Inventory } from "./components/forms/inventory";
-import { Collections } from "./components/forms/collections";
-import { AddBlog } from "./components/forms/addBlog";
-import { EditBlogs } from "./components/forms/editBlogs";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
-import { Orders } from "./components/forms/orders";
-import { Costumers } from "./components/forms/costumers";
-import UploadPage from "./components/forms/uploads";
-import ImageGallery from "./components/forms/editFile";
-import StartComponent from "./components/forms/startComponent";
+import ProfileDate from "./profileDate";
 
-export const Dashboard = () => {
+const StartComponent = () => {
   const router = useRouter();
   const [selectedMenu, setSelectedMenu] = useState("ProductsSetting");
   const [userName, setUserName] = useState("کاربر");
+  const [isPaymentMethodOpen, setIsPaymentMethodOpen] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<string>("");
+  const [isShippingMethodOpen, setIsShippingMethodOpen] = useState(false);
+  const [selectedShippingMethod, setSelectedShippingMethod] =
+    useState<string>("");
 
   useEffect(() => {
     const token = localStorage.getItem("token"); // Or however you store the token
@@ -69,47 +65,38 @@ export const Dashboard = () => {
       router.replace("/login");
     }
   }, [router]);
-  useEffect(() => {
-    console.log(selectedMenu);
-  }, [selectedMenu]);
 
-  const RenderForms = () => {
-    switch (selectedMenu) {
-      case "start":
-        return <StartComponent />;
-      case "addProduct":
-        return <ProductsSettings />;
-      case "inventory":
-        return <Inventory />;
-      case "collections":
-        return <Collections />;
-      case "addBlogs":
-        return <AddBlog />;
-      case "editBlogs":
-        return <EditBlogs />;
-      case "orders":
-        return <Orders />;
-      case "costumers":
-        return <Costumers />;
-      case "addFile":
-        return <UploadPage />;
-      case "editFile":
-        return <ImageGallery />;
-      case "orders":
-        return <Orders />;
-      default:
-        return <StartComponent />;
-    }
+  const handleOpenProduct = () => {
+    setSelectedMenu("addProduct");
+  };
+  const toggleShippingMethodDropdown = () => {
+    setIsShippingMethodOpen(!isShippingMethodOpen);
+  };
+
+  const handleShippingMethodSelect = (method: string) => {
+    console.log(`Selected shipping method: ${method}`);
+    setSelectedShippingMethod(method);
+    setIsShippingMethodOpen(false);
+  };
+
+  const togglePaymentMethodDropdown = () => {
+    setIsPaymentMethodOpen(!isPaymentMethodOpen);
+  };
+  const handlePaymentMethodSelect = (method: string) => {
+    // Logic for selecting payment method
+    console.log(`Selected payment method: ${method}`);
+    setSelectedPaymentMethod(method); // Store the selected method
+    setIsPaymentMethodOpen(false);
   };
   return (
-    <div className="h-screen my-12">
-      {/* <div className="px-4 py-16 mx-auto" dir="rtl">
+    <>
+      <div className="px-4 mx-auto" dir="rtl">
         <div className="max-w-xl mb-10 md:mx-auto text-center">
           <div>
-            <p className="inline-block px-3 py-4 text-base tracking-wider bg-pink-400 text-white rounded-full">
+            {/* <p className="inline-block px-3 py-4 text-base tracking-wider bg-pink-400 text-white rounded-full">
               <strong className="text-lg">{userName}</strong> عزیز به تومک خوش
               آمدی!
-            </p>
+            </p> */}
           </div>
           <br />
           <h2 className="max-w-lg mb-6 text-3xl font-bold leading-none tracking-tight text-[#0077b6] sm:text-4xl md:mx-auto">
@@ -406,9 +393,10 @@ export const Dashboard = () => {
             </Link>
           </div>
         </div>
-      </div> */}
-      <Form setSelectedMenu={setSelectedMenu} />
-      <RenderForms />
-    </div>
+      </div>
+      <ProfileDate userName={userName} />
+    </>
   );
 };
+
+export default StartComponent;
