@@ -12,8 +12,8 @@ import {
 import { BiEdit, BiBuildingHouse } from "react-icons/bi";
 import { BsAward } from "react-icons/bs";
 
-const mainProjectDirectory = "//Users//macbook//Desktop";
-const emptyDirectory = "//Users//macbook/Desktop//userwebsite"
+const mainProjectDirectory =process.env.NEXT_PUBLIC_MAIN_PROJECT_DIRECTORY;
+const emptyDirectory = process.env.NEXT_PUBLIC_EMPTY_DIRECTORY;
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);

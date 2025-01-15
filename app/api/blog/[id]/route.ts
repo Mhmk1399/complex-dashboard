@@ -3,19 +3,16 @@ import connect from "@/lib/data";
 import Blog from "@/models/blogs";
 import Jwt, { JwtPayload } from "jsonwebtoken";
 
-
 interface CustomJwtPayload extends JwtPayload {
     storeId: string;
 }
 
-
-
-
-export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
-    const id = params.id;
+export async function GET(req: NextRequest) {
+    const id = req.nextUrl.pathname.split('/')[3];
     if (!id) {
-        return new NextResponse('Blog ID is required', { status: 400 });
+        return NextResponse.json('Blog ID is required', { status: 400 });
     }
+
     const token = req.headers.get('Authorization')?.split(' ')[1];
     if (!token) {
         return NextResponse.json(
@@ -23,6 +20,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
             { status: 401 }
         );
     }
+
     const decodedToken = Jwt.decode(token) as CustomJwtPayload;
     if (!decodedToken) {
         return NextResponse.json(
@@ -30,8 +28,9 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
             { status: 401 }
         );
     }
-    const sotreId = decodedToken.storeId;
-    if (!sotreId) {
+
+    const storeId = decodedToken.storeId;
+    if (!storeId) {
         return NextResponse.json(
             { message: "Unauthorized" },
             { status: 401 }
@@ -40,16 +39,13 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
 
     await connect();
     if (!connect) {
-        return new NextResponse('Database connection error', { status: 500 });
+        return NextResponse.json('Database connection error', { status: 500 });
     }
 
-
-
-    const blog = await Blog.findById({ _id: id, storeId: sotreId });
+    const blog = await Blog.findById({ _id: id, storeId: storeId });
     if (!blog) {
-        return new NextResponse('Blog not found', { status: 404 });
+        return NextResponse.json('Blog not found', { status: 404 });
     }
-    return new NextResponse(JSON.stringify(blog), { status: 200 });
-
+    
+    return NextResponse.json(blog, { status: 200 });
 }
-

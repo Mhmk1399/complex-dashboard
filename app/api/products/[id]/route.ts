@@ -9,71 +9,58 @@ const logOperation = (operation: string, productId: string, details?: string | o
     }
 }
 
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
-    const productId = params.id;
+export async function DELETE(req: NextRequest) {
+    const productId = req.nextUrl.pathname.split('/')[3];
     logOperation('DELETE_ATTEMPT', productId);
 
     await connect();
     if(!connect) {
         logOperation('DELETE_ERROR', productId, 'Database connection failed');
-        return new NextResponse('Database connection error', { status: 500 });
-    }
-
-    if (!productId) {
-        logOperation('DELETE_ERROR', productId, 'Missing product ID');
-        return new NextResponse('Product ID is required', { status: 400 });
+        return NextResponse.json('Database connection error', { status: 500 });
     }
 
     try {
         await products.findByIdAndDelete(productId);
         logOperation('DELETE_SUCCESS', productId);
-        return new NextResponse(JSON.stringify({ message: 'Product deleted successfully' }), { status: 200 });
+        return NextResponse.json({ message: 'Product deleted successfully' }, { status: 200 });
     } catch (error) {
         logOperation('DELETE_ERROR', productId, error as string | object);
-        return new NextResponse('Error deleting product', { status: 500 });
+        return NextResponse.json('Error deleting product', { status: 500 });
     }
 }
 
-export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
-    const productId = params.id;
+export async function GET(req: NextRequest) {
+    const productId = req.nextUrl.pathname.split('/')[3];
     logOperation('GET_ATTEMPT', productId);
 
     await connect();
     if(!connect) {
         logOperation('GET_ERROR', productId, 'Database connection failed');
-        return new NextResponse('Database connection error', { status: 500 });
-    }
-
-    if (!productId) {
-        logOperation('GET_ERROR', productId, 'Missing product ID');
-        return new NextResponse('Product ID is required', { status: 400 });
+        return NextResponse.json('Database connection error', { status: 500 });
     }
 
     try {
         const product = await products.findById(productId);
         if (!product) {
             logOperation('GET_ERROR', productId, 'Product not found');
-            return new NextResponse('Product not found', { status: 404 });
+            return NextResponse.json('Product not found', { status: 404 });
         }
         logOperation('GET_SUCCESS', productId, product);
-        return new NextResponse(JSON.stringify(product), { status: 200 });
+        return NextResponse.json(product, { status: 200 });
     } catch (error) {
         logOperation('GET_ERROR', productId, error as string | object);
-        return new NextResponse('Error fetching product', { status: 500 });
+        return NextResponse.json('Error fetching product', { status: 500 });
     }
 }   
 
-export async function PATCH(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
-    const productId = params.id;
+export async function PATCH(req: NextRequest) {
+    const productId = req.nextUrl.pathname.split('/')[3];
     logOperation('PATCH_ATTEMPT', productId);
 
     await connect();
     if(!connect) {
         logOperation('PATCH_ERROR', productId, 'Database connection failed');
-        return new NextResponse('Database connection error', { status: 500 });
+        return NextResponse.json('Database connection error', { status: 500 });
     }
 
     try {
@@ -111,4 +98,3 @@ export async function PATCH(
         return NextResponse.json({ message: 'Error updating product' }, { status: 500 });
     }
 }
-
