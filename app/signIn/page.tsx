@@ -69,16 +69,7 @@ const SignInForm = () => {
    
   };
 
-  const handleNext = () => {
-    if (validateCurrentStep()) {
-      if (step < 2) {
-        setStep(step + 1);
-        setErrors("");
-      } else {
-        submitFormData();
-      }
-    }
-  };
+
 
   const submitFormData = async () => {
     const storeId = generateStoreId();
@@ -324,7 +315,7 @@ const SignInForm = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="ml-1 px-6 py-3 rounded-lg bg-purple-600 text-white font-medium flex items-center gap-1 shadow-lg hover:shadow-purple-500"
-              onClick={handleNext}
+              onClick={submitFormData}
             >
               {step === 2 ? "Complete" : "Next"}
               <FiArrowLeft />
