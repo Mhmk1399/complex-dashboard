@@ -49,6 +49,7 @@ const SignInForm = () => {
     formData.title = formData.name;
     formData.subdomain = formData.name;
     formData.logo = formData.name;
+    formData.category = formData.name;
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
