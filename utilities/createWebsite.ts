@@ -20,7 +20,13 @@ export async function createWebsite({
     // Step 1: Clone the empty GitHub repository
     const git = simpleGit();
     const localRepoPath = `/tmp/${targetDirectory}`;
-    await git.clone(emptyDirectoryRepoUrl, localRepoPath);
+    try {
+      await git.clone(emptyDirectoryRepoUrl, localRepoPath);
+    } catch (error) {
+      console.log('Clone error:', error);
+      console.error('Clone error:', error);
+      throw error;
+    }
     logs.push("[SUCCESS] Cloned the empty directory repository");
 
     // Step 2: Add user-specific data
@@ -44,11 +50,11 @@ export async function createWebsite({
     await git.cwd(localRepoPath).push("user-origin", "main");
     logs.push("[SUCCESS] Pushed to user's new GitHub repository");
 
-    
+
     return {
       success: true,
       logs,
-      
+
     };
   } catch (error) {
     logs.push(`[ERROR] Generation failed: ${(error as Error).message}`);
