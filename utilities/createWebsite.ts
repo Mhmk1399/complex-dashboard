@@ -44,31 +44,11 @@ export async function createWebsite({
     await git.cwd(localRepoPath).push("user-origin", "main");
     logs.push("[SUCCESS] Pushed to user's new GitHub repository");
 
-    // Step 5: Deploy to Vercel
-    const vercelResponse = await axios.post(
-      "https://api.vercel.com/v13/deployments",
-      {
-        name: targetDirectory,
-        gitSource: {
-          type: "github",
-          repoId: repo.id,
-          repoBranch: "main",
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.VERCEL_TOKEN}`,
-        },
-      }
-    );
-    const deploymentUrl = vercelResponse.data.url;
-    console.log(deploymentUrl);
-    logs.push(`[SUCCESS] Deployed to Vercel: ${deploymentUrl}`);
-
+    
     return {
       success: true,
       logs,
-      deploymentUrl,
+      
     };
   } catch (error) {
     logs.push(`[ERROR] Generation failed: ${(error as Error).message}`);
