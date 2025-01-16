@@ -1,13 +1,11 @@
-import simpleGit from "simple-git";
 import { Octokit } from "octokit"; // For GitHub API
-import axios from "axios";
+
 
 interface CreateWebsiteParams {
   emptyDirectoryRepoUrl: string; // URL of the empty GitHub repository
   targetDirectory: string; // User-specific directory/repo name
   storeId: string;
 }
-
 export async function createWebsite({
   emptyDirectoryRepoUrl,
   targetDirectory,
@@ -17,51 +15,36 @@ export async function createWebsite({
   try {
     logs.push("[START] Website generation process initiated");
 
-    // Step 1: Clone the empty GitHub repository
-    const git = simpleGit();
-    const localRepoPath = `/tmp/${targetDirectory}`;
-    try {
-      await git.clone(emptyDirectoryRepoUrl, localRepoPath);
-    } catch (error) {
-      console.log('Clone error:', error);
-      console.error('Clone error:', error);
-      throw error;
-    }
-    logs.push("[SUCCESS] Cloned the empty directory repository");
-
-    // Step 2: Add user-specific data
-    const fs = require("fs/promises");
-    await fs.writeFile(
-      `${localRepoPath}/storeId.json`,
-      JSON.stringify({ storeId }, null, 2)
-    );
-    logs.push("[SUCCESS] Added user-specific files");
-
-    // Step 3: Create a new GitHub repository for the user
+    // Use Octokit for all GitHub operations
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
+    // Create new repository
     const { data: repo } = await octokit.rest.repos.createForAuthenticatedUser({
       name: targetDirectory,
       private: true,
     });
-    const userRepoUrl = repo.clone_url;
 
-    // Step 4: Push the cloned repository to the new GitHub repository
-    await git.cwd(localRepoPath).addRemote("user-origin", userRepoUrl);
-    await git.cwd(localRepoPath).push("user-origin", "main");
-    logs.push("[SUCCESS] Pushed to user's new GitHub repository");
+    // Get template repository content and create files in new repo
+    const { data: templateContent } = await octokit.rest.repos.getContent({
+      owner: process.env.GITHUB_TEMPLATE_OWNER!,
+      repo: process.env.GITHUB_TEMPLATE_REPO!,
+      path: '',
+    });
 
+    // Create storeId.json in the new repository
+    await octokit.rest.repos.createOrUpdateFileContents({
+      owner: repo.owner.login,
+      repo: targetDirectory,
+      path: 'storeId.json',
+      message: 'Initialize repository with store ID',
+      content: Buffer.from(JSON.stringify({ storeId }, null, 2)).toString('base64'),
+    });
 
-    return {
-      success: true,
-      logs,
-
-    };
+    logs.push("[SUCCESS] Created repository and added files");
+    
+    return { success: true, logs };
   } catch (error) {
     logs.push(`[ERROR] Generation failed: ${(error as Error).message}`);
-    return {
-      success: false,
-      logs,
-      error: (error as Error).message,
-    };
+    return { success: false, logs, error: (error as Error).message };
   }
 }
