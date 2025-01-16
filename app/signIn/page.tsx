@@ -45,7 +45,7 @@ const SignInForm = () => {
 
   const submitFormData = async () => {
     const storeId = generateStoreId();
-    const targetProjectDirectory = `${mainProjectDirectory}/${formData.name}`;
+    const targetProjectDirectory = formData.name;
     formData.title = formData.name;
     formData.subdomain = formData.name;
     formData.logo = formData.name;

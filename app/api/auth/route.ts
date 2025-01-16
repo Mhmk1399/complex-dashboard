@@ -44,10 +44,11 @@ export async function POST(request: Request) {
 
     //creaete website
     await createWebsite({
+      emptyDirectoryRepoUrl: process.env.EMPTY_DIRECTORY_REPO_URL!,
       targetDirectory: targetProjectDirectory,
-      emptyDirectory,
       storeId,
     });
+    
 
     const token = jwt.sign(
       {

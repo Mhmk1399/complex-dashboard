@@ -1,13 +1,15 @@
-import fs from "fs/promises";
+import simpleGit from "simple-git";
+import { Octokit } from "octokit"; // For GitHub API
+import axios from "axios";
 
 interface CreateWebsiteParams {
-  emptyDirectory: string;
-  targetDirectory: string;
+  emptyDirectoryRepoUrl: string; // URL of the empty GitHub repository
+  targetDirectory: string; // User-specific directory/repo name
   storeId: string;
 }
 
 export async function createWebsite({
-  emptyDirectory,
+  emptyDirectoryRepoUrl,
   targetDirectory,
   storeId,
 }: CreateWebsiteParams) {
@@ -15,39 +17,57 @@ export async function createWebsite({
   try {
     logs.push("[START] Website generation process initiated");
 
-    try {
-      await fs.access(emptyDirectory);
-    } catch {
-      logs.push("[ERROR] Empty directory template not found");
-      throw new Error(`Template directory not found: ${emptyDirectory}`);
-    }
-    
-    // Create the target project directory
-  
-    await fs.mkdir(targetDirectory, { recursive: true });
-    logs.push(`[SUCCESS] Created project directory: ${targetDirectory}`);
-    await fs.writeFile(`${targetDirectory}/storeId.json`, JSON.stringify({ storeId: storeId }, null, 2));
-    // Copy files from the template directory
-    logs.push("[PROCESS] Copying template files...");
-    await fs.cp(emptyDirectory, targetDirectory, {
-      recursive: true,
-      filter: (src) => {
-        // Skip unwanted paths
-        const skipPaths = [
-          "node_modules",
-          ".git",
-          ".next",
-          ".env.local",
-        ];
-        return !skipPaths.some((skip) => src.includes(skip));
-      },
+    // Step 1: Clone the empty GitHub repository
+    const git = simpleGit();
+    const localRepoPath = `/tmp/${targetDirectory}`;
+    await git.clone(emptyDirectoryRepoUrl, localRepoPath);
+    logs.push("[SUCCESS] Cloned the empty directory repository");
+
+    // Step 2: Add user-specific data
+    const fs = require("fs/promises");
+    await fs.writeFile(
+      `${localRepoPath}/storeId.json`,
+      JSON.stringify({ storeId }, null, 2)
+    );
+    logs.push("[SUCCESS] Added user-specific files");
+
+    // Step 3: Create a new GitHub repository for the user
+    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    const { data: repo } = await octokit.rest.repos.createForAuthenticatedUser({
+      name: targetDirectory,
+      private: true,
     });
-    logs.push("[SUCCESS] Template files copied");
+    const userRepoUrl = repo.clone_url;
+
+    // Step 4: Push the cloned repository to the new GitHub repository
+    await git.cwd(localRepoPath).addRemote("user-origin", userRepoUrl);
+    await git.cwd(localRepoPath).push("user-origin", "main");
+    logs.push("[SUCCESS] Pushed to user's new GitHub repository");
+
+    // Step 5: Deploy to Vercel
+    const vercelResponse = await axios.post(
+      "https://api.vercel.com/v13/deployments",
+      {
+        name: targetDirectory,
+        gitSource: {
+          type: "github",
+          repoId: repo.id,
+          repoBranch: "main",
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.VERCEL_TOKEN}`,
+        },
+      }
+    );
+    const deploymentUrl = vercelResponse.data.url;
+    logs.push(`[SUCCESS] Deployed to Vercel: ${deploymentUrl}`);
 
     return {
       success: true,
       logs,
-      targetDirectory,
+      deploymentUrl,
     };
   } catch (error) {
     logs.push(`[ERROR] Generation failed: ${(error as Error).message}`);
