@@ -62,6 +62,7 @@ export async function createWebsite({
       }
     );
     const deploymentUrl = vercelResponse.data.url;
+    console.log(deploymentUrl);
     logs.push(`[SUCCESS] Deployed to Vercel: ${deploymentUrl}`);
 
     return {
