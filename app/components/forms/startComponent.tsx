@@ -16,8 +16,13 @@ const StartComponent = () => {
   const [repoUrl, setRepoUrl] = useState("");
 
   useEffect(() => {
-    setRepoUrl(localStorage.getItem("repoUrl") || "")
-    console.log(repoUrl);
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwt.decode(token);
+      if (decodedToken && typeof decodedToken === 'object') {
+        setRepoUrl(decodedToken.repoUrl || '');
+      }
+    }
   }, []);
   useEffect(() => {
     const token = localStorage.getItem("token"); // Or however you store the token
