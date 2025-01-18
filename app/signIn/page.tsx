@@ -42,7 +42,6 @@ const SignInForm = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const validateCurrentStep = () => {
-    
     switch (step) {
       case 1:
         if (!formData.name || formData.name.length < 3) {
@@ -57,17 +56,20 @@ const SignInForm = () => {
           setErrors("شماره تلفن معتبر نیست");
           return false;
         }
-        break;
-
+        return true; // Add this
+  
       case 2:
         if (!formData.category) {
           setErrors("لطفا دسته‌بندی سایت را انتخاب کنید");
+          return false;
         }
-        break;
+        return true; // Add this
+  
       default:
+        return true; // Add this
     }
-   
   };
+  
 
   const handleNext = () => {
     if (validateCurrentStep()) {
