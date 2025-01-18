@@ -40,7 +40,46 @@ const SignInForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const validateCurrentStep = () => {
+    switch (step) {
+      case 1:
+        if (!formData.name || formData.name.length < 3) {
+          setErrors("نام باید حداقل 3 کاراکتر باشد");
+          return false;
+        }
+        if (!formData.password || formData.password.length < 6) {
+          setErrors("رمز عبور باید حداقل 6 کاراکتر باشد");
+          return false;
+        }
+        if (!formData.phoneNumber || !/^09\d{9}$/.test(formData.phoneNumber)) {
+          setErrors("شماره تلفن معتبر نیست");
+          return false;
+        }
+        return true; // Add this
+  
+      case 2:
+        if (!formData.category) {
+          setErrors("لطفا دسته‌بندی سایت را انتخاب کنید");
+          return false;
+        }
+        return true; // Add this
+  
+      default:
+        return true; // Add this
+    }
+  };
+  
 
+  const handleNext = () => {
+    if (validateCurrentStep()) {
+      if (step < 2) {
+        setStep(step + 1);
+        setErrors("");
+      } else {
+        submitFormData();
+      }
+    }
+  };
 
   const submitFormData = async () => {
     const storeId = generateStoreId();
