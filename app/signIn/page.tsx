@@ -12,8 +12,7 @@ import {
 import { BiEdit, BiBuildingHouse } from "react-icons/bi";
 import { BsAward } from "react-icons/bs";
 
-const mainProjectDirectory = "//Users//macbook//Desktop";
-const emptyDirectory = "//Users//macbook/Desktop//userwebsite"
+const emptyDirectory = process.env.NEXT_PUBLIC_EMPTY_DIRECTORY;
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -84,10 +83,11 @@ const SignInForm = () => {
 
   const submitFormData = async () => {
     const storeId = generateStoreId();
-    const targetProjectDirectory = `${mainProjectDirectory}/${formData.name}`;
+    const targetProjectDirectory = formData.name;
     formData.title = formData.name;
     formData.subdomain = formData.name;
     formData.logo = formData.name;
+    formData.category = formData.name;
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
@@ -326,7 +326,7 @@ const SignInForm = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="ml-1 px-6 py-3 rounded-lg bg-purple-600 text-white font-medium flex items-center gap-1 shadow-lg hover:shadow-purple-500"
-              onClick={handleNext}
+              onClick={submitFormData}
             >
               {step === 2 ? "Complete" : "Next"}
               <FiArrowLeft />

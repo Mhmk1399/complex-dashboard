@@ -2,19 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import connect from "@/lib/data";
 import Collections from "@/models/collections";
 
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
-    const collectionId = params.id;
+export async function DELETE(req: NextRequest) {
+    const collectionId = req.nextUrl.pathname.split('/')[3];
     console.log('DELETE_ATTEMPT', collectionId);
 
     await connect();
     if(!connect) {
         console.log('DELETE_ERROR', collectionId, 'Database connection failed');
-        return new NextResponse('Database connection error', { status: 500 });
-    }
-
-    if (!collectionId) {
-        console.log('DELETE_ERROR', collectionId, 'Missing collection ID');
-        return new NextResponse('Collection ID is required', { status: 400 });
+        return NextResponse.json('Database connection error', { status: 500 });
     }
 
     try {
@@ -22,37 +17,37 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
         
         if (!deletedCollection) {
             console.log('DELETE_ERROR', collectionId, 'Collection not found');
-            return new NextResponse('Collection not found', { status: 404 });
+            return NextResponse.json('Collection not found', { status: 404 });
         }
 
         console.log('DELETE_SUCCESS', collectionId);
-        return new NextResponse(JSON.stringify({ message: 'Collection deleted successfully' }), { status: 200 });
+        return NextResponse.json({ message: 'Collection deleted successfully' }, { status: 200 });
     } catch (error) {
         console.log('DELETE_ERROR', collectionId, error);
-        return new NextResponse('Error deleting collection', { status: 500 });
+        return NextResponse.json('Error deleting collection', { status: 500 });
     }
 }
 
-export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
-    const collectionId = params.id;
+export async function GET(req: NextRequest) {
+    const collectionId = req.nextUrl.pathname.split('/')[3];
     
     try {
         await connect();
         const collection = await Collections.findById(collectionId).populate('products');
         
         if (!collection) {
-            return new NextResponse('Collection not found', { status: 404 });
+            return NextResponse.json('Collection not found', { status: 404 });
         }
         
         return NextResponse.json({ collection }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: "Error logging in", error }, { status: 500 });
+        return NextResponse.json({ message: "Error fetching collection", error }, { status: 500 });
     }
-};
+}
 
-export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export async function PATCH(req: NextRequest) {
     await connect();
-    const collectionId = params.id;
+    const collectionId = req.nextUrl.pathname.split('/')[3];
 
     try {
         const body = await req.json();
@@ -61,31 +56,18 @@ export const PATCH = async (req: NextRequest, { params }: { params: { id: string
             collectionId,
             {
                 name: body.name,
-                products: body.products // Store complete product objects
+                products: body.products
             },
             { new: true, runValidators: true }
         );
 
         if (!updatedCollection) {
-            return new NextResponse(JSON.stringify({ message: 'Collection not found' }), {
-                status: 404,
-                headers: { 'Content-Type': 'application/json' }
-            });
+            return NextResponse.json({ message: 'Collection not found' }, { status: 404 });
         }
 
-        return new NextResponse(JSON.stringify(updatedCollection), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
-
+        return NextResponse.json(updatedCollection, { status: 200 });
     } catch (error) {
         console.log('Update error:', error);
-        return new NextResponse(JSON.stringify({ message: 'Failed to update collection' }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        return NextResponse.json({ message: 'Failed to update collection' }, { status: 500 });
     }
 }
-
-
-

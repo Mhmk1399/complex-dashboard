@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { createWebsite } from "@/utilities/createWebsite";
 
 export async function POST(request: Request) {
   const {
@@ -41,8 +42,16 @@ export async function POST(request: Request) {
 
     await newUser.save();
 
+    //creaete website
+    await createWebsite({
+      emptyDirectoryRepoUrl: process.env.EMPTY_DIRECTORY_REPO_URL!,
+      targetDirectory: targetProjectDirectory,
+      storeId,
+    });
+    
+
     const token = jwt.sign(
-      { 
+      {
         id: newUser._id,
         pass: hashedPassword,
         targetDirectory: targetProjectDirectory,
@@ -54,13 +63,15 @@ export async function POST(request: Request) {
       { expiresIn: "1h" }
     );
 
-   
+
+
+
 
     return NextResponse.json(
-      { 
+      {
         message: "User created successfully",
         token,
-        userId: newUser._id 
+        userId: newUser._id
       },
       { status: 201 }
     );
