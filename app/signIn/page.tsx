@@ -70,16 +70,7 @@ const SignInForm = () => {
   };
   
 
-  const handleNext = () => {
-    if (validateCurrentStep()) {
-      if (step < 2) {
-        setStep(step + 1);
-        setErrors("");
-      } else {
-        submitFormData();
-      }
-    }
-  };
+
 
   const submitFormData = async () => {
     const storeId = generateStoreId();
