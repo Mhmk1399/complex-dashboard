@@ -1,45 +1,64 @@
-import { Octokit } from "octokit"; // For GitHub API
+import { Octokit } from "octokit";
 
 interface CreateWebsiteParams {
-  emptyDirectoryRepoUrl: string; // URL of the empty GitHub repository
-  targetDirectory: string; // User-specific directory/repo name
+  emptyDirectoryRepoUrl: string;
+  targetDirectory: string;
   storeId: string;
 }
+
 export async function createWebsite({
   emptyDirectoryRepoUrl,
   targetDirectory,
   storeId,
 }: CreateWebsiteParams) {
   const logs: string[] = [];
-  try {
-    logs.push("[START] Website generation process initiated");
-    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+  
+  if (!process.env.GITHUB_TOKEN) {
+    throw new Error("GitHub token is not configured");
+  }
 
+  const octokit = new Octokit({ 
+    auth: process.env.GITHUB_TOKEN
+  });
+
+  logs.push("[START] Website generation process initiated");
+
+  try {
     // Extract template repository information
     const [, templateOwner, templateRepo] = emptyDirectoryRepoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/) || [];
+    
+    logs.push(`[INFO] Creating repository from template: ${templateOwner}/${templateRepo}`);
 
-    // Create new repository from template
     const { data: newRepo } = await octokit.rest.repos.createUsingTemplate({
       template_owner: templateOwner,
       template_repo: templateRepo,
+      owner: templateOwner,
       name: targetDirectory,
       private: true,
       include_all_branches: true
     });
 
-    // Add store configuration
+    logs.push("[INFO] Repository created successfully");
+
     await octokit.rest.repos.createOrUpdateFileContents({
-      owner: newRepo.owner.login,
+      owner: templateOwner,
       repo: targetDirectory,
-      path: 'storeId.json',
-      message: 'Add store configuration',
-      content: Buffer.from(JSON.stringify({ storeId }, null, 2)).toString('base64')
+      path: 'store-config.json',
+      message: 'Initialize store configuration',
+      content: Buffer.from(JSON.stringify({ storeId })).toString('base64')
     });
 
-    logs.push("[SUCCESS] Repository cloned and configured");
-    return { success: true, logs, repoUrl: newRepo.html_url };
-  } catch (error) {
-    logs.push(`[ERROR] ${(error as Error).message}`);
-    return { success: false, logs, error: (error as Error).message };
+    logs.push("[SUCCESS] Store configuration added");
+
+    return {
+      success: true,
+      logs,
+      repoUrl: newRepo.html_url,
+      repoName: targetDirectory
+    };
+  } catch (error: any) {
+    logs.push(`[ERROR] ${error.message}`);
+    console.error("Full error:", error);
+    throw error;
   }
 }
