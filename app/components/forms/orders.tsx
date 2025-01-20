@@ -91,29 +91,29 @@ export const Orders = () => {
     };
     return statusMap[status] || 'bg-gray-100 text-gray-800';
   };
-useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const token = localStorage.getItem('token'); // Replace with actual token
-        const response = await fetch('/api/orders', {
-          headers: {
-            'Authorization': `${token}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setOrders(data);
-      } catch (error) {
-        setError((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
+// useEffect(() => {
+//     const fetchOrders = async () => {
+//       try {
+//         const token = localStorage.getItem('token'); // Replace with actual token
+//         const response = await fetch('/api/orders', {
+//           headers: {
+//             'Authorization': `${token}`
+//           }
+//         });
+//         if (!response.ok) {
+//           throw new Error('Network response was not ok');
+//         }
+//         const data = await response.json();
+//         setOrders(data);
+//       } catch (error) {
+//         setError((error as Error).message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
 
-    fetchOrders();
-  }, []);
+//     fetchOrders();
+//   }, []);
   const getPaymentStatusIcon = (status: string) => {
     return status === 'completed' ? '✅' : '⏳';
   };
