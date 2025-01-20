@@ -46,7 +46,9 @@ const OrderSchema = new mongoose.Schema(
             type: String,
             enum: ["pending", "completed", "failed"],
             default: "pending",
-        }
+        },
+        postCode: {
+            type: String}
     },
     {
         timestamps: true,

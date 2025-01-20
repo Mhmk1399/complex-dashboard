@@ -40,8 +40,6 @@ const dashboardMenuItems = [
     icon: <OrdersIcon />,
     subMenuItems: [
       { title: "سفارش ها", value: "orders" },
-      { title: "حمل و نقل", value: "shipping" },
-      { title: "دارایی های", value: "aboundendCheckouts" },
     ],
   },
   {
