@@ -1,50 +1,64 @@
-import { Octokit } from "octokit"; // For GitHub API
-
+import { Octokit } from "octokit";
 
 interface CreateWebsiteParams {
-  emptyDirectoryRepoUrl: string; // URL of the empty GitHub repository
-  targetDirectory: string; // User-specific directory/repo name
+  emptyDirectoryRepoUrl: string;
+  targetDirectory: string;
   storeId: string;
 }
+
 export async function createWebsite({
   emptyDirectoryRepoUrl,
   targetDirectory,
   storeId,
 }: CreateWebsiteParams) {
   const logs: string[] = [];
+  
+  if (!process.env.GITHUB_TOKEN) {
+    throw new Error("GitHub token is not configured");
+  }
+
+  const octokit = new Octokit({ 
+    auth: process.env.GITHUB_TOKEN
+  });
+
+  logs.push("[START] Website generation process initiated");
+
   try {
-    logs.push("[START] Website generation process initiated");
+    // Extract template repository information
+    const [, templateOwner, templateRepo] = emptyDirectoryRepoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/) || [];
+    
+    logs.push(`[INFO] Creating repository from template: ${templateOwner}/${templateRepo}`);
 
-    // Use Octokit for all GitHub operations
-    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-
-    // Create new repository
-    const { data: repo } = await octokit.rest.repos.createForAuthenticatedUser({
+    const { data: newRepo } = await octokit.rest.repos.createUsingTemplate({
+      template_owner: templateOwner,
+      template_repo: templateRepo,
+      owner: templateOwner,
       name: targetDirectory,
       private: true,
+      include_all_branches: true
     });
 
-    // Get template repository content and create files in new repo
-    const { data: templateContent } = await octokit.rest.repos.getContent({
-      owner: process.env.GITHUB_TEMPLATE_OWNER!,
-      repo: process.env.GITHUB_TEMPLATE_REPO!,
-      path: '',
-    });
+    logs.push("[INFO] Repository created successfully");
 
-    // Create storeId.json in the new repository
     await octokit.rest.repos.createOrUpdateFileContents({
-      owner: repo.owner.login,
+      owner: templateOwner,
       repo: targetDirectory,
-      path: 'storeId.json',
-      message: 'Initialize repository with store ID',
-      content: Buffer.from(JSON.stringify({ storeId }, null, 2)).toString('base64'),
+      path: 'store-config.json',
+      message: 'Initialize store configuration',
+      content: Buffer.from(JSON.stringify({ storeId })).toString('base64')
     });
 
-    logs.push("[SUCCESS] Created repository and added files");
-    
-    return { success: true, logs };
-  } catch (error) {
-    logs.push(`[ERROR] Generation failed: ${(error as Error).message}`);
-    return { success: false, logs, error: (error as Error).message };
+    logs.push("[SUCCESS] Store configuration added");
+
+    return {
+      success: true,
+      logs,
+      repoUrl: newRepo.html_url,
+      repoName: targetDirectory
+    };
+  } catch (error: any) {
+    logs.push(`[ERROR] ${error.message}`);
+    console.error("Full error:", error);
+    throw error;
   }
 }

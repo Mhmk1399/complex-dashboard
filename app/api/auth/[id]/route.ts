@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
             logOperation('GET_ERROR', userId, 'User not found');
             return NextResponse.json('User not found', { status: 404 });
         }
-        logOperation('GET_SUCCESS', userId, user);
+        // logOperation('GET_SUCCESS', userId, user);
         return NextResponse.json(user, { status: 200 });
     } catch (error) {
         logOperation('GET_ERROR', userId, error as string | object);

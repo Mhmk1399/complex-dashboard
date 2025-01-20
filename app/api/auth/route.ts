@@ -43,13 +43,12 @@ export async function POST(request: Request) {
     await newUser.save();
 
     //creaete website
-    await createWebsite({
+    const websiteResult = await createWebsite({
       emptyDirectoryRepoUrl: process.env.EMPTY_DIRECTORY_REPO_URL!,
       targetDirectory: targetProjectDirectory,
       storeId,
     });
     
-
     const token = jwt.sign(
       {
         id: newUser._id,
@@ -57,21 +56,19 @@ export async function POST(request: Request) {
         targetDirectory: targetProjectDirectory,
         templatesDirectory,
         emptyDirectory,
-        storeId
+        storeId,
+        repoUrl: websiteResult.repoUrl // Add the repo URL to the token
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
     );
-
-
-
-
-
+  
     return NextResponse.json(
       {
         message: "User created successfully",
         token,
-        userId: newUser._id
+        userId: newUser._id,
+        repoUrl: websiteResult.repoUrl // Also return it in the response
       },
       { status: 201 }
     );

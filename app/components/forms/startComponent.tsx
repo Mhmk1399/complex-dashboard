@@ -13,7 +13,17 @@ const StartComponent = () => {
   const [isShippingMethodOpen, setIsShippingMethodOpen] = useState(false);
   const [selectedShippingMethod, setSelectedShippingMethod] =
     useState<string>("");
+  const [repoUrl, setRepoUrl] = useState("");
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwt.decode(token);
+      if (decodedToken && typeof decodedToken === 'object') {
+        setRepoUrl(decodedToken.repoUrl || '');
+      }
+    }
+  }, []);
   useEffect(() => {
     const token = localStorage.getItem("token"); // Or however you store the token
 
@@ -65,8 +75,7 @@ const StartComponent = () => {
     }
   }, [router]);
 
-  const handleOpenProduct = () => {
-  };
+  const handleOpenProduct = () => {};
   const toggleShippingMethodDropdown = () => {
     setIsShippingMethodOpen(!isShippingMethodOpen);
   };
@@ -142,7 +151,7 @@ const StartComponent = () => {
               </svg>
             </div>
             <Link
-              href="/complex"
+              href={`${process.env.NEXT_PUBLIC_COMPLEX_URI}?repoUrl=${repoUrl}`}
               className="text-gray-100 font-bold transition-colors ease-in-out duration-300 group-hover:text-[#0077b6]"
             >
               تدوین و تنظیمات سایت
