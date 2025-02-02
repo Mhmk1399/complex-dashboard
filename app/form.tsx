@@ -32,6 +32,7 @@ const dashboardMenuItems = [
       { title: "افزودن محصول", value: "addProduct" },
       { title: "موجودی محصول", value: "inventory" },
       { title: "کالکشن ها ", value: "collections" },
+      { title: "افزودن دسته بندی", value: "addCategory" },
     ],
   },
   {
@@ -58,6 +59,7 @@ const dashboardMenuItems = [
     subMenuItems: [
       { title: "افزودن تصویر", value: "addFile" },
       { title: "مدیریت تصاویر", value: "editFile" },
+      { title: "افزودن استوری", value: "addStory" },
     ],
   },
   {

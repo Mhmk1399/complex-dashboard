@@ -13,6 +13,8 @@ import { Costumers } from "./components/forms/costumers";
 import UploadPage from "./components/forms/uploads";
 import ImageGallery from "./components/forms/editFile";
 import StartComponent from "./components/forms/startComponent";
+import AddCategory from "./components/forms/addCategory";
+import { AddStory } from "./components/forms/addStory";
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -95,8 +97,13 @@ export const Dashboard = () => {
         return <ImageGallery />;
       case "orders":
         return <Orders />;
+      case 'addCategory':
+        return <AddCategory />;
+      case 'addStory':
+       return <AddStory />;
       default:
         return <StartComponent />;
+
     }
   };
   return (
