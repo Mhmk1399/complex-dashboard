@@ -15,6 +15,7 @@ import ImageGallery from "./components/forms/editFile";
 import StartComponent from "./components/forms/startComponent";
 import AddCategory from "./components/forms/addCategory";
 import { AddStory } from "./components/forms/addStory";
+import {StoreSettings} from "./components/forms/storeSettings";
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -101,6 +102,8 @@ export const Dashboard = () => {
         return <AddCategory />;
       case 'addStory':
        return <AddStory />;
+      case "siteSettings":
+        return <StoreSettings />;
       default:
         return <StartComponent />;
 

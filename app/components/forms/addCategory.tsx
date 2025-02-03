@@ -1,93 +1,116 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-interface CategoryFormData {
+interface Category {
+  _id: string;
   name: string;
-  description: string;
-  parentCategory?: string;
-  isActive: boolean;
+  children: string[];
+  storeId: string;
 }
 
-export const AddCategory: React.FC = () => {
-  const [formData, setFormData] = useState<CategoryFormData>({
-    name: '',
-    description: '',
-    parentCategory: '',
-    isActive: true
-  });
+const AddCategory = () => {
+  const [categoryName, setCategoryName] = useState('');
+  const [existingCategories, setExistingCategories] = useState<Category[]>([]);
+  const [selectedParents, setSelectedParents] = useState<string[]>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/category', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = await response.json();
+      setExistingCategories(data);
+    } catch (error) {
+      toast.error('خطا در دریافت دسته‌بندی‌ها');
+      console.error(error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log(formData);
+    try {
+      const response = await fetch('/api/category', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          name: categoryName,
+          children: selectedParents
+        })
+      });
+
+      if (response.ok) {
+        toast.success("دسته‌بندی با موفقیت ایجاد شد");
+        setCategoryName('');
+        setSelectedParents([]);
+        fetchCategories();
+      }
+    } catch (error) {
+      toast.error("خطا در ایجاد دسته‌بندی");
+      console.error(error);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }));
-  };
+  const selectableCategories = existingCategories.filter(category => category.children.length === 0);
 
   return (
-    <motion.div 
-      className="p-6 bg-gray-200 backdrop-blur-md rounded-xl border border-white/20"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <h2 className="text-2xl font-bold mb-6 text-white text-center">افزودن دسته‌بندی جدید</h2>
-      
-      <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
-        <div className="space-y-2">
-          <label className="block text-gray-500">نام دسته‌بندی</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg bg-white border border-white/10 text-white focus:outline-none focus:border-blue-500"
-            required
-          />
+    <div className="p-6 grid lg:mx-auto lg:max-w-6xl mx-6 grid-cols-1 rounded-2xl bg-[#0077b6] md:grid-cols-1 lg:grid-cols-2 gap-4" dir="rtl">
+      <h2 className="text-2xl font-bold mb-2 text-white lg:col-span-2 col-span-1">
+        افزودن دسته‌بندی جدید
+      </h2>
+
+      <div>
+        <label className="block mb-2 text-white font-bold">نام دسته‌بندی</label>
+        <input
+          type="text"
+          value={categoryName}
+          onChange={(e) => setCategoryName(e.target.value)}
+          className="w-full p-2 border rounded-xl"
+          required
+        />
+      </div>
+
+      <div>
+        <label className="block mb-2 text-white font-bold">انتخاب زیر دسته‌ </label>
+        <div className="bg-white rounded-xl p-2 max-h-40 overflow-y-auto">
+          {selectableCategories.map((category) => (
+            <label key={category._id} className="flex items-center text-gray-800 mb-2">
+              <input
+                type="checkbox"
+                checked={selectedParents.includes(category._id)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedParents([...selectedParents, category._id]);
+                  } else {
+                    setSelectedParents(selectedParents.filter(id => id !== category._id));
+                  }
+                }}
+                className="mr-2"
+              />
+              {category.name}
+            </label>
+          ))}
         </div>
+      </div>
 
-        
+      <button
+        onClick={handleSubmit}
+        className="lg:col-span-2 w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 py-2 text-xl font-bold rounded-full mx-auto hover:from-sky-700 hover:to-sky-600 transition-all"
+      >
+        ذخیره دسته‌بندی
+      </button>
 
-        <div className="space-y-2">
-          <label className="block text-gray-500">دسته‌بندی والد</label>
-          <select
-            name="parentCategory"
-            value={formData.parentCategory}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg bg-white border border-white/10 text-white focus:outline-none focus:border-blue-500"
-          >
-            <option value="">بدون دسته‌بندی والد</option>
-            {/* Add category options dynamically here */}
-          </select>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="isActive"
-            checked={formData.isActive}
-            onChange={handleChange}
-            className="rounded bg-white border border-white/10"
-          />
-          <label className="text-gray-500">فعال</label>
-        </div>
-
-        <motion.button
-          type="submit"
-          className="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          ثبت دسته‌بندی
-        </motion.button>
-      </form>
-    </motion.div>
+      <ToastContainer rtl={true} position="top-center" />
+    </div>
   );
 };
 
