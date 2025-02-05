@@ -10,6 +10,20 @@ export async function POST(request: Request) {
 
   try {
     await connect();
+    console.log("Connected to MongoDB");
+    if(!connect){
+        return NextResponse.json({ error: "Failed to connect to database" });
+    }
+    const token = request.headers.get("Authorization")?.split(' ')[1];
+    
+    if (!token){
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    const decodedToken = jwt.decode(token) as CustomJwtPayload
+    if (!decodedToken){
+        return NextResponse.json({ error: "Invalid token" }, { status: 401 })
+    }
+    const storeId=decodedToken.storeId
     const newProduct = new Products(productData);
     await newProduct.save();
     return NextResponse.json(
@@ -33,7 +47,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const token = authHeader.split(" ")[1];
-    console.log(token, "tttttt");
 
     if (!token)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

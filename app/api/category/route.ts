@@ -75,22 +75,7 @@ export async function POST(req: NextRequest) {
 }
 export async function PATCH(req: NextRequest) {
     try {
-        await connect();
-        if(!connect){
-            return NextResponse.json({ error: "Failed to connect to database" });
-        }
-        const token = req.headers.get('Authorization')
-        if (!token){
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-        const decodedToken = jwt.verify(token || '', process.env.JWT_SECRET || '') as JwtPayload;
-        if (!decodedToken){
-            return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-        }
-        const storeId = decodedToken.storeId;
-        if (!storeId){
-            return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-        }
+       
         const body = await req.json();
         const category = await Category.findByIdAndUpdate(body.id, body, { new: true });
         return NextResponse.json(category);

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,86 +7,174 @@ import "react-toastify/dist/ReactToastify.css";
 interface ProductSettings {
   type: string;
   blocks: {
-    imageSrc: string;
-    imageAlt: string;
+    images: {
+      imageSrc: string; 
+      imageAlt: string;
+    }
+    properties: {
+      name: string;
+      value: string;
+    }[]
+    colors:
+      {
+        code: string;
+        quantity: string;
+      }[];
+  
     name: string;
     description: string;
-    category: string;
+    category: {_id: string, name: string};
     price: string;
     status: string;
     discount: string;
     id: string;
-    innventory: string;
   };
 }
 
 export const ProductsSettings = () => {
+  const [categories, setCategories] = useState<Array<{_id: string, name: string}>>([]);
   const [settings, setSettings] = useState<ProductSettings>({
     type: "productDetails",
     blocks: {
-      imageSrc: "/assets/images/product-detail.jpg",
-      imageAlt: "محصول",
+      images: {
+        imageSrc: "/assets/images/product-detail.jpg",
+        imageAlt: "محصول",
+      },
       name: "نام محصول",
       description: "توضیحات محصول",
-      category: "دسته بندی",
+      category:{
+        _id: "",
+        name: ""
+      },
       price: "0",
       status: "available",
       discount: "0",
       id: "1",
-      innventory: "0",
+      properties: [
+   
+      ],
+      colors: [
+        
+      ]
     },
   });
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/category', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        toast.error('خطا در دریافت دسته‌بندی‌ها');
+      }
+    };
+  
+    fetchCategories();
+  }, []);
+  const [newProperty, setNewProperty] = useState({ name: "", value: "" });
+  const [newColor, setNewColor] = useState({ code: "", quantity: "" });
 
-  // Changes settings general
   const handleChange = (section: string, field: string, value: string) => {
-    setSettings((prev) => ({
-      ...prev,
-      blocks: {
-        ...prev.blocks,
-        ...(section === "blocks" ? { [field]: value } : {}),
-      },
-    }));
-    console.log(settings.blocks);
+    if (field === "category") {
+      const selectedCategory = categories.find(cat => cat._id === value);
+      setSettings((prev) => ({
+        ...prev,
+        blocks: {
+          ...prev.blocks,
+          category: selectedCategory || {_id: "", name: ""}
+        },
+      }));
+    } else {
+      setSettings((prev) => ({
+        ...prev,
+        blocks: {
+          ...prev.blocks,
+          [field]: value
+        },
+      }));
+    }
   };
+  
+
+  // const handleImageChange = (field: string, value: string) => {
+  //   setSettings((prev) => ({
+  //     ...prev,
+  //     blocks: {
+  //       ...prev.blocks,
+  //       images: {
+  //         ...prev.blocks.images,
+  //         [field]: value
+  //       }
+  //     }
+  //   }));
+  // };
+
+  const addProperty = () => {
+    if (newProperty.name && newProperty.value) {
+      setSettings(prev => ({
+        ...prev,
+        blocks: {
+          ...prev.blocks,
+          properties: [...prev.blocks.properties, newProperty]
+        }
+      }));
+      setNewProperty({ name: "", value: "" });
+    }
+  };
+
+  const addColor = () => {
+    if (newColor.code && newColor.quantity) {
+      setSettings(prev => ({
+        ...prev,
+        blocks: {
+          ...prev.blocks,
+          colors: [...prev.blocks.colors, newColor]
+        }
+      }));
+      setNewColor({ code: "", quantity: "" });
+    }
+  };
+
   const storeId = localStorage.getItem("storeId");
-  console.log(storeId);
 
   const handelSave = async () => {
     try {
       const productData = {
-        images: {
-          imageSrc: settings.blocks.imageSrc,
-          imageAlt: settings.blocks.imageAlt,
-        },
+        images: settings.blocks.images,
         name: settings.blocks.name,
         description: settings.blocks.description,
-        category: settings.blocks.category,
+        category: settings.blocks.category._id, // This will now correctly send the category ID
         price: settings.blocks.price,
         status: settings.blocks.status,
         discount: settings.blocks.discount,
-        id: settings.blocks.id,
-        innventory: settings.blocks.innventory,
+        properties: settings.blocks.properties,
+        colors: settings.blocks.colors,
         storeId: storeId,
       };
-
       const response = await fetch("/api/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}` // Add this line
         },
         body: JSON.stringify(productData),
       });
 
       if (response.ok) {
-        toast.success("Product created successfully");
+        toast.success("محصول با موفقیت ایجاد شد");
       } else {
-        toast.error("Error creating product");
+        toast.error("خطا در ایجاد محصول");
       }
     } catch (error) {
-      toast.error("Error updating product");
+      toast.error("خطا در بروزرسانی محصول");
       console.log(error);
     }
-  };
+};
+
 
   return (
     <div
@@ -113,7 +201,7 @@ export const ProductsSettings = () => {
         </label>
         <input
           type="text"
-          value={settings.blocks.imageAlt}
+          value={settings.blocks.images.imageAlt}
           onChange={(e) => handleChange("blocks", "imageAlt", e.target.value)}
           className="w-full p-2 border rounded-xl"
           required
@@ -128,6 +216,7 @@ export const ProductsSettings = () => {
           className="w-full p-2 border rounded-xl"
         />
       </div>
+      
       <div>
         <label className="block mb-2 text-white font-bold">توضیحات</label>
         <textarea
@@ -140,16 +229,45 @@ export const ProductsSettings = () => {
         />
       </div>
       <div>
-        <label className="block mb-2 text-white font-bold"> دسته بندی</label>
-        <input
-          type="text"
-          value={settings.blocks.category}
-          onChange={(e) => handleChange("blocks", "category", e.target.value)}
-          className="w-full p-2 border rounded-xl"
-          required
-        />
-      </div>
+  <label className="block mb-2 text-white font-bold">دسته بندی</label>
+  <select
+    value={settings.blocks.category._id}
+    onChange={(e) => handleChange("blocks", "category", e.target.value)}
+    className="w-full p-2 border rounded-xl"
+    required
+  >
+    <option value="">انتخاب دسته بندی</option>
+    {categories.map((category) => (
+      <option key={category._id} value={category._id}>
+        {category.name}
+      </option>
+    ))}
+  </select>
+</div>
 
+      <div className="lg:col-span-1">
+        <h3 className="text-white font-bold mb-2">افزودن ویژگی</h3>
+        <div className="flex gap-2 flex-wrap w-full">
+          <input
+            type="text"
+            placeholder="نام ویژگی"
+            value={newProperty.name}
+            onChange={(e) => setNewProperty({...newProperty, name: e.target.value})}
+            className="p-2 border rounded-xl"
+          />
+          <input
+            type="text"
+            placeholder="مقدار"
+            value={newProperty.value}
+            onChange={(e) => setNewProperty({...newProperty, value: e.target.value})}
+            className="p-2 border rounded-xl"
+          />
+          <button onClick={addProperty} className="bg-sky-500 text-white px-4 rounded-xl">
+            افزودن
+          </button>
+        </div>
+        
+      </div>
       <div>
         <label className="block mb-2 text-white font-bold"> وضعیت</label>
         <select
@@ -163,6 +281,29 @@ export const ProductsSettings = () => {
           <option value="unavailable">نا موجود</option>
         </select>
       </div>
+      <div className="lg:col-span-1">
+        <h3 className="text-white font-bold mb-2">افزودن رنگ</h3>
+        <div className="flex gap-2">
+          <input
+          style={{borderRadius: "70%"}}
+            type="color"
+            value={newColor.code}
+            onChange={(e) => setNewColor({...newColor, code: e.target.value})}
+            className="border p-0 w-10 h-10 rounded-xl"
+          />
+          <input
+            type="number"
+            placeholder="تعداد"
+            value={newColor.quantity}
+            onChange={(e) => setNewColor({...newColor, quantity: e.target.value})}
+            className="p-2 border rounded-xl"
+          />
+          <button onClick={addColor} className="bg-sky-500 text-white px-4 rounded-xl">
+            افزودن رنگ
+          </button>
+        </div>
+      </div>
+      
       <div className="flex flex-col space-y-2 relative">
         <label className="block mb-2 text-white font-bold">قیمت</label>
         <input
@@ -198,7 +339,10 @@ export const ProductsSettings = () => {
             </div>
           )}
       </div>
+     
 
+      {/* Add new color section */}
+    
       <div>
         <label className="block mb-2 text-white font-bold">تخفیف</label>
         <input
@@ -215,15 +359,7 @@ export const ProductsSettings = () => {
         />
         <span className="text-white ml-2">{settings.blocks.discount}%</span>
       </div>
-      <div>
-        <label className="block mb-2 text-white font-bold"> موجودی</label>
-        <input
-          type="text"
-          value={settings.blocks.innventory}
-          onChange={(e) => handleChange("blocks", "innventory", e.target.value)}
-          className="w-full p-2 border rounded-xl"
-        />
-      </div>
+      
 
       <button
         className="w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 text-xl font-bold rounded-full mx-auto"
@@ -235,3 +371,4 @@ export const ProductsSettings = () => {
     </div>
   );
 };
+

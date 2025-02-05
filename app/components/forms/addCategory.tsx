@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import EditCategory from './editCategory';
+import { AnimatePresence, motion } from "framer-motion";
 
 interface Category {
   _id: string;
@@ -13,6 +15,11 @@ const AddCategory = () => {
   const [categoryName, setCategoryName] = useState('');
   const [existingCategories, setExistingCategories] = useState<Category[]>([]);
   const [selectedParents, setSelectedParents] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const openEditModal = () => setShowEditModal(true);
+  const closeEditModal = () => setShowEditModal(false);
 
   useEffect(() => {
     fetchCategories();
@@ -63,7 +70,8 @@ const AddCategory = () => {
   const selectableCategories = existingCategories.filter(category => category.children.length === 0);
 
   return (
-    <div className="p-6 grid lg:mx-auto lg:max-w-6xl mx-6 grid-cols-1 rounded-2xl bg-[#0077b6] md:grid-cols-1 lg:grid-cols-2 gap-4" dir="rtl">
+    <>
+    <div className="p-4 grid lg:mx-auto lg:max-w-6xl mx-3 grid-cols-1 rounded-2xl bg-[#0077b6] md:grid-cols-1 lg:grid-cols-2 gap-4" dir="rtl">
       <h2 className="text-2xl font-bold mb-2 text-white lg:col-span-2 col-span-1">
         افزودن دسته‌بندی جدید
       </h2>
@@ -101,16 +109,57 @@ const AddCategory = () => {
           ))}
         </div>
       </div>
-
-      <button
+          <div className="flex justify-center lg:-mt">
+            <button
         onClick={handleSubmit}
         className="lg:col-span-2 w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 py-2 text-xl font-bold rounded-full mx-auto hover:from-sky-700 hover:to-sky-600 transition-all"
       >
         ذخیره دسته‌بندی
       </button>
+      <motion.button
+          
+          onClick={() => setIsModalOpen(true)}
+          className="lg:col-span-2 w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white mt-3 py-2 text-xl font-bold rounded-full hover:from-indigo-700 hover:to-indigo-600 transition-all"
+        >
+          ویرایش دسته‌بندی‌ها
+        </motion.button>
 
+          </div>
+      
+      </div>
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black z-40"
+              onClick={() => setIsModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.75 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.75 }}
+              className="fixed inset-4 z-50 overflow-auto"
+            >
+              <button
+                onClick={() =>{setIsModalOpen(false)
+                  fetchCategories()
+                } }
+                className="absolute top-4 left-4 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+              >
+                ✕
+              </button>
+              <EditCategory />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
       <ToastContainer rtl={true} position="top-center" />
-    </div>
+
+    </>
   );
 };
 
