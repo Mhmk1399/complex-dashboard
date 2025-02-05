@@ -16,11 +16,6 @@ const AddCategory = () => {
   const [existingCategories, setExistingCategories] = useState<Category[]>([]);
   const [selectedParents, setSelectedParents] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-
-  const openEditModal = () => setShowEditModal(true);
-  const closeEditModal = () => setShowEditModal(false);
-
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -109,17 +104,17 @@ const AddCategory = () => {
           ))}
         </div>
       </div>
-          <div className="flex justify-center lg:-mt">
+          <div className="flex justify-center w-full col-span-2 gap-2">
             <button
         onClick={handleSubmit}
-        className="lg:col-span-2 w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 py-2 text-xl font-bold rounded-full mx-auto hover:from-sky-700 hover:to-sky-600 transition-all"
+        className=" w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 py-2 text-xl font-bold rounded-full mx-auto hover:from-sky-700 hover:to-sky-600 transition-all"
       >
         ذخیره دسته‌بندی
       </button>
       <motion.button
           
           onClick={() => setIsModalOpen(true)}
-          className="lg:col-span-2 w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white mt-3 py-2 text-xl font-bold rounded-full hover:from-indigo-700 hover:to-indigo-600 transition-all"
+          className=" w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white mt-3 py-2 text-xl font-bold rounded-full hover:from-indigo-700 hover:to-indigo-600 transition-all"
         >
           ویرایش دسته‌بندی‌ها
         </motion.button>

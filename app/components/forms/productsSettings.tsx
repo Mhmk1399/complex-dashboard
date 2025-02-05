@@ -3,12 +3,13 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Tooltip } from 'react-tooltip'; // Add this import
 
 interface ProductSettings {
   type: string;
   blocks: {
     images: {
-      imageSrc: string; 
+      imageSrc: string;
       imageAlt: string;
     }
     properties: {
@@ -16,14 +17,14 @@ interface ProductSettings {
       value: string;
     }[]
     colors:
-      {
-        code: string;
-        quantity: string;
-      }[];
-  
+    {
+      code: string;
+      quantity: string;
+    }[];
+
     name: string;
     description: string;
-    category: {_id: string, name: string};
+    category: { _id: string, name: string };
     price: string;
     status: string;
     discount: string;
@@ -32,7 +33,7 @@ interface ProductSettings {
 }
 
 export const ProductsSettings = () => {
-  const [categories, setCategories] = useState<Array<{_id: string, name: string}>>([]);
+  const [categories, setCategories] = useState<Array<{ _id: string, name: string }>>([]);
   const [settings, setSettings] = useState<ProductSettings>({
     type: "productDetails",
     blocks: {
@@ -42,7 +43,7 @@ export const ProductsSettings = () => {
       },
       name: "نام محصول",
       description: "توضیحات محصول",
-      category:{
+      category: {
         _id: "",
         name: ""
       },
@@ -51,10 +52,10 @@ export const ProductsSettings = () => {
       discount: "0",
       id: "1",
       properties: [
-   
+
       ],
       colors: [
-        
+
       ]
     },
   });
@@ -72,11 +73,14 @@ export const ProductsSettings = () => {
         toast.error('خطا در دریافت دسته‌بندی‌ها');
       }
     };
-  
+
     fetchCategories();
   }, []);
   const [newProperty, setNewProperty] = useState({ name: "", value: "" });
   const [newColor, setNewColor] = useState({ code: "", quantity: "" });
+  const [showPropertiesModal, setShowPropertiesModal] = useState(false);
+  const [showColorsModal, setShowColorsModal] = useState(false);
+
 
   const handleChange = (section: string, field: string, value: string) => {
     if (field === "category") {
@@ -85,7 +89,7 @@ export const ProductsSettings = () => {
         ...prev,
         blocks: {
           ...prev.blocks,
-          category: selectedCategory || {_id: "", name: ""}
+          category: selectedCategory || { _id: "", name: "" }
         },
       }));
     } else {
@@ -98,7 +102,7 @@ export const ProductsSettings = () => {
       }));
     }
   };
-  
+
 
   // const handleImageChange = (field: string, value: string) => {
   //   setSettings((prev) => ({
@@ -173,8 +177,52 @@ export const ProductsSettings = () => {
       toast.error("خطا در بروزرسانی محصول");
       console.log(error);
     }
-};
+  };
+  const PropertiesModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-xl w-96 max-h-[80vh] overflow-y-auto">
+        <h3 className="text-xl font-bold mb-4">ویژگی‌های اضافه شده</h3>
+        {settings.blocks.properties.map((prop, index) => (
+          <div key={index} className="flex justify-between items-center mb-2 p-2 bg-gray-50 rounded-lg">
+            <span className="font-bold">{prop.name}:</span>
+            <span>{prop.value}</span>
+          </div>
+        ))}
+        <button
+          onClick={() => setShowPropertiesModal(false)}
+          className="mt-4 w-full bg-sky-500 text-white py-2 rounded-xl"
+        >
+          بستن
+        </button>
+      </div>
+    </div>
+  );
 
+  const ColorsModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-xl w-96 max-h-[80vh] overflow-y-auto">
+        <h3 className="text-xl font-bold mb-4">رنگ‌های اضافه شده</h3>
+        {settings.blocks.colors.map((color, index) => (
+          <div key={index} className="flex justify-between items-center mb-2 p-2 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <div
+                className="w-6 h-6 rounded-full border"
+                style={{ backgroundColor: color.code }}
+              />
+              <span>{color.code}</span>
+            </div>
+            <span>تعداد: {color.quantity}</span>
+          </div>
+        ))}
+        <button
+          onClick={() => setShowColorsModal(false)}
+          className="mt-4 w-full bg-sky-500 text-white py-2 rounded-xl"
+        >
+          بستن
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -216,7 +264,7 @@ export const ProductsSettings = () => {
           className="w-full p-2 border rounded-xl"
         />
       </div>
-      
+
       <div>
         <label className="block mb-2 text-white font-bold">توضیحات</label>
         <textarea
@@ -229,21 +277,21 @@ export const ProductsSettings = () => {
         />
       </div>
       <div>
-  <label className="block mb-2 text-white font-bold">دسته بندی</label>
-  <select
-    value={settings.blocks.category._id}
-    onChange={(e) => handleChange("blocks", "category", e.target.value)}
-    className="w-full p-2 border rounded-xl"
-    required
-  >
-    <option value="">انتخاب دسته بندی</option>
-    {categories.map((category) => (
-      <option key={category._id} value={category._id}>
-        {category.name}
-      </option>
-    ))}
-  </select>
-</div>
+        <label className="block mb-2 text-white font-bold">دسته بندی</label>
+        <select
+          value={settings.blocks.category._id}
+          onChange={(e) => handleChange("blocks", "category", e.target.value)}
+          className="w-full p-2 border rounded-xl"
+          required
+        >
+          <option value="">انتخاب دسته بندی</option>
+          {categories.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="lg:col-span-1">
         <h3 className="text-white font-bold mb-2">افزودن ویژگی</h3>
@@ -252,21 +300,41 @@ export const ProductsSettings = () => {
             type="text"
             placeholder="نام ویژگی"
             value={newProperty.name}
-            onChange={(e) => setNewProperty({...newProperty, name: e.target.value})}
+            onChange={(e) => setNewProperty({ ...newProperty, name: e.target.value })}
             className="p-2 border rounded-xl"
           />
           <input
             type="text"
             placeholder="مقدار"
             value={newProperty.value}
-            onChange={(e) => setNewProperty({...newProperty, value: e.target.value})}
+            onChange={(e) => setNewProperty({ ...newProperty, value: e.target.value })}
             className="p-2 border rounded-xl"
           />
-          <button onClick={addProperty} className="bg-sky-500 text-white px-4 rounded-xl">
-            افزودن
+          <button
+            onClick={addProperty}
+            className="bg-sky-500 text-white px-4 rounded-xl hover:bg-sky-600 transition-colors"
+            data-tooltip-id="add-property"
+            data-tooltip-content="افزودن ویژگی جدید"
+
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white">
+              <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z" />
+            </svg>
           </button>
+          {settings.blocks.properties.length > 0 && (
+            <button
+             data-tooltip-id="view-properties"
+    data-tooltip-content="مشاهده ویژگی‌ها"
+              onClick={() => setShowPropertiesModal(true)}
+              className="bg-sky-600 text-white px-4 flex items-center py-2 rounded-xl hover:bg-sky-700 transition-colors"
+              data-tip="مشاهده ویژگی‌های اضافه شده"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-280v-80h560v80H120Zm0-160v-80h560v80H120Zm0-160v-80h560v80H120Zm680 320q-17 0-28.5-11.5T760-320q0-17 11.5-28.5T800-360q17 0 28.5 11.5T840-320q0 17-11.5 28.5T800-280Zm0-160q-17 0-28.5-11.5T760-480q0-17 11.5-28.5T800-520q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440Zm0-160q-17 0-28.5-11.5T760-640q0-17 11.5-28.5T800-680q17 0 28.5 11.5T840-640q0 17-11.5 28.5T800-600Z" /></svg>
+              <span className="mr-2">({settings.blocks.properties.length})</span>
+            </button>
+          )}
         </div>
-        
+
       </div>
       <div>
         <label className="block mb-2 text-white font-bold"> وضعیت</label>
@@ -285,25 +353,44 @@ export const ProductsSettings = () => {
         <h3 className="text-white font-bold mb-2">افزودن رنگ</h3>
         <div className="flex gap-2">
           <input
-          style={{borderRadius: "70%"}}
+            style={{ borderRadius: "70%" }}
             type="color"
             value={newColor.code}
-            onChange={(e) => setNewColor({...newColor, code: e.target.value})}
+            onChange={(e) => setNewColor({ ...newColor, code: e.target.value })}
             className="border p-0 w-10 h-10 rounded-xl"
           />
           <input
             type="number"
             placeholder="تعداد"
             value={newColor.quantity}
-            onChange={(e) => setNewColor({...newColor, quantity: e.target.value})}
+            onChange={(e) => setNewColor({ ...newColor, quantity: e.target.value })}
             className="p-2 border rounded-xl"
           />
-          <button onClick={addColor} className="bg-sky-500 text-white px-4 rounded-xl">
-            افزودن رنگ
+          <button
+            onClick={addColor}
+            className="bg-sky-500 text-white px-4 rounded-xl hover:bg-sky-600 transition-colors"
+  data-tooltip-id="add-color"
+  data-tooltip-content="افزودن رنگ جدید"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white">
+              <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z" />
+            </svg>
           </button>
+          {settings.blocks.colors.length > 0 && (
+            <button
+             data-tooltip-id="view-colors"
+    data-tooltip-content="مشاهده رنگ‌ها"
+              onClick={() => setShowColorsModal(true)}
+              className="bg-sky-500 text-white px-4 py-2 flex items-center rounded-xl hover:bg-sky-600 transition-colors"
+              data-tip="مشاهده رنگ‌های اضافه شده"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M120-280v-80h560v80H120Zm0-160v-80h560v80H120Zm0-160v-80h560v80H120Zm680 320q-17 0-28.5-11.5T760-320q0-17 11.5-28.5T800-360q17 0 28.5 11.5T840-320q0 17-11.5 28.5T800-280Zm0-160q-17 0-28.5-11.5T760-480q0-17 11.5-28.5T800-520q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440Zm0-160q-17 0-28.5-11.5T760-640q0-17 11.5-28.5T800-680q17 0 28.5 11.5T840-640q0 17-11.5 28.5T800-600Z" /></svg>
+              <span className="mr-2">({settings.blocks.colors.length})</span>
+            </button>
+          )}
         </div>
       </div>
-      
+
       <div className="flex flex-col space-y-2 relative">
         <label className="block mb-2 text-white font-bold">قیمت</label>
         <input
@@ -338,11 +425,13 @@ export const ProductsSettings = () => {
               </div>
             </div>
           )}
+        <Tooltip id="add" place="top" />
+
       </div>
-     
+
 
       {/* Add new color section */}
-    
+
       <div>
         <label className="block mb-2 text-white font-bold">تخفیف</label>
         <input
@@ -359,7 +448,7 @@ export const ProductsSettings = () => {
         />
         <span className="text-white ml-2">{settings.blocks.discount}%</span>
       </div>
-      
+
 
       <button
         className="w-full bg-gradient-to-r border from-sky-600 to-sky-500 text-white mt-5 text-xl font-bold rounded-full mx-auto"
@@ -368,7 +457,14 @@ export const ProductsSettings = () => {
         save
       </button>
       <ToastContainer rtl={true} />
+      {showPropertiesModal && <PropertiesModal />}
+      {showColorsModal && <ColorsModal />}
+      <Tooltip id="add-property" place="top" />
+      <Tooltip id="view-properties" place="top" />
+      <Tooltip id="add-color" place="top" />
+      <Tooltip id="view-colors" place="top" />
     </div>
+
   );
 };
 
