@@ -163,11 +163,16 @@ export default function ImageGallery() {
                 className="relative max-w-4xl max-h-[90vh]"
               >
                 <Image
-                  src={selectedImage.fileUrl} // This will be the GitHub raw file URL
+                  src={`https://raw.githubusercontent.com/Mhmk1399/storadge/main/images/${selectedImage.fileName}`}
                   alt={selectedImage.fileName}
                   width={300}
                   height={300}
                   className="object-cover w-full h-48"
+                  onError={(e) => {
+                    console.error('Image load error', e);
+                    // Optionally, set a fallback image or error state
+                  }}
+                
                 />
               </motion.div>
             </motion.div>

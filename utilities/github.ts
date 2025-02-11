@@ -15,60 +15,64 @@ export async function saveGitHubMedia(
   content: string,
   commitMessage: string = "Upload file"
 ): Promise<string> {
+  const GITHUB_REPO = "storadge"; // Hardcoded repository name
   const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
 
-
   try {
-    // Verify token and repository access
-    const userResponse = await axios.get('https://api.github.com/user', {
-      headers: {
-        'Authorization': `token ${GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-    console.log('GitHub User:', userResponse.data.login);
+    // Step 1: Check if file already exists
+    let existingSha = null;
+    try {
+      const existingFileResponse = await axios.get(url, {
+        headers: {
+          Authorization: `token ${GITHUB_TOKEN}`,
+          Accept: "application/vnd.github.v3+json"
+        }
+      });
 
-    // Verify repository access
-    const repoResponse = await axios.get(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`, {
-      headers: {
-        'Authorization': `token ${GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-    console.log('Repository Details:', {
-      name: repoResponse.data.name,
-      fullName: repoResponse.data.full_name,
-      private: repoResponse.data.private
-    });
+      // If file exists, capture its current SHA
+      existingSha = existingFileResponse.data.sha;
+      console.log('Existing file found. Current SHA:', existingSha);
+    } catch (error) {
+      // File doesn't exist, which is fine - we'll create a new one
+      console.log('File does not exist. Will create new file.');
+    }
 
+    // Step 2: Prepare payload for file upload/update
     const payload = {
-      message: commitMessage,
-      content: content, // Base64 encoded content
-      branch: 'main' // Explicitly specify main branch
+      message: commitMessage, // Commit message for the GitHub action
+      content: content, // Base64 encoded file content
+      branch: 'main', // Specify the branch
+
+      // Include SHA only if file already exists
+      ...(existingSha && { sha: existingSha })
     };
 
+    // Step 3: Upload or update the file
     const response = await axios.put(url, payload, {
       headers: {
-        'Authorization': `token ${GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json',
+        Authorization: `token ${GITHUB_TOKEN}`,
+        Accept: "application/vnd.github.v3+json",
         'Content-Type': 'application/json'
       }
     });
 
+    // Step 4: Return the download URL of the uploaded file
     return response.data.content.download_url;
+
   } catch (error: any) {
+    // Comprehensive error logging
     console.error('Detailed GitHub Upload Error:', {
       errorType: error.name,
       status: error.response?.status,
-      headers: error.response?.headers,
-      data: error.response?.data,
       message: error.message,
-      url: url
+      responseData: error.response?.data
     });
-    throw new Error(`GitHub Upload Failed: ${error.response?.data?.message || error.message}`);
 
+    // Throw a more informative error
+    throw new Error(`GitHub Media Upload Failed: ${error.response?.data?.message || error.message}`);
   }
 }
+
 export async function fetchGitHubMedia(filePath: string): Promise<string> {
   const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
 
