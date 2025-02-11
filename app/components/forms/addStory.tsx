@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { EditStory } from "./editStory";
-
+import ImageSelectorModal from "./ImageSelectorModal";
 
 interface StorySettings {
   title: string;
@@ -16,6 +16,7 @@ export const AddStory = () => {
     image: "",
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
 
   const handleChange = (field: string, value: string) => {
     setSettings((prev) => ({
@@ -51,23 +52,31 @@ export const AddStory = () => {
     }
   };
  
+  const [stories, setStories] = useState([]);
 
-    const [stories, setStories] = useState([]);
+  const fetchStories = async () => {
+    try {
+      const response = await fetch('/api/story', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      const data = await response.json();
+      setStories(data);
+    } catch (error) {
+      toast.error('خطا در دریافت استوری‌ها');
+      console.log(error);
+    }
+  };
 
-    const fetchStories = async () => {
-        try {
-            const response = await fetch('/api/story', {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            const data = await response.json();
-            setStories(data);
-        } catch (error) {
-            toast.error('خطا در دریافت استوری‌ها');
-            console.log(error);
-        }
-    };
+  const handleImageSelect = (image: { fileUrl: any; }) => {
+    setSettings(prev => ({
+      ...prev,
+      image: image.fileUrl
+    }));
+    setIsImageSelectorOpen(false);
+  };
+
   return (
     <>
       <div className="p-6 grid lg:mx-auto lg:max-w-6xl mx-6 grid-cols-1 rounded-2xl bg-[#0077b6] md:grid-cols-1 lg:grid-cols-2 gap-4" dir="rtl">
@@ -77,12 +86,21 @@ export const AddStory = () => {
 
         <div>
           <label className="block mb-2 text-white font-bold">تصویر استوری</label>
-          <input
-            type="text"
-            onChange={(e) => handleChange("image", e.target.value)}
-            className="w-full p-2 border rounded-xl"
-            required
-          />
+          <div className="flex">
+            <input
+              type="text"
+              value={settings.image}
+              readOnly
+              className="w-full p-2 border rounded-xl ml-2"
+              placeholder="انتخاب تصویر"
+            />
+            <button 
+              onClick={() => setIsImageSelectorOpen(true)}
+              className="bg-blue-500 text-white px-4 py-2 rounded-xl"
+            >
+              انتخاب تصویر
+            </button>
+          </div>
         </div>
 
         <div>
@@ -117,6 +135,12 @@ export const AddStory = () => {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         fetchStories={fetchStories}
+      />
+
+      <ImageSelectorModal
+        isOpen={isImageSelectorOpen}
+        onClose={() => setIsImageSelectorOpen(false)}
+        onSelectImage={handleImageSelect}
       />
     </>
   );
