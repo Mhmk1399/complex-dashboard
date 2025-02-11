@@ -5,7 +5,6 @@ import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 interface Product {
   images: {
     imageSrc: string;
@@ -18,6 +17,7 @@ interface Product {
   price: string;
   status: string;
   discount: string;
+  storeId: string;
   properties: {
     name: string;
     value: string;
@@ -36,7 +36,6 @@ export const Inventory = () => {
   const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
     null
   );
-  
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
@@ -126,26 +125,26 @@ export const Inventory = () => {
       <h2 className="text-2xl font-bold text-center mx-16 mb-6">
         موجودی محصول{" "}
       </h2>
-      <div className="overflow-x-auto lg:mx-16 mx-6 bg-white rounded-lg shadow">
+      <div className="overflow-x-auto lg:mx-16 mx-6 bg-white border border-[#0077b6]">
         <table className="w-full divide-y divide-gray-200">
-          <thead className="bg-gray-500">
+          <thead className="bg-blue-100 border border-[#0077b6]">
             <tr>
-              <th className="px-10 py-3  text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-10 py-3 border-l border-[#0077b6]  text-right text-base font-bold text-[#0077b6] uppercase tracking-wider">
                 محصول
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right border-l border-[#0077b6] text-base font-bold text-[#0077b6] uppercase tracking-wider">
                 دسته بندی
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right border-l border-[#0077b6] text-base font-bold text-[#0077b6] uppercase tracking-wider">
                 قیمت
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right border-l border-[#0077b6] text-base font-bold text-[#0077b6] uppercase tracking-wider">
                 وضعیت
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right border-l border-[#0077b6] text-base font-bold text-[#0077b6] uppercase tracking-wider">
                 موجودی
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right  text-base font-bold text-[#0077b6] uppercase tracking-wider">
                 عملیات ها
               </th>
             </tr>
@@ -156,10 +155,10 @@ export const Inventory = () => {
                 key={product._id}
                 className="hover:bg-gray-50 transition-colors"
               >
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                   <div className="flex items-center">
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium  text-gray-900">
                         {product.name}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -168,8 +167,8 @@ export const Inventory = () => {
                     </div>
                   </div>
                 </td>
-                
-                <td className="px-6 py-4 whitespace-nowrap">
+
+                <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                   <div className="text-sm text-gray-900">${product.price}</div>
                   {product.discount !== "0" && (
                     <div className="text-xs text-green-600">
@@ -177,7 +176,7 @@ export const Inventory = () => {
                     </div>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       product.status === "available"
@@ -188,8 +187,8 @@ export const Inventory = () => {
                     {product.status}
                   </span>
                 </td>
-               
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border-l border-[#0077b6]">
                   <div className="flex space-x-3">
                     <button
                       title="edit"
@@ -208,6 +207,12 @@ export const Inventory = () => {
                     </button>
                   </div>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border-l border-[#0077b6]">
+                  <div className="flex space-x-3"></div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border-l border-[#0077b6]">
+                  <div className="flex space-x-3"></div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -219,7 +224,7 @@ export const Inventory = () => {
         onClose={closeModal}
         onConfirm={confirmDelete}
       />
-      <ToastContainer  rtl={true} />
+      <ToastContainer rtl={true} />
     </div>
   );
 };

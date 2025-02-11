@@ -15,11 +15,11 @@ import { IoSettings } from "react-icons/io5";
 const dashboardMenuItems = [
   {
     id: "start",
-    title: "راهنمای سایت",
+    title: "خانه",
     icon: <FaHome />,
     subMenuItems: [
       {
-        title: "راهنمای سایت",
+        title: "داشبورد مدیریت",
         value: "start",
       },
     ],
@@ -47,7 +47,6 @@ const dashboardMenuItems = [
     icon: <CustomersIcon />,
     subMenuItems: [
       { title: "کاربران", value: "costumers" },
-      { title: "بخش ", value: "segment" },
     ],
   },
   {

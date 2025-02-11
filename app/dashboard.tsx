@@ -109,7 +109,7 @@ export const Dashboard = () => {
     }
   };
   return (
-    <div className="h-screen my-12">
+    <div className="h-screen">
       <Form setSelectedMenu={setSelectedMenu} />
       <RenderForms />
     </div>

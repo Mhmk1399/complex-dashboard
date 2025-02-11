@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Tooltip } from "react-tooltip"; // Add this import
+import ImageSelectorModal from "./ImageSelectorModal";
 
 interface ProductSettings {
   type: string;
@@ -35,6 +36,8 @@ export const ProductsSettings = () => {
   const [categories, setCategories] = useState<
     Array<{ _id: string; name: string }>
   >([]);
+  const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
+
   const [settings, setSettings] = useState<ProductSettings>({
     type: "productDetails",
     blocks: {
@@ -56,6 +59,13 @@ export const ProductsSettings = () => {
       colors: [],
     },
   });
+  const handleImageSelect = (image: { fileUrl: any; }) => {
+    setSettings(prev => ({
+      ...prev,
+      image: image.fileUrl
+    }));
+    setIsImageSelectorOpen(false);
+  };
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -239,10 +249,7 @@ export const ProductsSettings = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br py-8">
       <div className="max-w-7xl mx-auto px-4">
-        <div
-          className="bg-white rounded-2xl p-4"
-          dir="rtl"
-        >
+        <div className="bg-white rounded-2xl p-4" dir="rtl">
           {/* Header */}
           <div className="mb-8 ">
             <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-[#0077b6] to-blue-400 bg-clip-text text-transparent">
@@ -255,34 +262,25 @@ export const ProductsSettings = () => {
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Image Section */}
-            <div className="space-y-6 p-6 bg-[#0077b6]/5 rounded-xl">
-              <div className="group">
-                <label className="block mb-2 font-bold text-[#0077b6] group-hover:text-blue-700 transition-colors">
+            <div className="space-y-6 p-6  bg-[#0077b6]/5 rounded-xl">
+              <div>
+                <label className="block mb-2 mt-6 text-[#0077b6] font-bold">
                   تصویر محصول
                 </label>
-                <div className="relative">
+                <div className="flex">
                   <input
-                    type="file"
-                    onChange={(e) =>
-                      handleChange("blocks", "imageSrc", e.target.value)
-                    }
-                    className="w-full p-3 border-2 border-dashed border-blue-200 rounded-lg hover:border-blue-400 transition-all focus:outline-none focus:border-[#0077b6]"
-                    required
+                    type="text"
+                    value={settings.blocks.images.imageSrc}
+                    readOnly
+                    className="w-full p-2 border border-blue-200 rounded-xl ml-2"
+                    placeholder="انتخاب تصویر"
                   />
-                  <span className="absolute right-3 top-3 text-blue-400">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </span>
+                  <button
+                    onClick={() => setIsImageSelectorOpen(true)}
+                    className="bg-white text-[#0077b6] border text-nowrap border-blue-200 px-4 py-2 rounded-xl"
+                  >
+                    انتخاب تصویر
+                  </button>
                 </div>
               </div>
 
@@ -389,7 +387,7 @@ export const ProductsSettings = () => {
                     onChange={(e) =>
                       setNewColor({ ...newColor, code: e.target.value })
                     }
-                    className="w-8 h-8 rounded-sm cursor-pointer transition-transform hover:scale-110 focus:outline-none "
+                    className="w-[3.5rem] mt-2 h-[3.5rem] rounded-2xl cursor-pointer transition-transform hover:scale-110 focus:outline-none "
                     style={{ padding: 0 }}
                   />
                 </div>
@@ -584,9 +582,9 @@ export const ProductsSettings = () => {
                     onChange={(e) =>
                       handleChange("blocks", "discount", e.target.value)
                     }
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer "
+                    className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
                     style={{
-                      background: `linear-gradient(to left, #0077b6 ${settings.blocks.discount}%, #0077b6 ${settings.blocks.discount}%)`,
+                      background: `linear-gradient(to left, #0077b6 ${settings.blocks.discount}%, #fff ${settings.blocks.discount}%)`,
                     }}
                     max={100}
                     min={0}
@@ -610,6 +608,11 @@ export const ProductsSettings = () => {
           </div>
         </div>
       </div>
+      <ImageSelectorModal
+        isOpen={isImageSelectorOpen}
+        onClose={() => setIsImageSelectorOpen(false)}
+        onSelectImage={handleImageSelect}
+      />
 
       <ToastContainer rtl={true} />
       {showPropertiesModal && <PropertiesModal />}
