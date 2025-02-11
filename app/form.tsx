@@ -39,9 +39,7 @@ const dashboardMenuItems = [
     id: "orders",
     title: "سفارشات",
     icon: <OrdersIcon />,
-    subMenuItems: [
-      { title: "سفارش ها", value: "orders" },
-    ],
+    subMenuItems: [{ title: "سفارش ها", value: "orders" }],
   },
   {
     id: "costumers",
@@ -106,14 +104,14 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   return (
     <div className="rounded-lg mb-2 right-0" dir="ltr">
       <button
-        className="w-full py-4 px-2 text-right bg-[#90e0ef] hover:bg-[#0077b6] hover:bg-opacity-10 group transition-all duration-500 ease-in-out rounded-lg flex justify-between items-center"
+        className="w-full py-4 px-2 text-right bg-transparent hover:bg-[#0077b6] hover:bg-opacity-10 border-2 border-[#0077b6] group transition-all duration-500 ease-in-out rounded-lg flex justify-between items-center"
         onClick={onToggle}
       >
-        <span className=" text-[#fff] group-hover:text-blue-400 p-0 text-xl transition-all duration-500 ease-in-out">
+        <span className=" text-[#0077b6] group-hover:text-blue-400 p-0 text-xl transition-all duration-500 ease-in-out">
           {icon}
         </span>
 
-        <span className="text-gray-500 group-hover:text-white font-semibold transition-all duration-500 ease-in-out">
+        <span className="text-[#0077b6] group-hover:text-gray-500 font-semibold transition-all duration-500 ease-in-out">
           {title}
         </span>
 
@@ -134,7 +132,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="p-2 bg-white/10 rounded-2xl my-2 ">{children}</div>
+            <div className="p-2 bg-[#0077b6]/10 rounded-lg my-2 ">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -163,7 +161,7 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
         {item.subMenuItems?.map((subItem, index) => (
           <div
             key={index}
-            className="text-right  transition-all duration-200 ease-in-out cursor-pointer hover:font-bold text-[#e3e3e3] m-2"
+            className="text-right transition-all duration-300 ease-in-out border-b hover:-translate-x-1 border-[#0077b6]/50 p-1 cursor-pointer hover:text-gray-500 hover:font-bold text-[#0077b6] m-2"
             onClick={() => setSelectedMenu(subItem.value)}
           >
             {/* <span className="mx-2">{`<`}</span> */}
@@ -181,14 +179,14 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
         onClick={toggleMenu}
         className={`fixed top-4 right-4 ${
           isOpen ? "left-4 bg-transparent shadow-none" : ""
-        } z-50 bg-[#0077b6] p-3 rounded-full text-white shadow-lg`}
+        } z-50  p-3 rounded-full text-[#0077b6]`}
       >
         {isOpen ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
+            strokeWidth={2}
             stroke="currentColor"
             className="w-6 h-6"
           >
@@ -212,7 +210,7 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               onClick={toggleMenu}
-              className="fixed inset-0 bg-black z-40"
+              className="fixed inset-0 bg-black/70 z-40"
             />
 
             {/* Sliding Menu Panel */}
@@ -222,10 +220,11 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 150, damping: 20 }}
               dir="rtl"
-              className="w-64 bg-[#0077b6] backdrop-blur-sm bg-opacity-60 rounded-xl fixed top-0 right-0 h-full shadow-lg flex flex-col overflow-y-auto p-6 z-50"
+              // Add this class to your sliding menu panel div
+              className="w-64  bg-[#f8f9fa]  fixed top-0 right-0 h-full flex flex-col overflow-y-auto p-6 z-50 custom-scrollbar"
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-[#fff]" dir="rtl">
+                <h2 className="text-2xl font-bold text-[#0077b6]" dir="rtl">
                   منوی مدیریت
                 </h2>
               </div>

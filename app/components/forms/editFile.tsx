@@ -68,7 +68,7 @@ export default function ImageGallery() {
 
   return (
     <div className="pb-6">
-      <div className="p-6 bg-gradient-to-br mx-44 rounded-2xl from-[#0077b6] to-[#caf0f8]">
+      <div className="p-6 bg-gradient-to-br lg:mx-44 mx-4 rounded-2xl from-[#0077b6]/70 to-[#caf0f8]">
         <motion.h1
           className="text-3xl font-bold text-white mb-8 text-center"
           initial={{ y: -20, opacity: 0 }}

@@ -40,11 +40,6 @@ const SignInForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-
-  
-
-
-
   const submitFormData = async () => {
     const storeId = generateStoreId();
     const targetProjectDirectory = formData.name;
