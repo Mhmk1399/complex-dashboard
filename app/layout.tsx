@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import { Cairo } from "next/font/google";
+import { hezare } from "../next-persian-fonts/dohezar";
 
 import "./globals.css";
-
-const cairoFont = Cairo({
-  weight: "400",
-  subsets: ["arabic"],
-  variable: "--font-cairo",
-});
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -32,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${cairoFont.variable}  antialiased`}>
+      <body className={`${hezare.variable}`}>
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
