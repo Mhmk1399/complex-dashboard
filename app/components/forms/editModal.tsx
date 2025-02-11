@@ -1,28 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 interface Product {
-  images?: ProductImages;
+  images: {
+    imageSrc: string;
+    imageAlt: string;
+  };
   _id: string;
-  imageSrc?: string;
-  imageAlt?: string;
   name: string;
   description: string;
-  category: string;
+  category: { _id: string; name: string };
   price: string;
   status: string;
   discount: string;
-  id: string;
-  innventory: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-interface ProductImages {
-  imageSrc: string;
-  imageAlt: string;
+  properties: {
+    name: string;
+    value: string;
+  }[];
+  colors: {
+    code: string;
+    quantity: string;
+  }[];
+  storeId: string;
 }
 
 interface EditModalProps {
@@ -42,69 +43,80 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     price: product.price,
     status: product.status,
     discount: product.discount,
-    innventory: product.innventory,
+    properties: product.properties || [],
+    colors: product.colors || []
   });
+  const [categories, setCategories] = useState<Array<{ _id: string, name: string }>>([]);
+  const [newProperty, setNewProperty] = useState({ name: "", value: "" });
+  const [newColor, setNewColor] = useState({ code: "", quantity: "" });
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/category', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        toast.error('خطا در دریافت دسته‌بندی‌ها');
+      }
+    };
 
+    if (isOpen) {
+      fetchCategories();
+    }
+  }, [isOpen]);
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
-
+  const addProperty = () => {
+    if (newProperty.name && newProperty.value) {
+      setFormData(prev => ({
+        ...prev,
+        properties: [...prev.properties, newProperty]
+      }));
+      setNewProperty({ name: "", value: "" });
+    }
+  };
+  const addColor = () => {
+    if (newColor.code && newColor.quantity) {
+      setFormData(prev => ({
+        ...prev,
+        colors: [...prev.colors, newColor]
+      }));
+      setNewColor({ code: "", quantity: "" });
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(formData);
+
     try {
       const response = await fetch(`/api/products/${product._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({
-          images: {
-            imageSrc: formData.imageSrc,
-            imageAlt: formData.imageAlt,
-          },
-          ...formData,
-        }),
+        body: JSON.stringify(
+          formData
+        ),
       });
 
       if (response.ok) {
-        toast.success(` محصول ${product.name} با موفقیت ویرایش شد`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.success(`محصول ${product.name} با موفقیت ویرایش شد`);
         onSave();
         onClose();
       } else {
-        toast.error(`محصول ${product.name} ویرایش نشد`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.error(`خطا در ویرایش محصول ${product.name}`);
       }
     } catch (error) {
-      toast.error(`محصول ${product.name} ویرایش نشد ${error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      toast.error(`خطا در ویرایش محصول: ${error}`);
     }
   };
 
@@ -174,17 +186,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                     className="w-full p-2 border rounded bg-white/5 border-white/20 outline-none text-white focus:border-white/50 transition-all duration-300"
                   />
                 </div>
-                <div>
-                  <label className="block mb-2 text-white">
-                    دسته بندی محصول
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.category}
-                    onChange={(e) => handleChange("category", e.target.value)}
-                    className="w-full p-2 border rounded bg-white/5 border-white/20 outline-none text-white focus:border-white/50 transition-all duration-300"
-                  />
-                </div>
+
                 <div className="col-span-2">
                   <label className="block mb-2 text-white">توضیحات محصول</label>
                   <textarea
@@ -268,15 +270,129 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                       </div>
                     )}
                 </div>
+                {/* Category dropdown */}
                 <div>
-                  <label className="block mb-2 text-white">تعداد موجودی</label>
-                  <input
-                    type="text"
-                    value={formData.innventory}
-                    onChange={(e) => handleChange("innventory", e.target.value)}
-                    className="w-full p-2 border rounded bg-white/5 border-white/20 outline-none text-white focus:border-white/50 transition-all duration-300"
-                  />
+                  <label className="block mb-2 text-white">دسته بندی</label>
+                  <select
+                    value={formData.category._id}
+                    onChange={(e) => {
+                      const selectedCategory = categories.find(cat => cat._id === e.target.value);
+                      setFormData(prev => ({
+                        ...prev,
+                        category: selectedCategory || { _id: "", name: "" }
+                      }));
+                    }}
+                    className="w-full p-2 border rounded bg-white/5 border-white/20"
+                  >
+                    {categories.map((category) => (
+                      <option key={category._id} value={category._id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* Properties section */}
+                <div className="col-span-2">
+                  <h3 className="text-white font-bold mb-2">ویژگی‌ها</h3>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      placeholder="نام ویژگی"
+                      value={newProperty.name}
+                      onChange={(e) => setNewProperty({ ...newProperty, name: e.target.value })}
+                      className="p-2 border rounded bg-white/5 border-white/20"
+                    />
+                    <input
+                      type="text"
+                      placeholder="مقدار"
+                      value={newProperty.value}
+                      onChange={(e) => setNewProperty({ ...newProperty, value: e.target.value })}
+                      className="p-2 border rounded bg-white/5 border-white/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={addProperty}
+                      className="bg-blue-500 text-white px-4 rounded"
+                    >
+                      افزودن
+                    </button>
+                  </div>
+                  {/* Display existing properties */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {formData.properties.map((prop, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-white/10 rounded">
+                        <span>{prop.name}: {prop.value}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({
+                              ...prev,
+                              properties: prev.properties.filter((_, i) => i !== index)
+                            }));
+                          }}
+                          className="text-red-500"
+                        >
+                          حذف
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Colors section */}
+                <div className="col-span-2">
+                  <h3 className="text-white font-bold mb-2">رنگ‌ها</h3>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="color"
+                      value={newColor.code}
+                      onChange={(e) => setNewColor({ ...newColor, code: e.target.value })}
+                      className="w-10 h-10 rounded"
+                    />
+                    <input
+                      type="number"
+                      placeholder="تعداد"
+                      value={newColor.quantity}
+                      onChange={(e) => setNewColor({ ...newColor, quantity: e.target.value })}
+                      className="p-2 border rounded bg-white/5 border-white/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={addColor}
+                      className="bg-blue-500 text-white px-4 rounded"
+                    >
+                      افزودن
+                    </button>
+                  </div>
+                  {/* Display existing colors */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {formData.colors.map((color, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-white/10 rounded">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-6 h-6 rounded-full border"
+                            style={{ backgroundColor: color.code }}
+                          />
+                          <span>تعداد: {color.quantity}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({
+                              ...prev,
+                              colors: prev.colors.filter((_, i) => i !== index)
+                            }));
+                          }}
+                          className="text-red-500"
+                        >
+                          حذف
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="col-span-2 flex justify-start gap-4">
                   <motion.button
                     type="button"

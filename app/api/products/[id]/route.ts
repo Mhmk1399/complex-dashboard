@@ -65,18 +65,18 @@ export async function PATCH(req: NextRequest) {
 
     try {
         const body = await req.json();
+        
         const updateData = {
-            images: {
-                imageSrc: body.images.imageSrc,
-                imageAlt: body.images.imageAlt,
-            },
+            images: body.images,
             name: body.name,
             description: body.description,
-            category: body.category,
+            category: body.category._id,
             price: body.price,
             status: body.status,
             discount: body.discount,
-            innventory: body.innventory
+            properties: body.properties,
+            colors: body.colors,
+            storeId: body.storeId
         };
 
         const updatedProduct = await products.findByIdAndUpdate(
@@ -98,3 +98,5 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ message: 'Error updating product' }, { status: 500 });
     }
 }
+
+

@@ -104,14 +104,11 @@ export default function ImageSelectorModal({
                   onClick={() => handleImageSelect(image)}
                 >
                   <Image
-                    src={`https://raw.githubusercontent.com/Mhmk1399/storadge/main/images/${image.fileName}`}
+                    src={image.fileUrl}
                     alt={image.fileName}
-                    width={200}
-                    height={200}
+                    width={300}
+                    height={300}
                     className="object-cover w-full h-48"
-                    onError={(e) => {
-                      console.error("Image load error", e);
-                    }}
                   />
                 </motion.div>
               ))}

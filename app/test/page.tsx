@@ -27,15 +27,11 @@ export default function ParentComponent() {
       {selectedImage && (
         <div>
           <Image
-            src={`https://raw.githubusercontent.com/Mhmk1399/storadge/main/images/${selectedImage.fileName}`}
+            src={selectedImage.fileUrl}
             alt={selectedImage.fileName}
             width={300}
             height={300}
             className="object-cover w-full h-48"
-            onError={(e) => {
-              console.error("Image load error", e);
-              // Optionally, set a fallback image or error state
-            }}
           />
         </div>
       )}
