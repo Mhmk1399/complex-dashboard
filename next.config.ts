@@ -5,8 +5,16 @@ const nextConfig: NextConfig = {
     domains: [
       'raw.githubusercontent.com',
       'github.com'
-    ]}
-  /* config options here */
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+        port: '',
+        pathname: '/Mhmk1399/storadge/main/images/**'
+      }
+    ]
+  },
 };
 
 export default nextConfig;
