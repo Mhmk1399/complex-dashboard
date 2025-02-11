@@ -5,29 +5,28 @@ import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-interface ProductImages {
-  imageSrc: string;
-  imageAlt: string;
-}
 
 interface Product {
-  images?: ProductImages;
+  images: {
+    imageSrc: string;
+    imageAlt: string;
+  };
   _id: string;
-  imageSrc?: string;
-  imageAlt?: string;
   name: string;
   description: string;
-  category: string;
+  category: { _id: string; name: string };
   price: string;
   status: string;
   discount: string;
-  id: string;
-  innventory: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  properties: {
+    name: string;
+    value: string;
+  }[];
+  colors: {
+    code: string;
+    quantity: string;
+  }[];
 }
-
 export const Inventory = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -169,9 +168,7 @@ export const Inventory = () => {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.category}
-                </td>
+                
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">${product.price}</div>
                   {product.discount !== "0" && (
@@ -191,9 +188,7 @@ export const Inventory = () => {
                     {product.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.innventory}
-                </td>
+               
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-3">
                     <button
