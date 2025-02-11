@@ -4,30 +4,17 @@ import { FaTrash, FaExpand } from "react-icons/fa";
 import { FiImage } from "react-icons/fi";
 import Image from "next/image";
 
+// Update the interface to match the actual file structure
 interface ImageFile {
-  id: string;
-  url: string;
-  name: string;
+  _id: string; // Changed from 'id'
+  fileName: string; // Changed from 'name'
+  fileUrl: string; // Changed from 'url'
+  fileType: string;
+  fileSize: number;
 }
 
 export default function ImageGallery() {
-  const [images, setImages] = useState<ImageFile[]>([
-    {
-      id: "1",
-      url: "/images/1.jpg",
-      name: "Image 1",
-    },
-    {
-      id: "2",
-      url: "/images/2.jpg",
-      name: "Image 2",
-    },
-    {
-      id: "3",
-      url: "/images/3.jpg",
-      name: "Image 3",
-    },
-  ]);
+  const [images, setImages] = useState<ImageFile[]>([]);
   const [selectedImage, setSelectedImage] = useState<ImageFile | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [deleteModal, setDeleteModal] = useState({
@@ -41,11 +28,12 @@ export default function ImageGallery() {
 
   const fetchImages = async () => {
     try {
-      const response = await fetch("/api/upload");
+      const response = await fetch("/api/uploadFile");
       const data = await response.json();
+      console.log("Fetched images:", data);
       setImages(data);
     } catch (error) {
-      console.log("Error fetching images:", error);
+      console.error("Error fetching images:", error);
     }
   };
 
@@ -55,11 +43,26 @@ export default function ImageGallery() {
 
   const confirmDelete = async () => {
     try {
-      await fetch(`/api/upload/${deleteModal.imageId}`, { method: "DELETE" });
-      setImages(images.filter((img) => img.id !== deleteModal.imageId));
-      setDeleteModal({ isOpen: false, imageId: "" });
+      const response = await fetch(
+        `/api/uploadFile?id=${deleteModal.imageId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        // Remove the deleted image from the state
+        setImages(images.filter((img) => img._id !== deleteModal.imageId));
+        setDeleteModal({ isOpen: false, imageId: "" });
+      } else {
+        // Handle error
+        const errorData = await response.json();
+        console.error("Delete failed:", errorData);
+        alert(`Failed to delete image: ${errorData.message}`);
+      }
     } catch (error) {
       console.error("Error deleting image:", error);
+      alert("An error occurred while deleting the image");
     }
   };
 
@@ -98,15 +101,15 @@ export default function ImageGallery() {
           >
             {images.map((image) => (
               <motion.div
-                key={image.id}
+                key={image._id}
                 className="group relative bg-white/10 rounded-xl overflow-hidden backdrop-blur-sm"
                 whileHover={{ scale: 1.02 }}
                 layout
                 dir="rtl"
               >
                 <Image
-                  src={image.url}
-                  alt={image.name}
+                  src={image.fileUrl}
+                  alt={image.fileName}
                   width={300}
                   height={300}
                   className="object-cover w-full h-48"
@@ -122,7 +125,7 @@ export default function ImageGallery() {
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                       className="p-2 bg-red-500 rounded-full mx-2 text-white"
-                      onClick={() => initiateDelete(image.id)}
+                      onClick={() => initiateDelete(image._id)}
                     >
                       <FaTrash />
                     </motion.button>
@@ -160,11 +163,11 @@ export default function ImageGallery() {
                 className="relative max-w-4xl max-h-[90vh]"
               >
                 <Image
-                  src={selectedImage.url}
-                  alt={selectedImage.name}
-                  width={800}
-                  height={600}
-                  className="object-contain"
+                  src={selectedImage.fileUrl} // This will be the GitHub raw file URL
+                  alt={selectedImage.fileName}
+                  width={300}
+                  height={300}
+                  className="object-cover w-full h-48"
                 />
               </motion.div>
             </motion.div>
