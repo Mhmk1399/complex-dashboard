@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import connect from "@/lib/data";
-import { writeFile } from "fs/promises";
-import { join } from "path";
 import Files from "@/models/uploads";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { deleteGitHubFile, saveGitHubFile, saveGitHubMedia } from "@/utilities/github";
 
 interface CustomJwtPayload extends JwtPayload {
     targetDirectory: string;
@@ -28,13 +27,7 @@ export async function POST(request: Request) {
                 { status: 401 }
             );
         }
-        // const verifiedtoken = jwt.verify(token, process.env.JWT_SECRET!);
-        // if (!verifiedtoken) {
-        //     return NextResponse.json(
-        //         { message: "Unauthorized" },
-        //         { status: 401 }
-        //     );
-        // }
+
         const decodedToken = jwt.decode(token) as CustomJwtPayload;
         if (!decodedToken) {
             return NextResponse.json(
@@ -42,8 +35,6 @@ export async function POST(request: Request) {
                 { status: 401 }
             );
         }
-        const targetDirectory = decodedToken.targetDirectory;
-        const uploadsDir = join(targetDirectory, "public", "uploads");
 
         const formData = await request.formData();
         const file = formData.get("file") as File;
@@ -55,20 +46,21 @@ export async function POST(request: Request) {
             );
         }
 
+        // Convert file to base64
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
+        const base64File = buffer.toString('base64');
 
-        // Create uploads directory path
+        // Construct GitHub file path
+        const filePath = `images/${file.name}`;
 
-        const filePath = join(uploadsDir);
-
-        // Save file to directory
-        console.log(filePath);
-        
-        await writeFile(filePath, buffer);
-
-        // Create file URL
-        const fileUrl = `//Users//macbook//Desktop//mohammad//public//assets//images//${file.name}`;
+        // Upload file to GitHub and get download URL
+        const fileUrl = await saveGitHubMedia(
+            filePath,
+            base64File,
+            `Upload ${file.name}`
+          );
+          
 
         // Save file info to MongoDB
         const newFile = new Files({
@@ -94,7 +86,7 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error("Error uploading file:", error);
         return NextResponse.json(
-            { message: "Error uploading file" },
+            { message: "Error uploading file", error: String(error) },
             { status: 500 }
         );
     }
@@ -111,6 +103,57 @@ export async function GET() {
 
     const files = await Files.find();
     return NextResponse.json(files, { status: 200 });
-    
+}
 
+export async function DELETE(request: Request) {
+    try {
+        await connect();
+        if (!connect) {
+            return NextResponse.json(
+                { message: "Database connection error" },
+                { status: 500 }
+            );
+        }
+
+        // Extract file ID from the request
+        const { searchParams } = new URL(request.url);
+        const fileId = searchParams.get('id');
+
+        if (!fileId) {
+            return NextResponse.json(
+                { message: "File ID is required" },
+                { status: 400 }
+            );
+        }
+
+        // Find the file in the database
+        const file = await Files.findById(fileId);
+        
+        if (!file) {
+            return NextResponse.json(
+                { message: "File not found" },
+                { status: 404 }
+            );
+        }
+
+        // Extract the file path from the GitHub URL
+        const filePath = file.fileUrl.split('com/Mhmk1399/userwebsite/main/')[1];
+
+        // Delete from GitHub
+        await deleteGitHubFile(filePath);
+
+        // Delete from MongoDB
+        await Files.findByIdAndDelete(fileId);
+
+        return NextResponse.json(
+            { message: "File deleted successfully" },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.error("Error deleting file:", error);
+        return NextResponse.json(
+            { message: "Error deleting file", error: String(error) },
+            { status: 500 }
+        );
+    }
 }
