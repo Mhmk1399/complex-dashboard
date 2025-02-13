@@ -2,17 +2,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import {
-  FiArrowLeft,
-  FiCheck,
-  FiX,
-  FiShoppingCart,
-  FiUser,
-} from "react-icons/fi";
-import { BiEdit, BiBuildingHouse } from "react-icons/bi";
-import { BsAward } from "react-icons/bs";
+import { FiArrowLeft, FiCheck, FiX } from "react-icons/fi";
 
-const emptyDirectory = process.env.NEXT_PUBLIC_EMPTY_DIRECTORY;
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -22,19 +13,11 @@ const generateStoreId = () => {
 
 const SignInForm = () => {
   const router = useRouter();
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: "",
-    password: "",
     phoneNumber: "",
-    category: "",
-    subdomain: "",
+    password: "",
     title: "",
-    logo: "",
-    targetProjectDirectory: "",
-    templatesDirectory: "",
-    emptyDirectory: "",
-    storeId: "",
+    storeId: generateStoreId(),
   });
   const [errors, setErrors] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
@@ -42,11 +25,6 @@ const SignInForm = () => {
 
   const submitFormData = async () => {
     const storeId = generateStoreId();
-    const targetProjectDirectory = formData.name;
-    formData.title = formData.name;
-    formData.subdomain = formData.name;
-    formData.logo = formData.name;
-    formData.category = formData.name;
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
@@ -54,12 +32,7 @@ const SignInForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...formData,
-          targetProjectDirectory,
-          templatesDirectory: `${targetProjectDirectory}/public/template`,
-          emptyDirectory,
-          storeId,
-        }),
+          ...formData}),
       });
 
       const result = await response.json();
@@ -82,7 +55,6 @@ const SignInForm = () => {
       setShowModal(true);
     }
   };
-
 
   const Modal = () => (
     <AnimatePresence>
@@ -134,46 +106,40 @@ const SignInForm = () => {
     <motion.div
       initial={{ opacity: 0, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen bg-gradient-to-tr from-indigo-500 to-purple-600 flex flex-col items-center justify-center p-4"
+      className="min-h-screen  flex flex-col items-center justify-center p-4"
       dir="rtl"
     >
-      <h1 className="text-2xl  lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-white my-4 lg:my-10">
-        به سایت ساز تومک خوش آمدید!
-      </h1>
-
-      <motion.div className="bg-white bg-opacity-20 backdrop-blur-3xl rounded-2xl px-10 py-12 w-full max-w-4xl shadow-2xl border-2 border-white/50">
+      <motion.div className="bg-white/20 bg-opacity-20 backdrop-blur-3xl rounded-2xl px-10 py-12 w-full max-w-4xl border border-[#0077b6]">
         <motion.div
-          key={step}
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
         >
-          {step === 1 && (
             <>
-              <h2 className="text-2xl text-center font-bold text-white mb-6 drop-shadow-md">
-                اطلاعات کاربری
-              </h2>
+              <h1 className="text-2xl  lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-[#0077b6] my-4 lg:my-10">
+                خوش اومدی به سایکو بیا باهم سایت بسازیم
+              </h1>
               <hr />
               <br />
               <label
                 htmlFor="name"
-                className="block text-lg font-medium text-white mb-2"
+                className="block text-lg font-medium text-[#0077b6] mb-2"
               >
-                نام*
+                اسم فروشگاه
               </label>
               <input
-                id="name"
+                id="title"
                 type="text"
-                placeholder="نام خود را وارد کنید"
+                placeholder="اسم فروشگاهتو اینجا وارد کن"
                 onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
+                  setFormData({ ...formData, title: e.target.value })
                 }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
+                className="w-full p-4 ring-1 ring-[#0077b6]  focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg  focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
               />
               <label
                 htmlFor="password"
-                className="block text-lg font-medium text-white mb-2 mt-4"
+                className="block text-lg font-medium text-[#0077b6] mb-2 mt-4"
               >
-                رمز عبور*
+                رمز عبور
               </label>
               <input
                 id="password"
@@ -182,7 +148,7 @@ const SignInForm = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
+                className="w-full p-4 ring-1 ring-[#0077b6]  focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg  focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
               />
               <label
                 htmlFor="phoneNumber"
@@ -197,67 +163,10 @@ const SignInForm = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, phoneNumber: e.target.value })
                 }
-                className="w-full p-4 ring-1 ring-purple-400 focus:ring-2 focus:ring-purple-400 outline-none duration-300 placeholder:opacity-100 rounded-lg shadow-md focus:shadow-lg focus:shadow-purple-400 backdrop-blur-md bg-white/80"
+                className="w-full p-4 ring-1 ring-[#0077b6]  focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg  focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
               />
             </>
-          )}
-
-          {step === 2 && (
-            <>
-              <h2 className="text-2xl text-center font-bold text-white mb-6 drop-shadow-md">
-                دسته‌بندی سایت
-              </h2>
-              <hr />
-              <br />
-              <div className="grid grid-cols-1 gap-4 mt-4">
-                {[
-                  {
-                    value: "ecommerce",
-                    label: "فروشگاه آنلاین",
-                    icon: FiShoppingCart,
-                  },
-                  { value: "portfolio", label: "نمونه کار", icon: BsAward },
-                  { value: "blog", label: "وبلاگ", icon: BiEdit },
-                  { value: "company", label: "شرکتی", icon: BiBuildingHouse },
-                  { value: "personal", label: "شخصی", icon: FiUser },
-                ].map((option) => {
-                  const Icon = option.icon;
-                  return (
-                    <motion.div
-                      key={option.value}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        setFormData({ ...formData, category: option.value });
-                        setErrors("");
-                      }}
-                      className={`p-4 rounded-lg cursor-pointer border border-gray-50 transition-all
-                        backdrop-blur-sm bg-transparent shadow-md
-                        ${
-                          formData.category === option.value
-                            ? " bg-purple-700 hover:bg-purple-700 "
-                            : " hover:bg-white/10 hover:text-white"
-                        }
-                      `}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon
-                          className={`w-6 h-6 text-purple-800 ${
-                            formData.category === option.value
-                              ? "text-white"
-                              : "text-gray-400"
-                          }`}
-                        />
-                        <span className="text-lg font-medium text-white">
-                          {option.label}
-                        </span>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </>
-          )}
+          
 
           {errors && (
             <motion.p
@@ -270,40 +179,17 @@ const SignInForm = () => {
           )}
 
           <div className="flex justify-between mt-8">
-            {step > 1 && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 rounded-lg bg-gray-100/80 text-gray-700 font-medium backdrop-blur-md shadow-sm hover:shadow-md"
-                onClick={() => setStep(step - 1)}
-              >
-                Back
-              </motion.button>
-            )}
-
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="ml-1 px-6 py-3 rounded-lg bg-purple-600 text-white font-medium flex items-center gap-1 shadow-lg hover:shadow-purple-500"
+              className="ml-1 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex items-center gap-1  hover:shadow-[#0077b6] hover:shadow-md"
               onClick={submitFormData}
             >
-              {step === 2 ? "Complete" : "Next"}
+              ثبت نام
               <FiArrowLeft />
             </motion.button>
           </div>
         </motion.div>
-
-        <div className="flex gap-2 mt-8 justify-center">
-          {[1, 2].map((_, idx) => (
-            <motion.div
-              key={idx}
-              className={`h-[5px] mx-3 shadow-sm shadow-gray-200 rounded-full ${
-                idx == step ? "bg-purple-600" : "bg-gray-200"
-              }`}
-              style={{ width: `${100 / 2}%` }}
-            />
-          ))}
-        </div>
       </motion.div>
 
       <Modal />

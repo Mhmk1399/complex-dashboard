@@ -1,14 +1,13 @@
 import fetch from "node-fetch";
 
 interface DeployWebsiteParams {
-    repoName: string;
     githubRepoUrl: string;
-    userId: string; // Optional, if you want per-user deployments
+    reponame: string;
 }
 
 const VERCEL_API_BASE = "https://api.vercel.com";
 
-async function deployToVercel({ repoName, githubRepoUrl, userId }: DeployWebsiteParams) {
+async function deployToVercel({ githubRepoUrl, reponame }: DeployWebsiteParams) {
     const logs: string[] = [];
 
     if (!process.env.VERCEL_TOKEN) {
@@ -18,27 +17,26 @@ async function deployToVercel({ repoName, githubRepoUrl, userId }: DeployWebsite
     logs.push("[START] Initiating Vercel deployment process");
 
     try {
-        // Extract the repository owner and name from the GitHub URL
-        const repoPath = githubRepoUrl.replace("https://github.com/", "");
-        const [owner, repo] = repoPath.split("/");
+
 
         // Fetch repository details from GitHub API to get the repository ID
-        const githubRepoResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        const githubRepoResponse = await fetch(`https://api.github.com/repos/${githubRepoUrl.replace('https://github.com/', '')}`, {
             headers: {
                 'Authorization': `token ${process.env.GITHUB_TOKEN}`,
                 'Accept': 'application/vnd.github.v3+json'
             }
         });
 
+
         if (!githubRepoResponse.ok) {
-            throw new Error(`[ERROR] Failed to fetch GitHub repository details: ${await githubRepoResponse.text()}`);
+            throw new Error(`[ERROR] Failed to fetch GitHub repository details`);
         }
 
         const githubRepoData = await githubRepoResponse.json();
         const repoId = githubRepoData.id;
 
         // Create a new Vercel project
-        logs.push(`[INFO] Creating a new Vercel project for ${repoName}`);
+        logs.push(`[INFO] Creating a new Vercel project for ${reponame}`);
 
         const projectResponse = await fetch(`${VERCEL_API_BASE}/v9/projects`, {
             method: "POST",
@@ -47,10 +45,10 @@ async function deployToVercel({ repoName, githubRepoUrl, userId }: DeployWebsite
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                name: repoName,
+                name: reponame,
                 gitRepository: {
                     type: "github",
-                    repo: repoPath,
+                    repo: githubRepoUrl.replace('https://github.com/', ''), // Use owner/repo format
                 },
                 framework: "nextjs",
             }),
@@ -64,7 +62,7 @@ async function deployToVercel({ repoName, githubRepoUrl, userId }: DeployWebsite
         logs.push(`[SUCCESS] Vercel project created: ${projectData.id}`);
 
         // Trigger the first deployment
-        logs.push(`[INFO] Triggering deployment for ${repoName}`);
+        logs.push(`[INFO] Triggering deployment for ${reponame}`);
 
         const deploymentResponse = await fetch(`${VERCEL_API_BASE}/v13/deployments`, {
             method: "POST",
@@ -73,14 +71,14 @@ async function deployToVercel({ repoName, githubRepoUrl, userId }: DeployWebsite
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                name: repoName,
+                name: reponame,
                 project: projectData.id,
                 gitSource: {
                     type: "github",
                     repoUrl: githubRepoUrl,
                     ref: "main", // Specify the branch name, typically 'main' or 'master'
-                    owner: owner,
-                    repo: repo,
+                    owner: "Mhmk1399",
+                    repo: githubRepoUrl,
                     repoId: repoId // Add the repository ID
                 },
             }),

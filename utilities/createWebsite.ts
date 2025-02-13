@@ -2,13 +2,13 @@ import { Octokit } from "octokit";
 
 interface CreateWebsiteParams {
   emptyDirectoryRepoUrl: string;
-  targetDirectory: string;
+  title: string;
   storeId: string;
 }
 
 export async function createWebsite({
   emptyDirectoryRepoUrl,
-  targetDirectory,
+  title,
   storeId,
 }: CreateWebsiteParams) {
   const logs: string[] = [];
@@ -33,8 +33,8 @@ export async function createWebsite({
       template_owner: templateOwner,
       template_repo: templateRepo,
       owner: templateOwner,
-      name: targetDirectory,
-      private: true,
+      name: title+storeId,
+      private: false,
       include_all_branches: true
     });
 
@@ -42,10 +42,10 @@ export async function createWebsite({
 
     await octokit.rest.repos.createOrUpdateFileContents({
       owner: templateOwner,
-      repo: targetDirectory,
+      repo: title+storeId,
       path: 'store-config.json',
       message: 'Initialize store configuration',
-      content: Buffer.from(JSON.stringify({ storeId })).toString('base64')
+      content: Buffer.from(JSON.stringify({ "storeId:": storeId})).toString('base64')
     });
 
     logs.push("[SUCCESS] Store configuration added");
@@ -54,7 +54,7 @@ export async function createWebsite({
       success: true,
       logs,
       repoUrl: newRepo.html_url,
-      repoName: targetDirectory
+      repoName: newRepo.name
     };
   } catch (error: any) {
     logs.push(`[ERROR] ${error.message}`);

@@ -4,65 +4,67 @@ import User from "@/models/users";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { createWebsite } from "@/utilities/createWebsite";
+import deployToVercel from "@/utilities/vercelDeployment";
+
 
 export async function POST(request: Request) {
   const {
-    name,
     phoneNumber,
     password,
     title,
-    subdomain,
-    location,
-    socialMedia,
-    category,
-    targetProjectDirectory,
-    templatesDirectory,
-    emptyDirectory,
     storeId,
   } = await request.json();
 
   try {
     await connect();
+    const websiteResult = await createWebsite({
+      emptyDirectoryRepoUrl: process.env.EMPTY_DIRECTORY_REPO_URL!,
+      title,
+      storeId,
+    });
+
+    console.log("websiteResult:", websiteResult);
+
+
+
+    //creaete website
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const vercelUrl = await deployToVercel({
+      githubRepoUrl: websiteResult.repoUrl,
+      reponame: websiteResult.repoName,
+    });
+
+
+
+
+
+    const repoUrl = websiteResult.repoUrl;
+    console.log("repoUrl:", repoUrl);
+
     const newUser = new User({
-      name,
       phoneNumber,
       password: hashedPassword,
       title,
-      subdomain,
-      location,
-      socialMedia,
-      category,
-      targetProjectDirectory,
-      templatesDirectory,
-      emptyDirectory,
+      repoUrl,
+      vercelUrl,
       storeId,
     });
 
     await newUser.save();
 
-    //creaete website
-    const websiteResult = await createWebsite({
-      emptyDirectoryRepoUrl: process.env.EMPTY_DIRECTORY_REPO_URL!,
-      targetDirectory: targetProjectDirectory,
-      storeId,
-    });
-    
     const token = jwt.sign(
       {
         id: newUser._id,
         pass: hashedPassword,
-        targetDirectory: targetProjectDirectory,
-        templatesDirectory,
-        emptyDirectory,
         storeId,
-        repoUrl: websiteResult.repoUrl // Add the repo URL to the token
+        vercelUrl,
+        repoUrl
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
     );
-  
+
     return NextResponse.json(
       {
         message: "User created successfully",
