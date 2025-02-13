@@ -34,6 +34,8 @@ export async function POST(request: Request) {
       githubRepoUrl: websiteResult.repoUrl,
       reponame: websiteResult.repoName,
     });
+    console.log("websiteResult:", websiteResult);
+    console.log("vercelUrl:", vercelUrl);
 
 
 
@@ -47,7 +49,7 @@ export async function POST(request: Request) {
       password: hashedPassword,
       title,
       repoUrl,
-      vercelUrl,
+      vercelUrl:vercelUrl.deploymentUrl,
       storeId,
     });
 
@@ -58,7 +60,7 @@ export async function POST(request: Request) {
         id: newUser._id,
         pass: hashedPassword,
         storeId,
-        vercelUrl,
+        vercelUrl:vercelUrl.deploymentUrl,
         repoUrl
       },
       process.env.JWT_SECRET!,
@@ -70,7 +72,9 @@ export async function POST(request: Request) {
         message: "User created successfully",
         token,
         userId: newUser._id,
-        repoUrl: websiteResult.repoUrl // Also return it in the response
+        repoUrl: websiteResult.repoUrl,
+        vercelUrl:vercelUrl.deploymentUrl,
+        // Also return it in the response
       },
       { status: 201 }
     );
