@@ -50,18 +50,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const token = jwt.sign(
-            { 
-                id: user._id, 
-                pass: user.password,
-                targetDirectory: user.targetProjectDirectory, 
-                templatesDirectory: user.templatesDirectory, 
-                emptyDirectory: user.emptyDirectory, 
-                storeId: user.storeId 
-            },
-            tokenSecret,
-            { expiresIn: "1h" }
-        );
+            const token = jwt.sign(
+              {
+                id: user._id,
+                storeId: user.storeId,
+                vercelUrl:user.vercelUrl,
+                repoUrl:user.repoUrl,
+              },
+              process.env.JWT_SECRET!,
+              { expiresIn: "1h" }
+            );
 
         console.log('Login successful');
         return NextResponse.json({ token });

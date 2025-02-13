@@ -30,6 +30,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
     const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = jwt.decode(token);
+      console.log("decodedToken", decodedToken);
       if (decodedToken && typeof decodedToken === "object") {
         setRepoUrl(decodedToken.repoUrl || "");
       }
