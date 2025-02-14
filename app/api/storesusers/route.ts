@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
 
         const decodedToken = Jwt.decode(token) as CustomJwtPayload;
         const sotreId = decodedToken.storeId;
+        console.log("sotreId 23:", sotreId);
         if (!sotreId) {
             return NextResponse.json(
                 { message: "Unauthorized" },
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const users = await StoreUsers.find();
+        const users = await StoreUsers.find({storeId: sotreId});
         return NextResponse.json({ users }, { status: 200 })
     } catch (error) {
         console.error(error)

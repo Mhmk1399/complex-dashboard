@@ -5,9 +5,16 @@ interface DeployWebsiteParams {
     reponame: string;
 }
 
+interface DeploymentResult {
+    success: boolean;
+    logs: string[];
+    deploymentUrl: string;
+    projectId: string;  // Add projectId to the return type
+}
+
 const VERCEL_API_BASE = "https://api.vercel.com";
 
-async function deployToVercel({ githubRepoUrl, reponame }: DeployWebsiteParams) {
+async function deployToVercel({ githubRepoUrl, reponame }: DeployWebsiteParams): Promise<DeploymentResult> {
     const logs: string[] = [];
 
     if (!process.env.VERCEL_TOKEN) {
@@ -17,8 +24,6 @@ async function deployToVercel({ githubRepoUrl, reponame }: DeployWebsiteParams) 
     logs.push("[START] Initiating Vercel deployment process");
 
     try {
-
-
         // Fetch repository details from GitHub API to get the repository ID
         const githubRepoResponse = await fetch(`https://api.github.com/repos/${githubRepoUrl.replace('https://github.com/', '')}`, {
             headers: {
@@ -26,7 +31,6 @@ async function deployToVercel({ githubRepoUrl, reponame }: DeployWebsiteParams) 
                 'Accept': 'application/vnd.github.v3+json'
             }
         });
-
 
         if (!githubRepoResponse.ok) {
             throw new Error(`[ERROR] Failed to fetch GitHub repository details`);
@@ -84,7 +88,6 @@ async function deployToVercel({ githubRepoUrl, reponame }: DeployWebsiteParams) 
             }),
         });
 
-
         if (!deploymentResponse.ok) {
             throw new Error(`[ERROR] Deployment failed: ${await deploymentResponse.text()}`);
         }
@@ -124,6 +127,7 @@ async function deployToVercel({ githubRepoUrl, reponame }: DeployWebsiteParams) 
             success: true,
             logs,
             deploymentUrl: `https://${deploymentUrl}`,
+            projectId: projectData.id  // Return the project ID
         };
     } catch (error: any) {
         logs.push(`[ERROR] ${error.message}`);
