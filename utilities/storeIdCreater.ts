@@ -9,12 +9,13 @@ export async function createStoreId(
     }
 
     try {
-        // Create storeId.txt file
         const storeIdFilePath = `storeId.txt`;
+        const repoConfigFilePath = `store-config.json`;
+
+        // Create new storeId.txt file directly
         await saveGitHubFile(storeIdFilePath, storeId, repoUrl);
 
-        // Create a config file with store details
-        const repoConfigFilePath = `store-config.json`;
+        // Create new config file with store details
         const configContent = JSON.stringify({
             storeId: storeId,
             createdAt: new Date().toISOString(),
