@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiArrowLeft, FiCheck, FiX } from "react-icons/fi";
 import { FaPhoneAlt, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import Link from "next/link";
 
@@ -10,10 +11,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!phoneNumber || !password) {
+      setError("لطفا تمام فیلدها را پر کنید");
+      setShowModal(true);
+      return;
+    }
 
     try {
       const response = await fetch("/api/auth/login", {
@@ -28,116 +37,170 @@ export default function LoginPage() {
 
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        router.replace("http://localhost:3000");
-        console.log(data.token);
+        setIsSuccess(true);
+        setShowModal(true);
+        setTimeout(() => {
+          router.replace("/");
+        }, 1500);
       } else {
         setError(data.message);
+        setIsSuccess(false);
+        setShowModal(true);
       }
     } catch (err) {
-      setError("Failed to login. Please try again."+err);
+      setError("Failed to login. Please try again.");
+      setIsSuccess(false);
+      setShowModal(true);
     }
   };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  return (
-    <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-400 to-purple-700"
-        dir="rtl"
-      >
-        <motion.h1
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="mb-16 bg-white/50 p-10 rounded-full shadow-lg text-center text-xl font-bold text-purple-800"
-        >
-          <span className="text-purple-900 text-4xl">صفحه ورود</span>
-        </motion.h1>
-
+  const Modal = () => (
+    <AnimatePresence>
+      {showModal && (
         <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="max-w-md w-full space-y-8 p-8 border-l-2 border-purple-600 bg-white/80 backdrop-blur-sm rounded-2xl shadow-md"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
         >
-          <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-700">
-              لطفا وارد شوید
-            </h2>
-          </div>
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="text-red-500 text-center text-sm"
-              >
-                {error}
-              </motion.div>
-            )}
-            <div className="space-y-4">
-              <div className="relative">
-                <FaPhoneAlt className="text-gray-500 absolute top-4 z-50 -right-5" />
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.8 }}
+            className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4"
+          >
+            <div
+              className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center ${
+                isSuccess ? "bg-green-100" : "bg-red-100"
+              }`}
+            >
+              {isSuccess ? (
+                <FiCheck className="w-8 h-8 text-green-500" />
+              ) : (
+                <FiX className="w-8 h-8 text-red-500" />
+              )}
+            </div>
+            <h3 className="text-2xl font-bold text-center mt-4">
+              {isSuccess ? "موفق!" : "ناموفق!"}
+            </h3>
+            <p className="text-center text-gray-600 mt-2">
+              {isSuccess
+                ? "ورود با موفقیت انجام شد"
+                : error || "مشکلی پیش آمد. لطفا دوباره امتحان کنید."}
+            </p>
+            <button
+              onClick={() => setShowModal(false)}
+              className="w-full mt-6 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium"
+            >
+              {isSuccess ? "ورود موفق" : "تلاش مجدد"}
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 0 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="min-h-screen flex flex-col items-center justify-center p-4"
+      dir="rtl"
+    >
+      <motion.div 
+        className="bg-white/20 bg-opacity-20 backdrop-blur-3xl rounded-2xl px-10 py-12 w-full max-w-4xl border border-[#0077b6]"
+      >
+        <motion.div
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+        >
+          <h1 className="text-2xl lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-[#0077b6] my-4 lg:my-10">
+            ورود به داشبورد
+          </h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label 
+                htmlFor="phoneNumber" 
+                className="block text-lg font-medium text-[#0077b6] mb-2"
+              >
+                شماره تلفن
+              </label>
+              <div className="relative">
+                <FaPhoneAlt className="absolute left-3 top-4 text-[#0077b6] opacity-50" />
                 <input
-                  dir="rtl"
                   id="phoneNumber"
-                  name="phoneNumber"
                   type="tel"
                   required
-                  className="appearance-none rounded-xl relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-violet-400 focus:border-indigo-100"
-                  placeholder="شماره تلفن"
+                  placeholder="شماره تلفن خود را وارد کنید"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="w-full p-4 pl-10 ring-1 ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
                 />
               </div>
+            </div>
+
+            <div>
+              <label 
+                htmlFor="password" 
+                className="block text-lg font-medium text-[#0077b6] mb-2"
+              >
+                رمز عبور
+              </label>
               <div className="relative">
-                <FaLock className="text-gray-500 absolute top-4 z-50 -right-5" />
+                <FaLock className="absolute left-3 top-4 text-[#0077b6] opacity-50" />
                 <input
                   id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"} // Change type dynamically
+                  type={showPassword ? "text" : "password"}
                   required
-                  className="appearance-none rounded-xl relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-violet-400 focus:border-indigo-100"
-                  placeholder="رمز عبور"
+                  placeholder="رمز عبور خود را وارد کنید"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-4 pl-10 ring-1 ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
                 />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute top-4 left-3 text-gray-500 focus:outline-none"
+                  className="absolute left-3 top-4 text-[#0077b6] opacity-50 focus:outline-none"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
-            <div className="flex items-center justify-between">
-              <Link href="#" className=" text-gray-500 mr-2 hover:underline underline-offset-4">
-                فراموشی رمز عبور؟
-                </Link>
-                <Link href="/signIn" className=" text-gray-500 ml-2 hover:underline underline-offset-4">
-                  ثبت نام
-                </Link>
-            </div>
-            <div>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-base transition-all duration-200 font-medium rounded-md text-white bg-violet-700 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+
+            <div className="flex justify-between items-center">
+              <Link 
+                href="/signIn" 
+                className="text-[#0077b6] hover:underline"
               >
-                ورود
-              </motion.button>
+                ثبت نام
+              </Link>
+              <Link 
+                href="#" 
+                className="text-[#0077b6] hover:underline"
+              >
+                فراموشی رمز عبور
+              </Link>
             </div>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              className="w-full px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex items-center justify-center gap-2"
+            >
+              ورود
+              <FiArrowLeft />
+            </motion.button>
           </form>
         </motion.div>
       </motion.div>
-    </>
+
+      <Modal />
+    </motion.div>
   );
 }

@@ -59,7 +59,7 @@ export const ProductsSettings = () => {
       colors: [],
     },
   });
-  const handleImageSelect = (image: { fileUrl: any; }) => {
+  const handleImageSelect = (image: { fileUrl: string; }) => {
     setSettings(prev => ({
       ...prev,
       image: image.fileUrl
@@ -77,6 +77,7 @@ export const ProductsSettings = () => {
         const data = await response.json();
         setCategories(data);
       } catch (error) {
+        console.log(error);
         toast.error("خطا در دریافت دسته‌بندی‌ها");
       }
     };

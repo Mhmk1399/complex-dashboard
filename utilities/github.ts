@@ -391,3 +391,84 @@ export async function deleteRoutePage(
   const filePath = `app/${routeName}/page.tsx`;
   await deleteGitHubFile(filePath, repoUrl);
 }
+export async function saveGitHubStoreId(
+  filePath: string,
+  content: string,
+  repoUrl?: string,
+  force: boolean = false,
+  existingSha?: string | null
+): Promise<string | void> {
+  const GITHUB_REPO = getRepoFromUrl(repoUrl || null);
+  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+
+  try {
+    const encodedContent = Buffer.from(content).toString("base64");
+    let payload: { message: string; content: string; sha?: string } = {
+      message: `Update ${filePath}`,
+      content: encodedContent,
+    };
+
+    if (!force) {
+      // Get current file SHA if not forcing and no existing SHA provided
+      if (!existingSha) {
+        const currentFile = await axios
+          .get(url, {
+            headers: {
+              Authorization: `Bearer ${GITHUB_TOKEN}`,
+              Accept: "application/vnd.github.v3+json",
+            },
+          })
+          .catch(() => null);
+
+        if (currentFile?.data?.sha) {
+          payload.sha = currentFile.data.sha;
+        }
+      } else {
+        payload.sha = existingSha;
+      }
+    }
+
+    await axios.put(url, payload, {
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        Accept: "application/vnd.github.v3+json",
+      },
+    });
+  } catch (error: any) {
+    console.error(
+      "Error saving file to GitHub:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to save file to GitHub");
+  }
+}
+
+
+
+export async function getFileSha(filePath: string, repoUrl: string): Promise<string | null> {
+  const repoName = repoUrl.split('/').pop();
+  
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${repoName}/contents/${filePath}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+      }
+    );
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.sha;
+  } catch (error) {
+    console.error(`Error getting SHA for ${filePath}:`, error);
+    return null;
+  }
+}
+
+
