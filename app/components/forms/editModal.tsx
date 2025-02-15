@@ -60,6 +60,8 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
         const data = await response.json();
         setCategories(data);
       } catch (error) {
+        console.log(error);
+
         toast.error('خطا در دریافت دسته‌بندی‌ها');
       }
     };

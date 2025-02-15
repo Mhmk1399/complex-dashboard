@@ -14,21 +14,16 @@ interface Story {
   createdAt: string;
   updatedAt: string;
 }
-interface StorySettings {
-  title: string;
-  image: string;
-}
+
 
 interface EditStoryProps {
   isOpen: boolean;
   onClose: () => void;
-  fetchStories: () => void;
 }
 
 export const EditStory: React.FC<EditStoryProps> = ({
   isOpen,
   onClose,
-  fetchStories,
 }) => {
   const [stories, setStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
@@ -52,6 +47,7 @@ export const EditStory: React.FC<EditStoryProps> = ({
       const data = await response.json();
       setStories(data);
     } catch (error) {
+      console.log(error);
       toast.error("خطا در دریافت استوری‌ها");
     }
   };
@@ -70,11 +66,11 @@ export const EditStory: React.FC<EditStoryProps> = ({
       if (response.ok) {
         toast.success("استوری با موفقیت حذف شد");
         fetchAllStories();
-        fetchStories();
       } else {
         toast.error("خطا در حذف استوری");
       }
     } catch (error) {
+      console.log(error);
       toast.error("خطا در حذف استوری");
     }
   };
@@ -109,11 +105,11 @@ export const EditStory: React.FC<EditStoryProps> = ({
         setTitle("");
         setImage("");
         fetchAllStories();
-        fetchStories();
       } else {
         toast.error("خطا در بروزرسانی استوری");
       }
     } catch (error) {
+      console.log(error);
       toast.error("خطا در بروزرسانی استوری");
     }
   };
@@ -225,9 +221,9 @@ export const EditStory: React.FC<EditStoryProps> = ({
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {stories.map((story) => (
+                    {stories.map((story,idx) => (
                       <div 
-                        key={story._id} 
+                        key={story._id+idx} 
                         className="bg-white/10 rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform"
                       >
                         <Image

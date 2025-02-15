@@ -32,6 +32,7 @@ const EditCategory = () => {
       const data = await response.json();
       setCategories(data);
     } catch (error) {
+      console.log(error);
       toast.error('خطا در دریافت دسته‌بندی‌ها');
     }
   };
@@ -74,6 +75,8 @@ const EditCategory = () => {
         fetchCategories();
       }
     } catch (error) {
+      console.log(error);
+      
       toast.error('خطا در ویرایش دسته‌بندی');
     }
   };
@@ -103,6 +106,8 @@ const EditCategory = () => {
           fetchCategories();
         }
       } catch (error) {
+        console.log(error);
+
         toast.error('خطا در حذف زیر دسته');
       }
     }
@@ -132,6 +137,8 @@ const EditCategory = () => {
         }
       }
     } catch (error) {
+      console.log(error);
+
       toast.error('خطا در افزودن زیر دسته');
     }
   };
@@ -153,6 +160,8 @@ const EditCategory = () => {
         toast.error('خطا در حذف دسته‌بندی');
       }
     } catch (error) {
+      console.log(error);
+
       toast.error('خطا در حذف دسته‌بندی');
     }
   };

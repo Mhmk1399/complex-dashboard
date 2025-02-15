@@ -27,7 +27,6 @@ export default function UploadPage() {
         body: formData,
       });
 
-      const data = await response.json();
 
       if (response.ok) {
         setUploadStatus('success');
@@ -45,6 +44,7 @@ export default function UploadPage() {
       }
     } catch (error) {
       setUploadStatus('error');
+      console.log(error);
       toast.error("خطای غیرمنتظره", {
         position: "top-right",
         theme: "light"

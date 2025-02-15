@@ -48,6 +48,7 @@ export default function LoginPage() {
         setShowModal(true);
       }
     } catch (err) {
+      console.log(err);
       setError("Failed to login. Please try again.");
       setIsSuccess(false);
       setShowModal(true);
