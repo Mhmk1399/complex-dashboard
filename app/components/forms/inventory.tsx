@@ -76,7 +76,17 @@ export const Inventory = () => {
       }
     }
   };
-
+  let count = 0;
+  const quantity=(product:{colors: {code: string, quantity: string}[]})=> {
+    count=0;
+    product.colors.forEach((color) => {
+      
+      count += parseInt(color.quantity);
+    });
+    return count;
+    
+  };
+  
   const fetchProducts = () => {
     return fetch("/api/products", {
       method: "GET",
@@ -167,8 +177,14 @@ export const Inventory = () => {
                     </div>
                   </div>
                 </td>
-
-                <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
+                <td className=" border-l px-5 py-4 border-[#0077b6] whitespace-nowrap">
+                  <div >
+                    <div className="text-sm text-center font-medium text-gray-900">
+                     {product.category.name}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-5 py-4 whitespace-nowrap border-l border-[#0077b6]">
                   <div className="text-sm text-gray-900">${product.price}</div>
                   {product.discount !== "0" && (
                     <div className="text-xs text-green-600">
@@ -176,18 +192,33 @@ export const Inventory = () => {
                     </div>
                   )}
                 </td>
+               
                 <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                   <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      product.status === "available"
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.status === "available"
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
-                    }`}
+                      }`}
                   >
                     {product.status}
                   </span>
                 </td>
+                      <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
+                        <div className="flex items-center">
+                          <div className="text-sm font-medium text-gray-900">
+                            
+                              
+                              <span
+                               
+                                className="inline-block px-2 py-1 text-xs font-semibold text-white bg-gray-600 rounded-full mr-2"
+                              >
+                                {quantity(product)}
+                              </span>
+                            
+                          </div>
+                        </div>
 
+                      </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border-l border-[#0077b6]">
                   <div className="flex space-x-3">
                     <button
@@ -207,12 +238,7 @@ export const Inventory = () => {
                     </button>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border-l border-[#0077b6]">
-                  <div className="flex space-x-3"></div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border-l border-[#0077b6]">
-                  <div className="flex space-x-3"></div>
-                </td>
+               
               </tr>
             ))}
           </tbody>

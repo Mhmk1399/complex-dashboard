@@ -69,7 +69,7 @@ const AddCategory = () => {
   return (
     <>
       <div
-        className="p-4 grid lg:mx-auto lg:max-w-6xl mx-3 my-48 grid-cols-1 border border-[#0077b6] rounded-2xl bg-[#fff] md:grid-cols-1 lg:grid-cols-2 gap-4"
+        className="p-4 grid lg:mx-auto lg:max-w-6xl mx-10 mt-20 grid-cols-1 border border-[#0077b6] rounded-2xl bg-[#fff] md:grid-cols-1 lg:grid-cols-2 gap-4"
         dir="rtl"
       >
         <h2 className="text-2xl font-bold mb-2 text-[#0077b6] lg:col-span-2 col-span-1">
