@@ -2,8 +2,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { FiArrowLeft, FiCheck, FiX } from "react-icons/fi";
-import { ImSpinner9 } from "react-icons/im"; // Import a spinner icon
+import { FiArrowLeft } from "react-icons/fi";
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -32,6 +31,8 @@ const SignInForm = () => {
       console.log("Form validation failed");
       setErrors("لطفا تمام فیلدها را پر کنید");
       setShowModal(true);
+      console.log(isSuccess);
+      console.log(isLoading);
       return;
     }
 
