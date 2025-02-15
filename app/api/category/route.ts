@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
         const categories = await Category.find({ storeId: storeId });
         return NextResponse.json(categories);
     } catch (error) {
+        console.log(error);                 
         return NextResponse.json({ error: "Error fetching categories" }, { status: 500 });
     }
 }
@@ -65,11 +66,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(newCategory, { status: 201 });
     }catch(error){
             console.log(error)
+    
             return NextResponse.json({ error: "Error creating category" }, { status: 500 });
         }
         
 
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ error: "Error creating category" }, { status: 500 });
     }
 }
@@ -80,6 +83,7 @@ export async function PATCH(req: NextRequest) {
         const category = await Category.findByIdAndUpdate(body.id, body, { new: true });
         return NextResponse.json(category);
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ error: "Error updating category" }, { status: 500 });
     }
 }
@@ -94,6 +98,7 @@ export async function DELETE(req: NextRequest) {
         const category = await Category.findByIdAndDelete(body.id);
         return NextResponse.json(category);
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ error: "Error deleting category" }, { status: 500 });
     }
 }

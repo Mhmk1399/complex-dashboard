@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import connect from "@/lib/data";
 import Files from "@/models/uploads";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { deleteGitHubFile, saveGitHubFile, saveGitHubMedia } from "@/utilities/github";
+import { deleteGitHubFile, saveGitHubMedia } from "@/utilities/github";
 
 interface CustomJwtPayload extends JwtPayload {
     targetDirectory: string;

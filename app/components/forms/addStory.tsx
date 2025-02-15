@@ -73,25 +73,9 @@ export const AddStory = () => {
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
   };
- 
-  const [stories, setStories] = useState([]);
 
-  const fetchStories = async () => {
-    try {
-      const response = await fetch('/api/story', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const data = await response.json();
-      setStories(data);
-    } catch (error) {
-      toast.error('خطا در دریافت استوری‌ها');
-      console.log(error);
-    }
-  };
 
-  const handleImageSelect = (image: { fileUrl: any; }) => {
+  const handleImageSelect = (image: { fileUrl: string; }) => {
     setSettings(prev => ({
       ...prev,
       image: image.fileUrl
@@ -211,7 +195,7 @@ export const AddStory = () => {
       <EditStory 
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        fetchStories={fetchStories}
+        
       />
 
       <ImageSelectorModal

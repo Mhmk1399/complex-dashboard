@@ -23,7 +23,6 @@ export async function POST(request: Request) {
     if (!decodedToken){
         return NextResponse.json({ error: "Invalid token" }, { status: 401 })
     }
-    const storeId=decodedToken.storeId
     const newProduct = new Products(productData);
     await newProduct.save();
     return NextResponse.json(
@@ -62,7 +61,7 @@ export async function GET(request: NextRequest) {
     if (!storeId)
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
-    const products = await Products.find({ storeId });
+    const products = await Products.find({ storeId }).populate("category");
     return NextResponse.json({ products }, { status: 200 });
   } catch (error) {
     console.error("Error fetching products:", error);
