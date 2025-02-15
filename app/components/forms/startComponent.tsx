@@ -69,10 +69,10 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
 
           if (response.ok) {
             const userData = await response.json();
-            console.log(userData.storeId);
+            console.log(userData);
             localStorage.setItem("storeId", userData.storeId);
             // Update the greeting with user's name
-            setUserName(userData.name || "عزیز");
+            setUserName(userData.title);
           }
         } catch (error) {
           console.error("Error fetching user details:", error);

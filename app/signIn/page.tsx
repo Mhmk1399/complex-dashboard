@@ -27,18 +27,18 @@ const SignInForm = () => {
 
   const submitFormData = async () => {
     console.log("Submit form data called");
-  
+
     if (!formData.phoneNumber || !formData.password || !formData.title) {
       console.log("Form validation failed");
       setErrors("لطفا تمام فیلدها را پر کنید");
       setShowModal(true);
       return;
     }
-  
+
     console.log("Starting form submission");
     setIsLoading(true);
     setShowModal(true);
-  
+
     try {
       console.log("Sending fetch request");
       const response = await fetch("/api/auth", {
@@ -50,12 +50,12 @@ const SignInForm = () => {
           ...formData,
         }),
       });
-  
+
       console.log("Fetch response received", response.ok);
-  
+
       const result = await response.json();
       console.log("Response result:", result);
-  
+
       if (response.ok) {
         console.log("Registration successful");
         localStorage.setItem("token", result.token);
@@ -72,140 +72,163 @@ const SignInForm = () => {
       }
     } catch (error) {
       console.error("Full registration error:", error);
-      
+
       setIsLoading(false);
       setIsSuccess(false);
-      setErrors(error instanceof Error ? error.message : "An unexpected error occurred");
+      setErrors(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
       setShowModal(true);
     }
   };
-  
 
-  const LoadingModal = () => (
-    <AnimatePresence>
-      {showModal && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-        >
+  const LoadingModal = () => {
+    const [currentStep] = useState(0);
+    const steps = [
+      {
+        title: "شروع فرآیند",
+        message: "در حال آماده سازی ساخت وبسایت شما...",
+        icon: "🚀",
+      },
+      {
+        title: "ایجاد مخزن",
+        message: "در حال ایجاد مخزن از قالب اصلی...",
+        icon: "⚡",
+      },
+      {
+        title: "پیکربندی فروشگاه",
+        message: "در حال اعمال تنظیمات فروشگاه شما...",
+        icon: "⚙️",
+      },
+      {
+        title: "اتمام فرآیند",
+        message: "وبسایت شما با موفقیت ایجاد شد!",
+        icon: "🎉",
+      },
+    ];
+
+    return (
+      <AnimatePresence>
+        {showModal && (
           <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0.8 }}
-            className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           >
-            {isLoading ? (
-              <div className="flex flex-col items-center">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4"
+            >
+              <div className="space-y-6">
+                {steps.map((step, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ x: -50, opacity: 0 }}
+                    animate={{
+                      x: 0,
+                      opacity: currentStep >= index ? 1 : 0.3,
+                    }}
+                    transition={{ delay: index * 0.2 }}
+                    className={`flex items-center space-x-4 ${
+                      currentStep >= index ? "text-blue-600" : "text-gray-400"
+                    }`}
+                  >
+                    <span className="text-2xl">{step.icon}</span>
+                    <div className="flex-1">
+                      <h3 className="font-bold">{step.title}</h3>
+                      <p className="text-sm">{step.message}</p>
+                    </div>
+                    {currentStep > index && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="text-green-500"
+                      >
+                        ✓
+                      </motion.div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+
+              {currentStep === steps.length && (
                 <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 1,
-                    ease: "linear",
-                  }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-6 text-center"
                 >
-                  <ImSpinner9 className="w-16 h-16 text-[#0077b6] mb-4" />
+                  <p className="text-green-600 font-bold">آدرس مخزن شما:</p>
+                  <a
+                    // href={repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline break-all"
+                  >
+                    {/* {repoUrl} */}fffg
+                  </a>
+                  <button
+                    onClick={() => router.push("/")}
+                    className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                  >
+                    ورود به پنل مدیریت
+                  </button>
                 </motion.div>
-                <p className="text-center text-gray-600 mt-2">
-                  در حال ایجاد سایت شما...
-                </p>
-                <p className="text-center text-gray-500 text-sm mt-1">
-                  لطفا صبر کنید
-                </p>
-              </div>
-            ) : (
-              <div
-                className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center ${
-                  isSuccess ? "bg-green-100" : "bg-red-100"
-                }`}
-              >
-                {isSuccess ? (
-                  <FiCheck className="w-8 h-8 text-green-500" />
-                ) : (
-                  <FiX className="w-8 h-8 text-red-500" />
-                )}
-              </div>
-            )}
-
-            {!isLoading && (
-              <>
-                <h3 className="text-2xl font-bold text-center mt-4">
-                  {isSuccess ? "موفق!" : "ناموفق!"}
-                </h3>
-                <p className="text-center text-gray-600 mt-2">
-                  {isSuccess
-                    ? "اطلاعات سایت شما با موفقیت ذخیره شد.."
-                    : errors || "مشکلی پیش آمد. لطفا دوباره امتحان کنید."}
-                </p>
-              </>
-            )}
-
-            {!isLoading && (
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  if (isSuccess) {
-                    router.replace("/");
-                  }
-                }}
-                className="w-full mt-6 px-6 py-3 rounded-lg bg-purple-600 text-white font-medium"
-              >
-                {isSuccess ? "عالی بود!" : "دوباره امتحان کنید"}
-              </button>
-            )}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-
-  const Modal = () => (
-    <AnimatePresence>
-      {showModal && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-        >
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0.8 }}
-            className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4"
-          >
-            <div
-              className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center ${
-                isSuccess ? "bg-green-100" : "bg-red-100"
-              }`}
-            >
-              {isSuccess ? (
-                <FiCheck className="w-8 h-8 text-green-500" />
-              ) : (
-                <FiX className="w-8 h-8 text-red-500" />
               )}
-            </div>
-            <h3 className="text-2xl font-bold text-center mt-4">
-              {isSuccess ? "موفق!" : "ناموفق!"}
-            </h3>
-            <p className="text-center text-gray-600 mt-2">
-              {isSuccess
-                ? "اطلاعات سایت شما با موفقیت ذخیره شد.."
-                : "مشکلی پیش آمد. لطفا دوباره امتحان کنید."}
-            </p>
-            <button
-              onClick={() => setShowModal(false)}
-              className="w-full mt-6 px-6 py-3 rounded-lg bg-purple-600 text-white font-medium"
-            >
-              {isSuccess ? "عالی بود!" : "دوباره امتحان کنید"}
-            </button>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+        )}
+      </AnimatePresence>
+    );
+  };
+
+  // const Modal = () => (
+  //   <AnimatePresence>
+  //     {showModal && (
+  //       <motion.div
+  //         initial={{ opacity: 0 }}
+  //         animate={{ opacity: 1 }}
+  //         exit={{ opacity: 0 }}
+  //         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  //       >
+  //         <motion.div
+  //           initial={{ scale: 0.8 }}
+  //           animate={{ scale: 1 }}
+  //           exit={{ scale: 0.8 }}
+  //           className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4"
+  //         >
+  //           <div
+  //             className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center ${
+  //               isSuccess ? "bg-green-100" : "bg-red-100"
+  //             }`}
+  //           >
+  //             {isSuccess ? (
+  //               <FiCheck className="w-8 h-8 text-green-500" />
+  //             ) : (
+  //               <FiX className="w-8 h-8 text-red-500" />
+  //             )}
+  //           </div>
+  //           <h3 className="text-2xl font-bold text-center mt-4">
+  //             {isSuccess ? "موفق!" : "ناموفق!"}
+  //           </h3>
+  //           <p className="text-center text-gray-600 mt-2">
+  //             {isSuccess
+  //               ? "اطلاعات سایت شما با موفقیت ذخیره شد.."
+  //               : "مشکلی پیش آمد. لطفا دوباره امتحان کنید."}
+  //           </p>
+  //           <button
+  //             onClick={() => setShowModal(false)}
+  //             className="w-full mt-6 px-6 py-3 rounded-lg bg-purple-600 text-white font-medium"
+  //           >
+  //             {isSuccess ? "عالی بود!" : "دوباره امتحان کنید"}
+  //           </button>
+  //         </motion.div>
+  //       </motion.div>
+  //     )}
+  //   </AnimatePresence>
+  // );
 
   return (
     <motion.div
@@ -287,7 +310,10 @@ const SignInForm = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="ml-1 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex items-center gap-1  hover:shadow-[#0077b6] hover:shadow-md"
-              onClick={submitFormData}
+              onClick={() => {
+                submitFormData();
+                setShowModal(true);
+              }}
             >
               ثبت نام
               <FiArrowLeft />
@@ -297,7 +323,7 @@ const SignInForm = () => {
       </motion.div>
       <LoadingModal />
 
-      <Modal />
+      {/* <Modal /> */}
     </motion.div>
   );
 };
