@@ -257,9 +257,9 @@ const SignInForm = () => {
             />
             <label
               htmlFor="phoneNumber"
-              className="block text-lg font-medium text-white mb-2 mt-4"
+              className="block text-lg font-medium text-[#0077b6] mb-2 mt-4"
             >
-              شماره تلفن*
+              شماره تلفن
             </label>
             <input
               id="phoneNumber"

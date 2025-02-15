@@ -391,3 +391,50 @@ export async function deleteRoutePage(
   const filePath = `app/${routeName}/page.tsx`;
   await deleteGitHubFile(filePath, repoUrl);
 }
+export async function saveGitHubStoreId(
+  filePath: string,
+  content: string,
+  repoUrl?: string,
+  force: boolean = false
+): Promise<void> {
+  const GITHUB_REPO = getRepoFromUrl(repoUrl || null);
+  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+
+  try {
+    const encodedContent = Buffer.from(content).toString("base64");
+    let payload: { message: string; content: string; sha?: string } = {
+      message: `Update ${filePath}`,
+      content: encodedContent,
+    };
+
+    if (!force) {
+      // Only get current file if we're not forcing a new creation
+      const currentFile = await axios
+        .get(url, {
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+        })
+        .catch(() => null);
+
+      if (currentFile?.data?.sha) {
+        payload = { ...payload, sha: currentFile.data.sha };
+      }
+    }
+
+    await axios.put(url, payload, {
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        Accept: "application/vnd.github.v3+json",
+      },
+    });
+  } catch (error: any) {
+    console.error(
+      "Error saving file to GitHub:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to save file to GitHub");
+  }
+}
+
