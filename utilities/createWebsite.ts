@@ -33,7 +33,7 @@ export async function createWebsite({
       template_owner: templateOwner,
       template_repo: templateRepo,
       owner: templateOwner,
-      name: title+storeId,
+      name: storeId,
       private: false,
       include_all_branches: true
     });
@@ -42,11 +42,13 @@ export async function createWebsite({
 
     await octokit.rest.repos.createOrUpdateFileContents({
       owner: templateOwner,
-      repo: title+storeId,
+      repo: storeId,
       path: 'store-config.json',
       message: 'Initialize store configuration',
-      content: Buffer.from(JSON.stringify({ "storeId:": storeId})).toString('base64')
+      content: Buffer.from(JSON.stringify({ "storeId": storeId }, null, 2)).toString('base64'),
+      branch: 'main' // Explicitly specify the branch
     });
+    
 
     logs.push("[SUCCESS] Store configuration added");
 
