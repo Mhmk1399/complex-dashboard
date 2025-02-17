@@ -364,7 +364,6 @@ export default function Page() {
     Gallery,
     SlideBanner,
     ProductsRow,
-    ProductList,
   };
 
    useEffect(() => {
