@@ -333,7 +333,6 @@ type AllSections =
   MultiColumnSection &
   SlideSection &
   MultiRowSection &
-  ProductListSection &
   CollectionSection &
   StorySection &
   OfferRowSection &
