@@ -60,3 +60,10 @@ input[type="range"]::-moz-range-thumb {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
+@media (max-width: 768px) {
+  .orders-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
