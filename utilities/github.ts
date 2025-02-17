@@ -298,9 +298,33 @@ import Video from "@/components/video";
 import { Collection } from "@/components/collection";
 import RichText from "@/components/richText";
 import ProductList from "@/components/productList";
-import { fetchGitHubFile } from "@/utilities/github";
+import { Story } from "@/components/story";
+import { SpecialOffer } from "@/components/specialOffer";
+import Gallery from "@/components/gallery";
+import { OfferRow } from "@/components/offerRow";
+import { ProductsRow } from "@/components/productsRow";
+import SlideBanner from "@/components/slideBanner";
+import {
+  BannerSection,
+  CollapseSection,
+  CollectionSection,
+  ContactFormDataSection,
+  GallerySection,
+  ImageTextSection,
+  MultiColumnSection,
+  MultiRowSection,
+  NewsLetterSection,
+  OfferRowSection,
+  ProductListSection,
+  RichTextSection,
+  SlideBannerSection,
+  SlideSection,
+  SpecialOfferSection,
+  StorySection,
+  VideoSection,
+} from "@/lib/types";
 
-type AllSections = Section &
+type AllSections = 
   RichTextSection &
   BannerSection &
   ImageTextSection &
@@ -344,34 +368,38 @@ export default function Page() {
     Gallery,
     SlideBanner,
     ProductsRow,
+    ProductList,
   };
 
-  useEffect(() => {
+   useEffect(() => {
     const handleResize = async () => {
       const isMobileView = window.innerWidth < 430;
       setIsMobile(isMobileView);
 
-      const templateSuffix = isMobileView ? 'sm' : 'lg';
-      const templatePath = \`\${routeName}\${templateSuffix}\`;
-      
-      const template = await fetchGitHubFile(\`public/template/\${templatePath}.json\`, repoUrl);
+      const currentRouteName = window.location.pathname.split("/")[1];
 
-      const testData = template.children.sections as AllSections[];
+      const templateSuffix = isMobileView ? "sm" : "lg";
+      const templatePath = \`\${currentRouteName}\${templateSuffix}\`;
+
+      const template = await import(
+        \`../../public/template/\${templatePath}.json\`
+      );
+
+      const testData = template.default.children.sections;
+
       setData(testData);
-      setOrders(template.children.order);
+      setOrders(template.default.children.order);
     };
-
-    handleResize();
+       handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-  if (!data) {
+  
+    if (!data) {
     return <div>Loading...</div>;
   }
-
-  return (
+    return (
     <div className="grid grid-cols-1 pt-4 px-1">
       {orders.map((componentName, index) => {
         const baseComponentName = componentName.split("-")[0];
@@ -390,11 +418,12 @@ export default function Page() {
       })}
     </div>
   );
-}`;
+`;
 
   const filePath = `app/${routeName}/page.tsx`;
   await saveGitHubFile(filePath, pageContent, repoUrl);
 }
+
 export async function deleteRoutePage(
   routeName: string,
   repoUrl?: string

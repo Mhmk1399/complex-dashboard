@@ -58,7 +58,7 @@ const StatusModal = ({
           duration: 0.15,
           ease: "easeOut",
         }}
-        className="bg-white p-8 rounded-2xl shadow-xl w-[450px] z-50 relative border border-gray-100"
+        className="bg-white mb-56 md:mb-0 p-8 rounded-2xl shadow-xl w-[90%] sm:w-[450px] z-50 relative border border-gray-100"
       >
         <div className="absolute -top-6 -right-6 bg-blue-500 w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg">
           📦
@@ -160,7 +160,7 @@ const OrderDetailModal = ({
         initial={{ scale: 0.95, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.95, y: 20 }}
-        className="bg-white rounded-2xl p-8 shadow-xl w-[600px] max-h-[80vh] overflow-y-auto relative z-10"
+        className="bg-white mb-56 md:mb-0 rounded-2xl p-8 shadow-xl w-[600px] max-h-[80vh] overflow-y-auto relative z-10"
         dir="rtl"
       >
         <div className="absolute top-4 left-4">
