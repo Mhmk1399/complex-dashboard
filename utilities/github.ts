@@ -298,6 +298,7 @@ import Video from "@/components/video";
 import { Collection } from "@/components/collection";
 import RichText from "@/components/richText";
 import ProductList from "@/components/productList";
+import { fetchGitHubFile } from "@/utilities/github";
 
 type AllSections = Section &
   RichTextSection &
@@ -351,9 +352,10 @@ export default function Page() {
       setIsMobile(isMobileView);
 
       const templateSuffix = isMobileView ? 'sm' : 'lg';
-      const templatePath = \`${routeName}\${templateSuffix}\`;
+      const templatePath = \`\${routeName}\${templateSuffix}\`;
+      
+      const template = await fetchGitHubFile(\`public/template/\${templatePath}.json\`, repoUrl);
 
-      const template = await fetchGitHubFile(\`public/template/\${templatePath}.json\`);
       const testData = template.children.sections as AllSections[];
       setData(testData);
       setOrders(template.children.order);
@@ -364,11 +366,12 @@ export default function Page() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+
   if (!data) {
     return <div>Loading...</div>;
   }
 
-return (
+  return (
     <div className="grid grid-cols-1 pt-4 px-1">
       {orders.map((componentName, index) => {
         const baseComponentName = componentName.split("-")[0];
@@ -387,8 +390,7 @@ return (
       })}
     </div>
   );
-}
-`;
+}`;
 
   const filePath = `app/${routeName}/page.tsx`;
   await saveGitHubFile(filePath, pageContent, repoUrl);
