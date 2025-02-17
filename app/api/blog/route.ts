@@ -5,7 +5,6 @@ import blogs from "@/models/blogs";
 import Jwt, { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
 
-
 interface CustomJwtPayload extends JwtPayload {
   storeId: string;
 }
@@ -19,21 +18,21 @@ export async function POST(req: Request) {
       console.log("POST_ERROR", "Database connection failed");
       return new NextResponse("Database connection error", { status: 500 });
     }
-    const newBlog = new blogs(
-
-      BlogData);
+    const newBlog = new blogs(BlogData);
     console.log(newBlog);
-    
+
     await newBlog.save();
     console.log("POST_SUCCESS", "Blog created successfully");
     return NextResponse.json(newBlog, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
-
+    return NextResponse.json(
+      { message: "Error logging in", error },
+      { status: 500 }
+    );
   }
 }
 
-export const GET = async (req:NextRequest) => {
+export const GET = async (req: NextRequest) => {
   await connect();
   if (!connect) {
     return new NextResponse("Database connection error", { status: 500 });
@@ -42,127 +41,109 @@ export const GET = async (req:NextRequest) => {
   try {
     const token = req.headers.get("Authorization")?.split(" ")[1];
     if (!token) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
     const decodedToken = Jwt.decode(token) as CustomJwtPayload;
     console.log(decodedToken);
-    
+
     const storeId = decodedToken.storeId;
     if (!storeId) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const blogs = await Blog.find({storeId});
+    const blogs = await Blog.find({ storeId: storeId });
     return NextResponse.json({ blogs }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: "Error logging in",error }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error logging in", error },
+      { status: 500 }
+    );
   }
 };
 export const DELETE = async (req: NextRequest) => {
-  const id =req.headers.get('id');
- 
+  const id = req.headers.get("id");
+
   if (!id) {
-      return new NextResponse('Blog ID is required', { status: 400 });
+    return new NextResponse("Blog ID is required", { status: 400 });
   }
   await connect();
   if (!connect) {
-      return new NextResponse('Database connection error', { status: 500 });
+    return new NextResponse("Database connection error", { status: 500 });
   }
 
-  const token = req.headers.get('Authorization')?.split(' ')[1];
+  const token = req.headers.get("Authorization")?.split(" ")[1];
   if (!token) {
-      return NextResponse.json(
-          { message: "Unauthorized" },
-          { status: 401 }
-      );
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const decodedToken = Jwt.decode(token) as CustomJwtPayload;
   if (!decodedToken) {
-      return NextResponse.json(
-          { message: "Unauthorized" },
-          { status: 401 }
-      );
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const sotreId = decodedToken.storeId;
   if (!sotreId) {
-      return NextResponse.json(
-          { message: "Unauthorized" },
-          { status: 401 }
-      );
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const blogId = id;
   if (!blogId) {
-      return new NextResponse('Blog ID is required', { status: 400 });
+    return new NextResponse("Blog ID is required", { status: 400 });
   }
   console.log(blogId);
   console.log(sotreId);
-  
-  
 
   await Blog.findByIdAndDelete({ _id: id });
-  return new NextResponse(JSON.stringify({ message: 'Blog deleted successfully' }), { status: 200 });
+  return new NextResponse(
+    JSON.stringify({ message: "Blog deleted successfully" }),
+    { status: 200 }
+  );
+};
 
-
-
-}
-
-
-export async function PATCH(
-  req: NextRequest,
-  
-) {
-  const id =req.headers.get('id');
+export async function PATCH(req: NextRequest) {
+  const id = req.headers.get("id");
 
   if (!id) {
-      return new NextResponse('Blog ID is required', { status: 400 });
+    return new NextResponse("Blog ID is required", { status: 400 });
   }
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-      return NextResponse.json({ message: 'Invalid blog ID format' }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid blog ID format" },
+      { status: 400 }
+    );
   }
 
   await connect();
   if (!connect) {
-      return new NextResponse('Database connection error', { status: 500 });
+    return new NextResponse("Database connection error", { status: 500 });
   }
 
   try {
-      const body = await req.json();
-      const token = req.headers.get('Authorization')?.split(' ')[1];
-      if (!token) {
-          return NextResponse.json(
-              { message: "Unauthorized" },
-              { status: 401 }
-          );
-      }
-      const decodedToken = Jwt.decode(token) as CustomJwtPayload;
-      const sotreId = decodedToken.storeId;
-      if (!sotreId) {
-          return NextResponse.json(
-              { message: "Unauthorized" },
-              { status: 401 }
-          );
-      }
+    const body = await req.json();
+    const token = req.headers.get("Authorization")?.split(" ")[1];
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+    const decodedToken = Jwt.decode(token) as CustomJwtPayload;
+    const sotreId = decodedToken.storeId;
+    if (!sotreId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      id,
+      { ...body, storeId: sotreId },
+      { new: true }
+    );
 
-      const updatedBlog = await Blog.findByIdAndUpdate(
-          id,
-          { ...body, storeId: sotreId },
-          { new: true });
+    if (!updatedBlog) {
+      return NextResponse.json({ message: "Blog not found" }, { status: 404 });
+    }
 
-      if (!updatedBlog) {
-          return NextResponse.json({ message: 'Blog not found' }, { status: 404 });
-      }
-
-      return NextResponse.json(updatedBlog, { status: 200 });
+    return NextResponse.json(updatedBlog, { status: 200 });
   } catch (error) {
-      console.error('PATCH_ERROR', id, error);
-      return NextResponse.json({ message: 'Error updating blog' }, { status: 500 });
+    console.error("PATCH_ERROR", id, error);
+    return NextResponse.json(
+      { message: "Error updating blog" },
+      { status: 500 }
+    );
   }
 }

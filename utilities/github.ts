@@ -4,7 +4,6 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Add this to your .env file
 const GITHUB_OWNER = "Mhmk1399";
 const GITHUB_REPO = "storadge"; // Replace with your new repository name
 
-
 /**
  * Fetches the raw content of a file from the GitHub repository.
  * @param filePath - Path of the file in the repository (e.g., "public/template/homesm.json").
@@ -25,26 +24,26 @@ export async function saveGitHubMedia(
       const existingFileResponse = await axios.get(url, {
         headers: {
           Authorization: `token ${GITHUB_TOKEN}`,
-          Accept: "application/vnd.github.v3+json"
-        }
+          Accept: "application/vnd.github.v3+json",
+        },
       });
 
       // If file exists, capture its current SHA
       existingSha = existingFileResponse.data.sha;
-      console.log('Existing file found. Current SHA:', existingSha);
+      console.log("Existing file found. Current SHA:", existingSha);
     } catch (error) {
       // File doesn't exist, which is fine - we'll create a new one
-      console.log('File does not exist. Will create new file.');
+      console.log("File does not exist. Will create new file.");
     }
 
     // Step 2: Prepare payload for file upload/update
     const payload = {
       message: commitMessage, // Commit message for the GitHub action
       content: content, // Base64 encoded file content
-      branch: 'main', // Specify the branch
+      branch: "main", // Specify the branch
 
       // Include SHA only if file already exists
-      ...(existingSha && { sha: existingSha })
+      ...(existingSha && { sha: existingSha }),
     };
 
     // Step 3: Upload or update the file
@@ -52,24 +51,27 @@ export async function saveGitHubMedia(
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
         Accept: "application/vnd.github.v3+json",
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     // Step 4: Return the download URL of the uploaded file
     return response.data.content.download_url;
-
   } catch (error: any) {
     // Comprehensive error logging
-    console.error('Detailed GitHub Upload Error:', {
+    console.error("Detailed GitHub Upload Error:", {
       errorType: error.name,
       status: error.response?.status,
       message: error.message,
-      responseData: error.response?.data
+      responseData: error.response?.data,
     });
 
     // Throw a more informative error
-    throw new Error(`GitHub Media Upload Failed: ${error.response?.data?.message || error.message}`);
+    throw new Error(
+      `GitHub Media Upload Failed: ${
+        error.response?.data?.message || error.message
+      }`
+    );
   }
 }
 
@@ -80,12 +82,12 @@ export async function fetchGitHubMedia(filePath: string): Promise<string> {
     const response = await axios.get(url, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
-        Accept: "application/vnd.github.v3+json"
-      }
+        Accept: "application/vnd.github.v3+json",
+      },
     });
 
     // Decode base64 content
-    return Buffer.from(response.data.content, 'base64').toString('utf-8');
+    return Buffer.from(response.data.content, "base64").toString("utf-8");
   } catch (error: any) {
     console.error("GitHub fetch error:", error.response?.data || error.message);
     throw new Error("Failed to fetch file from GitHub");
@@ -100,23 +102,26 @@ export async function deleteGitHubMedia(filePath: string): Promise<void> {
     const fileDetails = await axios.get(url, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
-        Accept: "application/vnd.github.v3+json"
-      }
+        Accept: "application/vnd.github.v3+json",
+      },
     });
 
     // Delete the file
     await axios.delete(url, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
-        Accept: "application/vnd.github.v3+json"
+        Accept: "application/vnd.github.v3+json",
       },
       data: {
         message: `Delete ${filePath}`,
-        sha: fileDetails.data.sha
-      }
+        sha: fileDetails.data.sha,
+      },
     });
   } catch (error: any) {
-    console.error("GitHub delete error:", error.response?.data || error.message);
+    console.error(
+      "GitHub delete error:",
+      error.response?.data || error.message
+    );
     throw new Error("Failed to delete file from GitHub");
   }
 }
@@ -284,7 +289,6 @@ import { useEffect, useState } from "react";
 import ImageText from "@/components/imageText";
 import ContactForm from "@/components/contactForm";
 import NewsLetter from "@/components/newsLetter";
-import { usePathname } from "next/navigation";
 import Banner from "@/components/banner";
 import CollapseFaq from "@/components/collapseFaq";
 import MultiColumn from "@/components/multiColumn";
@@ -295,14 +299,32 @@ import { Collection } from "@/components/collection";
 import RichText from "@/components/richText";
 import ProductList from "@/components/productList";
 
-export default function Page() {
-  const [data, setData] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [error, setError] = useState("");
-  const [orders, setOrders] = useState<string[]>([]);
-  const pathname = usePathname();
+type AllSections = Section &
+  RichTextSection &
+  BannerSection &
+  ImageTextSection &
+  VideoSection &
+  ContactFormDataSection &
+  NewsLetterSection &
+  CollapseSection &
+  MultiColumnSection &
+  SlideSection &
+  MultiRowSection &
+  ProductListSection &
+  CollectionSection &
+  SpecialOfferSection &
+  StorySection &
+  OfferRowSection &
+  GallerySection &
+  SlideBannerSection &
+  ProductListSection;
 
-  const componentMap = {
+export default function Page() {
+  const [data, setData] = useState<AllSections[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [orders, setOrders] = useState<string[]>([]);
+
+ const componentMap = {
     RichText,
     Banner,
     ImageText,
@@ -315,67 +337,55 @@ export default function Page() {
     MultiRow,
     ProductList,
     Collection,
+    SpecialOffer,
+    Story,
+    OfferRow,
+    Gallery,
+    SlideBanner,
+    ProductsRow,
   };
 
   useEffect(() => {
-    const getData = async () => {
-      console.log(setIsMobile);
-      console.log(setError);
-      if (!process.env.NEXT_PUBLIC_API_URL) {
-        throw new Error("NEXT_PUBLIC_API_URL is not set");
-      }
-      const routePath = pathname.split("/").pop() || "home";
+    const handleResize = async () => {
+      const isMobileView = window.innerWidth < 430;
+      setIsMobile(isMobileView);
 
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "/api/sections?" + routePath,
-        {
-          cache: "no-store",
-        }
-      );
-      const data = await response.json();
+      const templateSuffix = isMobileView ? 'sm' : 'lg';
+      const templatePath = \`${routeName}\${templateSuffix}\`;
 
-      setData(data.Children.sections);
-      setOrders(data.Children.order);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
+      const template = await fetchGitHubFile(\`public/template/\${templatePath}.json\`);
+      const testData = template.children.sections as AllSections[];
+      setData(testData);
+      setOrders(template.children.order);
     };
-    getData();
-  }, [pathname]);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (!data) {
     return <div>Loading...</div>;
   }
 
-  return (
-    <>
-      <div className="grid grid-cols-1 ">
-        {orders.map((componentName, index) => {
-          const baseComponentName = componentName.split("-")[0];
-          const Component =
-            componentMap[baseComponentName as keyof typeof componentMap];
+return (
+    <div className="grid grid-cols-1 pt-4 px-1">
+      {orders.map((componentName, index) => {
+        const baseComponentName = componentName.split("-")[0];
+        const Component =
+          componentMap[baseComponentName as keyof typeof componentMap];
 
-          return Component ? (
-            <div
-              key={componentName} // Using the full componentName which includes the UUID
-              style={{ order: index }}
-              className="w-full"
-            >
-              <Component
-                sections={data}
-                isMobile={isMobile}
-                componentName={componentName}
-              />
-            </div>
-          ) : null;
-        })}
-      </div>
-    </>
+        return Component ? (
+          <div key={componentName} style={{ order: index }} className="w-full">
+            <Component
+              sections={data}
+              isMobile={isMobile}
+              componentName={componentName}
+            />
+          </div>
+        ) : null;
+      })}
+    </div>
   );
 }
 `;
@@ -383,7 +393,6 @@ export default function Page() {
   const filePath = `app/${routeName}/page.tsx`;
   await saveGitHubFile(filePath, pageContent, repoUrl);
 }
-
 export async function deleteRoutePage(
   routeName: string,
   repoUrl?: string
@@ -443,18 +452,19 @@ export async function saveGitHubStoreId(
   }
 }
 
+export async function getFileSha(
+  filePath: string,
+  repoUrl: string
+): Promise<string | null> {
+  const repoName = repoUrl.split("/").pop();
 
-
-export async function getFileSha(filePath: string, repoUrl: string): Promise<string | null> {
-  const repoName = repoUrl.split('/').pop();
-  
   try {
     const response = await fetch(
       `https://api.github.com/repos/${GITHUB_OWNER}/${repoName}/contents/${filePath}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-          Accept: 'application/vnd.github.v3+json',
+          Accept: "application/vnd.github.v3+json",
         },
       }
     );
@@ -470,5 +480,3 @@ export async function getFileSha(filePath: string, repoUrl: string): Promise<str
     return null;
   }
 }
-
-

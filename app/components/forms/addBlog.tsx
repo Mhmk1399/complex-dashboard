@@ -201,7 +201,7 @@ export const AddBlog = () => {
     const content = editor?.getHTML();
     const storeId = localStorage.getItem("storeId");
     try {
-      const response = await fetch("/api/blogs", {
+      const response = await fetch("/api/blog", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

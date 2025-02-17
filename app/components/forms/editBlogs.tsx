@@ -129,7 +129,7 @@ export const EditBlogs = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("/api/blogs", {
+        const response = await fetch("/api/blog", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
