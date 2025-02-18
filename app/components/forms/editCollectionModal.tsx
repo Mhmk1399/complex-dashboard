@@ -26,7 +26,7 @@ interface Product {
   imageAlt?: string;
   name: string;
   description: string;
-  category: string;
+  category: {name: string; _id: string };
   price: string;
   status: string;
   discount: string;
@@ -71,17 +71,18 @@ export const EditCollectionModal = ({
   }, [allProducts]);
 
   useEffect(() => {
-    fetch(`/api/collections/${collection._id}`, {
+    fetch(`/api/collections/id`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        id: collection._id,
       },
     })
       .then((res) => res.json())
       .then((data) => {
-        setSelectedProducts(data.collection.products);
-        setAvailableProducts(data.collection.products);
+        console.log(data);
+        setSelectedProducts(data.products);
+        setAvailableProducts(data.products);
       });
 
     fetch("/api/products", {
@@ -238,32 +239,26 @@ export const EditCollectionModal = ({
               </div>
               <div className="mb-4">
                 <div className="mb-4 h-[150px] border p-1 overflow-y-auto">
-                  {allProducts &&
-                    allProducts
-                      .filter(
-                        (product) =>
-                          !availableProducts.some(
-                            (existingProduct) =>
-                              existingProduct._id === product._id
-                          ) &&
-                          product.name
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase()) &&
-                          parseFloat(product.price) >= selectedPriceRange.min &&
-                          parseFloat(product.price) <= selectedPriceRange.max
-                      )
-                      .map((product) => (
-                        <motion.div
-                          key={`available-${product._id}`}
-                          className="flex items-center border rounded-lg justify-between p-2 hover:bg-gray-200"
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 20 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <div className="flex items-center"></div>
-                          <span>نام:{product.name}</span>
-                          <span> دسته بندی:{product.category}</span>
+                {allProducts &&
+  allProducts
+    .filter(
+      (product) =>
+        !availableProducts.some(
+          (existingProduct) => existingProduct._id === product._id
+        ) &&
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        parseFloat(product.price) >= selectedPriceRange.min &&
+        parseFloat(product.price) <= selectedPriceRange.max
+    )
+    .map((product, index) => (
+      <motion.div
+        key={`available-${index}`}
+        className="flex items-center border rounded-lg justify-between p-2 hover:bg-gray-200"
+      >
+        <div className="flex items-center">
+          <span>{product.name}</span>
+          <span>{typeof product.category === 'object' ? product.category.name : product.category}</span>
+        </div>
                           <button
                             type="button"
                             onClick={() => handleAddProduct(product)}
@@ -306,7 +301,7 @@ export const EditCollectionModal = ({
                                             /> */}
                       </div>
                       <span>نام:{product.name}</span>
-                      <span> دسته بندی:{product.category}</span>
+                      {/* <span> دسته بندی:{product.category}</span> */}
                       <button
                         type="button"
                         onClick={() => handleRemoveProduct(product)}
