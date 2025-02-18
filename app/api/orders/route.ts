@@ -72,7 +72,7 @@ export async function GET(req: Request) {
     if (!storeId)
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
-    const orders = await Order.find({ });
+    const orders = await Order.find({ storeId: storeId });
     return NextResponse.json(orders, { status: 200 });
   } catch (error) {
     console.error(error);

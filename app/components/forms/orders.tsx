@@ -391,20 +391,17 @@ export const Orders = () => {
     return <div className="text-red-500 text-center mt-4">خطا: {error}</div>;
 
   return (
-    <div
-      className="orders-container p-6 bg-white rounded-2xl shadow-lg"
-      dir="rtl"
-    >
+    <div className="orders-container p-6 bg-white rounded-2xl" dir="rtl">
       {orders.length === 0 ? (
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex flex-col mx-auto items-center justify-center min-h-[400px]"
+          className="flex flex-col mx-auto mt-44 items-center justify-center "
         >
           <div className="relative w-32 h-32 mb-6">
             <div className="absolute inset-0 bg-blue-100 rounded-full blur-2xl opacity-50"></div>
             <svg
-              className="relative z-10 w-full h-full text-blue-500"
+              className="relative z-10 w-full h-full text-blue-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -420,47 +417,47 @@ export const Orders = () => {
           </p>
         </motion.div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
+        <div className="overflow-x-auto lg:mx-16 mx-6 bg-white border border-[#0077b6]">
+          <table className="w-full divide-y divide-gray-200">
+            <thead className="bg-blue-100 border border-[#0077b6]">
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="py-4 px-6 text-right text-sm font-medium text-gray-500">
+                <th className="px-10 py-3 border-l border-[#0077b6]  text-right text-base font-bold text-[#0077b6] uppercase tracking-wider">
                   شماره سفارش
                 </th>
-                <th className="py-4 px-6 text-right text-sm font-medium text-gray-500">
+                <th className="px-10 py-3 border-l border-[#0077b6]  text-right text-base font-bold text-[#0077b6] uppercase tracking-wider">
                   وضعیت
                 </th>
-                <th className="py-4 px-6 text-right text-sm font-medium text-gray-500">
+                <th className="px-10 py-3 border-l border-[#0077b6]  text-right text-base font-bold text-[#0077b6] uppercase tracking-wider">
                   مبلغ کل
                 </th>
-                <th className="py-4 px-6 text-right text-sm font-medium text-gray-500">
+                <th className="px-10 py-3 border-l border-[#0077b6]  text-right text-base font-bold text-[#0077b6] uppercase tracking-wider">
                   وضعیت پرداخت
                 </th>
-                <th className="py-4 px-6 text-right text-sm font-medium text-gray-500">
+                <th className="px-10 py-3 border-l border-[#0077b6]  text-right text-base font-bold text-[#0077b6] uppercase tracking-wider">
                   آدرس
                 </th>
-                <th className="py-4 px-6 text-right text-sm font-medium text-gray-500">
+                <th className="px-10 py-3 border-l border-[#0077b6]  text-right text-base font-bold text-[#0077b6] uppercase tracking-wider">
                   تاریخ
                 </th>
-                <th className="py-4 px-6 text-right text-sm font-medium text-gray-500">
+                <th className="px-10 py-3 border-l border-[#0077b6]  text-right text-base font-bold text-[#0077b6] uppercase tracking-wider">
                   عملیات
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200">
               {orders.map((order) => (
                 <motion.tr
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   key={order._id}
-                  className="hover:bg-blue-50/50 transition-colors duration-150"
+                  className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                     <span className="font-medium text-gray-900">
                       {order._id}
                     </span>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                     <span
                       className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${getStatusColor(
                         order.status
@@ -469,12 +466,12 @@ export const Orders = () => {
                       {getStatusText(order.status)}
                     </span>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                     <span className="font-medium text-gray-900">
                       {order.totalAmount.toLocaleString()} تومان
                     </span>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                     <span className="inline-flex items-center gap-2">
                       {getPaymentStatusIcon(order.paymentStatus)}
                       <span>
@@ -484,18 +481,18 @@ export const Orders = () => {
                       </span>
                     </span>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                     <span className="text-gray-600 truncate max-w-xs block">
                       {order.shippingAddress.city}،{" "}
                       {order.shippingAddress.street}
                     </span>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                     <span className="text-gray-500 text-sm">
                       {new Date(order.createdAt).toLocaleDateString("fa-IR")}
                     </span>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="px-6 py-4 whitespace-nowrap border-l border-[#0077b6]">
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => {

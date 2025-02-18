@@ -7,6 +7,7 @@ import { FiUploadCloud, FiCheckCircle, FiAlertTriangle } from "react-icons/fi";
 export default function UploadPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showImageTips, setShowImageTips] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
@@ -20,6 +21,7 @@ export default function UploadPage() {
         position: "top-right",
         theme: "light",
       });
+
       return false;
     }
 
@@ -40,11 +42,10 @@ export default function UploadPage() {
 
     setLoading(true);
     setUploadStatus("idle");
-    const formData = new FormData();
 
-    files.forEach((file, index) => {
-      formData.append(`file${index}`, file);
-    });
+    // Create FormData and append single file
+    const formData = new FormData();
+    formData.append("file", files[0]); // We're handling single file upload first
 
     try {
       const response = await fetch("/api/uploadFile", {
@@ -56,25 +57,18 @@ export default function UploadPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+
         setUploadStatus("success");
-        toast.success("فایل‌ها با موفقیت آپلود شدند", {
-          position: "top-right",
-          theme: "light",
-        });
+        toast.success("فایل با موفقیت آپلود شد");
         setFiles([]);
       } else {
-        setUploadStatus("error");
-        toast.error("آپلود فایل‌ها با خطا مواجه شد", {
-          position: "top-right",
-          theme: "light",
-        });
+        throw new Error("Upload failed");
       }
     } catch (error) {
       setUploadStatus("error");
-      toast.error("خطای غیرمنتظره", {
-        position: "top-right",
-        theme: "light",
-      });
+      toast.error("خطا در آپلود فایل");
     } finally {
       setLoading(false);
     }
@@ -97,10 +91,39 @@ export default function UploadPage() {
       >
         <div className="text-center mb-6">
           <FiUploadCloud className="mx-auto text-5xl text-blue-500 mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800">آپلود تصاویر</h2>
-          <p className="text-gray-500 mt-2 text-sm">
-            حداکثر حجم هر تصویر: 100 کیلوبایت
-          </p>
+          <div className="flex items-center flex-row-reverse justify-center gap-2 relative">
+            <h2 className="text-2xl font-bold text-gray-800">آپلود تصاویر</h2>
+            <div className="relative">
+              <i
+                className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors"
+                onMouseEnter={() => setShowImageTips(true)}
+                onMouseLeave={() => setShowImageTips(false)}
+              />
+              {showImageTips && (
+                <motion.span
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  dir="rtl"
+                  className="absolute z-10 bg-blue-600 backdrop-blur-md border-2 border-white/50 rounded-xl shadow-lg p-5 text-sm text-white w-[280px]"
+                >
+                  <ul className="text-right space-y-2">
+                    <li className="flex items-center gap-2">
+                      <i className="fas fa-check-circle" />
+                      حجم هر تصویر باید کمتر از ۱۰۰ کیلوبایت باشد
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <i className="fas fa-check-circle" />
+                      فرمت تصاویر فقط PNG و WEBP مجاز است
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <i className="fas fa-check-circle" />
+                      می‌توانید چندین تصویر را همزمان انتخاب کنید
+                    </li>
+                  </ul>
+                </motion.span>
+              )}
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -176,11 +199,11 @@ export default function UploadPage() {
             >
               {uploadStatus === "success" ? (
                 <>
-                  <FiCheckCircle className="ml-2" /> تصاویر با موفقیت آپلود شدند
+                  تصاویر با موفقیت آپلود شدند <FiCheckCircle className="ml-2" />
                 </>
               ) : (
                 <>
-                  <FiAlertTriangle className="ml-2" /> خطا در آپلود تصاویر
+                  خطا در آپلود تصاویر <FiAlertTriangle className="ml-2" />
                 </>
               )}
             </motion.div>

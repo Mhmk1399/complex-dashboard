@@ -44,25 +44,27 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     status: product.status,
     discount: product.discount,
     properties: product.properties || [],
-    colors: product.colors || []
+    colors: product.colors || [],
   });
-  const [categories, setCategories] = useState<Array<{ _id: string, name: string }>>([]);
+  const [categories, setCategories] = useState<
+    Array<{ _id: string; name: string }>
+  >([]);
   const [newProperty, setNewProperty] = useState({ name: "", value: "" });
   const [newColor, setNewColor] = useState({ code: "", quantity: "" });
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('/api/category', {
+        const response = await fetch("/api/category", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
         const data = await response.json();
         setCategories(data);
       } catch (error) {
         console.log(error);
 
-        toast.error('خطا در دریافت دسته‌بندی‌ها');
+        toast.error("خطا در دریافت دسته‌بندی‌ها");
       }
     };
 
@@ -78,18 +80,18 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
   };
   const addProperty = () => {
     if (newProperty.name && newProperty.value) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        properties: [...prev.properties, newProperty]
+        properties: [...prev.properties, newProperty],
       }));
       setNewProperty({ name: "", value: "" });
     }
   };
   const addColor = () => {
     if (newColor.code && newColor.quantity) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        colors: [...prev.colors, newColor]
+        colors: [...prev.colors, newColor],
       }));
       setNewColor({ code: "", quantity: "" });
     }
@@ -103,11 +105,9 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(
-          formData
-        ),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -188,7 +188,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                     className="w-full p-2 border rounded bg-white/5 border-white/20 outline-none text-white focus:border-white/50 transition-all duration-300"
                   />
                 </div>
-
                 <div className="col-span-2">
                   <label className="block mb-2 text-white">توضیحات محصول</label>
                   <textarea
@@ -278,10 +277,12 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                   <select
                     value={formData.category._id}
                     onChange={(e) => {
-                      const selectedCategory = categories.find(cat => cat._id === e.target.value);
-                      setFormData(prev => ({
+                      const selectedCategory = categories.find(
+                        (cat) => cat._id === e.target.value
+                      );
+                      setFormData((prev) => ({
                         ...prev,
-                        category: selectedCategory || { _id: "", name: "" }
+                        category: selectedCategory || { _id: "", name: "" },
                       }));
                     }}
                     className="w-full p-2 border rounded bg-white/5 border-white/20"
@@ -293,24 +294,30 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                     ))}
                   </select>
                 </div>
-
                 {/* Properties section */}
-                <div className="col-span-2">
+                <div className="col-span-1">
                   <h3 className="text-white font-bold mb-2">ویژگی‌ها</h3>
-                  <div className="flex gap-2 mb-2">
+                  <div className="flex gap-2 mb-2 text-white">
                     <input
                       type="text"
                       placeholder="نام ویژگی"
                       value={newProperty.name}
-                      onChange={(e) => setNewProperty({ ...newProperty, name: e.target.value })}
-                      className="p-2 border rounded bg-white/5 border-white/20"
+                      onChange={(e) =>
+                        setNewProperty({ ...newProperty, name: e.target.value })
+                      }
+                      className="p-2 border rounded bg-white/5 border-white/20 text-white placeholder:text-white"
                     />
                     <input
                       type="text"
                       placeholder="مقدار"
                       value={newProperty.value}
-                      onChange={(e) => setNewProperty({ ...newProperty, value: e.target.value })}
-                      className="p-2 border rounded bg-white/5 border-white/20"
+                      onChange={(e) =>
+                        setNewProperty({
+                          ...newProperty,
+                          value: e.target.value,
+                        })
+                      }
+                      className="p-2 border rounded bg-white/5 border-white/20 text-white placeholder:text-white"
                     />
                     <button
                       type="button"
@@ -323,17 +330,25 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                   {/* Display existing properties */}
                   <div className="grid grid-cols-2 gap-2">
                     {formData.properties.map((prop, index) => (
-                      <div key={index} className="flex justify-between items-center p-2 bg-white/10 rounded">
-                        <span>{prop.name}: {prop.value}</span>
+                      <div
+                        key={index}
+                        className="flex justify-between items-center p-2 bg-white/10 rounded"
+                      >
+                        <span>
+                          {prop.name}: {prop.value}
+                        </span>
                         <button
                           type="button"
                           onClick={() => {
-                            setFormData(prev => ({
+                            setFormData((prev) => ({
                               ...prev,
-                              properties: prev.properties.filter((_, i) => i !== index)
+                              properties: prev.properties.filter(
+                                (_, i) => i !== index
+                              ),
                             }));
                           }}
                           className="text-red-500"
+                          
                         >
                           حذف
                         </button>
@@ -341,7 +356,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                     ))}
                   </div>
                 </div>
-
                 {/* Colors section */}
                 <div className="col-span-2">
                   <h3 className="text-white font-bold mb-2">رنگ‌ها</h3>
@@ -349,15 +363,19 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                     <input
                       type="color"
                       value={newColor.code}
-                      onChange={(e) => setNewColor({ ...newColor, code: e.target.value })}
+                      onChange={(e) =>
+                        setNewColor({ ...newColor, code: e.target.value })
+                      }
                       className="w-10 h-10 rounded"
                     />
                     <input
                       type="number"
                       placeholder="تعداد"
                       value={newColor.quantity}
-                      onChange={(e) => setNewColor({ ...newColor, quantity: e.target.value })}
-                      className="p-2 border rounded bg-white/5 border-white/20"
+                      onChange={(e) =>
+                        setNewColor({ ...newColor, quantity: e.target.value })
+                      }
+                      className="p-2 border rounded bg-white/5 border-white/20 text-white placeholder:text-white"
                     />
                     <button
                       type="button"
@@ -370,7 +388,10 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                   {/* Display existing colors */}
                   <div className="grid grid-cols-2 gap-2">
                     {formData.colors.map((color, index) => (
-                      <div key={index} className="flex justify-between items-center p-2 bg-white/10 rounded">
+                      <div
+                        key={index}
+                        className="flex justify-between items-center p-2 bg-white/10 rounded"
+                      >
                         <div className="flex items-center gap-2">
                           <div
                             className="w-6 h-6 rounded-full border"
@@ -381,9 +402,9 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                         <button
                           type="button"
                           onClick={() => {
-                            setFormData(prev => ({
+                            setFormData((prev) => ({
                               ...prev,
-                              colors: prev.colors.filter((_, i) => i !== index)
+                              colors: prev.colors.filter((_, i) => i !== index),
                             }));
                           }}
                           className="text-red-500"
@@ -394,7 +415,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                     ))}
                   </div>
                 </div>
-
                 <div className="col-span-2 flex justify-start gap-4">
                   <motion.button
                     type="button"

@@ -16,29 +16,31 @@ export default function ImageGallery() {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [selectedImage, setSelectedImage] = useState<ImageFile | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [deleteStatus, setDeleteStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [deleteStatus, setDeleteStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
     imageId: "",
   });
 
-  useEffect(() => {
-    fetchImages();
-  }, []);
-
   const fetchImages = async () => {
     try {
       const response = await fetch("/api/uploadFile");
       const data = await response.json();
+      console.log(data , "gallllley fetch");
       setImages(data);
     } catch (error) {
       console.error("Error fetching images:", error);
     }
   };
+  useEffect(() => {
+    fetchImages();
+  }, []);
 
   const initiateDelete = (id: string) => {
     setDeleteModal({ isOpen: true, imageId: id });
-    setDeleteStatus('idle');
+    setDeleteStatus("idle");
   };
 
   const confirmDelete = async () => {
@@ -52,22 +54,56 @@ export default function ImageGallery() {
 
       if (response.ok) {
         setImages(images.filter((img) => img._id !== deleteModal.imageId));
-        setDeleteStatus('success');
+        setDeleteStatus("success");
         setDeleteModal({ isOpen: false, imageId: "" });
       } else {
         const errorData = await response.json();
         console.error("Delete failed:", errorData);
-        setDeleteStatus('error');
+        setDeleteStatus("error");
       }
     } catch (error) {
       console.error("Error deleting image:", error);
-      setDeleteStatus('error');
+      setDeleteStatus("error");
     }
+  };
+  const ImageLightbox = ({
+    image,
+    onClose,
+  }: {
+    image: ImageFile;
+    onClose: () => void;
+  }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.5 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0.5 }}
+          className="relative max-w-7xl max-h-[90vh] w-full h-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Image
+            src={image.fileUrl}
+            alt={image.fileName}
+            layout="fill"
+            objectFit="contain"
+            className="rounded-lg"
+            priority
+          />
+        </motion.div>
+      </motion.div>
+    );
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <motion.div 
+    <div className="min-h-screen  mt-12 md:mt-0 flex items-center justify-center bg-gray-50 p-4">
+      <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
@@ -117,7 +153,7 @@ export default function ImageGallery() {
                 />
 
                 <motion.div
-                  className="absolute inset-0 bg-[#0077b6]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 group-hover:backdrop-blur-sm transition-opacity duration-300 flex items-center justify-center"
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 1 }}
                 >
@@ -125,7 +161,7 @@ export default function ImageGallery() {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="p-3 bg-red-500 rounded-full text-white"
+                      className="p-3 bg-white/70 rounded-full text-rose-500"
                       onClick={() => initiateDelete(image._id)}
                     >
                       <FaTrash />
@@ -133,7 +169,7 @@ export default function ImageGallery() {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="p-3 bg-green-500 rounded-full text-white"
+                      className="p-3 bg-white/70 rounded-full text-blue-500"
                       onClick={() => {
                         setSelectedImage(image);
                         setIsLightboxOpen(true);
@@ -151,27 +187,10 @@ export default function ImageGallery() {
         {/* Lightbox */}
         <AnimatePresence>
           {isLightboxOpen && selectedImage && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/90 flex items-center justify-center z-50"
-              onClick={() => setIsLightboxOpen(false)}
-            >
-              <motion.div
-                initial={{ scale: 0.5 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.5 }}
-                className="relative max-w-4xl max-h-[90vh] border-4 border-[#0077b6]"
-              >
-                <Image
-                  src={selectedImage.fileUrl}
-                  alt={selectedImage.fileName}
-                  layout="fill"
-                  objectFit="contain"
-                />
-              </motion.div>
-            </motion.div>
+            <ImageLightbox
+              image={selectedImage}
+              onClose={() => setIsLightboxOpen(false)}
+            />
           )}
         </AnimatePresence>
 
@@ -203,7 +222,9 @@ export default function ImageGallery() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg"
-                      onClick={() => setDeleteModal({ isOpen: false, imageId: "" })}
+                      onClick={() =>
+                        setDeleteModal({ isOpen: false, imageId: "" })
+                      }
                     >
                       انصراف
                     </motion.button>
@@ -224,21 +245,29 @@ export default function ImageGallery() {
 
         {/* Delete Status Notification */}
         <AnimatePresence>
-          {deleteStatus !== 'idle' && (
+          {deleteStatus !== "idle" && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className={`
                 fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 rounded-lg flex items-center justify-center
-                ${deleteStatus === 'success' 
-                  ? 'bg-green-100 text-green-800 border-2 border-green-500' 
-                  : 'bg-red-100 text-red-800 border-2 border-red-500'}
+                ${
+                  deleteStatus === "success"
+                    ? "bg-green-100 text-green-800 border-2 border-green-500"
+                    : "bg-red-100 text-red-800 border-2 border-red-500"
+                }
               `}
             >
-              {deleteStatus === 'success' 
-                ? <><FiCheckCircle className="ml-2" /> تصویر با موفقیت حذف شد</>
-                : <><FiAlertTriangle className="ml-2" /> خطا در حذف تصویر</>}
+              {deleteStatus === "success" ? (
+                <>
+                  <FiCheckCircle className="ml-2" /> تصویر با موفقیت حذف شد
+                </>
+              ) : (
+                <>
+                  <FiAlertTriangle className="ml-2" /> خطا در حذف تصویر
+                </>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
