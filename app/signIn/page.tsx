@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { FiArrowLeft } from "react-icons/fi";
+import Link from "next/link";
 // no
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -305,12 +306,22 @@ const SignInForm = () => {
               {errors}
             </motion.p>
           )}
+          <div className="flex justify-between items-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.push("/login")}
+              className=" py-3 mt-3 text-[#0077b6] font-medium flex items-center gap-1  hover:opacity-70 transition-colors duration-300"
+            >
+              ورود به حساب
+            </motion.button>
+          </div>
 
           <div className="flex justify-between mt-8">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="ml-1 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex items-center gap-1  hover:shadow-[#0077b6] hover:shadow-md"
+              className="ml-1 px-6 py-3 w-full  text-center rounded-lg bg-[#0077b6] text-white font-medium flex justify-center items-center gap-1  hover:shadow-[#0077b6] hover:shadow-md"
               onClick={() => {
                 submitFormData();
                 setShowModal(true);

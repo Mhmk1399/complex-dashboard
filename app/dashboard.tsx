@@ -16,6 +16,7 @@ import StartComponent from "./components/forms/startComponent";
 import AddCategory from "./components/forms/addCategory";
 import { AddStory } from "./components/forms/addStory";
 import { StoreSettings } from "./components/forms/storeSettings";
+import InformationData from "./components/forms/informationData";
 
 export const Dashboard = () => {
   const router = useRouter();
@@ -104,6 +105,8 @@ export const Dashboard = () => {
         return <AddStory />;
       case "siteSettings":
         return <StoreSettings />;
+      case "accountSettings":
+        return <InformationData />;
       default:
         return <StartComponent setSelectedMenu={setSelectedMenu} />;
     }

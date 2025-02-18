@@ -112,9 +112,7 @@ export default function LoginPage() {
       className="min-h-screen flex flex-col items-center justify-center p-4"
       dir="rtl"
     >
-      <motion.div 
-        className="bg-white/20 bg-opacity-20 backdrop-blur-3xl rounded-2xl px-10 py-12 w-full max-w-4xl border border-[#0077b6]"
-      >
+      <motion.div className="bg-white/20 bg-opacity-20 backdrop-blur-3xl rounded-2xl px-10 py-12 w-full max-w-4xl border border-[#0077b6]">
         <motion.div
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -122,17 +120,17 @@ export default function LoginPage() {
           <h1 className="text-2xl lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-[#0077b6] my-4 lg:my-10">
             ورود به داشبورد
           </h1>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label 
-                htmlFor="phoneNumber" 
+              <label
+                htmlFor="phoneNumber"
                 className="block text-lg font-medium text-[#0077b6] mb-2"
               >
                 شماره تلفن
               </label>
               <div className="relative">
-                <FaPhoneAlt className="absolute left-3 top-4 text-[#0077b6] opacity-50" />
+                <FaPhoneAlt className="absolute -left-7 top-5 text-[#0077b6] opacity-50" />
                 <input
                   id="phoneNumber"
                   type="tel"
@@ -140,20 +138,20 @@ export default function LoginPage() {
                   placeholder="شماره تلفن خود را وارد کنید"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full p-4 pl-10 ring-1 ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
+                  className="w-full p-4 pl-10 ring-1 text-right ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
                 />
               </div>
             </div>
 
             <div>
-              <label 
-                htmlFor="password" 
+              <label
+                htmlFor="password"
                 className="block text-lg font-medium text-[#0077b6] mb-2"
               >
                 رمز عبور
               </label>
               <div className="relative">
-                <FaLock className="absolute left-3 top-4 text-[#0077b6] opacity-50" />
+                <FaLock className="absolute -left-7 top-5 text-[#0077b6] opacity-50" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -166,7 +164,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute left-3 top-4 text-[#0077b6] opacity-50 focus:outline-none"
+                  className="absolute left-3 top-5 text-[#0077b6] opacity-50 focus:outline-none"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -174,16 +172,10 @@ export default function LoginPage() {
             </div>
 
             <div className="flex justify-between items-center">
-              <Link 
-                href="/signIn" 
-                className="text-[#0077b6] hover:underline"
-              >
+              <Link href="/signIn" className="text-[#0077b6] hover:underline">
                 ثبت نام
               </Link>
-              <Link 
-                href="#" 
-                className="text-[#0077b6] hover:underline"
-              >
+              <Link href="#" className="text-[#0077b6] hover:underline">
                 فراموشی رمز عبور
               </Link>
             </div>

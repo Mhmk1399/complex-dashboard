@@ -8,79 +8,33 @@ import {
   FaImage as MediaIcon,
   FaBookOpen as BlogIcon,
   FaHome,
-  FaBars, // Add menu icon
+  FaBars,
+  FaPlus,
+  FaBoxes,
+  FaLayerGroup,
+  FaTags,
+  FaShoppingBag,
+  FaUsers,
+  FaFileUpload,
+  FaImages,
+  FaInstagram,
+  FaBlog,
+  FaDatabase,
+  FaEdit,
+  FaCog,
+  FaUserCog,
+  FaCreditCard,
+  FaShieldAlt,
 } from "react-icons/fa";
+interface AccordionItemProps {
+  title: string;
+  children: React.ReactNode;
+  isOpen: boolean;
+  onToggle: () => void;
+  icon?: React.ReactNode; // Optional icon prop
+}
 import { IoSettings } from "react-icons/io5";
 
-const dashboardMenuItems = [
-  {
-    id: "start",
-    title: "خانه",
-    icon: <FaHome />,
-    subMenuItems: [
-      {
-        title: "داشبورد مدیریت",
-        value: "start",
-      },
-    ],
-  },
-  {
-    id: "store",
-    title: " محصولات",
-    icon: <StoreIcon />,
-    subMenuItems: [
-      { title: "افزودن محصول", value: "addProduct" },
-      { title: "موجودی محصول", value: "inventory" },
-      { title: "کالکشن ها ", value: "collections" },
-      { title: "افزودن دسته بندی", value: "addCategory" },
-    ],
-  },
-  {
-    id: "orders",
-    title: "سفارشات",
-    icon: <OrdersIcon />,
-    subMenuItems: [{ title: "سفارش ها", value: "orders" }],
-  },
-  {
-    id: "costumers",
-    title: "کاربران",
-    icon: <CustomersIcon />,
-    subMenuItems: [
-      { title: "کاربران", value: "costumers" },
-    ],
-  },
-  {
-    id: "media",
-    title: "گالری",
-    icon: <MediaIcon />,
-    subMenuItems: [
-      { title: "افزودن تصویر", value: "addFile" },
-      { title: "مدیریت تصاویر", value: "editFile" },
-      { title: "افزودن استوری", value: "addStory" },
-    ],
-  },
-  {
-    id: "addBlogs",
-    title: "وبلاگ",
-    icon: <BlogIcon />,
-    subMenuItems: [
-      { title: "افزودن وبلاگ ", value: "addBlogs" },
-      { title: "افزودن متا دیتا ها", value: "addMetaData" },
-      { title: "ویرایش وبلاگ", value: "editBlogs" },
-    ],
-  },
-  {
-    id: "settings",
-    title: "تنظیمات",
-    icon: <IoSettings />,
-    subMenuItems: [
-      { title: "تنظیمات سایت", value: "siteSettings" },
-      { title: "تنظیمات حساب", value: "accountSettings" },
-      { title: "تنظیمات پرداخت", value: "paymentSettings" },
-      { title: "تنظیمات امنیت", value: "securitySettings" },
-    ],
-  },
-];
 interface FormProps {
   setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -92,6 +46,89 @@ interface AccordionItemProps {
   onToggle: () => void;
   icon?: React.ReactNode; // Optional icon prop
 }
+
+const dashboardMenuItems = [
+  {
+    id: "start",
+    title: "خانه",
+    icon: <FaHome />,
+    subMenuItems: [
+      {
+        title: "داشبورد مدیریت",
+        value: "start",
+        icon: <FaCog />,
+      },
+    ],
+  },
+  {
+    id: "store",
+    title: " محصولات",
+    icon: <StoreIcon />,
+    subMenuItems: [
+      { title: "افزودن محصول", value: "addProduct", icon: <FaPlus /> },
+      { title: "موجودی محصول", value: "inventory", icon: <FaBoxes /> },
+      { title: "کالکشن ها ", value: "collections", icon: <FaLayerGroup /> },
+      { title: "افزودن دسته بندی", value: "addCategory", icon: <FaTags /> },
+    ],
+  },
+  {
+    id: "orders",
+    title: "سفارشات",
+    icon: <OrdersIcon />,
+    subMenuItems: [
+      { title: "سفارش ها", value: "orders", icon: <FaShoppingBag /> },
+    ],
+  },
+  {
+    id: "costumers",
+    title: "کاربران",
+    icon: <CustomersIcon />,
+    subMenuItems: [{ title: "کاربران", value: "costumers", icon: <FaUsers /> }],
+  },
+  {
+    id: "media",
+    title: "گالری",
+    icon: <MediaIcon />,
+    subMenuItems: [
+      { title: "افزودن تصویر", value: "addFile", icon: <FaFileUpload /> },
+      { title: "مدیریت تصاویر", value: "editFile", icon: <FaImages /> },
+      { title: "افزودن استوری", value: "addStory", icon: <FaInstagram /> },
+    ],
+  },
+  {
+    id: "addBlogs",
+    title: "وبلاگ",
+    icon: <BlogIcon />,
+    subMenuItems: [
+      { title: "افزودن وبلاگ ", value: "addBlogs", icon: <FaBlog /> },
+      {
+        title: "افزودن متا دیتا ها",
+        value: "addMetaData",
+        icon: <FaDatabase />,
+      },
+      { title: "ویرایش وبلاگ", value: "editBlogs", icon: <FaEdit /> },
+    ],
+  },
+  {
+    id: "settings",
+    title: "تنظیمات",
+    icon: <IoSettings />,
+    subMenuItems: [
+      { title: "تنظیمات سایت", value: "siteSettings", icon: <FaCog /> },
+      { title: "تنظیمات حساب", value: "accountSettings", icon: <FaUserCog /> },
+      {
+        title: "تنظیمات پرداخت",
+        value: "paymentSettings",
+        icon: <FaCreditCard />,
+      },
+      {
+        title: "تنظیمات امنیت",
+        value: "securitySettings",
+        icon: <FaShieldAlt />,
+      },
+    ],
+  },
+];
 
 const AccordionItem: React.FC<AccordionItemProps> = ({
   title,
@@ -131,7 +168,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="p-2 bg-[#0077b6]/10 rounded-lg my-2 ">{children}</div>
+            <div className="p-2 bg-[#0077b6]/10 rounded-lg my-2 ">
+              {children}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -152,7 +191,13 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
   };
 
   const renderAccordionContent = (
-    item: { subMenuItems?: Array<{ title: string; value: string }> },
+    item: {
+      subMenuItems?: Array<{
+        title: string;
+        value: string;
+        icon: React.ReactNode;
+      }>;
+    },
     setSelectedMenu: React.Dispatch<React.SetStateAction<string>>
   ) => {
     return (
@@ -160,11 +205,11 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
         {item.subMenuItems?.map((subItem, index) => (
           <div
             key={index}
-            className="text-right transition-all duration-300 ease-in-out border-b hover:-translate-x-1 border-[#0077b6]/50 p-1 cursor-pointer hover:text-gray-500 hover:font-bold text-[#0077b6] m-2"
+            className="text-right transition-all duration-300 ease-in-out border-b hover:-translate-x-1 border-[#0077b6]/50 p-1 cursor-pointer hover:text-gray-500 hover:font-bold text-[#0077b6] m-2 flex items-center justify-end gap-2"
             onClick={() => setSelectedMenu(subItem.value)}
           >
-            {/* <span className="mx-2">{`<`}</span> */}
             {subItem.title}
+            <span className="text-sm">{subItem.icon}</span>
           </div>
         ))}
       </>

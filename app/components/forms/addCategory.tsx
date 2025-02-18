@@ -75,12 +75,12 @@ const AddCategory = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-transparent mt-12 p-8" dir="rtl">
-        <div className="max-w-6xl mx-auto backdrop-blur-lg bg-white/80 rounded-2xl shadow-xl p-8 border border-blue-100">
+      <div className="min-h-screen bg-transparent  p-8" dir="rtl">
+        <div className="max-w-6xl mx-auto backdrop-blur-lg mt-12 bg-white/80 rounded-2xl shadow-xl p-8 border border-blue-100">
           <motion.h2
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="text-3xl font-bold mb-8 text-[#0077b6] flex items-center gap-3"
+            className="text-2xl md:text-3xl font-bold mb-8 text-[#0077b6] flex items-center gap-3"
           >
             <HiOutlineFolderAdd className="text-4xl" />
             افزودن دسته‌بندی جدید
@@ -139,7 +139,7 @@ const AddCategory = () => {
                       }}
                       className="form-checkbox h-5 w-5 text-blue-500 rounded border-blue-200 ml-3"
                     />
-                    <span className="text-gray-700 group-hover:text-blue-600 transition-colors">
+                    <span className="text-gray-800 group-hover:text-blue-600 transition-colors">
                       {category.name}
                     </span>
                   </motion.label>

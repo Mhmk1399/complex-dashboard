@@ -20,10 +20,6 @@ const EditCategory = () => {
   );
   const [selectedParentId, setSelectedParentId] = useState<string>("");
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
   const fetchCategories = async () => {
     try {
       const response = await fetch("/api/category", {
@@ -38,7 +34,9 @@ const EditCategory = () => {
       toast.error("خطا در دریافت دسته‌بندی‌ها");
     }
   };
-
+  useEffect(() => {
+    fetchCategories();
+  }, []);
   const toggleExpand = (categoryId: string) => {
     const newExpanded = new Set(expandedCategories);
     if (newExpanded.has(categoryId)) {
@@ -184,15 +182,12 @@ const EditCategory = () => {
         key={category._id}
         className={`mr-${level * 2} sm:mr-${level * 4}`}
       >
-        <motion.div
-          className="bg-gradient-to-r from-white to-gray-50 p-2 rounded-xl flex lg:flex-row flex-col  lg:items-center justify-between mb-2 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 gap-2"
-          whileHover={{ scale: 1.01 }}
-        >
+        <motion.div className="bg-gradient-to-r from-white  to-gray-50 p-2 rounded-xl flex lg:flex-row flex-col  lg:items-center justify-between mb-2 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 gap-2">
           <div className="flex items-center gap-3 w-full">
             {hasChildren && (
               <motion.button
                 onClick={() => toggleExpand(category._id)}
-                className="text-blue-600 hover:text-blue-800 w-6 h-6 flex items-center justify-center rounded-full bg-blue-50 hover:bg-blue-100 transition-colors"
+                className="text-blue-600 hover:text-blue-800 w-6 h-6 flex items-center justify-center rounded-full  hover:bg-blue-100 transition-colors"
                 whileHover={{ rotate: 180 }}
                 animate={{ rotate: isExpanded ? 180 : 0 }}
               >
@@ -219,9 +214,8 @@ const EditCategory = () => {
                     data-tooltip-id="delete"
                     data-tooltip-content="حذف دسته‌بندی"
                     whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
                     onClick={() => handleDelete(category._id)}
-                    className="p-2 py-3 rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md"
+                    className="p-2 py-3 rounded-lg bg-transparent text-rose-500 "
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -243,9 +237,8 @@ const EditCategory = () => {
                     data-tooltip-id="edit"
                     data-tooltip-content="ویرایش"
                     whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
                     onClick={() => handleEdit(category)}
-                    className="p-2 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+                    className="p-2 py-3 rounded-lg bg-transparent text-blue-500 "
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -273,9 +266,8 @@ const EditCategory = () => {
                 data-tooltip-id="save"
                 data-tooltip-content="ذخیره"
                 whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
                 onClick={handleUpdate}
-                className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md"
+                className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-green-500 shadow-md"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -301,12 +293,11 @@ const EditCategory = () => {
                         data-tooltip-id="add"
                         data-tooltip-content="افزودن به زیردسته"
                         whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
                         onClick={() =>
                           selectedParentId &&
                           addToParent(selectedParentId, category._id)
                         }
-                        className="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-md"
+                        className="p-2 rounded-lg bg-transparent text-green-500"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -328,9 +319,8 @@ const EditCategory = () => {
                         data-tooltip-id="remove"
                         data-tooltip-content="حذف از زیردسته"
                         whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
                         onClick={() => removeFromParent(category._id)}
-                        className="p-2 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-md"
+                        className="p-2 rounded-lg bg-transparent text-yellow-500 "
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -415,7 +405,7 @@ const EditCategory = () => {
         ویرایش دسته‌بندی‌ها
       </h2>
 
-      <div className="space-y-4 bg-white/10 p-3 sm:p-6 rounded-xl backdrop-blur-lg">
+      <div className="space-y-4 bg-white/10 p-1 sm:p-6 rounded-xl backdrop-blur-lg">
         {categories
           .filter(
             (category) =>
