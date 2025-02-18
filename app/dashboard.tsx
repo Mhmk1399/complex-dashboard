@@ -20,7 +20,7 @@ import { StoreSettings } from "./components/forms/storeSettings";
 export const Dashboard = () => {
   const router = useRouter();
   const [selectedMenu, setSelectedMenu] = useState("ProductsSetting");
-
+const[loading, setLoading] = useState(true);
   useEffect(() => {
     const token = localStorage.getItem("token"); // Or however you store the token
 
@@ -56,10 +56,18 @@ export const Dashboard = () => {
             const userData = await response.json();
             console.log(userData.storeId);
             localStorage.setItem("storeId", userData.storeId);
+            setLoading(false);
             // Update the greeting with user's name
+          }
+          if(response.status===404) {
+            router.replace("/login");
+            setTimeout(() => {
+              setLoading(false);  
+            }, 3000);
           }
         } catch (error) {
           console.error("Error fetching user details:", error);
+          setLoading(false);
         }
       };
 
@@ -68,6 +76,7 @@ export const Dashboard = () => {
       console.error("Error decoding token:", error);
       localStorage.removeItem("token");
       router.replace("/login");
+      setLoading(false);
     }
   }, [router]);
   useEffect(() => {
@@ -108,6 +117,16 @@ export const Dashboard = () => {
         return <StartComponent setSelectedMenu={setSelectedMenu} />;
     }
   };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+          <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin">
+              <div className="w-14 h-14 border-r-4 border-blue-400 border-solid rounded-full animate-spin-reverse"></div>
+          </div>
+      </div>
+  );
+  }
+  
   return (
     <div className="">
       <Form setSelectedMenu={setSelectedMenu} />
