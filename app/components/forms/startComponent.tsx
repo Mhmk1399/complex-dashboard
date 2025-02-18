@@ -11,6 +11,7 @@ import {
   FaMotorcycle,
   FaCloudDownloadAlt,
 } from "react-icons/fa";
+import { motion } from "framer-motion";
 interface StartComponentProps {
   setSelectedMenu: (menu: string) => void;
 }
@@ -25,7 +26,10 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const [selectedShippingMethod, setSelectedShippingMethod] =
     useState<string>("");
   const [repoUrl, setRepoUrl] = useState("");
-
+  const [ShowsettingTips, setShowsettingTips] = useState(false);
+  const [showAddTips,setShowAddTips] = useState(false);
+  const [showPayTips,setShowPayTips] = useState(false);
+  const [showShippingTips,setShowShippingTips] = useState(false);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -157,9 +161,34 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                 </svg>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
-                  تنظیمات سایت
-                </h3>
+
+                <div className="relative">
+                  <h1
+                    className="text-xl
+                 text-right mb-4 flex items-center justify-start gap-2"
+                    onMouseEnter={() => setShowsettingTips(true)}
+                    onMouseLeave={() => setShowsettingTips(false)}
+                  >
+                    تنظیمات سایت
+                    <i className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors" />
+                  </h1>
+
+                  {ShowsettingTips && (
+                    <motion.span
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="absolute z-10 bg-blue-600 backdrop-blur-md border-2 border-white/50 rounded-xl shadow-lg p-5 right-0 mt-1 text-sm text-white"
+                    >
+                      <ul className="text-right space-y-2">
+                        <li className="flex items-center gap-2 text-nowrap">
+                          <i className="fas fa-check-circle" />
+                          در این بخش می توانید تنظیمات ظاهری سایت خود را انجام دهید
+                        </li>
+
+                      </ul>
+                    </motion.span>
+                  )}
+                </div>
                 <p className="text-gray-600">
                   تنظیمات اولیه و پیکربندی سایت شما
                 </p>
@@ -190,9 +219,33 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                 </svg>
               </div>
               <div className="text-right">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
+             
+                <div className="relative">
+                  <h1
+                    className="text-xl text-right mb-4 flex items-center justify-start gap-2"
+                    onMouseEnter={() => setShowAddTips(true)}
+                    onMouseLeave={() => setShowAddTips(false)}
+                  >
                   افزودن محصول
-                </h3>
+                  <i className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors" />
+                  </h1>
+
+                  {showAddTips && (
+                    <motion.span
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="absolute z-10 bg-blue-600 backdrop-blur-md border-2 border-white/50 rounded-xl shadow-lg p-5 right-0 mt-1 text-sm text-white"
+                    >
+                      <ul className="text-right space-y-2">
+                        <li className="flex items-center gap-2 text-nowrap">
+                          <i className="fas fa-check-circle" />
+                          در این بخش می توانید محصولات فروشگاه خود را اضافه کنید
+                        </li>
+
+                      </ul>
+                    </motion.span>
+                  )}
+                </div>
                 <p className="text-gray-600">مدیریت و افزودن محصولات فروشگاه</p>
               </div>
             </button>
@@ -240,18 +293,40 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                 </svg>
               </div>
               <div className="text-right">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                
+                <div className="relative">
+                  <h1
+                    className="text-xl text-right mb-4 flex items-center justify-start gap-2"
+                    onMouseEnter={() => setShowPayTips(true)}
+                    onMouseLeave={() => setShowPayTips(false)}
+                  >
                   روش پرداخت
-                </h3>
+                  <i className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors" />
+                  </h1>
+
+                  {showPayTips && (
+                    <motion.span
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="absolute z-10 bg-blue-600 backdrop-blur-md border-2 border-white/50 rounded-xl shadow-lg p-5 right-0 mt-1 text-sm text-white"
+                    >
+                      <ul className="text-right space-y-2">
+                        <li className="flex items-center gap-2 text-nowrap">
+                          <i className="fas fa-check-circle" />
+                          در این بخش می توانید روش پرداخت خود را انتخاب کنید
+                        </li>
+                      </ul>
+                    </motion.span>
+                  )}
+                </div>
                 <p className="text-gray-600">
                   {selectedPaymentMethod
-                    ? `انتخاب شده: ${
-                        selectedPaymentMethod === "online"
-                          ? "آنلاین"
-                          : selectedPaymentMethod === "cash"
-                          ? "نقدی"
-                          : "اقساطی"
-                      }`
+                    ? `انتخاب شده: ${selectedPaymentMethod === "online"
+                      ? "آنلاین"
+                      : selectedPaymentMethod === "cash"
+                        ? "نقدی"
+                        : "اقساطی"
+                    }`
                     : "انتخاب روش پرداخت"}
                 </p>
               </div>
@@ -318,18 +393,40 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                 </svg>
               </div>
               <div className="text-right">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                
+                <div className="relative">
+                  <h1
+                    className="text-xl text-right mb-4 flex items-center justify-start gap-2"
+                    onMouseEnter={() => setShowShippingTips(true)}
+                    onMouseLeave={() => setShowShippingTips(false)}
+                  >
                   روش ارسال
-                </h3>
+                  <i className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors" />
+                  </h1>
+
+                  {showShippingTips && (
+                    <motion.span
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="absolute z-10 bg-blue-600 backdrop-blur-md border-2 border-white/50 rounded-xl shadow-lg p-5 right-0 mt-1 text-sm text-white"
+                    >
+                      <ul className="text-right space-y-2">
+                        <li className="flex items-center gap-2 text-nowrap">
+                          <i className="fas fa-check-circle" />
+                          در این بخش می توانید روش ارسال خود را انتخاب کنید.
+                        </li>
+                      </ul>
+                    </motion.span>
+                  )}
+                </div>
                 <p className="text-gray-600">
                   {selectedShippingMethod
-                    ? `انتخاب شده: ${
-                        selectedShippingMethod === "post"
-                          ? "پست"
-                          : selectedShippingMethod === "express"
-                          ? "پیک"
-                          : "دیجیتال"
-                      }`
+                    ? `انتخاب شده: ${selectedShippingMethod === "post"
+                      ? "پست"
+                      : selectedShippingMethod === "express"
+                        ? "پیک"
+                        : "دیجیتال"
+                    }`
                     : "انتخاب روش ارسال"}
                 </p>
               </div>
