@@ -10,6 +10,7 @@ import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion";
 
 export const AddBlog = () => {
   const [title, setTitle] = useState("");
@@ -201,7 +202,7 @@ export const AddBlog = () => {
     const content = editor?.getHTML();
     const storeId = localStorage.getItem("storeId");
     try {
-      const response = await fetch("/api/blogs", {
+      const response = await fetch("/api/blog", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -276,15 +277,23 @@ export const AddBlog = () => {
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} rtl={true} />
-      <div className="max-w-4xl mx-6 lg:mx-auto p-6 bg-gray-100 rounded-xl shadow-sm">
+      <div className="max-w-4xl mx-6 md:mt-36 my-16 lg:mx-auto">
         {/* rest of your code */}
 
-        <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
+        <motion.h2
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text"
+        >
           افزودن بلاگ جدید
-        </h2>
+        </motion.h2>
 
         <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
-          <div className="border rounded-lg p-2">
+          <motion.div
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="bg-blue-50/50 rounded-xl p-6 border border-blue-100"
+          >
             <div className="relative">
               <h1
                 className="text-
@@ -293,17 +302,30 @@ export const AddBlog = () => {
                 onMouseLeave={() => setShowSeoTips(false)}
               >
                 بخش سئو
-                <i className="fas fa-info-circle cursor-help text-blue-400 hover:text-gray-700" />
+                <i className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors" />
               </h1>
 
               {showSeoTips && (
-                <span className="absolute z-10 bg-blue-600 bg-opacity-60  backdrop-blur-sm border-2 border-white/50 font-medium rounded-lg shadow-lg p-4 right-0 mt-1 text-xs text-gray-50">
-                  <ul className="text-right space-y-1 my-2">
-                    <li>عنوان سئو باید کوتاه و گویا باشد</li>
-                    <li>از کلمات کلیدی مرتبط استفاده کنید</li>
-                    <li>توضیحات کوتاه را در 160 کاراکتر بنویسید</li>
+                <motion.span
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute z-10 bg-blue-600 backdrop-blur-md border-2 border-white/50 rounded-xl shadow-lg p-5 right-0 mt-1 text-sm text-white"
+                >
+                  <ul className="text-right space-y-2">
+                    <li className="flex items-center gap-2">
+                      <i className="fas fa-check-circle" />
+                      عنوان سئو باید کوتاه و گویا باشد
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <i className="fas fa-check-circle" />
+                      از کلمات کلیدی مرتبط استفاده کنید
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <i className="fas fa-check-circle" />
+                      توضیحات کوتاه را در 160 کاراکتر بنویسید
+                    </li>
                   </ul>
-                </span>
+                </motion.span>
               )}
             </div>
             <label className="block text-sm font-medium text-gray-700 text-right mb-2">
@@ -313,13 +335,18 @@ export const AddBlog = () => {
               type="text"
               value={seoTitle}
               onChange={(e) => setSeoTitle(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              placeholder="عنوان بلاگ را وارد کنید"
+              className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+              placeholder="عنوان سئو را وارد کنید..."
             />
             {errors.seoTitle && (
-              <p className="text-red-500 text-sm mt-1 text-right">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-red-500 text-sm mt-2 flex items-center gap-2"
+              >
+                <i className="fas fa-exclamation-circle" />
                 {errors.seoTitle}
-              </p>
+              </motion.p>
             )}
 
             <div>
@@ -329,36 +356,51 @@ export const AddBlog = () => {
               <input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                placeholder="توضیحات کوتاه بلاگ را وارد کنید"
+                className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                placeholder="توضیحات کوتاه را وارد کنید..."
               />
               {errors.description && (
-                <p className="text-red-500 text-sm mt-1 text-right">
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-red-500 text-sm mt-2 flex items-center gap-2"
+                >
+                  <i className="fas fa-exclamation-circle" />
                   {errors.description}
-                </p>
+                </motion.p>
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Add this new input field */}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 text-right mb-2">
+          <motion.div
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="space-y-4"
+          >
+            <label className=" text-sm font-medium text-blue-700 mb-2 flex items-center gap-2">
+              <i className="fas fa-pen-fancy" />
               عنوان بلاگ
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              placeholder="عنوان بلاگ را وارد کنید"
+              className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+              placeholder="عنوان اصلی بلاگ را وارد کنید..."
             />
             {errors.title && (
-              <p className="text-red-500 text-sm mt-1 text-right">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-red-500 text-sm mt-2 flex items-center gap-2"
+              >
+                <i className="fas fa-exclamation-circle" />
                 {errors.title}
-              </p>
+              </motion.p>
             )}
-          </div>
+          </motion.div>
 
           <div>
             <label className="block  text-sm font-medium text-gray-700 text-right mb-2">

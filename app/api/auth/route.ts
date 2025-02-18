@@ -47,6 +47,7 @@ export async function POST(request: Request) {
       ;
     await addEnvironmentVariablesToVercel(vercelUrl.projectId, envVariables);
 
+    const cleanVercelUrl = `https://${websiteResult.repoName}.vercel.app`;
 
 
     const repoUrl = websiteResult.repoUrl;
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
       password: hashedPassword,
       title,
       repoUrl,
-      vercelUrl: vercelUrl.deploymentUrl,
+      vercelUrl: cleanVercelUrl,
       storeId,
     });
 
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
         id: newUser._id,
         pass: hashedPassword,
         storeId,
-        vercelUrl: vercelUrl.deploymentUrl,
+        vercelUrl: cleanVercelUrl,
         repoUrl
       },
       process.env.JWT_SECRET!,

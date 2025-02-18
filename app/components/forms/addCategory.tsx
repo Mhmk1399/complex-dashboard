@@ -3,6 +3,13 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import EditCategory from "./editCategory";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  HiOutlineFolderAdd,
+  HiOutlineTag,
+  HiOutlineFolderOpen,
+  HiOutlineSave,
+  HiOutlinePencil,
+} from "react-icons/hi";
 
 interface Category {
   _id: string;
@@ -31,7 +38,7 @@ const AddCategory = () => {
       setExistingCategories(data);
     } catch (error) {
       toast.error("خطا در دریافت دسته‌بندی‌ها");
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -58,7 +65,7 @@ const AddCategory = () => {
       }
     } catch (error) {
       toast.error("خطا در ایجاد دسته‌بندی");
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -68,69 +75,99 @@ const AddCategory = () => {
 
   return (
     <>
-      <div
-        className="p-4 grid lg:mx-auto lg:max-w-6xl mx-10 mt-20 grid-cols-1 border border-[#0077b6] rounded-2xl bg-[#fff] md:grid-cols-1 lg:grid-cols-2 gap-4"
-        dir="rtl"
-      >
-        <h2 className="text-2xl font-bold mb-2 text-[#0077b6] lg:col-span-2 col-span-1">
-          افزودن دسته‌بندی جدید
-        </h2>
+      <div className="min-h-screen bg-transparent mt-12 p-8" dir="rtl">
+        <div className="max-w-6xl mx-auto backdrop-blur-lg bg-white/80 rounded-2xl shadow-xl p-8 border border-blue-100">
+          <motion.h2
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="text-3xl font-bold mb-8 text-[#0077b6] flex items-center gap-3"
+          >
+            <HiOutlineFolderAdd className="text-4xl" />
+            افزودن دسته‌بندی جدید
+          </motion.h2>
 
-        <div>
-          <label className="block mb-2 text-[#0077b6] font-bold">
-            نام دسته‌بندی
-          </label>
-          <input
-            type="text"
-            value={categoryName}
-            onChange={(e) => setCategoryName(e.target.value)}
-            className="w-full p-2  rounded-md border focus:border-blue-200 focus:outline-none "
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 text-[#0077b6] font-bold">
-            انتخاب زیر دسته‌{" "}
-          </label>
-          <div className="bg-white rounded-xl p-2 max-h-40 overflow-y-auto">
-            {selectableCategories.map((category) => (
-              <label
-                key={category._id}
-                className="flex items-center text-gray-800 mb-2"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedParents.includes(category._id)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedParents([...selectedParents, category._id]);
-                    } else {
-                      setSelectedParents(
-                        selectedParents.filter((id) => id !== category._id)
-                      );
-                    }
-                  }}
-                  className="ml-2"
-                />
-                {category.name}
+          <div className="grid lg:grid-cols-2 gap-8">
+            <motion.div
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              className="space-y-4"
+            >
+              <label className=" text-[#0077b6] font-bold flex items-center gap-2">
+                <HiOutlineTag className="text-xl" />
+                نام دسته‌بندی
               </label>
-            ))}
+              <input
+                type="text"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                className="w-full p-3 rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-200 focus:border-transparent transition-all duration-300 outline-none"
+                placeholder="نام دسته‌بندی را وارد کنید..."
+                required
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              className="space-y-4"
+            >
+              <label className=" text-[#0077b6] font-bold flex items-center gap-2">
+                <HiOutlineFolderOpen className="text-xl" />
+                انتخاب زیر دسته‌
+              </label>
+              <div className="bg-white/90 rounded-xl p-4 max-h-60 overflow-y-auto custom-scrollbar border border-blue-100">
+                {selectableCategories.map((category) => (
+                  <motion.label
+                    key={category._id}
+                    className="flex items-center p-2 hover:bg-blue-50 rounded-lg cursor-pointer group transition-all duration-200 mb-2"
+                    whileHover={{ x: 4 }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedParents.includes(category._id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedParents([
+                            ...selectedParents,
+                            category._id,
+                          ]);
+                        } else {
+                          setSelectedParents(
+                            selectedParents.filter((id) => id !== category._id)
+                          );
+                        }
+                      }}
+                      className="form-checkbox h-5 w-5 text-blue-500 rounded border-blue-200 ml-3"
+                    />
+                    <span className="text-gray-700 group-hover:text-blue-600 transition-colors">
+                      {category.name}
+                    </span>
+                  </motion.label>
+                ))}
+              </div>
+            </motion.div>
           </div>
-        </div>
-        <div className="flex items-center justify-start w-full gap-2">
-          <button
-            onClick={handleSubmit}
-            className="  text-[#0077b6] bg-[#fff] mt-5 py-2 px-4 border border-blue-200 text-xl font-bold rounded-md  hover:from-sky-700 hover:to-sky-600 transition-all"
+
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="flex justify-center md:justify-start items-center gap-4 mt-8"
           >
-            ذخیره دسته‌بندی
-          </button>
-          <motion.button
-            onClick={() => setIsModalOpen(true)}
-            className="  text-[#0077b6] bg-[#fff] mt-5 py-2 px-4 border border-blue-200 text-xl font-bold rounded-md hover:from-sky-700 hover:to-sky-600 transition-all"
-          >
-            ویرایش دسته‌بندی‌ها
-          </motion.button>
+            <button
+              onClick={handleSubmit}
+              className="flex items-center text-nowrap text-sm md:text-lg gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white md:px-6 px-3 py-3 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300"
+            >
+              <HiOutlineSave className="text-xl" />
+              ذخیره دسته‌بندی
+            </button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center text-nowrap text-sm md:text-lg gap-2 bg-white border border-blue-200 text-blue-500 md:px-6 px-3 py-3 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-300"
+            >
+              <HiOutlinePencil className="text-xl" />
+              ویرایش دسته‌بندی‌ها
+            </button>
+          </motion.div>
         </div>
       </div>
 
@@ -155,7 +192,7 @@ const AddCategory = () => {
                   setIsModalOpen(false);
                   fetchCategories();
                 }}
-                className="absolute top-4 left-4 p-2 bg-red-500 text-[#0077b6] rounded-full hover:bg-red-600 transition-colors"
+                className="absolute top-9 left-4 p-2  z-[9999] text-[#ffffff] rounded-full hover:opacity-85 transition-colors"
               >
                 ✕
               </button>
