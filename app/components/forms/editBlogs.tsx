@@ -228,7 +228,7 @@ export const EditBlogs = () => {
     if (!selectedBlog?._id) return;
 
     try {
-      const response = await fetch(`/api/blogs/`, {
+      const response = await fetch(`/api/blog/`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -270,7 +270,7 @@ export const EditBlogs = () => {
     if (!selectedBlog?._id) return;
 
     try {
-      const response = await fetch(`/api/blogs/`, {
+      const response = await fetch(`/api/blog/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
