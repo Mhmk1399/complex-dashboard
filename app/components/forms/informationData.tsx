@@ -52,7 +52,7 @@ export const InformationData: React.FC = () => {
 
   const handleSubmitForm = async () => {
     try {
-      const response = await fetch("/api/userinfo", {
+      const response = await fetch("/api/userInfo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
