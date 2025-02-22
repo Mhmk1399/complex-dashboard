@@ -21,7 +21,7 @@ interface Product {
   imageAlt?: string;
   name: string;
   description: string;
-  category: string;
+  category: { name: string; _id: string };
   price: string;
   status: string;
   discount: string;
@@ -148,22 +148,14 @@ export const Collections = () => {
   }
 
   const handleEdit = async (collection: Collection) => {
-    try {
-      const response = await fetch(`/api/collections/${collection._id}`);
-      const data = await response.json();
-      setSelectedCollection({
-        ...collection,
-        // This will contain only the products in this collection
-        products: data.products,
-      });
+    
+      
+      
+      setSelectedCollection(collection);
       setIsEditModalOpen(true);
-
-      fetchCollections();
-    } catch (error) {
-      console.error("Error fetching collection details:", error);
-    }
+  
   };
-
+  
   return (
     <div className="px-4 py-8" dir="rtl">
       <div className="flex justify-center lg:mx-16 items-center mb-6">

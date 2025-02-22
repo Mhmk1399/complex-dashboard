@@ -9,7 +9,7 @@ interface Product {
   imageAlt?: string;
   name: string;
   description: string;
-  category: string;
+  category: {name: string; _id: string };
   price: string;
   status: string;
   discount: string;
