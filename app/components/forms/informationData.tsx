@@ -87,8 +87,10 @@ export const InformationData: React.FC = () => {
             exit="exit"
           >
             <div className="grid grid-cols-2 gap-6">
-              <ColorPicker label="رنگ اصلی" defaultValue="#0077b6" />
-              <ColorPicker label="رنگ ثانویه" defaultValue="#00b4d8" />
+              <ColorPicker
+                label="رنگ پس زمینه صفحات سایت"
+                defaultValue="#ffffff"
+              />
             </div>
             <FloatingSelect
               label="فونت"
