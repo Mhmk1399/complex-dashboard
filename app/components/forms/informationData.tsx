@@ -15,6 +15,7 @@ import {
   MdSettings,
 } from "react-icons/md";
 import ImageSelectorModal from "./ImageSelectorModal";
+import { toast } from "react-toastify";
 
 const menuItems = [
   { id: "basic", icon: <FaStore />, title: "اطلاعات پایه" },
@@ -26,6 +27,59 @@ const menuItems = [
 export const InformationData: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState("basic");
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    basic: {
+      storeName: "",
+      logo: "",
+      description: "",
+    },
+    design: {
+      backgroundColor: "#ffffff",
+      font: "iranSans",
+    },
+    contact: {
+      phone: "",
+      email: "",
+      address: "",
+    },
+    social: {
+      instagram: "",
+      telegram: "",
+      whatsapp: "",
+    },
+  });
+
+  const handleSubmitForm = async () => {
+    try {
+      const response = await fetch("/api/userinfo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        toast.success("اطلاعات با موفقیت ذخیره شد");
+      } else {
+        throw new Error("خطا در ارسال اطلاعات");
+      }
+    } catch (error) {
+      toast.error("خطا در ارسال اطلاعات");
+      console.error(error);
+    }
+  };
+
+  const handleNextStep = () => {
+    const menuOrder = ["basic", "design", "contact", "social"];
+    const currentIndex = menuOrder.indexOf(activeMenu);
+
+    if (currentIndex < menuOrder.length - 1) {
+      setActiveMenu(menuOrder[currentIndex + 1]);
+    }
+  };
 
   const slideVariants = {
     enter: { x: 20, opacity: 0 },
@@ -203,8 +257,15 @@ export const InformationData: React.FC = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               className="mt-8 w-full bg-[#0077b6] text-white py-4 rounded-xl hover:bg-[#005f8f] transition-all duration-300 text-lg font-medium"
+              onClick={() => {
+                if (activeMenu === "social") {
+                  handleSubmitForm();
+                } else {
+                  handleNextStep();
+                }
+              }}
             >
-              ذخیره تغییرات
+              {activeMenu === "social" ? "ثبت اطلاعات" : "مرحله بعدی"}
             </motion.button>
           </div>
         </div>
