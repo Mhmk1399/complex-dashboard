@@ -68,7 +68,7 @@ export const InformationData: React.FC = () => {
       }
     } catch (error) {
       toast.error("خطا در ارسال اطلاعات");
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -102,6 +102,16 @@ export const InformationData: React.FC = () => {
               label="نام فروشگاه"
               icon={<FaStore />}
               placeholder="نام فروشگاه خود را وارد کنید"
+              value={formData.basic.storeName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setFormData({
+                  ...formData,
+                  basic: {
+                    ...formData.basic,
+                    storeName: e.target.value,
+                  },
+                })
+              }
             />
 
             <div className="relative group">
@@ -290,7 +300,9 @@ const FloatingInput: React.FC<{
   placeholder?: string;
   type?: string;
   prefix?: string;
-}> = ({ label, icon, placeholder, type = "text", prefix }) => (
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}> = ({ label, icon, placeholder, type = "text", prefix, value, onChange }) => (
   <div className="relative group">
     <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
       {icon}
