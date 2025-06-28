@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { toast } from "react-toastify";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import ImageSelectorModal from "./ImageSelectorModal"; // Import the ImageSelectorModal
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa"; // Add some icons for better UX

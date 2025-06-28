@@ -68,6 +68,7 @@ export default function UploadPage() {
       }
     } catch (error) {
       setUploadStatus("error");
+      console.log(error)
       toast.error("خطا در آپلود فایل");
     } finally {
       setLoading(false);

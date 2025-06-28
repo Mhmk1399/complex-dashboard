@@ -302,7 +302,7 @@ const FloatingInput: React.FC<{
   prefix?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ label, icon, placeholder, type = "text", prefix, value, onChange }) => (
+}> = ({ label, icon, placeholder, type = "text", prefix }) => (
   <div className="relative group">
     <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
       {icon}

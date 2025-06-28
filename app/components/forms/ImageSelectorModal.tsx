@@ -63,7 +63,10 @@ export default function ImageSelectorModal({
   };
 
   // If modal is not open, return null
-  return (
+  if (!isOpen) {
+    return null;
+  }
+ if (isOpen) return (
     <AnimatePresence>
       <motion.div
         className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
