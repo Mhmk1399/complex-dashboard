@@ -1,11 +1,8 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ModalProps } from "@/types/type";
 
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
+ 
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm }) => {
   return (

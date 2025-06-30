@@ -1,41 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { CreateCollectionModal } from "./createCollectionModal";
 import { toast, ToastContainer } from "react-toastify";
 import { EditCollectionModal } from "./editCollectionModal";
 import DeleteModal from "./DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
+import { Collection, ProductCollection } from "@/types/type";
 
-interface Collection {
-  _id: string;
-  name: string;
-  products: Product[]; // Changed from string[] to Product[]
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Product {
-  images?: ProductImages;
-  _id: string;
-  imageSrc?: string;
-  imageAlt?: string;
-  name: string;
-  description: string;
-  category: { name: string; _id: string };
-  price: string;
-  status: string;
-  discount: string;
-  id: string;
-  innventory: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  storeId: string;
-}
-interface ProductImages {
-  imageSrc: string;
-  imageAlt: string;
-}
 export const Collections = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,7 +36,7 @@ export const Collections = () => {
 
   const handleCreateCollection = async (collectionData: {
     name: string;
-    products: Product[];
+    products: ProductCollection[];
   }) => {
     try {
       const response = await fetch("/api/collections", {
@@ -90,14 +61,7 @@ export const Collections = () => {
   // Fetch collections on component mount
   useEffect(() => {
     fetchCollections();
-    fetchProducts();
   }, []);
-  const fetchProducts = async () => {
-    try {
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
 
   const fetchCollections = async () => {
     try {
@@ -142,25 +106,227 @@ export const Collections = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0077b6]"></div>
+      </div>
+    );
+  }
+
+  // Empty collections section
+  if (!collections || collections.length === 0) {
+    return (
+      <div className="min-h-screen py-8" dir="rtl">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="bg-white rounded-2xl p-8">
+            {/* Header */}
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-bold  text-black">
+                مدیریت کالکشن‌ها
+              </h2>
+              <p className="text-gray-500 mt-2">
+                کالکشن‌های محصولات خود را مدیریت کنید
+              </p>
+            </div>
+
+            {/* Empty State */}
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="mb-8">
+                <svg
+                  className="mx-auto h-32 w-32 text-gray-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1}
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-600 mb-4">
+                هیچ کالکشنی یافت نشد
+              </h3>
+              <p className="text-gray-500 mb-8 max-w-md text-center">
+                شما هنوز هیچ کالکشنی ایجاد نکرده‌اید. کالکشن‌ها به شما کمک
+                می‌کنند محصولات مرتبط را گروه‌بندی کنید.
+              </p>
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="bg-gradient-to-r from-[#0077b6] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg"
+              >
+                <PlusIcon className="h-6 w-6" />
+                ایجاد اولین کالکشن
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Modals */}
+        {isCreateModalOpen && (
+          <CreateCollectionModal
+            isOpen={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+            onSave={handleCreateCollection}
+          />
+        )}
       </div>
     );
   }
 
   const handleEdit = async (collection: Collection) => {
-    
-      
-      
-      setSelectedCollection(collection);
-      setIsEditModalOpen(true);
-  
+    setSelectedCollection(collection);
+    setIsEditModalOpen(true);
   };
-  
+
   return (
-    <div className="px-4 py-8" dir="rtl">
-      <div className="flex justify-center lg:mx-16 items-center mb-6">
-        <h2 className="text-2xl text-center font-bold">کالکشن</h2>
+    <div className="px-4 py-8 min-h-screen" dir="rtl">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-xl mb-6 p-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="md:text-3xl font-bold text-black">
+                مدیریت کالکشن‌ها
+              </h2>
+              <p className="text-gray-500 hidden md:block text-base mt-2">
+                کالکشن‌های محصولات خود را مدیریت کنید
+              </p>
+            </div>
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-gradient-to-r from-[#0077b6] md:text-lg text-sm to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg"
+            >
+              ایجاد کالکشن جدید
+              <PlusIcon className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Collections Table */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Table Header with Stats */}
+          <div className="bg-gradient-to-r from-[#0077b6] to-blue-600 p-6">
+            <div className="flex justify-between items-center text-white">
+              <div>
+                <h3 className="text-xl font-bold">لیست کالکشن‌ها</h3>
+                <p className="text-blue-100 mt-1">
+                  مجموع {collections.length} کالکشن
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
+                  <span className="text-sm">تعداد کل محصولات: </span>
+                  <span className="font-bold">
+                    {collections.reduce(
+                      (total, collection) => total + collection.products.length,
+                      0
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Table Content */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-blue-50 border-b-2 border-[#0077b6]">
+                <tr>
+                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                    نام کالکشن
+                  </th>
+                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                    تعداد محصولات
+                  </th>
+                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                    تاریخ ایجاد
+                  </th>
+                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                    عملیات‌ها
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {collections.map((collection, index) => (
+                  <tr
+                    key={collection._id}
+                    className={`hover:bg-blue-50 transition-all duration-200 ${
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    }`}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center justify-center">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 bg-gradient-to-br from-[#0077b6] to-blue-400 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">
+                              {collection.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {collection.name}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center justify-center">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                          {collection.products.length} محصول
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 text-center">
+                        {new Date(collection.createdAt).toLocaleDateString(
+                          "fa-IR"
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex gap-2 justify-center">
+                        <button
+                          title="ویرایش"
+                          onClick={() => handleEdit(collection)}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition-colors duration-200"
+                        >
+                          <PencilIcon className="h-4 w-4" />
+                        </button>
+                        <button
+                          title="حذف"
+                          onClick={() => openDeleteModal(collection._id)}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Table Footer */}
+          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+            <div className="flex items-center justify-between text-sm text-gray-500">
+              <div>نمایش {collections.length} کالکشن</div>
+              <div className="flex items-center gap-4">
+                <span>
+                  آخرین بروزرسانی: {new Date().toLocaleDateString("fa-IR")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Modals */}
       {isCreateModalOpen && (
         <CreateCollectionModal
           isOpen={isCreateModalOpen}
@@ -168,6 +334,7 @@ export const Collections = () => {
           onSave={handleCreateCollection}
         />
       )}
+
       {isEditModalOpen && selectedCollection && (
         <EditCollectionModal
           isOpen={isEditModalOpen}
@@ -176,79 +343,14 @@ export const Collections = () => {
           fetchCollections={fetchCollections}
         />
       )}
-      <div className=" overflow-x-auto bg-white rounded-lg lg:mx-16 mx-6 shadow">
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="bg-green-500 absolute lg:-mr-8 -mr-9 text-white text-2xl text-center font-extrabold lg:px-2 lg:py-1 p-3 rounded-lg hover:bg-green-600 transition-colors"
-        >
-          +
-        </button>
-        <table className="min-w-full divide-y divide-gray-200 ">
-          <thead className="bg-gray-500">
-            <tr>
-              <th className="px-8 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
-                نام
-              </th>
-              <th className="px-8 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
-                تعداد محصولات
-              </th>
-              <th className="px-8 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
-                تاریخ ایجاد
-              </th>
-              <th className="px-8 py-3 text-right text-xs font-medium text-gray-100 uppercase tracking-wider">
-                عملیات
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {collections.map((collection) => (
-              <tr
-                key={collection._id}
-                className="hover:bg-gray-50 transition-colors"
-              >
-                <td className="px-8 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {collection.name}
-                  </div>
-                </td>
 
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">
-                    {collection.products.length}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">
-                    {new Date(collection.createdAt).toLocaleDateString()}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-3">
-                    <button className="text-indigo-600 hover:text-indigo-900">
-                      <PencilIcon
-                        className="h-5 w-5"
-                        onClick={() => handleEdit(collection)}
-                      />
-                    </button>
-                    <button
-                      onClick={() => openDeleteModal(collection._id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         onConfirm={confirmDelete}
       />
-      <ToastContainer rtl={true} />
+
+      <ToastContainer position="top-center" rtl={true} />
     </div>
   );
 };

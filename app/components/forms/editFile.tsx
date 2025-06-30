@@ -3,14 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaTrash, FaExpand } from "react-icons/fa";
 import { FiImage, FiCheckCircle, FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
+import { ImageFile } from "@/types/type";
 
-interface ImageFile {
-  _id: string;
-  fileName: string;
-  fileUrl: string;
-  fileType: string;
-  fileSize: number;
-}
+
 
 export default function ImageGallery() {
   const [images, setImages] = useState<ImageFile[]>([]);

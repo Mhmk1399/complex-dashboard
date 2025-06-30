@@ -9,14 +9,9 @@ import TextAlign from "@tiptap/extension-text-align";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import { toast, ToastContainer } from "react-toastify";
+import { Blog } from "@/types/type";
 
-interface Blog {
-  _id: string;
-  title: string;
-  content: string;
-  description: string;
-  seoTitle: string;
-}
+
 
 export const EditBlogs = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -342,7 +337,7 @@ export const EditBlogs = () => {
 
   return (
     <>
-      <ToastContainer  rtl={true} />
+      <ToastContainer position="top-center" rtl={true} />
       {loading ? (
         <div>
           <div className="flex justify-center items-center h-screen">

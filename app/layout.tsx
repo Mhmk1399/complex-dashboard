@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { hezare } from "../next-persian-fonts/dohezar";
 
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -31,6 +32,7 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         />
+        <ToastContainer position="top-center" className={hezare.className} rtl={true} />
 
         {children}
       </body>

@@ -51,14 +51,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
     const body = await req.json();
-    const { tag } = body.link;
-    const { link } = body.link;
-    console.log("tag", tag);
-    console.log("link", link);
-    console.log("storeId", storeId);
+    const tag = body.tag;
+    const link = body.link;
+
 
     if (!tag) {
       return NextResponse.json({ error: "Invalid tag" }, { status: 400 });
+    }
+    if (!link) {
+      return NextResponse.json({ error: "Invalid link" }, { status: 400 });
     }
 
     const enamad = new Enamad({

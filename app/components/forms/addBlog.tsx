@@ -276,7 +276,7 @@ export const AddBlog = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} rtl={true} />
+      <ToastContainer position="top-center" autoClose={3000} rtl={true} />
       <div className="max-w-4xl mx-6 md:mt-36 my-16 lg:mx-auto">
         {/* rest of your code */}
 

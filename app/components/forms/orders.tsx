@@ -1,29 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Order } from "@/types/type";
 
-interface Order {
-  _id: string;
-  userId: string;
-  storeId: string;
-  postCode?: string;
-  products: {
-    productId: string;
-    quantity: number;
-    price: number;
-    _id: string;
-  }[];
-  shippingAddress: {
-    street: string;
-    city: string;
-    state: string;
-    postalCode: string;
-  };
-  status: string;
-  totalAmount: number;
-  paymentStatus: string;
-  createdAt: string;
-  updatedAt: string;
-}
 const StatusModal = ({
   order,
   onClose,

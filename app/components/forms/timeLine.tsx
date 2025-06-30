@@ -1,5 +1,13 @@
 import React from "react";
 
+
+interface TimeLineItemProps {
+  text: string;
+  position: string;
+  icon: React.ReactNode;
+  isLast: boolean;
+}
+
 const TimeLineData = [
   {
     text: "به وبسایت ما خوش آمدید",
@@ -51,23 +59,22 @@ const TimeLineData = [
   },
 ];
 
-
 const TimeLine = () => {
-  interface TimeLineItemProps {
-    text: string;
-    position: string;
-    icon: React.ReactNode;
-    isLast: boolean;
-  }
-
-  const TimeLineItem = ({ text, position, icon, isLast }: TimeLineItemProps) => (
-    <div className={`mt-6 sm:mt-0 ${!isLast ? 'sm:mb-12' : ''}`}>
+  const TimeLineItem = ({
+    text,
+    position,
+    icon,
+    isLast,
+  }: TimeLineItemProps) => (
+    <div className={`mt-6 sm:mt-0 ${!isLast ? "sm:mb-12" : ""}`}>
       <div className="flex flex-col sm:flex-row items-center">
         <div className={`flex justify-${position} w-full mx-auto items-center`}>
-          <div className={`w-full sm:w-1/2 ${position === 'start' ? 'sm:pr-8' : 'sm:pl-8'}`}>
-            <div className="p-4 bg-white rounded shadow">
-              {text}
-            </div>
+          <div
+            className={`w-full sm:w-1/2 ${
+              position === "start" ? "sm:pr-8" : "sm:pl-8"
+            }`}
+          >
+            <div className="p-4 bg-white rounded shadow">{text}</div>
           </div>
         </div>
         <div className="rounded-full bg-blue-500 border-white border-4 w-8 h-8 absolute left-1/2 -translate-y-4 sm:translate-y-0 transform -translate-x-1/2 flex items-center justify-center">
@@ -86,7 +93,10 @@ const TimeLine = () => {
   );
 
   return (
-    <div className="min-h-screen bg-blue-50 py-6 flex flex-col justify-center sm:py-12" dir="rtl"> 
+    <div
+      className="min-h-screen bg-blue-50 py-6 flex flex-col justify-center sm:py-12"
+      dir="rtl"
+    >
       <div className="py-3 sm:max-w-xl sm:mx-auto w-full px-2 sm:px-0">
         <div className="relative text-gray-700 antialiased text-sm font-semibold">
           <div className="hidden sm:block w-1 bg-blue-300 absolute h-full left-1/2 transform -translate-x-1/2"></div>

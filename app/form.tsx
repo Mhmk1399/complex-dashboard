@@ -25,33 +25,18 @@ import {
   FaUserCog,
   FaCreditCard,
   FaShieldAlt,
+  FaChevronDown,
+  FaSignOutAlt,
 } from "react-icons/fa";
-interface AccordionItemProps {
-  title: string;
-  children: React.ReactNode;
-  isOpen: boolean;
-  onToggle: () => void;
-  icon?: React.ReactNode; // Optional icon prop
-}
 import { IoSettings } from "react-icons/io5";
-
-interface FormProps {
-  setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
-}
-
-interface AccordionItemProps {
-  title: string;
-  children: React.ReactNode;
-  isOpen: boolean;
-  onToggle: () => void;
-  icon?: React.ReactNode; // Optional icon prop
-}
+import { AccordionItemProps, FormProps } from "@/types/type";
 
 const dashboardMenuItems = [
   {
     id: "start",
     title: "خانه",
     icon: <FaHome />,
+    color: "from-blue-500 to-blue-600",
     subMenuItems: [
       {
         title: "داشبورد مدیریت",
@@ -62,12 +47,13 @@ const dashboardMenuItems = [
   },
   {
     id: "store",
-    title: " محصولات",
+    title: "محصولات",
     icon: <StoreIcon />,
+    color: "from-blue-500 to-blue-600",
     subMenuItems: [
       { title: "افزودن محصول", value: "addProduct", icon: <FaPlus /> },
       { title: "موجودی محصول", value: "inventory", icon: <FaBoxes /> },
-      { title: "کالکشن ها ", value: "collections", icon: <FaLayerGroup /> },
+      { title: "کالکشن ها", value: "collections", icon: <FaLayerGroup /> },
       { title: "افزودن دسته بندی", value: "addCategory", icon: <FaTags /> },
     ],
   },
@@ -75,6 +61,7 @@ const dashboardMenuItems = [
     id: "orders",
     title: "سفارشات",
     icon: <OrdersIcon />,
+    color: "from-blue-500 to-blue-600",
     subMenuItems: [
       { title: "سفارش ها", value: "orders", icon: <FaShoppingBag /> },
     ],
@@ -83,12 +70,14 @@ const dashboardMenuItems = [
     id: "costumers",
     title: "کاربران",
     icon: <CustomersIcon />,
+    color: "from-blue-500 to-blue-600",
     subMenuItems: [{ title: "کاربران", value: "costumers", icon: <FaUsers /> }],
   },
   {
     id: "media",
     title: "گالری",
     icon: <MediaIcon />,
+    color: "from-blue-500 to-blue-600",
     subMenuItems: [
       { title: "افزودن تصویر", value: "addFile", icon: <FaFileUpload /> },
       { title: "مدیریت تصاویر", value: "editFile", icon: <FaImages /> },
@@ -99,8 +88,9 @@ const dashboardMenuItems = [
     id: "addBlogs",
     title: "وبلاگ",
     icon: <BlogIcon />,
+    color: "from-blue-500 to-blue-600",
     subMenuItems: [
-      { title: "افزودن وبلاگ ", value: "addBlogs", icon: <FaBlog /> },
+      { title: "افزودن وبلاگ", value: "addBlogs", icon: <FaBlog /> },
       {
         title: "افزودن متا دیتا ها",
         value: "addMetaData",
@@ -113,6 +103,7 @@ const dashboardMenuItems = [
     id: "settings",
     title: "تنظیمات",
     icon: <IoSettings />,
+    color: "from-blue-500 to-blue-600",
     subMenuItems: [
       { title: "تنظیمات سایت", value: "siteSettings", icon: <FaCog /> },
       { title: "تنظیمات حساب", value: "accountSettings", icon: <FaUserCog /> },
@@ -130,51 +121,70 @@ const dashboardMenuItems = [
   },
 ];
 
-const AccordionItem: React.FC<AccordionItemProps> = ({
+const AccordionItem: React.FC<AccordionItemProps & { color?: string }> = ({
   title,
   children,
   isOpen,
   onToggle,
   icon,
+  color = "from-blue-500 to-blue-600",
 }) => {
   return (
-    <div className="rounded-lg mb-2 right-0" dir="ltr">
-      <button
-        className="w-full py-4 px-2 text-right bg-transparent hover:bg-[#0077b6] hover:bg-opacity-10 border-2 border-[#0077b6] group transition-all duration-500 ease-in-out rounded-lg flex justify-between items-center"
+    <motion.div
+      className="mb-3"
+      dir="rtl"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <motion.button
+        className={`w-full py-4 px-4 text-right bg-gradient-to-r ${color} hover:shadow-lg group transition-all duration-300 ease-in-out rounded-xl flex justify-between items-center relative overflow-hidden`}
         onClick={onToggle}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
       >
-        <span className=" text-[#0077b6] group-hover:text-blue-400 p-0 text-xl transition-all duration-500 ease-in-out">
-          {icon}
-        </span>
+        <motion.div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
 
-        <span className="text-[#0077b6] group-hover:text-gray-500 font-semibold transition-all duration-500 ease-in-out">
-          {title}
-        </span>
+        <div className="flex items-center gap-3 z-10">
+          <motion.span
+            className="text-white text-xl"
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <FaChevronDown />
+          </motion.span>
+          <span className="text-white font-semibold text-lg">{title}</span>
+        </div>
 
-        {/* <span
-          className={`transform transition-transform ${
-            isOpen ? "rotate-180 text-[#344e41]" : "text-[#fff]"
-          }`}
+        <motion.span
+          className="text-white text-xl z-10"
+          whileHover={{ scale: 1.1 }}
         >
-          ▼
-        </span> */}
-      </button>
+          {icon}
+        </motion.span>
+      </motion.button>
+
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="p-2 bg-[#0077b6]/10 rounded-lg my-2 ">
+            <motion.div
+              className="mt-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
+              initial={{ y: -10 }}
+              animate={{ y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
               {children}
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
@@ -182,12 +192,15 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  // const toggleSection = (sectionId: string) => {
-  //   setActiveSection(activeSection === sectionId ? null : sectionId);
-  // };
-
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("storeId");
+    localStorage.removeItem("userName");
+    window.location.href = "/login";
   };
 
   const renderAccordionContent = (
@@ -201,95 +214,210 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
     setSelectedMenu: React.Dispatch<React.SetStateAction<string>>
   ) => {
     return (
-      <>
+      <div className="p-2">
         {item.subMenuItems?.map((subItem, index) => (
-          <div
+          <motion.div
+            dir="rtl"
             key={index}
-            className="text-right transition-all duration-300 ease-in-out border-b hover:-translate-x-1 border-[#0077b6]/50 p-1 cursor-pointer hover:text-gray-500 hover:font-bold text-[#0077b6] m-2 flex items-center justify-end gap-2"
-            onClick={() => setSelectedMenu(subItem.value)}
+            className=" transition-all duration-300 ease-in-out border-b border-white/10 p-3 cursor-pointer hover:bg-white/30 text-black/70 m-1 rounded-lg flex flex-row-reverse items-center justify-between group"
+            onClick={() => {
+              setSelectedMenu(subItem.value);
+              setIsOpen(false); // Close menu on mobile after selection
+            }}
+            whileHover={{ x: -5 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
           >
-            {subItem.title}
-            <span className="text-sm">{subItem.icon}</span>
-          </div>
+            <span className="text-sm group-hover:scale-110 transition-transform duration-200">
+              {subItem.icon}
+            </span>
+            <span className="font-medium">{subItem.title}</span>
+          </motion.div>
         ))}
-      </>
+      </div>
     );
   };
 
   return (
     <>
-      {/* Menu Toggle Button */}
+      {/* Enhanced Menu Toggle Button */}
       <motion.button
         onClick={toggleMenu}
-        className={`fixed top-4 right-4 ${
-          isOpen ? "left-4 bg-transparent shadow-none" : ""
-        } z-50  p-3 rounded-full text-[#0077b6]`}
+        className={`fixed top-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 ${
+          isOpen
+            ? "bg-red-500 hover:bg-red-600"
+            : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+        }`}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
       >
-        {isOpen ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        ) : (
-          <FaBars />
-        )}
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {isOpen ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-6 h-6 text-white"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          ) : (
+            <FaBars className="text-white" />
+          )}
+        </motion.div>
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Overlay */}
+            {/* Enhanced Overlay with improved blur */}
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={toggleMenu}
-              className="fixed inset-0 bg-black/70 z-40"
+              className="fixed inset-0 bg-black/40 backdrop-blur-md z-40"
             />
 
-            {/* Sliding Menu Panel */}
+            {/* Enhanced Sliding Menu Panel with modern glass morphism */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", stiffness: 150, damping: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               dir="rtl"
-              // Add this class to your sliding menu panel div
-              className="w-64  bg-[#f8f9fa]  fixed top-0 right-0 h-full flex flex-col overflow-y-auto p-6 z-50 custom-scrollbar"
+              className="w-80 bg-white/10 backdrop-blur-xl border-l border-white/20 fixed top-0 right-0 h-full flex flex-col overflow-hidden z-50 shadow-2xl before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-white/10 before:to-transparent before:backdrop-blur-3xl"
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-[#0077b6]" dir="rtl">
-                  منوی مدیریت
+              {/* Header Section with glass effect */}
+              <motion.div
+                className="relative p-6 border-b border-white/20 bg-gradient-to-r from-white/15 to-white/5 backdrop-blur-sm"
+                initial={{ y: -50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                dir="rtl"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-600/10 rounded-t-lg" />
+                <h2 className="relative text-2xl font-bold text-white text-center drop-shadow-lg">
+                  پنل مدیریت
                 </h2>
+              </motion.div>
+
+              {/* Menu Items with improved scrolling */}
+              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar relative">
+                {/* Subtle gradient overlay for depth */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent pointer-events-none" />
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  dir="rtl"
+                  className="relative z-10"
+                >
+                  {dashboardMenuItems.map((item, index) => (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 * index }}
+                      dir="rtl"
+                    >
+                      <AccordionItem
+                        title={item.title}
+                        icon={item.icon}
+                        color={item.color}
+                        isOpen={activeSection === item.id}
+                        onToggle={() =>
+                          setActiveSection(
+                            activeSection === item.id ? null : item.id
+                          )
+                        }
+                      >
+                        {renderAccordionContent(item, setSelectedMenu)}
+                      </AccordionItem>
+                    </motion.div>
+                  ))}
+                </motion.div>
               </div>
 
-              {dashboardMenuItems.map((item) => (
-                <AccordionItem
-                  key={item.id}
-                  title={item.title}
-                  icon={item.icon}
-                  isOpen={activeSection === item.id}
-                  onToggle={() =>
-                    setActiveSection(activeSection === item.id ? null : item.id)
-                  }
+              {/* Footer Section with enhanced glass effect */}
+              <motion.div
+                className="relative p-4 border-t border-white/20 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm"
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5" />
+                <motion.button
+                  onClick={handleLogout}
+                  className="relative w-full py-3 px-4 text-red-600 border border-red-500 hover:bg-red-600 hover:text-white hover:border-red-300/70 backdrop-blur-sm rounded-xl flex items-center justify-center gap-3 transition-all duration-300 font-semibold group overflow-hidden"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  {renderAccordionContent(item, setSelectedMenu)}
-                </AccordionItem>
-              ))}
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/10 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <FaSignOutAlt className="relative z-10" />
+                  <span className="relative z-10">خروج از سیستم</span>
+                </motion.button>
+              </motion.div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      {/* Enhanced Custom Scrollbar Styles */}
+      <style jsx global>{`
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+          margin: 8px 0;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0.1) 100%
+          );
+          border-radius: 10px;
+          border: 2px solid transparent;
+          background-clip: content-box;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.5) 0%,
+            rgba(255, 255, 255, 0.2) 100%
+          );
+          background-clip: content-box;
+        }
+
+        /* Glass morphism support */
+        @supports (backdrop-filter: blur(20px)) {
+          .backdrop-blur-3xl {
+            backdrop-filter: blur(20px);
+          }
+        }
+      `}</style>
     </>
   );
 };

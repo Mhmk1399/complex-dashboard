@@ -4,21 +4,8 @@ import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import ImageSelectorModal from "./ImageSelectorModal"; // Import the ImageSelectorModal
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa"; // Add some icons for better UX
-
-interface Story {
-  _id: string;
-  title: string;
-  image: string;
-  storeId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface EditStoryProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa"; // Add FaTimes for close button
+import { EditStoryProps, Story } from "@/types/type";
 
 export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -35,13 +22,14 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
         },
       });
       const data = await response.json();
-      console.log(data , "sssssssssssssssssssssssssss");
+      console.log(data, "sssssssssssssssssssssssssss");
       setStories(data);
     } catch (error) {
       console.log(error);
       toast.error("خطا در دریافت استوری‌ها");
     }
   };
+
   useEffect(() => {
     if (isOpen) {
       fetchAllStories();
@@ -113,142 +101,223 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
   // Handle image selection from ImageSelectorModal
   const handleImageSelect = (selectedImage: { fileUrl: string }) => {
     setImage(selectedImage.fileUrl);
-    // Update the settings state if needed
     setIsImageSelectorOpen(false);
+  };
+
+  // Handle closing image selector
+  const handleCloseImageSelector = () => {
+    setIsImageSelectorOpen(false);
+  };
+
+  // Handle cancel edit
+  const handleCancelEdit = () => {
+    setSelectedStory(null);
+    setTitle("");
+    setImage("");
   };
 
   return (
     <>
       <Dialog
-        open={isOpen}
+        open={isOpen && !isImageSelectorOpen}
         onClose={onClose}
-        className="fixed inset-0 z-10 overflow-y-auto"
+        className="fixed inset-0 z-40 overflow-y-auto"
         dir="rtl"
       >
-        <motion.div
-          className="flex items-center justify-center min-h-screen p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <div
-            className="fixed inset-0 bg-black opacity-20"
-            onClick={onClose}
-          />
+        <div className="flex items-center justify-center min-h-screen p-4">
+          {/* Backdrop */}
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" />
 
+          {/* Modal Content */}
           <motion.div
-            className="relative bg-white/50 backdrop-blur-xl rounded-2xl p-8 border border-white/30 max-w-4xl w-full mx-4 shadow-2xl"
+            className="relative bg-white/95 backdrop-blur-xl rounded-2xl p-8 border border-white/30 max-w-6xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto"
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
           >
-            <h2 className="text-3xl font-bold mb-6 text-black/80 text-center flex items-center justify-center gap-4">
-              <FaPlus className="text-blue-300" />
-              مدیریت استوری‌ها
-            </h2>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <FaTimes className="text-gray-500 text-xl" />
+              </button>
+              <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                <FaPlus className="text-blue-500" />
+                مدیریت استوری‌ها
+              </h2>
+              <div className="w-10" /> {/* Spacer for centering */}
+            </div>
 
             {selectedStory ? (
-              <form onSubmit={handleUpdate} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-white mb-2 font-semibold">
-                      عنوان
+              /* Edit Form */
+              <motion.form
+                onSubmit={handleUpdate}
+                className="space-y-8"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Title Input */}
+                  <div className="space-y-2">
+                    <label className="block text-gray-700 text-lg font-semibold">
+                      عنوان استوری
                     </label>
                     <input
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full p-3 rounded-xl bg-white/10 text-white border border-white/30 focus:ring-2 focus:ring-blue-500 transition-all"
+                      className="w-full p-4 rounded-xl bg-gray-50 text-gray-800 border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                       placeholder="عنوان استوری را وارد کنید"
+                      required
                     />
                   </div>
-                  <div>
-                    <label className="block text-white mb-2 font-semibold">
-                      تصویر
+
+                  {/* Image Selection */}
+                  <div className="space-y-2">
+                    <label className="block text-gray-700 text-lg font-semibold">
+                      تصویر استوری
                     </label>
-                    <div className="flex items-center space-x-4">
-                      <input
-                        type="text"
-                        value={image}
-                        readOnly
-                        className="flex-grow p-3 rounded-xl bg-white/10 text-white border border-white/30"
-                        placeholder="تصویر انتخاب شده"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setIsImageSelectorOpen(true)}
-                        className="bg-blue-500 text-white p-3 rounded-xl hover:bg-blue-600 transition-colors flex items-center gap-2"
-                      >
-                        <FaEdit /> انتخاب تصویر
-                      </button>
-                    </div>
-                    {image && (
-                      <div className="mt-4">
-                        <Image
-                          src={image}
-                          alt="Selected Story Image"
-                          width={1000}
-                          height={1000}
-                          className="rounded-xl object-cover"
+                    <div className="flex flex-col space-y-3">
+                      <div className="flex items-center space-x-3 space-x-reverse">
+                        <input
+                          type="text"
+                          value={image}
+                          readOnly
+                          className="flex-grow p-4 rounded-xl bg-gray-100 text-gray-600 border border-gray-200 cursor-not-allowed"
+                          placeholder="تصویر انتخاب شده نمایش داده می‌شود"
                         />
+                        <button
+                          type="button"
+                          onClick={() => setIsImageSelectorOpen(true)}
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        >
+                          <FaEdit className="text-sm" />
+                          انتخاب تصویر
+                        </button>
                       </div>
-                    )}
+
+                      {/* Image Preview */}
+                      {image && (
+                        <motion.div
+                          className="mt-4 p-4 bg-gray-50 rounded-xl"
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <p className="text-sm text-gray-600 mb-2">
+                            پیش‌نمایش تصویر:
+                          </p>
+                          <div className="relative w-full h-48 rounded-lg overflow-hidden shadow-md">
+                            <Image
+                              src={image}
+                              alt="Selected Story Image"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-center gap-4">
+
+                {/* Action Buttons */}
+                <div className="flex justify-center gap-4 pt-6 border-t border-gray-200">
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors flex items-center gap-2"
+                    className="px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
-                    <FaEdit /> بروزرسانی
+                    <FaEdit className="text-sm" />
+                    بروزرسانی استوری
                   </button>
                   <button
                     type="button"
-                    onClick={() => setSelectedStory(null)}
-                    className="px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-colors"
+                    onClick={handleCancelEdit}
+                    className="px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
-                    لغو
+                    انصراف
                   </button>
                 </div>
-              </form>
+              </motion.form>
             ) : (
-              <div>
+              /* Stories Grid */
+              <div className="space-y-6">
                 {stories.length === 0 ? (
-                  <div className="text-center py-12 bg-white/10 rounded-xl">
-                    <p className="text-gray-800 text-xl">
+                  <motion.div
+                    className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <FaPlus className="mx-auto text-6xl text-gray-400 mb-4" />
+                    <p className="text-gray-600 text-xl font-medium">
                       هیچ استوری اضافه نشده است
                     </p>
-                  </div>
+                    <p className="text-gray-500 text-sm mt-2">
+                      برای شروع، اولین استوری خود را اضافه کنید
+                    </p>
+                  </motion.div>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {stories.map((story, idx) => (
                       <motion.div
-                        key={idx}
-                        className="bg-white/10 rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform"
+                        key={story._id}
+                        className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        whileHover={{ scale: 1.02 }}
                       >
-                        <Image
-                          src={story.image}
-                          alt={story.title}
-                          width={1000}
-                          height={1000}
-                          className="w-full object-cover"
-                        />
-                        <div className="p-4">
-                          <h3 className="text-white font-semibold mb-2">
+                        {/* Image */}
+                        <div className="relative h-48 overflow-hidden">
+                          <Image
+                            src={story.image}
+                            alt={story.title}
+                            fill
+                            className="object-cover transition-transform duration-300 hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-4 space-y-4">
+                          <h3 className="text-gray-800 font-bold text-lg line-clamp-2">
                             {story.title}
                           </h3>
-                          <div className="flex justify-between items-center">
+
+                          <div className="text-xs text-gray-500 space-y-1">
+                            <p>
+                              تاریخ ایجاد:{" "}
+                              {new Date(story.createdAt).toLocaleDateString(
+                                "fa-IR"
+                              )}
+                            </p>
+                            <p>
+                              آخرین بروزرسانی:{" "}
+                              {new Date(story.updatedAt).toLocaleDateString(
+                                "fa-IR"
+                              )}
+                            </p>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-2 pt-2">
                             <button
                               onClick={() => handleEdit(story)}
-                              className="bg-blue-500 text-white text-sm p-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm py-2 px-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                             >
-                              <FaEdit /> ویرایش
+                              <FaEdit className="text-xs" />
+                              ویرایش
                             </button>
                             <button
                               onClick={() => handleDelete(story._id)}
-                              className="bg-red-500 text-white text-sm p-2 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
+                              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm py-2 px-3 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                             >
-                              <FaTrash /> حذف
+                              <FaTrash className="text-xs" />
+                              حذف
                             </button>
                           </div>
                         </div>
@@ -259,50 +328,15 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
               </div>
             )}
           </motion.div>
-        </motion.div>
+        </div>
       </Dialog>
+
+      {/* Image Selector Modal - Higher z-index */}
       <ImageSelectorModal
         isOpen={isImageSelectorOpen}
-        onClose={() => setIsImageSelectorOpen(false)}
+        onClose={handleCloseImageSelector}
         onSelectImage={handleImageSelect}
       />
     </>
   );
 };
-//   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-// {stories.map((story) => (
-//   <div
-//     key={story._id}
-//     className="bg-white/10 rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform"
-//   >
-//     <Image
-//       src={story.image}
-//       alt={story.title}
-//       width={1000}
-//       height={1000}
-//       className="w-full object-cover"
-//     />
-//     <div className="p-4">
-//       <h3 className="text-white font-semibold mb-2">
-//         {story.title}
-//       </h3>
-//       <div className="flex justify-between">
-//         <button
-//           onClick={() => handleEdit(story)}
-//           className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-//         >
-//           <FaEdit /> ویرایش
-//         </button>
-//         <button
-//           onClick={() => handleDelete(story._id)}
-//           className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
-//         >
-//           <FaTrash /> حذف
-//         </button>
-//       </div>
-//     </div>
-//   </div>
-// ))}
-// </div> }
-
-// /_next/image?url=https%3A%2F%2Fraw.githubusercontent.com%2FMhmk1399%2Fstoradge%2Fmain%2Fimages%2Ftabriz.webp%3Ftoken%3DBCKF7QXGTZ6JCVHZ5QPB5S3HWRSRI&w=1080&q=75 1x, /_next/image?url=https%3A%2F%2Fraw.githubusercontent.com%2FMhmk1399%2Fstoradge%2Fmain%2Fimages%2Ftabriz.webp%3Ftoken%3DBCKF7QXGTZ6JCVHZ5QPB5S3HWRSRI&w=2048&q=75 2x

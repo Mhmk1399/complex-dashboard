@@ -1,16 +1,9 @@
+import { User } from "@/types/type";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
-interface User {
-  _id: string;
-  name: string;
-  storeId: string;
-  phone: string;
-  password: string;
-  createdAt: string;
-  updatedAt: string;
-}
+
 
 export const Costumers = () => {
   const [users, setUsers] = useState<User[]>([
@@ -166,7 +159,7 @@ export const Costumers = () => {
           </tbody>
         </table>
       </div>
-      <ToastContainer rtl={true} />
+      <ToastContainer position="top-center" rtl={true} />
     </div>
   );
 };

@@ -184,52 +184,6 @@ const SignInForm = () => {
     );
   };
 
-  // const Modal = () => (
-  //   <AnimatePresence>
-  //     {showModal && (
-  //       <motion.div
-  //         initial={{ opacity: 0 }}
-  //         animate={{ opacity: 1 }}
-  //         exit={{ opacity: 0 }}
-  //         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-  //       >
-  //         <motion.div
-  //           initial={{ scale: 0.8 }}
-  //           animate={{ scale: 1 }}
-  //           exit={{ scale: 0.8 }}
-  //           className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4"
-  //         >
-  //           <div
-  //             className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center ${
-  //               isSuccess ? "bg-green-100" : "bg-red-100"
-  //             }`}
-  //           >
-  //             {isSuccess ? (
-  //               <FiCheck className="w-8 h-8 text-green-500" />
-  //             ) : (
-  //               <FiX className="w-8 h-8 text-red-500" />
-  //             )}
-  //           </div>
-  //           <h3 className="text-2xl font-bold text-center mt-4">
-  //             {isSuccess ? "موفق!" : "ناموفق!"}
-  //           </h3>
-  //           <p className="text-center text-gray-600 mt-2">
-  //             {isSuccess
-  //               ? "اطلاعات سایت شما با موفقیت ذخیره شد.."
-  //               : "مشکلی پیش آمد. لطفا دوباره امتحان کنید."}
-  //           </p>
-  //           <button
-  //             onClick={() => setShowModal(false)}
-  //             className="w-full mt-6 px-6 py-3 rounded-lg bg-purple-600 text-white font-medium"
-  //           >
-  //             {isSuccess ? "عالی بود!" : "دوباره امتحان کنید"}
-  //           </button>
-  //         </motion.div>
-  //       </motion.div>
-  //     )}
-  //   </AnimatePresence>
-  // );
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 0 }}
