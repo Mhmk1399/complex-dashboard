@@ -23,6 +23,7 @@
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "framer-motion": "^11.18.2",
+    "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.11.0",
     "mongoose": "^8.8.2",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20",
     "@types/node-fetch": "^2.6.12",
     "@types/react": "^18",
