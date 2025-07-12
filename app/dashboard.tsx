@@ -28,6 +28,7 @@ import {
   FaBlog,
   FaCog,
 } from "react-icons/fa";
+import Contact from "./components/forms/contact";
 
 // Enhanced loading component
 const LoadingSpinner = () => (
@@ -302,6 +303,7 @@ export const Dashboard = () => {
       addStory: <AddStory />,
       siteSettings: <StoreSettings />,
       accountSettings: <InformationData />,
+      contact: <Contact />,
     };
 
     const component = formComponents[selectedMenu] || formComponents.start;

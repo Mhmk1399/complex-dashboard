@@ -30,6 +30,7 @@ import {
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { AccordionItemProps, FormProps } from "@/types/type";
+import { title } from "process";
 
 const dashboardMenuItems = [
   {
@@ -71,7 +72,8 @@ const dashboardMenuItems = [
     title: "کاربران",
     icon: <CustomersIcon />,
     color: "from-blue-500 to-blue-600",
-    subMenuItems: [{ title: "کاربران", value: "costumers", icon: <FaUsers /> }],
+    subMenuItems: [{ title: "کاربران", value: "costumers", icon: <FaUsers /> },{title: " درخواست ها", value: "contact", icon: <FaUserCog />},],
+    
   },
   {
     id: "media",
