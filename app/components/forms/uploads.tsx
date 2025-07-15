@@ -14,7 +14,7 @@ export default function UploadPage() {
 
   const validateFile = (file: File) => {
     const validTypes = ["image/webp", "image/png"];
-    const maxSize = 100 * 1024; // 100KB in bytes
+    const maxSize = 10000 * 1024; // 100KB in bytes
 
     if (!validTypes.includes(file.type)) {
       toast.error(`${file.name} باید فرمت PNG یا WEBP باشد`, {
@@ -43,9 +43,8 @@ export default function UploadPage() {
     setLoading(true);
     setUploadStatus("idle");
 
-    // Create FormData and append single file
     const formData = new FormData();
-    formData.append("file", files[0]); // We're handling single file upload first
+    formData.append("file", files[0]);
 
     try {
       const response = await fetch("/api/uploadFile", {

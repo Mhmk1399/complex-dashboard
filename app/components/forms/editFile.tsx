@@ -5,8 +5,6 @@ import { FiImage, FiCheckCircle, FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
 import { ImageFile } from "@/types/type";
 
-
-
 export default function ImageGallery() {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [selectedImage, setSelectedImage] = useState<ImageFile | null>(null);
@@ -21,46 +19,87 @@ export default function ImageGallery() {
 
   const fetchImages = async () => {
     try {
-      const response = await fetch("/api/uploadFile");
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/uploadFile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error response:", errorData);
+        return;
+      }
+
       const data = await response.json();
-      console.log(data , "gallllley fetch");
-      setImages(data);
+      const storeId = data.storeId;
+      // Map image names to full URLs using storeId from response
+      const imageUrls = data.images.map((filename: string) => ({
+        _id: filename,
+        fileUrl: `http://91.216.104.8:5000/uploads/${data.storeId}/image/${filename}`,
+        fileName: filename,
+        storeId: storeId,
+      }));
+      setImages(imageUrls);
     } catch (error) {
       console.error("Error fetching images:", error);
     }
   };
+
   useEffect(() => {
     fetchImages();
   }, []);
 
-  const initiateDelete = (id: string) => {
-    setDeleteModal({ isOpen: true, imageId: id });
-    setDeleteStatus("idle");
-  };
+const initiateDelete = (id: string) => {
+  setDeleteModal({ isOpen: true, imageId: id });
+  setDeleteStatus("idle");
+};
 
-  const confirmDelete = async () => {
-    try {
-      const response = await fetch(
-        `/api/uploadFile?id=${deleteModal.imageId}`,
-        {
-          method: "DELETE",
-        }
-      );
+const confirmDelete = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const image = images.find((img) => img._id === deleteModal.imageId);
+    if (!image) {
+      console.error("Image not found");
+      setDeleteStatus("error");
+      return;
+    }
 
-      if (response.ok) {
-        setImages(images.filter((img) => img._id !== deleteModal.imageId));
-        setDeleteStatus("success");
-        setDeleteModal({ isOpen: false, imageId: "" });
-      } else {
-        const errorData = await response.json();
-        console.error("Delete failed:", errorData);
-        setDeleteStatus("error");
-      }
-    } catch (error) {
-      console.error("Error deleting image:", error);
+    const response = await fetch("/api/uploadFile", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        storeId: image.storeId, // Ensure storeId is stored in images array
+        filename: image.fileName,
+      }),
+    });
+
+    console.log(response, "delete responseasdfasdfasdfasdfasdf");
+
+    if (response.ok) {
+      setImages(images.filter((img) => img._id !== deleteModal.imageId));
+      setDeleteStatus("success");
+      setDeleteModal({ isOpen: false, imageId: "" });
+    } else {
+      const errorData = await response.json();
+      console.error("Delete failed:", errorData);
       setDeleteStatus("error");
     }
-  };
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    setDeleteStatus("error");
+  }
+};
+
+
+
+
+
+
   const ImageLightbox = ({
     image,
     onClose,

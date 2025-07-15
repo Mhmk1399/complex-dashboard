@@ -4,7 +4,8 @@ const nextConfig: NextConfig = {
   images: {
     domains: [
       'raw.githubusercontent.com',
-      'github.com'
+      'github.com',
+      '91.216.104.8'
     ],
     remotePatterns: [
       {
