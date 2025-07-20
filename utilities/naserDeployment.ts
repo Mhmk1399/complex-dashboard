@@ -23,7 +23,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
   }
 
   // Read YAML template
-  const yamlPath = path.join(process.cwd(), 'app/api/createDeployment/mamad.yaml');
+  const yamlPath = path.join(process.cwd(), 'mamad.yaml');
   let yamlContent = fs.readFileSync(yamlPath, 'utf8');
 
   // Replace placeholders
@@ -95,7 +95,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
 
     config: {
      
-      host: `${config.name}.-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`,
+      host: `${config.name}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`,
     },
   };
 

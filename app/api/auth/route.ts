@@ -15,10 +15,10 @@ export async function POST(request: NextRequest) {
  
 // create new deployment
     const naserDeployment = await createDeployment({
-      name: title,
-      image: process.env.IMAGE_NAME || "",
-      replicas: 2,
-      namespace: "complex",
+        name: title,
+        image: process.env.IMAGE_NAME || "",
+        replicas: Number(process.env.REPLICAS) || 2,
+        namespace: process.env.NAMESPACE || "",
     });
 
     const deployedUrl = naserDeployment.config?.host;
@@ -27,8 +27,10 @@ export async function POST(request: NextRequest) {
 
     // create folder in disk
     const createFolderDisk = await initStore(storeId);
+  
     const userFolderPath = createFolderDisk.url;
-    console.log("userFolderPath:", userFolderPath);
+    
+  
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
