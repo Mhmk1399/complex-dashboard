@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { createDeployment } from "@/utilities/naserDeployment";
+import { createDeployment } from "@/utilities/createNewDeployment";
 import { initStore } from "@/utilities/createFolderDisk";
 
 export async function POST(request: NextRequest) {
@@ -14,14 +14,14 @@ export async function POST(request: NextRequest) {
 
  
 // create new deployment
-    const naserDeployment = await createDeployment({
+    const createNewDeployment = await createDeployment({
         name: title,
         image: process.env.IMAGE_NAME || "",
         replicas: Number(process.env.REPLICAS) || 2,
         namespace: process.env.NAMESPACE || "",
     });
 
-    const deployedUrl = naserDeployment.config?.host;
+    const deployedUrl = createNewDeployment.config?.host;
     console.log(deployedUrl, " deployment url");
 
 

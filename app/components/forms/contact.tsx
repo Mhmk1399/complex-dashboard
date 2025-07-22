@@ -214,7 +214,7 @@ const ContactComponent: React.FC = () => {
           <div className="flex gap-2">
             <select
               value={filters.sortBy}
-              onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as any }))}
+              onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as 'name' | 'phone' | 'date' }))}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="name">مرتب‌سازی بر اساس نام</option>

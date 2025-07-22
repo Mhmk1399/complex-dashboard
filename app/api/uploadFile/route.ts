@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import connect from "@/lib/data";
 import Files from "@/models/uploads";
-import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
 interface CustomJwtPayload extends JwtPayload {
@@ -9,9 +9,7 @@ interface CustomJwtPayload extends JwtPayload {
   storeId: string;
 }
 
-const VPS_TOKEN =
-  process.env.VPS_TOKEN || "your-secret-token";
-const VPS_URL = process.env.VPS_URL || "mamad";
+
 
 export async function POST(request: Request) {
   try {
