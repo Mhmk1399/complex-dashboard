@@ -7,45 +7,59 @@ interface DeploymentConfig {
   image: string;
   replicas?: number;
   namespace?: string;
+  storeId?: string;
 }
 
 const ARVAN_API_BASE = 'https://napi.arvancloud.ir/caas/v2/zones/ir-thr-ba1';
 
 export async function createDeployment(config: DeploymentConfig): Promise<{
   message: string;
-  config?: {  host: string };
+  config?: { host: string };
 }> {
   const namespace = config.namespace || 'complex';
 
   // Validate required fields
   if (!config.name || !config.image) {
-    return { message: "Name and image are required fields" };
+    return { message: 'Name and image are required fields' };
   }
 
   // Read YAML template
   const yamlPath = path.join(process.cwd(), 'mamad.yaml');
   let yamlContent = fs.readFileSync(yamlPath, 'utf8');
 
-  // Replace placeholders
+  // Replace placeholders in the template
   yamlContent = yamlContent
     .replace(/{name-of-the-deployment}/g, config.name)
     .replace(/username\/image:version/g, config.image)
     .replace(/replicas: 2/g, `replicas: ${config.replicas || 2}`)
     .replace(
       /{name-of-the-deployment}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir/g,
-      `${config.name}.-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`
+      `${config.name}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`
     )
     .replace(/name-of-the-deployment-free-ingress/g, `${config.name}-ingress`);
 
-  // Parse YAML
+  // Parse the modified YAML
   const documents = yaml.loadAll(yamlContent) as any[];
   const results = [];
   const errors = [];
 
-  // Process resources
   for (const doc of documents) {
     try {
       let endpoint = '';
+
+      // Inject STORE_ID env var into Deployment
+      if (doc.kind === 'Deployment' && config.storeId) {
+        const containers = doc?.spec?.template?.spec?.containers;
+        if (Array.isArray(containers) && containers.length > 0) {
+          containers[0].env = containers[0].env || [];
+          containers[0].env.push({
+            name: 'STORE_ID',
+            value: config.storeId,
+          });
+        }
+      }
+
+      // Determine API endpoint based on resource kind
       switch (doc.kind) {
         case 'Deployment':
           endpoint = `${ARVAN_API_BASE}/apis/apps/v1/namespaces/${namespace}/deployments`;
@@ -60,6 +74,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
           continue;
       }
 
+      // Send the resource to Arvan
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -78,7 +93,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
       }
 
       const result = await response.json();
-      console.log(result,"this is result")
+      console.log(result, 'this is result');
       results.push({ resource: doc.kind, result, status: response.status });
     } catch (error) {
       console.error(`Error processing ${doc.kind}:`, error);
@@ -89,15 +104,12 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
     }
   }
 
-  // Return results
-  const response = {
-    message: errors.length > 0 ? "Some resources were not created successfully" : "All resources created successfully",
-
+  return {
+    message: errors.length > 0
+      ? 'Some resources were not created successfully'
+      : 'All resources created successfully',
     config: {
-     
       host: `${config.name}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`,
     },
   };
-
-  return response;
 }

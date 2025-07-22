@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
         image: process.env.IMAGE_NAME || "",
         replicas: Number(process.env.REPLICAS) || 2,
         namespace: process.env.NAMESPACE || "",
+        storeId
     });
 
     const deployedUrl = createNewDeployment.config?.host;
