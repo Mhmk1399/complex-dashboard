@@ -8,8 +8,8 @@ interface CustomJwtPayload extends JwtPayload {
   storeId: string;
 }
 
-const FLASK_SECRET_TOKEN = process.env.FLASK_SECRET_TOKEN || "your-secret-token";
-const VPS_API_URL = process.env.VPS_API_URL || "http://91.216.104.8:5000";
+const VPS_TOKEN = process.env.VPS_TOKEN || "your-secret-token";
+const VPS_URL = process.env.VPS_URL || "mamad";
 const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret";
 
 const verifyToken = (token: string | null): CustomJwtPayload | null => {
@@ -50,9 +50,9 @@ export const uploadFile = async (request: Request) => {
     uploadForm.append("file", fileBlob, filename);
     uploadForm.append("storeId", decodedToken.storeId);
 
-    const flaskResponse = await fetch(`${VPS_API_URL}/upload/image`, {
+    const flaskResponse = await fetch(`${VPS_URL}/upload/image`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${FLASK_SECRET_TOKEN}` },
+      headers: { Authorization: `Bearer ${VPS_TOKEN}` },
       body: uploadForm,
     });
 
@@ -61,7 +61,7 @@ export const uploadFile = async (request: Request) => {
       return NextResponse.json({ message: result.error || "VPS upload failed" }, { status: flaskResponse.status });
     }
 
-    const fileUrl = `${VPS_API_URL}/uploads/${decodedToken.storeId}/image/${filename}`;
+    const fileUrl = `${VPS_URL}/uploads/${decodedToken.storeId}/image/${filename}`;
     const newFile = new Files({
       fileName: filename,
       fileUrl,
@@ -86,9 +86,9 @@ export const fetchFiles = async (request: NextRequest) => {
       return NextResponse.json({ message: "Unauthorized or invalid token" }, { status: 401 });
     }
 
-    const flaskUrl = `${VPS_API_URL}/images/${decodedToken.storeId}`;
+    const flaskUrl = `${VPS_URL}/images/${decodedToken.storeId}`;
     const flaskRes = await fetch(flaskUrl, {
-      headers: { Authorization: `Bearer ${FLASK_SECRET_TOKEN}` },
+      headers: { Authorization: `Bearer ${VPS_TOKEN}` },
     });
 
     if (!flaskRes.ok) {
@@ -119,11 +119,11 @@ export const deleteFile = async (request: NextRequest) => {
       return NextResponse.json({ message: "Invalid storeId" }, { status: 403 });
     }
 
-    const flaskResponse = await fetch(`${VPS_API_URL}/delete/image`, {
+    const flaskResponse = await fetch(`${VPS_URL}/delete/image`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${FLASK_SECRET_TOKEN}`,
+        Authorization: `Bearer ${VPS_TOKEN}`,
       },
       body: JSON.stringify({ storeId, filename }),
     });

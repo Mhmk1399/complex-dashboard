@@ -37,7 +37,7 @@ export default function ImageGallery() {
       // Map image names to full URLs using storeId from response
       const imageUrls = data.images.map((filename: string) => ({
         _id: filename,
-        fileUrl: `http://91.216.104.8:5000/uploads/${data.storeId}/image/${filename}`,
+        fileUrl: `${process.env.VPS_URL}/uploads/${data.storeId}/image/${filename}`,
         fileName: filename,
         storeId: storeId,
       }));

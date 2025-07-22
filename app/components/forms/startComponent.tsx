@@ -26,7 +26,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const [isShippingMethodOpen, setIsShippingMethodOpen] = useState(false);
   const [selectedShippingMethod, setSelectedShippingMethod] =
     useState<string>("");
-  const [repoUrl, setRepoUrl] = useState("");
+  const [DiskUrl, setDiskUrl] = useState("");
   const [ShowsettingTips, setShowsettingTips] = useState(false);
   const [showAddTips, setShowAddTips] = useState(false);
   const [showPayTips, setShowPayTips] = useState(false);
@@ -37,7 +37,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
       const decodedToken = jwt.decode(token);
       console.log("decodedToken", decodedToken);
       if (decodedToken && typeof decodedToken === "object") {
-        setRepoUrl(decodedToken.repoUrl || "");
+        setDiskUrl(decodedToken.DiskUrl || "");
       }
     }
   }, []);
@@ -133,7 +133,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
           {/* Site Settings Card */}
           <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 border-2 border-transparent hover:border-[#0077b6]">
             <Link
-              href={`${process.env.NEXT_PUBLIC_COMPLEX_URI}?repoUrl=${repoUrl}`}
+              href={`${process.env.COMPLEX_URL}?DiskUrl=${DiskUrl}`}
               target="_blank"
               className="flex items-center space-x-4 space-x-reverse"
             >

@@ -9,9 +9,9 @@ interface CustomJwtPayload extends JwtPayload {
   storeId: string;
 }
 
-const FLASK_SECRET_TOKEN =
-  process.env.FLASK_SECRET_TOKEN || "your-secret-token";
-const VPS_API_URL = process.env.VPS_API_URL || "http://91.216.104.8:5000";
+const VPS_TOKEN =
+  process.env.VPS_TOKEN || "your-secret-token";
+const VPS_URL = process.env.VPS_URL || "mamad";
 
 export async function POST(request: Request) {
   try {
@@ -67,10 +67,10 @@ export async function POST(request: Request) {
     uploadForm.append("file", fileBlob, filename);
     uploadForm.append("storeId", decodedToken.storeId);
 
-    const flaskResponse = await fetch(`${process.env.VPS_API_URL}upload/image`, {
+    const flaskResponse = await fetch(`${process.env.VPS_URL}/upload/image`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.FLASK_SECRET_TOKEN}`,
+        Authorization: `Bearer ${process.env.VPS_TOKEN}`,
       },
       body: uploadForm,
     });
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: result.error || "VPS upload failed", details: result }, { status: flaskResponse.status });
     }
 
-    const fileUrl = `${process.env.VPS_API_URL}uploads/${decodedToken.storeId}/image/${filename}`;
+    const fileUrl = `${process.env.VPS_URL}/uploads/${decodedToken.storeId}/image/${filename}`;
 
     const newFile = new Files({
       fileName: filename, // Store random UUID-based name
@@ -135,11 +135,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Invalid token payload" }, { status: 401 });
     }
 
-    const flaskUrl = `${process.env.VPS_API_URL}/images/${decodedToken.storeId}`;
+    const flaskUrl = `${process.env.VPS_URL}/images/${decodedToken.storeId}`;
     
     const flaskRes = await fetch(flaskUrl, {
       headers: {
-        Authorization: `Bearer ${process.env.FLASK_SECRET_TOKEN || "your-secret-token"}`
+        Authorization: `Bearer ${process.env.VPS_TOKEN || "your-secret-token"}`
       }
     });
 
@@ -193,11 +193,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ message: "Invalid storeId" }, { status: 403 });
     }
 
-    const flaskResponse = await fetch(`${process.env.VPS_API_URL}/delete/image`, {
+    const flaskResponse = await fetch(`${process.env.VPS_URL}/delete/image`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.FLASK_SECRET_TOKEN || "your-secret-token"}`,
+        Authorization: `Bearer ${process.env.VPS_TOKEN || "your-secret-token"}`,
       },
       body: JSON.stringify({ storeId, filename }),
     });

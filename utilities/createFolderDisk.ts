@@ -5,13 +5,13 @@ export async function initStore(storeId: string): Promise<NextResponse> {
     return NextResponse.json({ error: 'Missing Store-Id in header' }, { status: 400 });
   }
 
-  const token = process.env.FLASK_SECRET_TOKEN;
+  const token = process.env.VPS_TOKEN;
   if (!token) {
     return NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 });
   }
 
   try {
-    const response = await fetch(`${process.env.VPS_API_URL}/init-store`, {
+    const response = await fetch(`${process.env.VPS_URL}/init-store`, {
       method: 'GET',
       headers: {
         'storeId': storeId,
