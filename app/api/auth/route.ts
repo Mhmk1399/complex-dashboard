@@ -15,21 +15,21 @@ export async function POST(request: NextRequest) {
  
 // create new deployment
     const createNewDeployment = await createDeployment({
-        name: title,
+        name: `${title}-${storeId}`,
         image: process.env.IMAGE_NAME || "",
         replicas: Number(process.env.REPLICAS) || 2,
         namespace: process.env.NAMESPACE || "",
         storeId
     });
 
-    const deployedUrl = createNewDeployment.config?.host;
-    console.log(deployedUrl, " deployment url");
+    const DeployedUrl = createNewDeployment.config?.host;
+    console.log(DeployedUrl, "deployment url");
 
 
     // create folder in disk
     const createFolderDisk = await initStore(storeId);
   
-    const userFolderPath = createFolderDisk.url;
+    const DiskUrl = createFolderDisk.url;
     
   
 
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       password: hashedPassword,
       title,
-      repoUrl: userFolderPath,
-      vercelUrl: deployedUrl,
+      DiskUrl: DiskUrl,
+      DeployedUrl: DeployedUrl,
       storeId,
     });
 
@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
         id: newUser._id,
         pass: hashedPassword,
         storeId,
-        vercelUrl: deployedUrl,
-        repoUrl: userFolderPath,
+        DeployedUrl: DeployedUrl,
+        DiskUrl: DiskUrl,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         token,
         userId: newUser._id,
         DiskUrl: createFolderDisk,
-        websiteUrl: deployedUrl,
+        websiteUrl: DeployedUrl,
       },
       { status: 201 }
     );

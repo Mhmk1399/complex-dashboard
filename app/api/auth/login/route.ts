@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
               {
                 id: user._id,
                 storeId: user.storeId,
-                vercelUrl:user.vercelUrl,
-                repoUrl:user.repoUrl,
+                DeployedUrl:user.DeployedUrl,
+                DiskUrl:user.DiskUrl,
               },
               process.env.JWT_SECRET!,
               { expiresIn: "1h" }

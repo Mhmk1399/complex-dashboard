@@ -162,12 +162,12 @@ const SignInForm = () => {
                 >
                   <p className="text-green-600 font-bold">آدرس مخزن شما:</p>
                   <a
-                    // href={repoUrl}
+                    // href={DiskUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 hover:underline break-all"
                   >
-                    {/* {repoUrl} */}fffg
+                    {/* {DiskUrl} */}fffg
                   </a>
                   <button
                     onClick={() => router.push("/")}

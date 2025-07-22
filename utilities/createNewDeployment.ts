@@ -53,7 +53,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
         if (Array.isArray(containers) && containers.length > 0) {
           containers[0].env = containers[0].env || [];
           containers[0].env.push({
-            name: 'STORE_ID',
+            name: 'StoreId',
             value: config.storeId,
           });
         }
