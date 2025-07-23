@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secret-{name-of-the-deployment}
+  namespace: complex
+data:
+  STOREID: {base64-encoded-storeid}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,13 +47,28 @@ spec:
             - name: MONGODB_URI
               valueFrom:
                 secretKeyRef:
-                  name: generic-secret
+                  name: shared-secret
                   key: MONGODB_URI
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: generic-secret
+                  name: shared-secret
                   key: JWT_SECRET
+            - name: VPS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: VPS_TOKEN
+            - name: VPS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: VPS_URL
+            - name: STOREID
+              valueFrom:
+                secretKeyRef:
+                  name: secret-{name-of-the-deployment}
+                  key: STOREID
           ports:
             - containerPort: 3000
               name: http
@@ -69,7 +92,6 @@ spec:
           key: role
           operator: Equal
           value: cloud-container-g2
-
 ---
 apiVersion: v1
 kind: Service
@@ -92,12 +114,11 @@ spec:
     app: {name-of-the-deployment}
   sessionAffinity: None
   type: ClusterIP
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {name-of-the-deployment}-free-ingress
+  name: {name-of-the-deployment}-ingress
 spec:
   ingressClassName: nginx
   rules:

@@ -133,7 +133,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
           {/* Site Settings Card */}
           <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 border-2 border-transparent hover:border-[#0077b6]">
             <Link
-              href={`${process.env.COMPLEX_URL}?DiskUrl=${DiskUrl}`}
+              href={`${process.env.NEXT_PUBLIC_COMPLEX_URL}?DiskUrl=${DiskUrl}`}
               target="_blank"
               className="flex items-center space-x-4 space-x-reverse"
             >
