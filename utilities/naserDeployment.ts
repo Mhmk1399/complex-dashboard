@@ -7,56 +7,45 @@ interface DeploymentConfig {
   image: string;
   replicas?: number;
   namespace?: string;
-  storeId?: string;
 }
 
 const ARVAN_API_BASE = 'https://napi.arvancloud.ir/caas/v2/zones/ir-thr-ba1';
 
 export async function createDeployment(config: DeploymentConfig): Promise<{
   message: string;
-  config?: { host: string };
+  config?: {  host: string };
 }> {
-  const namespace = config.namespace || 'complex';
+  const namespace = config.namespace || 'ghasem';
 
   // Validate required fields
   if (!config.name || !config.image) {
-    return { message: 'Name and image are required fields' };
+    return { message: "Name and image are required fields" };
   }
 
   // Read YAML template
   const yamlPath = path.join(process.cwd(), 'mamad.yaml');
   let yamlContent = fs.readFileSync(yamlPath, 'utf8');
 
-  // Replace placeholders in the template
+  // Replace placeholders
   yamlContent = yamlContent
     .replace(/{name-of-the-deployment}/g, config.name)
     .replace(/username\/image:version/g, config.image)
     .replace(/replicas: 2/g, `replicas: ${config.replicas || 2}`)
     .replace(
       /{name-of-the-deployment}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir/g,
-      `${config.name}-${config.storeId}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`
+      `userwebsite-${config.name}.-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`
     )
-    .replace(/name-of-the-deployment-free-ingress/g, `${config.name}-ingress`)
-    .replace(/secret-{name-of-the-deployment}/g, `secret-${config.name}`);
+    .replace(/name-of-the-deployment-free-ingress/g, `${config.name}-ingress`);
 
-  // Parse the modified YAML
+  // Parse YAML
   const documents = yaml.loadAll(yamlContent) as any[];
   const results = [];
   const errors = [];
 
+  // Process resources
   for (const doc of documents) {
     try {
       let endpoint = '';
-
-      // Inject environment variables into Secret (only STOREID for user-specific Secret)
-      if (doc.kind === 'Secret' && doc.metadata.name !== 'shared-secret') {
-        doc.data = doc.data || {};
-        if (config.storeId) {
-          doc.data.STOREID = Buffer.from(config.storeId).toString('base64');
-        }
-      }
-
-      // Determine API endpoint based on resource kind
       switch (doc.kind) {
         case 'Deployment':
           endpoint = `${ARVAN_API_BASE}/apis/apps/v1/namespaces/${namespace}/deployments`;
@@ -67,14 +56,10 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
         case 'Ingress':
           endpoint = `${ARVAN_API_BASE}/apis/networking.k8s.io/v1/namespaces/${namespace}/ingresses`;
           break;
-        case 'Secret':
-          endpoint = `${ARVAN_API_BASE}/api/v1/namespaces/${namespace}/secrets`;
-          break;
         default:
           continue;
       }
 
-      // Send the resource to Arvan
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -93,7 +78,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
       }
 
       const result = await response.json();
-      console.log(result, 'this is result');
+      console.log(result,"this is result")
       results.push({ resource: doc.kind, result, status: response.status });
     } catch (error) {
       console.error(`Error processing ${doc.kind}:`, error);
@@ -104,12 +89,15 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
     }
   }
 
-  return {
-    message: errors.length > 0
-      ? 'Some resources were not created successfully'
-      : 'All resources created successfully',
+  // Return results
+  const response = {
+    message: errors.length > 0 ? "Some resources were not created successfully" : "All resources created successfully",
+
     config: {
-      host: `${config.name}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`,
+     
+      host: `userwebsite${config.name}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`,
     },
   };
+
+  return response;
 }
