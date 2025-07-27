@@ -1,0 +1,43 @@
+# Ignore node_modules - it will be installed inside the container
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignore environment files
+.env
+.env.* 
+
+# Ignore local build output (we build in container)
+.next
+out
+
+# Ignore system files
+.DS_Store
+*.swp
+
+# Ignore testing/config files not needed in production
+coverage
+.vscode
+.idea
+*.test.js
+*.spec.js
+jest.config.js
+tsconfig.test.json
+
+# Ignore git and CI/CD metadata
+.git
+.gitignore
+.gitattributes
+.github
+*.md
+
+# Ignore Docker-specific files not needed in final image
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Ignore local tooling configs
+*.log
+*.tgz
+*.zip

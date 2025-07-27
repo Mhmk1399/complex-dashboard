@@ -9,7 +9,7 @@ interface CustomJwtPayload extends JwtPayload {
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     await connect();
     try {
@@ -25,7 +25,8 @@ export async function DELETE(
         if (!storeId)
             return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
-        const contactId = params.id;
+        const resolvedParams = await params;
+        const contactId = resolvedParams.id;
         
         const deletedContact = await contact.findOneAndDelete({ 
             _id: contactId, 

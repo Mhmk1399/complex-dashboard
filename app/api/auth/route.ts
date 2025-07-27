@@ -7,85 +7,83 @@ import { createDeployment } from "@/utilities/createNewDeployment";
 import { initStore } from "@/utilities/createFolderDisk";
 
 export async function POST(request: NextRequest) {
+  console.log("Signup API hit");
   const { phoneNumber, password, title, storeId } = await request.json();
 
   try {
     await connect();
+    console.log("Connected to DB");
 
- 
-// create new deployment
+    console.log("Starting deployment creation...");
     const createNewDeployment = await createDeployment({
-        name: `${title}-${storeId}`,
-        image: process.env.IMAGE_NAME || "",
-        replicas: Number(process.env.REPLICAS) || 2,
-        namespace: process.env.NAMESPACE || "",
-        storeId
+      name: `${title}-${storeId}`,
+      image: process.env.IMAGE_NAME || "",
+      replicas: Number(process.env.REPLICAS) || 2,
+      namespace: process.env.NAMESPACE || "",
+      storeId,
     });
+    console.log("Deployment created:", createNewDeployment);
 
     const DeployedUrl = createNewDeployment.config?.host;
-    console.log(DeployedUrl, "deployment url");
+    if (!DeployedUrl) throw new Error("Deployment URL missing");
 
-
-    // create folder in disk
+    console.log("Starting folder creation...");
     const createFolderDisk = await initStore(storeId);
-  
     const DiskUrl = createFolderDisk.url;
-    
-  
+    if (!DiskUrl) throw new Error("Disk URL missing");
 
-    // Hash password
+    console.log("Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
+    console.log("Creating new user...");
     const newUser = new User({
       phoneNumber,
       password: hashedPassword,
       title,
-      DiskUrl: DiskUrl,
-      DeployedUrl: DeployedUrl,
+      DiskUrl,
+      DeployedUrl,
       storeId,
+      trialDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // or a full week if you're testing login too
     });
 
     await newUser.save();
+    console.log("User saved to DB");
 
-    // Generate JWT token
     const token = jwt.sign(
       {
         id: newUser._id,
-        pass: hashedPassword,
         storeId,
-        DeployedUrl: DeployedUrl,
-        DiskUrl: DiskUrl,
+        DeployedUrl,
+        DiskUrl,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
     );
 
+    console.log("Signup successful");
     return NextResponse.json(
       {
         message: "User created successfully",
         token,
         userId: newUser._id,
-        DiskUrl: createFolderDisk,
+        DiskUrl,
         websiteUrl: DeployedUrl,
       },
       { status: 201 }
     );
   } catch (error) {
-
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
-
+    console.error("Signup error:", error);
     return NextResponse.json(
       {
         message: "Error creating user",
-        error: errorMessage,
+        error: error instanceof Error ? error.message : "Unknown error",
         details: process.env.NODE_ENV === "development" ? error : undefined,
       },
       { status: 500 }
     );
   }
 }
+
 
 export async function GET() {
   try {

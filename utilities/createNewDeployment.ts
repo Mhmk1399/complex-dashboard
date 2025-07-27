@@ -24,7 +24,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
   }
 
   // Read YAML template
-  const yamlPath = path.join(process.cwd(), 'mamad.yaml');
+  const yamlPath = path.join(process.cwd(), 'public/mamad.yaml');
   let yamlContent = fs.readFileSync(yamlPath, 'utf8');
 
   // Replace placeholders in the template

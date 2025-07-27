@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema(
     DiskUrl: { type: String, required: false },
     DeployedUrl: { type: String, required: false },
     storeId: { type: String, required: true, unique: true },
+    trialDate: {type: Date},
+    type: { type: String, enum: ["trialUser", "paidUser"], default: "trialUser" },
 
   },
   { timestamps: true }
