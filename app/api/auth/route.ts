@@ -28,9 +28,10 @@ export async function POST(request: NextRequest) {
     if (!DeployedUrl) throw new Error("Deployment URL missing");
 
     console.log("Starting folder creation...");
-    const createFolderDisk = await initStore(storeId);
-    const DiskUrl = createFolderDisk.url;
-    if (!DiskUrl) throw new Error("Disk URL missing");
+    await initStore(storeId);
+    // const createFolderDisk = await initStore(storeId);
+    // const DiskUrl = createFolderDisk.url;
+    // if (!DiskUrl) throw new Error("Disk URL missing");
 
     console.log("Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       password: hashedPassword,
       title,
-      DiskUrl,
+      // DiskUrl,
       DeployedUrl,
       storeId,
       trialDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // or a full week if you're testing login too
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
         id: newUser._id,
         storeId,
         DeployedUrl,
-        DiskUrl,
+        // DiskUrl,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
         message: "User created successfully",
         token,
         userId: newUser._id,
-        DiskUrl,
+        // DiskUrl,
         websiteUrl: DeployedUrl,
       },
       { status: 201 }

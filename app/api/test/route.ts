@@ -1,19 +1,16 @@
-import { initStore } from "@/utilities/createFolderDisk"; // Assume this handles file system logic
-import { NextRequest, NextResponse } from "next/server";
+import { initStore } from '../../../utilities/createFolderDisk';
 
-
-export async function GET(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const storeId = request.headers.get("storeId");
-    console.log(storeId, "storeId");
-    if (!storeId) {
-      return NextResponse.json({ error: "Missing storeId in header" }, { status: 400 });
+    const { storeId } = await request.json();
+    const result = await initStore(storeId);
+    
+    if (result.error) {
+      return Response.json({ error: result.error }, { status: 400 });
     }
-
-    const response = await initStore(storeId);
-    return NextResponse.json(response, { status: 200 });
+    
+    return Response.json({ success: true });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return Response.json({ error: 'Invalid request' }, { status: 400 });
   }
 }
