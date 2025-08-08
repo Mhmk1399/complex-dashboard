@@ -5,7 +5,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
 interface CustomJwtPayload extends JwtPayload {
-  targetDirectory: string;
   storeId: string;
 }
 
@@ -56,16 +55,12 @@ export async function POST(request: Request) {
     // Generate random UUID-based filename
     const extension = file.name.split('.').pop() || 'png';
     const filename = `${uuidv4()}.${extension}`;
-    console.log("Generated filename:", filename);
-
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const fileBlob = new Blob([buffer], { type: file.type });
 
     const uploadForm = new FormData();
-    uploadForm.append("file", fileBlob, filename);
+    uploadForm.append("file", file, filename);
     uploadForm.append("storeId", decodedToken.storeId);
 
-    const flaskResponse = await fetch(`${process.env.VPS_URL}/upload/image`, {
+    const flaskResponse = await fetch(`${process.env.VPS_URL}/image/${decodedToken.storeId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.VPS_TOKEN}`,
@@ -73,14 +68,12 @@ export async function POST(request: Request) {
       body: uploadForm,
     });
 
-    console.log("Flask response:", flaskResponse);
-
     const result = await flaskResponse.json();
     if (!flaskResponse.ok) {
       return NextResponse.json({ message: result.error || "VPS upload failed", details: result }, { status: flaskResponse.status });
     }
 
-    const fileUrl = `${process.env.VPS_URL}/uploads/${decodedToken.storeId}/image/${filename}`;
+    const fileUrl = `${process.env.VPS_URL}/image/${decodedToken.storeId}/${filename}`;
 
     const newFile = new Files({
       fileName: filename, // Store random UUID-based name
@@ -115,10 +108,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    interface CustomJwtPayload extends jwt.JwtPayload {
-      storeId: string;
-    }
-
     let decodedToken: CustomJwtPayload;
     try {
       decodedToken = jwt.verify(token, process.env.JWT_SECRET || "your-jwt-secret") as CustomJwtPayload;
@@ -146,9 +135,10 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await flaskRes.json();
+
     return NextResponse.json({ 
-      images: data.images,
-      storeId: decodedToken.storeId 
+      images: data,
+      // storeId: decodedToken.storeId 
     }, { status: 200 });
 
   } catch (error) {
@@ -159,16 +149,11 @@ export async function GET(request: NextRequest) {
 
 
 export async function DELETE(request: NextRequest) {
-
-  console.log("DELETE request received", request.body);
+  
   try {
     const token = request.headers.get("Authorization")?.split(" ")[1];
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    interface CustomJwtPayload extends jwt.JwtPayload {
-      storeId: string;
     }
 
     let decodedToken: CustomJwtPayload;

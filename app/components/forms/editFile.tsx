@@ -17,39 +17,42 @@ export default function ImageGallery() {
     imageId: "",
   });
 
-  const fetchImages = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/uploadFile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+const fetchImages = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`/api/uploadFile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error response:", errorData);
-        return;
-      }
-
-      const data = await response.json();
-      const storeId = data.storeId;
-      // Map image names to full URLs using storeId from response
-      const imageUrls = data.images.map((filename: string) => ({
-        _id: filename,
-        fileUrl: `${process.env.VPS_URL}/uploads/${data.storeId}/image/${filename}`,
-        fileName: filename,
-        storeId: storeId,
-      }));
-      setImages(imageUrls);
-    } catch (error) {
-      console.error("Error fetching images:", error);
+    if (!response.ok) {
+      console.error("Failed to fetch images");
+      return;
     }
-  };
 
-  useEffect(() => {
-    fetchImages();
-  }, []);
+    const data = await response.json();
+    const imageUrls = data.images.images.map((image: any) => ({
+      _id: image._id,
+      fileName: image.fileName,
+      storeId: image.storeId,
+      fileUrl: `${process.env.NEXT_PUBLIC_MAMAD_URL}${image.fileUrl}`
+    }));
+
+    setImages(imageUrls);
+  } catch (error) {
+    console.error("Error fetching images:", error);
+  }
+};
+
+useEffect(() => {
+  fetchImages();
+}, []);
+
+
+  
+
+
 
 const initiateDelete = (id: string) => {
   setDeleteModal({ isOpen: true, imageId: id });
@@ -61,36 +64,30 @@ const confirmDelete = async () => {
     const token = localStorage.getItem("token");
     const image = images.find((img) => img._id === deleteModal.imageId);
     if (!image) {
-      console.error("Image not found");
       setDeleteStatus("error");
       return;
     }
 
-    const response = await fetch("/api/uploadFile", {
+    const response = await fetch("/api/uploadfile", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        storeId: image.storeId, // Ensure storeId is stored in images array
+        storeId: image.storeId,
         filename: image.fileName,
       }),
     });
-
-    console.log(response, "delete responseasdfasdfasdfasdfasdf");
 
     if (response.ok) {
       setImages(images.filter((img) => img._id !== deleteModal.imageId));
       setDeleteStatus("success");
       setDeleteModal({ isOpen: false, imageId: "" });
     } else {
-      const errorData = await response.json();
-      console.error("Delete failed:", errorData);
       setDeleteStatus("error");
     }
   } catch (error) {
-    console.error("Error deleting image:", error);
     setDeleteStatus("error");
   }
 };
@@ -256,52 +253,34 @@ const confirmDelete = async () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg"
-                      onClick={() =>
-                        setDeleteModal({ isOpen: false, imageId: "" })
-                      }
+                      onClick={() => setDeleteModal({ isOpen: false, imageId: "" })}
                     >
-                      انصراف
+                      لغو
                     </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 bg-[#0077b6] text-white rounded-lg"
+                      className="px-6 py-2 bg-red-500 text-white rounded-lg"
                       onClick={confirmDelete}
                     >
-                      تأیید حذف
+                      حذف
                     </motion.button>
                   </div>
+
+                  {deleteStatus === "success" && (
+                    <div className="mt-4 flex items-center justify-center text-green-600">
+                      <FiCheckCircle className="mr-2" />
+                      تصویر با موفقیت حذف شد
+                    </div>
+                  )}
+                  {deleteStatus === "error" && (
+                    <div className="mt-4 flex items-center justify-center text-red-600">
+                      <FiAlertTriangle className="mr-2" />
+                      خطا در حذف تصویر
+                    </div>
+                  )}
                 </div>
               </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Delete Status Notification */}
-        <AnimatePresence>
-          {deleteStatus !== "idle" && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`
-                fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 rounded-lg flex items-center justify-center
-                ${
-                  deleteStatus === "success"
-                    ? "bg-green-100 text-green-800 border-2 border-green-500"
-                    : "bg-red-100 text-red-800 border-2 border-red-500"
-                }
-              `}
-            >
-              {deleteStatus === "success" ? (
-                <>
-                  <FiCheckCircle className="ml-2" /> تصویر با موفقیت حذف شد
-                </>
-              ) : (
-                <>
-                  <FiAlertTriangle className="ml-2" /> خطا در حذف تصویر
-                </>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
