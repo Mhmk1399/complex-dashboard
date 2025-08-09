@@ -176,13 +176,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ message: "Invalid storeId" }, { status: 403 });
     }
 
-    const flaskResponse = await fetch(`${process.env.VPS_URL}/delete/image`, {
+    const flaskResponse = await fetch(`${process.env.VPS_URL}/image/${storeId}/${filename}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.VPS_TOKEN || "your-secret-token"}`,
-      },
-      body: JSON.stringify({ storeId, filename }),
+      }
     });
 
     const result = await flaskResponse.json();

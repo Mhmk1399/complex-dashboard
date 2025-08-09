@@ -68,7 +68,7 @@ const confirmDelete = async () => {
       return;
     }
 
-    const response = await fetch("/api/uploadfile", {
+    const response = await fetch("/api/uploadFile", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
