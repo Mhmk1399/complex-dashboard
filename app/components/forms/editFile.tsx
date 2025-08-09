@@ -5,6 +5,13 @@ import { FiImage, FiCheckCircle, FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
 import { ImageFile } from "@/types/type";
 
+interface ApiImageResponse {
+  _id: string;
+  fileName: string;
+  storeId: string;
+  fileUrl: string;
+}
+
 export default function ImageGallery() {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [selectedImage, setSelectedImage] = useState<ImageFile | null>(null);
@@ -32,7 +39,7 @@ const fetchImages = async () => {
     }
 
     const data = await response.json();
-    const imageUrls = data.images.images.map((image: any) => ({
+    const imageUrls = data.images.images.map((image: ApiImageResponse) => ({
       _id: image._id,
       fileName: image.fileName,
       storeId: image.storeId,
@@ -87,7 +94,7 @@ const confirmDelete = async () => {
     } else {
       setDeleteStatus("error");
     }
-  } catch (error) {
+  } catch {
     setDeleteStatus("error");
   }
 };
