@@ -1,40 +1,26 @@
-# Step 1: Use official Node.js image for building
-FROM node:20-alpine AS builder
+# Use official Node.js image for development
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy env first so Docker layer caching works well
+# Copy env args so you can pass them when building the image if needed
 ARG NEXT_PUBLIC_COMPLEX_URL
 ENV NEXT_PUBLIC_COMPLEX_URL=$NEXT_PUBLIC_COMPLEX_URL
 
-# Install dependencies
+ARG NEXT_PUBLIC_MAMAD_URL
+ENV NEXT_PUBLIC_MAMAD_URL=$NEXT_PUBLIC_MAMAD_URL
+
+# Install dependencies including dev dependencies for dev mode
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy all necessary files
+# Copy all source files
 COPY . .
 
-# Build the Next.js app with the injected public env
-RUN npm run build
-
-# Step 2: Use a minimal image for serving the app
-FROM node:20-alpine AS runner
-
-ENV NODE_ENV=production
-
-WORKDIR /app
-
-# Install only production dependencies
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
-
-# Copy the build output and other necessary files from builder
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/next.config.ts ./next.config.ts
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
+# Expose the default Next.js dev port
 EXPOSE 3000
-CMD ["npm", "start"]
+
+# Start Next.js in development mode
+CMD ["npx", "next", "dev"]
+

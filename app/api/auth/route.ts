@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
     });
     console.log("Deployment created:", createNewDeployment);
 
-    const DeployedUrl = createNewDeployment.config?.host;
+    // const DeployedUrl = createNewDeployment.config?.host;
+    const DeployedUrl = `http://localhost:3002/`;
     if (!DeployedUrl) throw new Error("Deployment URL missing");
 
     const DiskUrl = `${process.env.VPS_URL}/${storeId}`

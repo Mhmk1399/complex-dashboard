@@ -65,7 +65,7 @@ spec:
           value: cloud-container-g2
       containers:
         - name: {name-of-the-deployment}
-          image: wolfix1245/user-website:1.3
+          image: wolfix1245/user-website:1.4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -99,11 +99,13 @@ spec:
                   key: STOREID
           resources:
             requests:
+              cpu: "1000m"
+              memory: "2Gi"
+              ephemeral-storage: "2Gi"
+            limits:
               cpu: "2000m"
               memory: "4Gi"
-            limits:
-              cpu: "4000m"
-              memory: "4Gi"
+              ephemeral-storage: "4Gi"
           readinessProbe:
             httpGet:
               path: /health
