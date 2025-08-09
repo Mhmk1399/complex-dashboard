@@ -6,7 +6,9 @@ const nextConfig: NextConfig = {
       'raw.githubusercontent.com',
       'github.com',
       '91.216.104.8',
-      'localhost'
+      'localhost',
+      '*',
+      'disk-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir'
     ],
     remotePatterns: [
       {

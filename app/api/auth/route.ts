@@ -15,11 +15,14 @@ export async function POST(request: NextRequest) {
     console.log("Connected to DB");
 
     console.log("Starting deployment creation...");
+
+    // IMPORTANT: Don't manually set replicas if you use HPA to auto-scale.
+    // You can omit replicas here or set it to your HPA minReplicas (e.g., 2).
     const createNewDeployment = await createDeployment({
-      name: `${title}-${storeId}`,
-      image: process.env.IMAGE_NAME || "",
-      replicas: Number(process.env.REPLICAS) || 2,
-      namespace: process.env.NAMESPACE || "",
+      name: `${title}-${storeId}`,                  // deployment name
+      image: process.env.IMAGE_NAME || "",          // should be something like "wolfix1245/fastapi:1.1"
+      // replicas: Number(process.env.REPLICAS) || 2, // optional, can omit for HPA auto-scaling
+      namespace: process.env.NAMESPACE || "mamad",  // your k8s namespace
       storeId,
     });
     console.log("Deployment created:", createNewDeployment);
@@ -27,11 +30,10 @@ export async function POST(request: NextRequest) {
     const DeployedUrl = createNewDeployment.config?.host;
     if (!DeployedUrl) throw new Error("Deployment URL missing");
 
+    const DiskUrl = `${process.env.VPS_URL}/${storeId}`
+
     console.log("Starting folder creation...");
     await initStore(storeId);
-    // const createFolderDisk = await initStore(storeId);
-    // const DiskUrl = createFolderDisk.url;
-    // if (!DiskUrl) throw new Error("Disk URL missing");
 
     console.log("Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -41,10 +43,10 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       password: hashedPassword,
       title,
-      // DiskUrl,
       DeployedUrl,
+      DiskUrl,
       storeId,
-      trialDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // or a full week if you're testing login too
+      trialDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days trial
     });
 
     await newUser.save();
@@ -55,7 +57,7 @@ export async function POST(request: NextRequest) {
         id: newUser._id,
         storeId,
         DeployedUrl,
-        // DiskUrl,
+        DiskUrl
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
@@ -67,7 +69,6 @@ export async function POST(request: NextRequest) {
         message: "User created successfully",
         token,
         userId: newUser._id,
-        // DiskUrl,
         websiteUrl: DeployedUrl,
       },
       { status: 201 }
@@ -84,7 +85,6 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
 
 export async function GET() {
   try {

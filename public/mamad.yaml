@@ -2,23 +2,42 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: secret-{name-of-the-deployment}
-  namespace: complex
+  namespace: mamad
 data:
   STOREID: {base64-encoded-storeid}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {name-of-the-deployment}
+  namespace: mamad
+  labels:
+    app: {name-of-the-deployment}
+spec:
+  clusterIP: None
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: {name-of-the-deployment}
+  sessionAffinity: None
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    deployment.kubernetes.io/revision: "1"
-  generation: 1
+  name: {name-of-the-deployment}
+  namespace: mamad
   labels:
     app: {name-of-the-deployment}
-  name: {name-of-the-deployment}
 spec:
-  progressDeadlineSeconds: 600
-  replicas: 2
-  revisionHistoryLimit: 3
+  replicas: 2 # Initial replicas, HPA will scale this
   selector:
     matchLabels:
       app: {name-of-the-deployment}
@@ -39,10 +58,19 @@ spec:
                     operator: In
                     values:
                       - "true"
+      tolerations:
+        - effect: NoSchedule
+          key: role
+          operator: Equal
+          value: cloud-container-g2
       containers:
         - name: {name-of-the-deployment}
-          image: username/image:version
+          image: wolfix1245/user-website:1.3
           imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
           env:
             - name: MONGODB_URI
               valueFrom:
@@ -69,17 +97,29 @@ spec:
                 secretKeyRef:
                   name: secret-{name-of-the-deployment}
                   key: STOREID
-          ports:
-            - containerPort: 3000
-              name: http
-              protocol: TCP
           resources:
-            limits:
-              cpu: "2"
-              memory: 4G
             requests:
-              cpu: "2"
-              memory: 4G
+              cpu: "2000m"
+              memory: "4Gi"
+            limits:
+              cpu: "4000m"
+              memory: "4Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
@@ -87,42 +127,38 @@ spec:
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
-      tolerations:
-        - effect: NoSchedule
-          key: role
-          operator: Equal
-          value: cloud-container-g2
 ---
-apiVersion: v1
-kind: Service
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
 metadata:
-  labels:
-    app: {name-of-the-deployment}
-  name: {name-of-the-deployment}
+  name: {name-of-the-deployment}-hpa
+  namespace: mamad
 spec:
-  clusterIP: None
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-    - IPv4
-  ipFamilyPolicy: SingleStack
-  ports:
-    - name: http
-      port: 80
-      protocol: TCP
-      targetPort: 3000
-  selector:
-    app: {name-of-the-deployment}
-  sessionAffinity: None
-  type: ClusterIP
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {name-of-the-deployment}
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {name-of-the-deployment}-ingress
+  namespace: mamad
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: {name-of-the-deployment}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir
+    - host: {name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
       http:
         paths:
           - path: /

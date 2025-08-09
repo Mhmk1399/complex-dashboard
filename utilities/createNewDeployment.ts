@@ -5,7 +5,7 @@ import path from 'path';
 interface DeploymentConfig {
   name: string;
   image: string;
-  replicas?: number;
+  replicas?: number;    // Optional: likely unused with HPA
   namespace?: string;
   storeId?: string;
 }
@@ -16,7 +16,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
   message: string;
   config?: { host: string };
 }> {
-  const namespace = config.namespace || 'complex';
+  const namespace = config.namespace || 'mamad';
 
   // Validate required fields
   if (!config.name || !config.image) {
@@ -27,28 +27,31 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
   const yamlPath = path.join(process.cwd(), 'public/mamad.yaml');
   let yamlContent = fs.readFileSync(yamlPath, 'utf8');
 
-  // Replace placeholders in the template
+  // Replace placeholders in the template:
+  // - Deployment name
+  // - Image name
+  // - Remove replicas replacement since autoscaling is in place
+  // - Update host URLs and ingress names using name and storeId
   yamlContent = yamlContent
     .replace(/{name-of-the-deployment}/g, config.name)
     .replace(/username\/image:version/g, config.image)
-    .replace(/replicas: 2/g, `replicas: ${config.replicas || 2}`)
+    // .replace(/replicas: 2/g, `replicas: ${config.replicas || 2}`) // omit this, replicas managed by HPA
     .replace(
       /{name-of-the-deployment}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir/g,
-      `${config.name}-${config.storeId}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`
+      `${config.name}-${config.storeId}-5aab14d2ac-mamad.apps.ir-central1.arvancaas.ir`
     )
     .replace(/name-of-the-deployment-free-ingress/g, `${config.name}-ingress`)
     .replace(/secret-{name-of-the-deployment}/g, `secret-${config.name}`);
 
-  // Parse the modified YAML
+  // Parse the modified YAML into separate documents
   const documents = yaml.loadAll(yamlContent) as any[];
-  const results = [];
   const errors = [];
 
   for (const doc of documents) {
     try {
       let endpoint = '';
 
-      // Inject environment variables into Secret (only STOREID for user-specific Secret)
+      // Inject storeId into Secret data (base64 encoded)
       if (doc.kind === 'Secret' && doc.metadata.name !== 'shared-secret') {
         doc.data = doc.data || {};
         if (config.storeId) {
@@ -56,7 +59,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
         }
       }
 
-      // Determine API endpoint based on resource kind
+      // Map kind to Arvan API endpoints with your namespace
       switch (doc.kind) {
         case 'Deployment':
           endpoint = `${ARVAN_API_BASE}/apis/apps/v1/namespaces/${namespace}/deployments`;
@@ -74,7 +77,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
           continue;
       }
 
-      // Send the resource to Arvan
+      // POST each resource to Arvan API
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -93,8 +96,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
       }
 
       const result = await response.json();
-      console.log(result, 'this is result');
-      results.push({ resource: doc.kind, result, status: response.status });
+      console.log(`${doc.kind} created:`, result);
     } catch (error) {
       console.error(`Error processing ${doc.kind}:`, error);
       errors.push({
@@ -109,7 +111,8 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
       ? 'Some resources were not created successfully'
       : 'All resources created successfully',
     config: {
-      host: `${config.name}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`,
+      // Updated host URL to match new naming & namespace ("mamad") and storeId
+      host: `${config.name}-${config.storeId}-5aab14d2ac-mamad.apps.ir-central1.arvancaas.ir`,
     },
   };
 }
