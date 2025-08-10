@@ -65,7 +65,7 @@ spec:
           value: cloud-container-g2
       containers:
         - name: {name-of-the-deployment}
-          image: wolfix1245/userwebsite:1.0
+          image: wolfix1245/user-website:1.5
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -106,6 +106,22 @@ spec:
               cpu: "2000m"
               memory: "4Gi"
               ephemeral-storage: "4Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst

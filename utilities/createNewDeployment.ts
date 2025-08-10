@@ -38,7 +38,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
     // .replace(/replicas: 2/g, `replicas: ${config.replicas || 2}`) // omit this, replicas managed by HPA
     .replace(
       /{name-of-the-deployment}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir/g,
-      `${config.name}-${config.storeId}-5aab14d2ac-mamad.apps.ir-central1.arvancaas.ir`
+      `${config.name}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir`
     )
     .replace(/name-of-the-deployment-free-ingress/g, `${config.name}-ingress`)
     .replace(/secret-{name-of-the-deployment}/g, `secret-${config.name}`);
@@ -112,7 +112,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
       : 'All resources created successfully',
     config: {
       // Updated host URL to match new naming & namespace ("mamad") and storeId
-      host: `${config.name}-${config.storeId}-5aab14d2ac-mamad.apps.ir-central1.arvancaas.ir`,
+      host: `${config.name}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir`,
     },
   };
 }

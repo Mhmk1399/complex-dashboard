@@ -32,8 +32,8 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
     .replace(/username\/image:version/g, config.image)
     .replace(/replicas: 2/g, `replicas: ${config.replicas || 2}`)
     .replace(
-      /{name-of-the-deployment}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir/g,
-      `userwebsite-${config.name}.-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`
+      /{name-of-the-deployment}-9ddcd5133c-complex.apps.ir-central1.arvancaas.ir/g,
+      `userwebsite-${config.name}.-9ddcd5133c-complex.apps.ir-central1.arvancaas.ir`
     )
     .replace(/name-of-the-deployment-free-ingress/g, `${config.name}-ingress`);
 
@@ -95,7 +95,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
 
     config: {
      
-      host: `userwebsite${config.name}-5aab14d2ac-complex.apps.ir-central1.arvancaas.ir`,
+      host: `userwebsite${config.name}-9ddcd5133c-complex.apps.ir-central1.arvancaas.ir`,
     },
   };
 
