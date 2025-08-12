@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Invalid token payload" }, { status: 401 });
     }
 
-    const flaskUrl = `${process.env.VPS_URL}/images/${decodedToken.storeId}`;
+    const flaskUrl = `${process.env.VPS_URL}/image/images/${decodedToken.storeId}`;
     
     const flaskRes = await fetch(flaskUrl, {
       headers: {
