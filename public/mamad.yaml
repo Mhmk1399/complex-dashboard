@@ -37,7 +37,7 @@ metadata:
   labels:
     app: {name-of-the-deployment}
 spec:
-  replicas: 2 # Initial replicas, HPA will scale this
+  replicas: 1 # Initial replicas, HPA will scale this
   selector:
     matchLabels:
       app: {name-of-the-deployment}
@@ -106,13 +106,13 @@ spec:
               value: "{name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir"
           resources:
             requests:
-              cpu: "1000m"
-              memory: "2Gi"
-              ephemeral-storage: "2Gi"
+              cpu: "100m"
+              memory: "200Mi"
+              ephemeral-storage: "300Mi"
             limits:
-              cpu: "2000m"
-              memory: "4Gi"
-              ephemeral-storage: "4Gi"
+              cpu: "200m"
+              memory: "400Mi"
+              ephemeral-storage: "600Mi"
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
@@ -141,6 +141,28 @@ spec:
           type: Utilization
           averageUtilization: 60
 ---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {name-of-the-deployment}-vpa
+  namespace: mamad
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: {name-of-the-deployment}
+  updatePolicy:
+    updateMode: "Auto" # Automatically adjusts pod resources
+  resourcePolicy:
+    containerPolicies:
+      - containerName: {name-of-the-deployment}
+        minAllowed:
+          cpu: 100m
+          memory: 200Mi
+        maxAllowed:
+          cpu: 2
+          memory: 2Gi
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -151,8 +173,6 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    # - host: {name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
-    # {name-of-the-deployment}.tomakdigitalagency.ir
     - host: {name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
       http:
         paths:
