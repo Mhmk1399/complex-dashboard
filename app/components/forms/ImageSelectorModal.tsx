@@ -21,12 +21,18 @@ export default function ImageSelectorModal({
   const fetchImages = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/uploadFile");
+      const token = localStorage.getItem('token');
+      const response = await fetch("/api/uploadFile", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await response.json();
       console.log("Fetched images:", data);
-      setImages(data);
+      setImages(data.images.images || []);
     } catch (error) {
       console.error("Error fetching images:", error);
+      setImages([]);
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +68,7 @@ export default function ImageSelectorModal({
   };
 
   // Filter images based on search term
-  const filteredImages = images.filter((image) =>
+  const filteredImages = (images || []).filter((image) =>
     image.fileName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -187,7 +193,7 @@ export default function ImageSelectorModal({
                     {/* Image Container */}
                     <div className="relative aspect-square bg-gray-100">
                       <Image
-                        src={image.fileUrl}
+                        src={`${process.env.NEXT_PUBLIC_MAMAD_URL}${image.fileUrl}`}
                         alt={image.fileName}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-110"
@@ -232,7 +238,7 @@ export default function ImageSelectorModal({
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 relative rounded-lg overflow-hidden flex-shrink-0 shadow-md">
                     <Image
-                      src={selectedImage.fileUrl}
+                      src={`${process.env.NEXT_PUBLIC_MAMAD_URL}${selectedImage.fileUrl}`}
                       alt={selectedImage.fileName}
                       fill
                       className="object-cover"

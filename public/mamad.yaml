@@ -65,7 +65,7 @@ spec:
           value: cloud-container-g2
       containers:
         - name: {name-of-the-deployment}
-          image: wolfix1245/userwebsite:1.0
+          image: wolfix1245/userwebsite:1.3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -92,11 +92,18 @@ spec:
                 secretKeyRef:
                   name: shared-secret
                   key: VPS_URL
+            - name: ZARINPAL_MERCHANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: ZARINPAL_MERCHANT_ID
             - name: STOREID
               valueFrom:
                 secretKeyRef:
                   name: secret-{name-of-the-deployment}
                   key: STOREID
+            - name: NEXT_PUBLIC_BASE_USERWEBSITE_PAYMENT_URL
+              value: "{name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir"
           resources:
             requests:
               cpu: "1000m"
@@ -144,6 +151,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
+    # - host: {name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
+    # {name-of-the-deployment}.tomakdigitalagency.ir
     - host: {name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
       http:
         paths:

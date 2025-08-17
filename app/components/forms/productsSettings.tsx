@@ -18,7 +18,7 @@ export const ProductsSettings = () => {
     type: "productDetails",
     blocks: {
       images: {
-        imageSrc: "/assets/images/product-detail.jpg",
+        imageSrc: "",
         imageAlt: "",
       },
       name: "",
@@ -102,10 +102,7 @@ export const ProductsSettings = () => {
       newErrors.price = "قیمت باید بیشتر از صفر باشد";
     }
 
-    if (
-      !settings.blocks.images.imageSrc ||
-      settings.blocks.images.imageSrc === "/assets/images/product-detail.jpg"
-    ) {
+    if (!settings.blocks.images.imageSrc) {
       newErrors.image = "انتخاب تصویر محصول الزامی است";
     }
 
@@ -404,12 +401,12 @@ export const ProductsSettings = () => {
             name: "",
             description: "",
             category: { _id: "", name: "" },
-            price: "",
-            status: "active",
-            discount: "",
-            id: "",
+            price: "0",
+            status: "available",
+            discount: "0",
+            id: "1",
             images: {
-              imageSrc: "/assets/images/product-detail.jpg",
+              imageSrc: "",
               imageAlt: "",
             },
             properties: [],
