@@ -9,10 +9,13 @@ import Link from "next/link";
 export default function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [step, setStep] = useState(1);
+  const [codeSent, setCodeSent] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -50,6 +53,61 @@ export default function LoginPage() {
     }
   }, [router]);
 
+  const sendCode = async () => {
+    if (!phoneNumber) {
+      setError("شماره تلفن را وارد کنید");
+      setShowModal(true);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/send-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setCodeSent(true);
+        setStep(2);
+      } else {
+        setError(data.message);
+        setShowModal(true);
+      }
+    } catch (err) {
+      setError("خطا در ارسال کد");
+      setShowModal(true);
+    }
+  };
+
+  const verifyCode = async () => {
+    if (!verificationCode) {
+      setError("کد تایید را وارد کنید");
+      setShowModal(true);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber, code: verificationCode }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setStep(3);
+      } else {
+        setError(data.message);
+        setShowModal(true);
+      }
+    } catch (err) {
+      setError("خطا در تایید کد");
+      setShowModal(true);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -62,29 +120,23 @@ export default function LoginPage() {
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber, password }),
       });
 
       const data = await response.json();
-
       if (response.ok) {
         localStorage.setItem("token", data.token);
         setIsSuccess(true);
         setShowModal(true);
-        setTimeout(() => {
-          router.replace("/");
-        }, 1500);
+        setTimeout(() => router.replace("/"), 1500);
       } else {
         setError(data.message);
         setIsSuccess(false);
         setShowModal(true);
       }
     } catch (err) {
-      console.log(err);
-      setError("Failed to login. Please try again.");
+      setError("خطا در ورود");
       setIsSuccess(false);
       setShowModal(true);
     }
@@ -156,75 +208,105 @@ export default function LoginPage() {
             ورود به داشبورد
           </h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="phoneNumber"
-                className="block text-lg font-medium text-[#0077b6] mb-2"
+          {step === 1 && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-lg font-medium text-[#0077b6] mb-2">
+                  شماره تلفن
+                </label>
+                <div className="relative">
+                  <FaPhoneAlt className="absolute -left-7 top-5 text-[#0077b6] opacity-50" />
+                  <input
+                    type="tel"
+                    placeholder="شماره تلفن خود را وارد کنید"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="w-full p-4 pl-10 ring-1 text-right ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
+                  />
+                </div>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={sendCode}
+                className="w-full px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex items-center justify-center gap-2"
               >
-                شماره تلفن
-              </label>
-              <div className="relative">
-                <FaPhoneAlt className="absolute -left-7 top-5 text-[#0077b6] opacity-50" />
+                ارسال کد تایید
+                <FiArrowLeft />
+              </motion.button>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-lg font-medium text-[#0077b6] mb-2">
+                  کد تایید
+                </label>
                 <input
-                  id="phoneNumber"
-                  type="tel"
-                  required
-                  placeholder="شماره تلفن خود را وارد کنید"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full p-4 pl-10 ring-1 text-right ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
+                  type="text"
+                  placeholder="کد 6 رقمی را وارد کنید"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  className="w-full p-4 ring-1 text-center ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
                 />
               </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-lg font-medium text-[#0077b6] mb-2"
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={verifyCode}
+                className="w-full px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex items-center justify-center gap-2"
               >
-                رمز عبور
-              </label>
-              <div className="relative">
-                <FaLock className="absolute -left-7 top-5 text-[#0077b6] opacity-50" />
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="رمز عبور خود را وارد کنید"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-4 pl-10 ring-1 ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute left-3 top-5 text-[#0077b6] opacity-50 focus:outline-none"
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
+                تایید کد
+                <FiArrowLeft />
+              </motion.button>
+            </div>
+          )}
+
+          {step === 3 && (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-lg font-medium text-[#0077b6] mb-2">
+                  رمز عبور
+                </label>
+                <div className="relative">
+                  <FaLock className="absolute -left-7 top-5 text-[#0077b6] opacity-50" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="رمز عبور خود را وارد کنید"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-4 pl-10 ring-1 ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute left-3 top-5 text-[#0077b6] opacity-50 focus:outline-none"
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </div>
-            </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="submit"
+                className="w-full px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex items-center justify-center gap-2"
+              >
+                ورود
+                <FiArrowLeft />
+              </motion.button>
+            </form>
+          )}
 
-            <div className="flex justify-between items-center">
-              <Link href="/signIn" className="text-[#0077b6] hover:underline">
-                ثبت نام
-              </Link>
-              <Link href="#" className="text-[#0077b6] hover:underline">
-                فراموشی رمز عبور
-              </Link>
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              type="submit"
-              className="w-full px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex items-center justify-center gap-2"
-            >
-              ورود
-              <FiArrowLeft />
-            </motion.button>
-          </form>
+          <div className="flex justify-between items-center mt-4">
+            <Link href="/signIn" className="text-[#0077b6] hover:underline">
+              ثبت نام
+            </Link>
+            <Link href="#" className="text-[#0077b6] hover:underline">
+              فراموشی رمز عبور
+            </Link>
+          </div>
         </motion.div>
       </motion.div>
 
