@@ -15,6 +15,7 @@ import UploadPage from "./components/forms/uploads";
 import ImageGallery from "./components/forms/editFile";
 import StartComponent from "./components/forms/startComponent";
 import AddCategory from "./components/forms/addCategory";
+import AddGiftCard from "./components/forms/addGiftCard";
 import { AddStory } from "./components/forms/addStory";
 import { StoreSettings } from "./components/forms/storeSettings";
 import InformationData from "./components/forms/informationData";
@@ -139,6 +140,11 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
       },
       addCategory: {
         title: "افزودن دسته بندی",
+        icon: <FaStore />,
+        color: "text-green-600",
+      },
+      addGiftCard: {
+        title: "کارتهای هدیه",
         icon: <FaStore />,
         color: "text-green-600",
       },
@@ -300,6 +306,7 @@ export const Dashboard = () => {
       addFile: <UploadPage />,
       editFile: <ImageGallery />,
       addCategory: <AddCategory />,
+      addGiftCard: <AddGiftCard />,
       addStory: <AddStory />,
       siteSettings: <StoreSettings />,
       accountSettings: <InformationData />,
