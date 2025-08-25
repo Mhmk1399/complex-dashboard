@@ -18,66 +18,103 @@ const SignInForm = () => {
     title: "",
     storeId: generateStoreId(),
   });
+  const [verificationCode, setVerificationCode] = useState("");
   const [errors, setErrors] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // New state for loading
+  const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState(1);
+  const [codeSent, setCodeSent] = useState(false);
 
-  const submitFormData = async () => {
-    console.log("Submit form data called");
-
-    if (!formData.phoneNumber || !formData.password || !formData.title) {
-      console.log("Form validation failed");
-      setErrors("لطفا تمام فیلدها را پر کنید");
+  const sendCode = async () => {
+    if (!formData.phoneNumber) {
+      setErrors("شماره تلفن را وارد کنید");
       setShowModal(true);
-      console.log(isSuccess);
-      console.log(isLoading);
       return;
     }
 
-    console.log("Starting form submission");
+    try {
+      const response = await fetch("/api/auth/send-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber: formData.phoneNumber }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setCodeSent(true);
+        setStep(2);
+      } else {
+        setErrors(data.message);
+        setShowModal(true);
+      }
+    } catch (error) {
+      setErrors("خطا در ارسال کد");
+      setShowModal(true);
+    }
+  };
+
+  const verifyCode = async () => {
+    if (!verificationCode) {
+      setErrors("کد تایید را وارد کنید");
+      setShowModal(true);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber: formData.phoneNumber, code: verificationCode }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setStep(3);
+      } else {
+        setErrors(data.message);
+        setShowModal(true);
+      }
+    } catch (error) {
+      setErrors("خطا در تایید کد");
+      setShowModal(true);
+    }
+  };
+
+  const submitFormData = async () => {
+    if (!formData.phoneNumber || !formData.password || !formData.title) {
+      setErrors("لطفا تمام فیلدها را پر کنید");
+      setShowModal(true);
+      return;
+    }
+
     setIsLoading(true);
     setShowModal(true);
 
     try {
-      console.log("Sending fetch request");
       const response = await fetch("/api/auth", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
-      console.log("Fetch response received", response.ok);
-
       const result = await response.json();
-      console.log("Response result:", result);
-
       if (response.ok) {
-        console.log("Registration successful");
         localStorage.setItem("token", result.token);
         setIsLoading(false);
         setIsSuccess(true);
         setShowModal(true);
         router.push("/");
       } else {
-        console.log("Registration failed");
         setIsLoading(false);
         setIsSuccess(false);
         setErrors(result.message || "Registration failed");
         setShowModal(true);
       }
     } catch (error) {
-      console.error("Full registration error:", error);
-
       setIsLoading(false);
       setIsSuccess(false);
-      setErrors(
-        error instanceof Error ? error.message : "An unexpected error occurred"
-      );
+      setErrors("An unexpected error occurred");
       setShowModal(true);
     }
   };
@@ -196,58 +233,90 @@ const SignInForm = () => {
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
         >
-          <>
-            <h1 className="text-2xl  lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-[#0077b6] my-4 lg:my-10">
-              خوش اومدی به سایکو بیا باهم سایت بسازیم
-            </h1>
-            <hr />
-            <br />
-            <label
-              htmlFor="name"
-              className="block text-lg font-medium text-[#0077b6] mb-2"
-            >
-              اسم فروشگاه
-            </label>
-            <input
-              id="title"
-              type="text"
-              placeholder="اسم فروشگاهتو اینجا وارد کن"
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              className="w-full p-4 ring-1 ring-[#0077b6]  focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg  focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
-            />
-            <label
-              htmlFor="password"
-              className="block text-lg font-medium text-[#0077b6] mb-2 mt-4"
-            >
-              رمز عبور
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="رمز عبور خود را وارد کنید"
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              className="w-full p-4 ring-1 ring-[#0077b6]  focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg  focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
-            />
-            <label
-              htmlFor="phoneNumber"
-              className="block text-lg font-medium text-[#0077b6] mb-2 mt-4"
-            >
-              شماره تلفن
-            </label>
-            <input
-              id="phoneNumber"
-              type="text"
-              placeholder="شماره تلفن خود را وارد کنید"
-              onChange={(e) =>
-                setFormData({ ...formData, phoneNumber: e.target.value })
-              }
-              className="w-full p-4 ring-1 ring-[#0077b6]  focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg  focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
-            />
-          </>
+          <h1 className="text-2xl  lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-[#0077b6] my-4 lg:my-10">
+            خوش اومدی به سایکو بیا باهم سایت بسازیم
+          </h1>
+          <hr />
+          <br />
+
+          {step === 1 && (
+            <>
+              <label className="block text-lg font-medium text-[#0077b6] mb-2">
+                شماره تلفن
+              </label>
+              <input
+                type="text"
+                placeholder="شماره تلفن خود را وارد کنید"
+                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                className="w-full p-4 ring-1 ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={sendCode}
+                className="w-full mt-4 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex justify-center items-center gap-1"
+              >
+                ارسال کد تایید
+                <FiArrowLeft />
+              </motion.button>
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <label className="block text-lg font-medium text-[#0077b6] mb-2">
+                کد تایید
+              </label>
+              <input
+                type="text"
+                placeholder="کد 6 رقمی را وارد کنید"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                className="w-full p-4 ring-1 text-center ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={verifyCode}
+                className="w-full mt-4 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex justify-center items-center gap-1"
+              >
+                تایید کد
+                <FiArrowLeft />
+              </motion.button>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              <label className="block text-lg font-medium text-[#0077b6] mb-2">
+                اسم فروشگاه
+              </label>
+              <input
+                type="text"
+                placeholder="اسم فروشگاهتو اینجا وارد کن"
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full p-4 ring-1 ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
+              />
+              <label className="block text-lg font-medium text-[#0077b6] mb-2 mt-4">
+                رمز عبور
+              </label>
+              <input
+                type="password"
+                placeholder="رمز عبور خود را وارد کنید"
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full p-4 ring-1 ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 placeholder:opacity-100 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => { submitFormData(); setShowModal(true); }}
+                className="w-full mt-4 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex justify-center items-center gap-1"
+              >
+                ثبت نام
+                <FiArrowLeft />
+              </motion.button>
+            </>
+          )}
 
           {errors && (
             <motion.p
@@ -258,29 +327,15 @@ const SignInForm = () => {
               {errors}
             </motion.p>
           )}
-          <div className="flex justify-between items-center">
+
+          <div className="flex justify-between items-center mt-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => router.push("/login")}
-              className=" py-3 mt-3 text-[#0077b6] font-medium flex items-center gap-1  hover:opacity-70 transition-colors duration-300"
+              className="py-3 text-[#0077b6] font-medium flex items-center gap-1 hover:opacity-70 transition-colors duration-300"
             >
               ورود به حساب
-            </motion.button>
-          </div>
-
-          <div className="flex justify-between mt-8">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="ml-1 px-6 py-3 w-full  text-center rounded-lg bg-[#0077b6] text-white font-medium flex justify-center items-center gap-1  hover:shadow-[#0077b6] hover:shadow-md"
-              onClick={() => {
-                submitFormData();
-                setShowModal(true);
-              }}
-            >
-              ثبت نام
-              <FiArrowLeft />
             </motion.button>
           </div>
         </motion.div>

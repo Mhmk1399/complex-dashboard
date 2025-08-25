@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connect from "@/lib/data";
 import User from "@/models/users";
+import Verification from "@/models/verification";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -18,6 +19,12 @@ export async function POST(request: NextRequest) {
         { message: "Phone number and password are required" },
         { status: 400 }
       );
+    }
+
+    // Check if phone is verified
+    const verification = await Verification.findOne({ phone: phoneNumber, verified: true });
+    if (!verification) {
+      return NextResponse.json({ message: "Phone not verified" }, { status: 400 });
     }
 
     const user = await User.findOne({ phoneNumber });

@@ -55,6 +55,7 @@ const dashboardMenuItems = [
       { title: "موجودی محصول", value: "inventory", icon: <FaBoxes /> },
       { title: "کالکشن ها", value: "collections", icon: <FaLayerGroup /> },
       { title: "افزودن دسته بندی", value: "addCategory", icon: <FaTags /> },
+      { title: "کارتهای هدیه", value: "addGiftCard", icon: <FaCreditCard /> },
     ],
   },
   {
