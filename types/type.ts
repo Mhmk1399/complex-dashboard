@@ -6,6 +6,10 @@ export interface ProductSettings {
     images: {
       imageSrc: string;
       imageAlt: string;
+    }[];
+    video?: {
+      videoSrc: string;
+      videoAlt: string;
     };
     properties: {
       name: string;
@@ -32,6 +36,10 @@ export interface Product {
   images: {
     imageSrc: string;
     imageAlt: string;
+  }[];
+  video?: {
+    videoSrc: string;
+    videoAlt: string;
   };
   _id: string;
   name: string;
