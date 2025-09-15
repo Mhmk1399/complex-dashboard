@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       DiskUrl: user.DiskUrl,
     },
     tokenSecret,
-    { expiresIn: "1h" }
+    { expiresIn: "10000h" }
   );
 
   console.log("Login successful");

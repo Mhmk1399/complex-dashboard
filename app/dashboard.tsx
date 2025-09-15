@@ -296,7 +296,7 @@ export const Dashboard = () => {
   const RenderForms = () => {
     const formComponents: Record<string, React.ReactNode> = {
       start: <StartComponent setSelectedMenu={setSelectedMenu} />,
-      addProduct: <ProductsSettings />,
+      addProduct: <ProductsSettings setSelectedMenu={setSelectedMenu}/>,
       inventory: <Inventory setSelectedMenu={setSelectedMenu} />,
       collections: <Collections />,
       addBlogs: <AddBlog />,

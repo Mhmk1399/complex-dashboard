@@ -38,11 +38,12 @@ export async function POST(request: NextRequest) {
       role: user.role,
     });
 
-    const { password: _, ...userWithoutPassword } = user.toObject();
+    const userObject = user.toObject();
+    delete userObject.password;
 
     return NextResponse.json({
       token,
-      user: userWithoutPassword,
+      user: userObject,
     });
   } catch (error) {
     return NextResponse.json(

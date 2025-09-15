@@ -37,7 +37,7 @@ const EditGiftCard = () => {
       });
       const data = await response.json();
       setGiftCards(data.giftCards || []);
-    } catch (error) {
+    } catch {
       toast.error("خطا در دریافت کارتهای هدیه");
     }
   };
@@ -75,7 +75,7 @@ const EditGiftCard = () => {
       } else {
         toast.error("خطا در بروزرسانی کارت هدیه");
       }
-    } catch (error) {
+    } catch {
       toast.error("خطا در بروزرسانی کارت هدیه");
     }
   };
@@ -97,7 +97,7 @@ const EditGiftCard = () => {
       } else {
         toast.error("خطا در حذف کارت هدیه");
       }
-    } catch (error) {
+    } catch {
       toast.error("خطا در حذف کارت هدیه");
     }
   };

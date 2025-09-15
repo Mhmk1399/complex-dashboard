@@ -13,7 +13,7 @@ export async function DELETE(req: NextRequest) {
     try {
         await GiftCard.findByIdAndDelete(giftCardId);
         return NextResponse.json({ message: 'Gift card deleted successfully' }, { status: 200 });
-    } catch (error) {
+    } catch {
         return NextResponse.json('Error deleting gift card', { status: 500 });
     }
 }
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json('Gift card not found', { status: 404 });
         }
         return NextResponse.json(giftCard, { status: 200 });
-    } catch (error) {
+    } catch {
         return NextResponse.json('Error fetching gift card', { status: 500 });
     }
 }   
@@ -62,7 +62,7 @@ export async function PATCH(req: NextRequest) {
             message: 'Gift card updated successfully',
             giftCard: updatedGiftCard 
         }, { status: 200 });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ message: 'Error updating gift card' }, { status: 500 });
     }
 }

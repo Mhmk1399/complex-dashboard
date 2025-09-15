@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
         DiskUrl
       },
       process.env.JWT_SECRET!,
-      { expiresIn: "1h" }
+      { expiresIn: "10000h" }
     );
 
     console.log("Signup successful");

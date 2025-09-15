@@ -65,7 +65,7 @@ spec:
           value: cloud-container-g2
       containers:
         - name: {name-of-the-deployment}
-          image: wolfix1245/userwebsite:1.5
+          image: wolfix1245/userwebsite:1.4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -104,16 +104,16 @@ spec:
                   key: STOREID
             - name: NEXT_PUBLIC_BASE_USERWEBSITE_PAYMENT_URL
               # value: "{name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir"
-              value: "tomakdigitalagency.ir"
+              value: "ghasem.tomakdigitalagency.ir"
           resources:
             requests:
-              cpu: "500m"
-              memory: "1000Mi"
-              ephemeral-storage: "500Mi"
+              cpu: "100m"
+              memory: "200Mi"
+              ephemeral-storage: "300Mi"
             limits:
-              cpu: "1000m"
-              memory: "2000Mi"
-              ephemeral-storage: "500Mi"
+              cpu: "200m"
+              memory: "400Mi"
+              ephemeral-storage: "600Mi"
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
@@ -141,28 +141,28 @@ spec:
         target:
           type: Utilization
           averageUtilization: 60
-# ---
-# apiVersion: autoscaling.k8s.io/v1
-# kind: VerticalPodAutoscaler
-# metadata:
-#   name: {name-of-the-deployment}-vpa
-#   namespace: mamad
-# spec:
-#   targetRef:
-#     apiVersion: "apps/v1"
-#     kind: Deployment
-#     name: {name-of-the-deployment}
-#   updatePolicy:
-#     updateMode: "Auto" # Automatically adjusts pod resources
-#   resourcePolicy:
-#     containerPolicies:
-#       - containerName: {name-of-the-deployment}
-#         minAllowed:
-#           cpu: 100m
-#           memory: 200Mi
-#         maxAllowed:
-#           cpu: 2
-#           memory: 2Gi
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {name-of-the-deployment}-vpa
+  namespace: mamad
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: {name-of-the-deployment}
+  updatePolicy:
+    updateMode: "Auto" # Automatically adjusts pod resources
+  resourcePolicy:
+    containerPolicies:
+      - containerName: {name-of-the-deployment}
+        minAllowed:
+          cpu: 100m
+          memory: 200Mi
+        maxAllowed:
+          cpu: 2
+          memory: 2Gi
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
