@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: site
+  namespace: mamad
+  labels:
+    app: site
+spec:
+  type: ClusterIP
+  selector:
+    app: site
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site
+  namespace: mamad
+  labels:
+    app: site
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: site
+  template:
+    metadata:
+      labels:
+        app: site
+    spec:
+      containers:
+        - name: site
+          image: wolfix1245/userwebsite:1.4
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: MONGODB_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: JWT_SECRET
+            - name: VPS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: VPS_TOKEN
+            - name: VPS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: VPS_URL
+            - name: ZARINPAL_MERCHANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secret
+                  key: ZARINPAL_MERCHANT_ID
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: site-ingress
+  namespace: mamad
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - "*.tomakdigitalagency.ir"
+      secretName: wildcard-site-com-tls
+  rules:
+    - host: "*.tomakdigitalagency.ir"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: site
+                port:
+                  number: 80

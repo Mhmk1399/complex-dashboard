@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 
     const giftCards = await GiftCard.find({ storeId });
     return NextResponse.json({ giftCards }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: "Error fetching gift cards" },
       { status: 500 }

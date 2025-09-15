@@ -37,7 +37,7 @@ metadata:
   labels:
     app: {name-of-the-deployment}
 spec:
-  replicas: 2 # Initial replicas, HPA will scale this
+  replicas: 1 # Initial replicas, HPA will scale this
   selector:
     matchLabels:
       app: {name-of-the-deployment}
@@ -65,7 +65,7 @@ spec:
           value: cloud-container-g2
       containers:
         - name: {name-of-the-deployment}
-          image: wolfix1245/userwebsite:1.3
+          image: wolfix1245/userwebsite:1.5
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -103,16 +103,17 @@ spec:
                   name: secret-{name-of-the-deployment}
                   key: STOREID
             - name: NEXT_PUBLIC_BASE_USERWEBSITE_PAYMENT_URL
-              value: "{name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir"
+              # value: "{name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir"
+              value: "tomakdigitalagency.ir"
           resources:
             requests:
-              cpu: "1000m"
-              memory: "2Gi"
-              ephemeral-storage: "2Gi"
+              cpu: "500m"
+              memory: "1000Mi"
+              ephemeral-storage: "500Mi"
             limits:
-              cpu: "2000m"
-              memory: "4Gi"
-              ephemeral-storage: "4Gi"
+              cpu: "1000m"
+              memory: "2000Mi"
+              ephemeral-storage: "500Mi"
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
@@ -140,6 +141,28 @@ spec:
         target:
           type: Utilization
           averageUtilization: 60
+# ---
+# apiVersion: autoscaling.k8s.io/v1
+# kind: VerticalPodAutoscaler
+# metadata:
+#   name: {name-of-the-deployment}-vpa
+#   namespace: mamad
+# spec:
+#   targetRef:
+#     apiVersion: "apps/v1"
+#     kind: Deployment
+#     name: {name-of-the-deployment}
+#   updatePolicy:
+#     updateMode: "Auto" # Automatically adjusts pod resources
+#   resourcePolicy:
+#     containerPolicies:
+#       - containerName: {name-of-the-deployment}
+#         minAllowed:
+#           cpu: 100m
+#           memory: 200Mi
+#         maxAllowed:
+#           cpu: 2
+#           memory: 2Gi
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -151,8 +174,6 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    # - host: {name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
-    # {name-of-the-deployment}.tomakdigitalagency.ir
     - host: {name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
       http:
         paths:
