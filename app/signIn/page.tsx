@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { FiArrowLeft } from "react-icons/fi";
@@ -25,6 +25,26 @@ const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [codeSent, setCodeSent] = useState(false);
+  const [smsExpiresAt, setSmsExpiresAt] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState<number>(0);
+
+  useEffect(() => {
+    if (!smsExpiresAt) return;
+
+    const timer = setInterval(() => {
+      const now = Date.now();
+      const expiryTime = new Date(smsExpiresAt).getTime();
+      const remaining = Math.max(0, Math.floor((expiryTime - now) / 1000));
+      
+      setCountdown(remaining);
+      
+      if (remaining === 0) {
+        clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [smsExpiresAt]);
 
   const sendCode = async () => {
     if (!formData.phoneNumber) {
@@ -43,6 +63,9 @@ const SignInForm = () => {
       const data = await response.json();
       if (response.ok) {
         setCodeSent(true);
+        setSmsExpiresAt(data.expiresAt);
+        const remaining = Math.max(0, Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000));
+        setCountdown(remaining);
         setStep(2);
       } else {
         setErrors(data.message);
@@ -274,11 +297,31 @@ const SignInForm = () => {
                 onChange={(e) => setVerificationCode(e.target.value)}
                 className="w-full p-4 ring-1 text-center ring-[#0077b6] focus:ring-[#0077b6] outline-none duration-300 rounded-lg focus:shadow-md focus:shadow-[#0077b6] backdrop-blur-md bg-white/80"
               />
+              {smsExpiresAt && (
+                <div className="text-center mt-4 mb-2">
+                  {countdown > 0 ? (
+                    <p className={`text-lg font-bold ${
+                      countdown > 60 ? 'text-green-600' : countdown > 30 ? 'text-yellow-600' : 'text-red-600'
+                    }`}>
+                      {countdown} ثانیه
+                    </p>
+                  ) : (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={sendCode}
+                      className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium"
+                    >
+                      ارسال مجدد کد
+                    </motion.button>
+                  )}
+                </div>
+              )}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={verifyCode}
-                className="w-full mt-4 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex justify-center items-center gap-1"
+                className="w-full mt-2 px-6 py-3 rounded-lg bg-[#0077b6] text-white font-medium flex justify-center items-center gap-1"
               >
                 تایید کد
                 <FiArrowLeft />

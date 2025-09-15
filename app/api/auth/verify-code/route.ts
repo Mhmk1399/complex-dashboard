@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (code.length !== 6 || !/^\d{6}$/.test(code)) {
-      return NextResponse.json({ message: 'Code must be 6 digits' }, { status: 400 });
+      return NextResponse.json({ message: 'کد باید ۶ رقمی باشد' }, { status: 400 });
     }
 
     await connect();
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!verification) {
-      return NextResponse.json({ message: 'Invalid or expired code' }, { status: 400 });
+      return NextResponse.json({ message: 'کد نامعتبر است' }, { status: 400 });
     }
 
     verification.verified = true;

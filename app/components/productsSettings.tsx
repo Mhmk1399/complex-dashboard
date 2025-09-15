@@ -6,20 +6,23 @@ import "react-toastify/dist/ReactToastify.css";
 import { Tooltip } from "react-tooltip"; // Add this import
 import ImageSelectorModal from "./ImageSelectorModal";
 import { ProductSettings } from "@/types/type";
+import { AIDescriptionGenerator } from "./AIDescriptionGenerator";
 
 export const ProductsSettings = () => {
   const [categories, setCategories] = useState<
     Array<{ _id: string; name: string }>
   >([]);
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [settings, setSettings] = useState<ProductSettings>({
     type: "productDetails",
     blocks: {
-      images: {
-        imageSrc: "",
-        imageAlt: "",
+      images: [],
+      video: {
+        videoSrc: "",
+        videoAlt: "",
       },
       name: "",
       description: "",
@@ -36,18 +39,19 @@ export const ProductsSettings = () => {
     },
   });
 
-  const handleImageSelect = (image: { fileUrl: string }) => {
-    setSettings((prev) => ({
-      ...prev,
-      blocks: {
-        ...prev.blocks,
-        images: {
-          ...prev.blocks.images,
-          imageSrc: image.fileUrl,
+  const handleImageSelect = (image: { fileUrl: string }, index: number) => {
+    setSettings((prev) => {
+      const newImages = [...prev.blocks.images];
+      newImages[index] = { imageSrc: image.fileUrl, imageAlt: "" };
+      return {
+        ...prev,
+        blocks: {
+          ...prev.blocks,
+          images: newImages,
         },
-      },
-    }));
-    clearError("image");
+      };
+    });
+    clearError("images");
     setIsImageSelectorOpen(false);
   };
 
@@ -102,12 +106,8 @@ export const ProductsSettings = () => {
       newErrors.price = "قیمت باید بیشتر از صفر باشد";
     }
 
-    if (!settings.blocks.images.imageSrc) {
-      newErrors.image = "انتخاب تصویر محصول الزامی است";
-    }
-
-    if (!settings.blocks.images.imageAlt.trim()) {
-      newErrors.imageAlt = "متن جایگزین تصویر الزامی است";
+    if (settings.blocks.images.length === 0) {
+      newErrors.images = "حداقل یک تصویر محصول الزامی است";
     }
 
     setErrors(newErrors);
@@ -135,17 +135,18 @@ export const ProductsSettings = () => {
     }
   };
 
-  const handleImageChange = (field: string, value: string) => {
-    setSettings((prev) => ({
-      ...prev,
-      blocks: {
-        ...prev.blocks,
-        images: {
-          ...prev.blocks.images,
-          [field]: value,
+  const handleImageChange = (index: number, field: string, value: string) => {
+    setSettings((prev) => {
+      const newImages = [...prev.blocks.images];
+      newImages[index] = { ...newImages[index], [field]: value };
+      return {
+        ...prev,
+        blocks: {
+          ...prev.blocks,
+          images: newImages,
         },
-      },
-    }));
+      };
+    });
   };
   // add property
   const addProperty = () => {
@@ -373,6 +374,7 @@ export const ProductsSettings = () => {
     try {
       const productData = {
         images: settings.blocks.images,
+        video: settings.blocks.video,
         name: settings.blocks.name,
         description: settings.blocks.description,
         category: settings.blocks.category._id, // This will now correctly send the category ID
@@ -405,9 +407,10 @@ export const ProductsSettings = () => {
             status: "available",
             discount: "0",
             id: "1",
-            images: {
-              imageSrc: "",
-              imageAlt: "",
+            images: [],
+            video: {
+              videoSrc: "",
+              videoAlt: "",
             },
             properties: [],
             colors: [],
@@ -448,57 +451,112 @@ export const ProductsSettings = () => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Image Section */}
-            <div className="space-y-6 p-6  bg-[#0077b6]/5 rounded-xl">
+            {/* Images Section */}
+            <div className="lg:col-span-2 space-y-6 p-6 bg-[#0077b6]/5 rounded-xl">
               <div>
-                <label className="block mb-2 mt-6 text-[#0077b6] font-bold">
-                  تصویر محصول *
+                <label className="block mb-4 text-[#0077b6] font-bold text-xl">
+                  تصاویر محصول (حداکثر 6 تصویر) *
                 </label>
-                <div className="flex">
-                  <input
-                    type="text"
-                    value={settings.blocks.images.imageSrc}
-                    readOnly
-                    className={`w-full p-2 border rounded-xl ml-2 ${
-                      errors.image ? "border-red-500" : "border-blue-200"
-                    }`}
-                    placeholder="انتخاب تصویر"
-                  />
-                  <button
-                    onClick={() => {
-                      setIsImageSelectorOpen(true);
-                      clearError("image");
-                    }}
-                    className="bg-white text-[#0077b6] border text-nowrap border-blue-200 px-4 py-2 rounded-xl"
-                  >
-                    انتخاب تصویر
-                  </button>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <div key={index} className="space-y-3">
+                      <div className="relative">
+                        {settings.blocks.images[index]?.imageSrc ? (
+                          <div className="relative">
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_MAMAD_URL}${settings.blocks.images[index].imageSrc}`}
+                              alt={settings.blocks.images[index].imageAlt || `تصویر ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg border border-blue-200"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newImages = [...settings.blocks.images];
+                                newImages.splice(index, 1);
+                                setSettings(prev => ({
+                                  ...prev,
+                                  blocks: { ...prev.blocks, images: newImages }
+                                }));
+                              }}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="w-full h-32 border-2 border-dashed border-blue-300 rounded-lg flex flex-col items-center justify-center bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer"
+                               onClick={() => {
+                                 setCurrentImageIndex(index);
+                                 setIsImageSelectorOpen(true);
+                               }}>
+                            <svg className="w-8 h-8 text-blue-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            <span className="text-blue-600 text-sm font-medium">تصویر {index + 1}</span>
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        placeholder={`متن جایگزین تصویر ${index + 1}`}
+                        value={settings.blocks.images[index]?.imageAlt || ""}
+                        onChange={(e) => handleImageChange(index, "imageAlt", e.target.value)}
+                        className="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+                        dir="rtl"
+                      />
+                    </div>
+                  ))}
                 </div>
-                {errors.image && (
-                  <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+                {errors.images && (
+                  <p className="text-red-500 text-sm mt-2">{errors.images}</p>
                 )}
               </div>
 
-              <div>
+              {/* Video Section */}
+              <div className="space-y-3">
                 <label className="block mb-2 font-bold text-[#0077b6]">
-                  متن جایگزین تصویر *
+                  ویدیو محصول (اختیاری)
                 </label>
                 <input
                   type="text"
-                  value={settings.blocks.images?.imageAlt || ""}
+                  value={settings.blocks.video?.videoSrc || ""}
                   onChange={(e) => {
-                    handleImageChange("imageAlt", e.target.value);
-                    clearError("imageAlt");
+                    setSettings(prev => ({
+                      ...prev,
+                      blocks: { 
+                        ...prev.blocks, 
+                        video: {
+                          ...prev.blocks.video,
+                          videoSrc: e.target.value
+                        }
+                      }
+                    }));
                   }}
-                  className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-none transition-all ${
-                    errors.imageAlt ? "border-red-500" : "border-blue-200"
-                  }`}
-                  placeholder="متن جایگزین تصویر"
+                  className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+                  placeholder="آدرس ویدیو محصول"
                   dir="rtl"
                 />
-                {errors.imageAlt && (
-                  <p className="text-red-500 text-sm mt-1">{errors.imageAlt}</p>
-                )}
+                <input
+                  type="text"
+                  value={settings.blocks.video?.videoAlt || ""}
+                  onChange={(e) => {
+                    setSettings(prev => ({
+                      ...prev,
+                      blocks: { 
+                        ...prev.blocks, 
+                        video: {
+                          ...prev.blocks.video,
+                          videoAlt: e.target.value
+                        }
+                      }
+                    }));
+                  }}
+                  className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+                  placeholder="متن جایگزین ویدیو"
+                  dir="rtl"
+                />
               </div>
             </div>
 
@@ -526,9 +584,26 @@ export const ProductsSettings = () => {
               </div>
 
               <div>
-                <label className="block mb-2 font-bold text-[#0077b6]">
-                  توضیحات *
-                </label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block font-bold text-[#0077b6]">
+                    توضیحات *
+                  </label>
+                  <AIDescriptionGenerator
+                    productData={{
+                      name: settings.blocks.name,
+                      category: settings.blocks.category.name,
+                      colors: settings.blocks.colors.map(c => c.code),
+                      properties: settings.blocks.properties.reduce((acc, prop) => {
+                        acc[prop.name] = prop.value;
+                        return acc;
+                      }, {} as Record<string, any>)
+                    }}
+                    onDescriptionGenerated={(description) => {
+                      handleChange("blocks", "description", description);
+                      clearError("description");
+                    }}
+                  />
+                </div>
                 <textarea
                   value={settings.blocks.description}
                   onChange={(e) => {
@@ -878,7 +953,7 @@ export const ProductsSettings = () => {
       <ImageSelectorModal
         isOpen={isImageSelectorOpen}
         onClose={() => setIsImageSelectorOpen(false)}
-        onSelectImage={handleImageSelect}
+        onSelectImage={(image) => handleImageSelect(image, currentImageIndex)}
       />
 
       <ToastContainer rtl={true} position="top-center" autoClose={3000} />

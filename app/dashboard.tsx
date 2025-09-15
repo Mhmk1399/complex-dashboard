@@ -2,23 +2,23 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Form from "./form";
-import { ProductsSettings } from "./components/forms/productsSettings";
-import { Inventory } from "./components/forms/inventory";
-import { Collections } from "./components/forms/collections";
-import { AddBlog } from "./components/forms/addBlog";
-import { EditBlogs } from "./components/forms/editBlogs";
+import { ProductsSettings } from "./components/productsSettings";
+import { Inventory } from "./components/inventory";
+import { Collections } from "./components/collections";
+import { AddBlog } from "./components/addBlog";
+import { EditBlogs } from "./components/editBlogs";
 import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken";
-import { Orders } from "./components/forms/orders";
-import { Costumers } from "./components/forms/costumers";
-import UploadPage from "./components/forms/uploads";
-import ImageGallery from "./components/forms/editFile";
-import StartComponent from "./components/forms/startComponent";
-import AddCategory from "./components/forms/addCategory";
-import AddGiftCard from "./components/forms/addGiftCard";
-import { AddStory } from "./components/forms/addStory";
-import { StoreSettings } from "./components/forms/storeSettings";
-import InformationData from "./components/forms/informationData";
+import { Orders } from "./components/orders";
+import { Costumers } from "./components/costumers";
+import UploadPage from "./components/uploads";
+import ImageGallery from "./components/editFile";
+import StartComponent from "./components/startComponent";
+import AddCategory from "./components/addCategory";
+import AddGiftCard from "./components/addGiftCard";
+import { AddStory } from "./components/addStory";
+import { StoreSettings } from "./components/storeSettings";
+import InformationData from "./components/informationData";
 import {
   FaExclamationTriangle,
   FaHome,
@@ -29,7 +29,7 @@ import {
   FaBlog,
   FaCog,
 } from "react-icons/fa";
-import Contact from "./components/forms/contact";
+import Contact from "./components/contact";
 
 // Enhanced loading component
 const LoadingSpinner = () => (

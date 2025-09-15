@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       console.log("User not found");
-      return NextResponse.json({ message: "User not found" }, { status: 401 });
+      return NextResponse.json({ message: "نام کاربری یا رمز اشتباه هستند" }, { status: 401 });
     }
 
     if (!user || !user.password) {

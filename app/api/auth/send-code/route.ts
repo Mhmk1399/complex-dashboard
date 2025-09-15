@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     await connect();
 
     const code = generateVerificationCode();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+    const expiresAt = new Date(Date.now() + 1 * 60 * 1000);
 
     await Verification.findOneAndUpdate(
       { phone: phoneNumber },
@@ -32,7 +32,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Failed to send SMS' }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Verification code sent' });
+    return NextResponse.json({ 
+      message: 'Verification code sent',
+      expiresAt: expiresAt.toISOString()
+    });
   } catch (error) {
     console.error('Send code error:', error);
     return NextResponse.json({ message: 'Server error' }, { status: 500 });

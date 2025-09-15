@@ -13,20 +13,32 @@ export default function UploadPage() {
   >("idle");
 
   const validateFile = (file: File) => {
-    const validTypes = ["image/webp", "image/png"];
-    const maxSize = 10000 * 1024; // 100KB in bytes
+    const validImageTypes = ["image/webp", "image/png", "image/jpeg", "image/jpg"];
+    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+    const maxImageSize = 10000 * 1024; // 100KB for images
+    const maxVideoSize = 50 * 1024 * 1024; // 50MB for videos
 
-    if (!validTypes.includes(file.type)) {
-      toast.error(`${file.name} باید فرمت PNG یا WEBP باشد`, {
+    const isImage = validImageTypes.includes(file.type);
+    const isVideo = validVideoTypes.includes(file.type);
+
+    if (!isImage && !isVideo) {
+      toast.error(`${file.name} باید فرمت تصویر (PNG, WEBP, JPG) یا ویدیو (MP4, WEBM, OGG) باشد`, {
         position: "top-right",
         theme: "light",
       });
-
       return false;
     }
 
-    if (file.size > maxSize) {
+    if (isImage && file.size > maxImageSize) {
       toast.error(`${file.name} باید کمتر از 100 کیلوبایت باشد`, {
+        position: "top-right",
+        theme: "light",
+      });
+      return false;
+    }
+
+    if (isVideo && file.size > maxVideoSize) {
+      toast.error(`${file.name} باید کمتر از 50 مگابایت باشد`, {
         position: "top-right",
         theme: "light",
       });
@@ -92,7 +104,7 @@ export default function UploadPage() {
         <div className="text-center mb-6">
           <FiUploadCloud className="mx-auto text-5xl text-blue-500 mb-4" />
           <div className="flex items-center flex-row-reverse justify-center gap-2 relative">
-            <h2 className="text-2xl font-bold text-gray-800">آپلود تصاویر</h2>
+            <h2 className="text-2xl font-bold text-gray-800">آپلود فایل‌ها</h2>
             <div className="relative">
               <i
                 className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors"
@@ -133,7 +145,7 @@ export default function UploadPage() {
               id="fileUpload"
               onChange={handleFileChange}
               multiple
-              accept=".webp,.png"
+              accept=".webp,.png,.jpg,.jpeg,.mp4,.webm,.ogg"
               className="hidden"
             />
             <label
@@ -150,7 +162,7 @@ export default function UploadPage() {
             >
               {files.length > 0
                 ? `${files.length} فایل انتخاب شده`
-                : "انتخاب تصاویر"}
+                : "انتخاب فایل‌ها"}
             </label>
           </div>
 
@@ -178,7 +190,7 @@ export default function UploadPage() {
               }
             `}
           >
-            {loading ? "در حال آپلود..." : "آپلود تصاویر"}
+            {loading ? "در حال آپلود..." : "آپلود فایل‌ها"}
           </motion.button>
         </form>
 
@@ -199,11 +211,11 @@ export default function UploadPage() {
             >
               {uploadStatus === "success" ? (
                 <>
-                  تصاویر با موفقیت آپلود شدند <FiCheckCircle className="ml-2" />
+                  فایل‌ها با موفقیت آپلود شدند <FiCheckCircle className="ml-2" />
                 </>
               ) : (
                 <>
-                  خطا در آپلود تصاویر <FiAlertTriangle className="ml-2" />
+                  خطا در آپلود فایل‌ها <FiAlertTriangle className="ml-2" />
                 </>
               )}
             </motion.div>

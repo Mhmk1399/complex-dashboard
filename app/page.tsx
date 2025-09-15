@@ -12,7 +12,7 @@ export default function Home() {
 
     if (!token) {
       // No token exists, redirect to login
-      router.replace("/auth");
+      router.replace("/login");
       return;
     }
 
@@ -28,7 +28,7 @@ export default function Home() {
         localStorage.removeItem("token");
         localStorage.removeItem("storeId");
         localStorage.removeItem("userName");
-        router.replace("/auth");
+        router.replace("/login");
         return;
       }
     } catch (error) {
@@ -37,7 +37,7 @@ export default function Home() {
       localStorage.removeItem("token");
       localStorage.removeItem("storeId");
       localStorage.removeItem("userName");
-      router.replace("/auth");
+      router.replace("/login");
       return;
     }
   }, [router]);
