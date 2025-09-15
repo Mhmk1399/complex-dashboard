@@ -30,11 +30,12 @@ import {
   FaCog,
 } from "react-icons/fa";
 import Contact from "./components/contact";
+import SwirlBackground from "./components/SwirlBackground";
 
 // Enhanced loading component
 const LoadingSpinner = () => (
   <motion.div
-    className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
+    className="flex items-center justify-center min-h-screen"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
   >
@@ -82,7 +83,7 @@ const ErrorComponent = ({
   onRetry: () => void;
 }) => (
   <motion.div
-    className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50"
+    className="flex items-center justify-center min-h-screen"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
   >
@@ -341,16 +342,21 @@ export const Dashboard = () => {
 
   return (
     <motion.div
-      className="min-h-screen "
+      className="min-h-screen bg-transparent"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+
+      {/* Swirl Background */}
+      <SwirlBackground />
       {/* Enhanced Form Component */}
-      <Form setSelectedMenu={setSelectedMenu} />
+      <div className="relative z-10">
+        <Form setSelectedMenu={setSelectedMenu} />
+      </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen relative z-10">
         {/* Breadcrumb */}
         <Breadcrumb selectedMenu={selectedMenu} />
 
@@ -365,15 +371,7 @@ export const Dashboard = () => {
         </motion.main>
       </div>
 
-      {/* Background Pattern */}
-      <div className="fixed inset-0 pointer-events-none opacity-5 z-0">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='27' cy='7' r='1'/%3E%3Ccircle cx='47' cy='7' r='1'/%3E%3Ccircle cx='7' cy='27' r='1'/%3E%3Ccircle cx='27' cy='27' r='1'/%3E%3Ccircle cx='47' cy='27' r='1'/%3E%3Ccircle cx='7' cy='47' r='1'/%3E%3Ccircle cx='27' cy='47' r='1'/%3E%3Ccircle cx='47' cy='47' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
-      </div>
+
     </motion.div>
   );
 };

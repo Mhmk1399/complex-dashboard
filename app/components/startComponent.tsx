@@ -145,7 +145,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   return (
     <>
       <div
-        className="min-h-screen bg-gradient-to-t from-blue-50 to-white px-4 py-16"
+        className="min-h-screen  px-4 py-16"
         dir="rtl"
       >
         <div className="max-w-4xl mx-auto my-16 text-center">

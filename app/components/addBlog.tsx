@@ -11,6 +11,7 @@ import OrderedList from "@tiptap/extension-ordered-list";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
+import { AIBlogGenerator } from "./AIBlogGenerator";
 
 export const AddBlog = () => {
   const [title, setTitle] = useState("");
@@ -403,9 +404,21 @@ export const AddBlog = () => {
           </motion.div>
 
           <div>
-            <label className="block  text-sm font-medium text-gray-700 text-right mb-2">
-              محتوای بلاگ
-            </label>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-medium text-gray-700 text-right">
+                محتوای بلاگ
+              </label>
+              <AIBlogGenerator
+                blogData={{
+                  title,
+                  seoTitle,
+                  description
+                }}
+                onBlogGenerated={(content) => {
+                  editor?.commands.setContent(content);
+                }}
+              />
+            </div>
             <div className="border border-gray-300 rounded-lg">
               <div className="bg-gray-50 p-2 border-b border-gray-300 flex flex-wrap gap-2">
                 <MenuButton

@@ -37,7 +37,7 @@ export class DeepSeekClient {
             Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json",
           },
-          timeout: 30000,
+          timeout: 240000,
         }
       );
 

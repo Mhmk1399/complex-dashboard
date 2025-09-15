@@ -19,6 +19,7 @@
     "@tiptap/react": "^2.10.3",
     "@tiptap/starter-kit": "^2.10.3",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/three": "^0.180.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -37,6 +38,7 @@
     "react-tooltip": "^5.28.0",
     "sanitize-filename": "^1.6.3",
     "sms-typescript": "^1.0.2",
+    "three": "^0.180.0",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
