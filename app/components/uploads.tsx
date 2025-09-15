@@ -23,37 +23,19 @@ export default function UploadPage() {
   const [uploadProgress, setUploadProgress] = useState<string>("");
 
   const validateFile = (file: File) => {
-<<<<<<< Updated upstream:app/components/uploads.tsx
-    const validImageTypes = ["image/webp", "image/png", "image/jpeg", "image/jpg"];
-    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
-    const maxImageSize = 10000 * 1024; // 100KB for images
-    const maxVideoSize = 50 * 1024 * 1024; // 50MB for videos
-
-    const isImage = validImageTypes.includes(file.type);
-    const isVideo = validVideoTypes.includes(file.type);
-
-    if (!isImage && !isVideo) {
-      toast.error(`${file.name} باید فرمت تصویر (PNG, WEBP, JPG) یا ویدیو (MP4, WEBM, OGG) باشد`, {
-=======
     const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     const maxSize = 10 * 1024 * 1024; // 10MB in bytes
 
     if (!validTypes.includes(file.type)) {
       toast.error(`${file.name} باید فرمت JPEG، PNG، GIF یا WEBP باشد`, {
->>>>>>> Stashed changes:app/components/forms/uploads.tsx
         position: "top-right",
         theme: "light",
       });
       return false;
     }
 
-<<<<<<< Updated upstream:app/components/uploads.tsx
-    if (isImage && file.size > maxImageSize) {
-      toast.error(`${file.name} باید کمتر از 100 کیلوبایت باشد`, {
-=======
     if (file.size > maxSize) {
       toast.error(`${file.name} باید کمتر از 10 مگابایت باشد`, {
->>>>>>> Stashed changes:app/components/forms/uploads.tsx
         position: "top-right",
         theme: "light",
       });
@@ -206,11 +188,7 @@ export default function UploadPage() {
               id="fileUpload"
               onChange={handleFileChange}
               multiple
-<<<<<<< Updated upstream:app/components/uploads.tsx
-              accept=".webp,.png,.jpg,.jpeg,.mp4,.webm,.ogg"
-=======
               accept=".jpeg,.jpg,.png,.gif,.webp"
->>>>>>> Stashed changes:app/components/forms/uploads.tsx
               className="hidden"
             />
             <label
@@ -273,17 +251,6 @@ export default function UploadPage() {
               exit={{ opacity: 0, y: -20 }}
               className="mt-6 space-y-4"
             >
-<<<<<<< Updated upstream:app/components/uploads.tsx
-              {uploadStatus === "success" ? (
-                <>
-                  فایل‌ها با موفقیت آپلود شدند <FiCheckCircle className="ml-2" />
-                </>
-              ) : (
-                <>
-                  خطا در آپلود فایل‌ها <FiAlertTriangle className="ml-2" />
-                </>
-              )}
-=======
               <h3 className="text-lg font-semibold text-gray-800 text-center">
                 نتایج آپلود
               </h3>
@@ -331,7 +298,6 @@ export default function UploadPage() {
                   )}
                 </div>
               ))}
->>>>>>> Stashed changes:app/components/forms/uploads.tsx
             </motion.div>
           )}
         </AnimatePresence>
