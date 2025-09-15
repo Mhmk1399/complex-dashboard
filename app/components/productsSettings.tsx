@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Tooltip } from "react-tooltip"; // Add this import
 import ImageSelectorModal from "./ImageSelectorModal";
 import { ProductSettings } from "@/types/type";
+import { AIDescriptionGenerator } from "./AIDescriptionGenerator";
 
 export const ProductsSettings = () => {
   const [categories, setCategories] = useState<
@@ -583,9 +584,26 @@ export const ProductsSettings = () => {
               </div>
 
               <div>
-                <label className="block mb-2 font-bold text-[#0077b6]">
-                  توضیحات *
-                </label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block font-bold text-[#0077b6]">
+                    توضیحات *
+                  </label>
+                  <AIDescriptionGenerator
+                    productData={{
+                      name: settings.blocks.name,
+                      category: settings.blocks.category.name,
+                      colors: settings.blocks.colors.map(c => c.code),
+                      properties: settings.blocks.properties.reduce((acc, prop) => {
+                        acc[prop.name] = prop.value;
+                        return acc;
+                      }, {} as Record<string, any>)
+                    }}
+                    onDescriptionGenerated={(description) => {
+                      handleChange("blocks", "description", description);
+                      clearError("description");
+                    }}
+                  />
+                </div>
                 <textarea
                   value={settings.blocks.description}
                   onChange={(e) => {
