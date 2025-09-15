@@ -42,14 +42,6 @@ export default function UploadPage() {
       return false;
     }
 
-    if (isVideo && file.size > maxVideoSize) {
-      toast.error(`${file.name} باید کمتر از 50 مگابایت باشد`, {
-        position: "top-right",
-        theme: "light",
-      });
-      return false;
-    }
-
     return true;
   };
 
@@ -121,7 +113,7 @@ export default function UploadPage() {
       toast.success(`${successCount} از ${files.length} فایل آپلود شد`);
     } else {
       setUploadStatus("error");
-      toast.error("خطا در آپلود فایل‌ها");
+      toast.error("خطا در آپلود فایلها");
     }
 
     setFiles([]);
@@ -147,7 +139,7 @@ export default function UploadPage() {
         <div className="text-center mb-6">
           <FiUploadCloud className="mx-auto text-5xl text-blue-500 mb-4" />
           <div className="flex items-center flex-row-reverse justify-center gap-2 relative">
-            <h2 className="text-2xl font-bold text-gray-800">آپلود فایل‌ها</h2>
+            <h2 className="text-2xl font-bold text-gray-800">آپلود تصاویر</h2>
             <div className="relative">
               <i
                 className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors"
@@ -168,7 +160,7 @@ export default function UploadPage() {
                     </li>
                     <li className="flex items-center gap-2">
                       <i className="fas fa-check-circle" />
-                      فرمت‌های JPEG، PNG، GIF و WEBP مجاز است
+                      فرمتهای JPEG، PNG، GIF و WEBP مجاز است
                     </li>
                     <li className="flex items-center gap-2">
                       <i className="fas fa-check-circle" />
@@ -205,7 +197,7 @@ export default function UploadPage() {
             >
               {files.length > 0
                 ? `${files.length} فایل انتخاب شده`
-                : "انتخاب فایل‌ها"}
+                : "انتخاب تصاویر"}
             </label>
           </div>
 
@@ -239,7 +231,7 @@ export default function UploadPage() {
               }
             `}
           >
-            {loading ? "در حال آپلود..." : "آپلود فایل‌ها"}
+            {loading ? "در حال آپلود..." : "آپلود تصاویر"}
           </motion.button>
         </form>
 
