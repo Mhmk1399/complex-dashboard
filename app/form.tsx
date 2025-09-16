@@ -246,7 +246,7 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
       {/* Enhanced Menu Toggle Button */}
       <motion.button
         onClick={toggleMenu}
-        className={`fixed top-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 ${
+        className={`absolute top-6 right-6 z-[50] p-4 rounded-full shadow-lg transition-all duration-300 ${
           isOpen
             ? "bg-red-500 hover:bg-red-600"
             : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"

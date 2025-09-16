@@ -31,7 +31,7 @@ export default function SwirlBackground() {
       canvas.height = window.innerHeight
     }
 
-    const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b']
+    const colors = ['#90e0ef', '#00b4d8', '#023e8a']
 
     const createParticles = () => {
       const particles: Particle[] = []

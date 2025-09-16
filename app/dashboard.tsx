@@ -351,12 +351,12 @@ export const Dashboard = () => {
       {/* Swirl Background */}
       <SwirlBackground />
       {/* Enhanced Form Component */}
-      <div className="relative z-10">
+      <div className=" z-20 pointer-events-auto">
         <Form setSelectedMenu={setSelectedMenu} />
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-col min-h-screen relative z-10">
+      <div className="flex flex-col min-h-screen relative z-20 pointer-events-auto">
         {/* Breadcrumb */}
         <Breadcrumb selectedMenu={selectedMenu} />
 
