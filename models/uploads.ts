@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 
-const fileSchema = new mongoose.Schema({
-  fileName: {
+const imageschema = new mongoose.Schema({
+  imagesName: {
     type: String,
     required: true
   },
-  fileUrl: {
+  imagesUrl: {
     type: String,
     required: true
   },
-  fileType: {
+  imagesType: {
     type: String,
     required: true
   },
-  fileSize: {
+  imagesize: {
     type: Number,
     required: true
   },
@@ -29,6 +29,6 @@ const fileSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const Files = mongoose.models.Files || mongoose.model("Files", fileSchema);
+const images = mongoose.models.images || mongoose.model("images", imageschema);
 
-export default Files;
+export default images;

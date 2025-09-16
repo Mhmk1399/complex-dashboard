@@ -5,17 +5,20 @@ import { FiImage, FiCheckCircle, FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
 import { ImageFile } from "@/types/type";
 
-interface ApiImageResponse {
-  _id: string;
-  fileName: string;
-  storeId: string;
-  fileUrl: string;
+interface ImageResponse {
+  id: string;
+  filename: string;
+  url: string;
+  uploadedAt: string;
+  size: number;
 }
 
 export default function ImageGallery() {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [selectedImage, setSelectedImage] = useState<ImageFile | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [deleteStatus, setDeleteStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
@@ -26,29 +29,34 @@ export default function ImageGallery() {
 
 const fetchImages = async () => {
   try {
+    setLoading(true);
+    setError(null);
     const token = localStorage.getItem("token");
-    const response = await fetch(`/api/uploadFile`, {
+    const response = await fetch(`/api/upload`, {
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     if (!response.ok) {
-      console.error("Failed to fetch images");
-      return;
+      throw new Error("Failed to fetch images");
     }
 
     const data = await response.json();
-    const imageUrls = data.images.images.map((image: ApiImageResponse) => ({
-      _id: image._id,
-      fileName: image.fileName,
-      storeId: image.storeId,
-      fileUrl: `${process.env.NEXT_PUBLIC_MAMAD_URL}${image.fileUrl}`
+    const imageUrls = data.images.map((image: ImageResponse) => ({
+      _id: image.id,
+      fileName: image.filename,
+      storeId: image.id,
+      fileUrl: image.url
     }));
 
     setImages(imageUrls);
   } catch (error) {
     console.error("Error fetching images:", error);
+    setError("خطا در بارگیری تصاویر");
+  } finally {
+    setLoading(false);
   }
 };
 
@@ -75,22 +83,24 @@ const confirmDelete = async () => {
       return;
     }
 
-    const response = await fetch("/api/uploadFile", {
+    const response = await fetch("/api/upload", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        storeId: image.storeId,
-        filename: image.fileName,
+        fileId: image._id,
       }),
     });
 
     if (response.ok) {
       setImages(images.filter((img) => img._id !== deleteModal.imageId));
       setDeleteStatus("success");
-      setDeleteModal({ isOpen: false, imageId: "" });
+      setTimeout(() => {
+        setDeleteModal({ isOpen: false, imageId: "" });
+        setDeleteStatus("idle");
+      }, 1500);
     } else {
       setDeleteStatus("error");
     }
@@ -129,8 +139,8 @@ const confirmDelete = async () => {
           <Image
             src={image.fileUrl}
             alt={image.fileName}
-            layout="fill"
-            objectFit="contain"
+            fill
+            style={{ objectFit: "contain" }}
             className="rounded-lg"
             priority
           />
@@ -140,7 +150,7 @@ const confirmDelete = async () => {
   };
 
   return (
-    <div className="min-h-screen  mt-12 md:mt-0 flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen mt-12 md:mt-0 flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -151,9 +161,47 @@ const confirmDelete = async () => {
           <FiImage className="mx-auto text-5xl text-[#0077b6] mb-4" />
           <h2 className="text-2xl font-bold text-gray-800">گالری تصاویر</h2>
           <p className="text-gray-500 mt-2">مدیریت و مشاهده تصاویر آپلود شده</p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={fetchImages}
+            className="mt-4 px-4 py-2 bg-[#0077b6] text-white rounded-lg text-sm hover:bg-[#005a8b] transition-colors"
+          >
+            بروزرسانی
+          </motion.button>
         </div>
 
-        {images.length === 0 ? (
+        {loading ? (
+          <motion.div
+            className="flex flex-col items-center justify-center h-[60vh]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="w-12 h-12 border-4 border-[#0077b6] border-t-transparent rounded-full mb-4"
+            />
+            <p className="text-gray-500">در حال بارگیری تصاویر...</p>
+          </motion.div>
+        ) : error ? (
+          <motion.div
+            className="flex flex-col items-center justify-center h-[60vh] border-2 border-dashed border-red-300 rounded-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <FiAlertTriangle className="w-32 h-32 text-red-400 mb-4" />
+            <h2 className="text-2xl font-semibold text-red-600 mb-2">{error}</h2>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={fetchImages}
+              className="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              تلاش مجدد
+            </motion.button>
+          </motion.div>
+        ) : images.length === 0 ? (
           <motion.div
             className="flex flex-col items-center justify-center h-[60vh] border-2 border-dashed border-[#0077b6] rounded-lg"
             initial={{ opacity: 0, y: 20 }}
