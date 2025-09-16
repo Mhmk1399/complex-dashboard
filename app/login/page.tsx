@@ -651,7 +651,7 @@ export default function LoginPage() {
                     {signupSmsExpiresAt && (
                       <div className="text-center">
                         {signupCountdown > 0 ? (
-                          <p className={`text-lg font-bold ${signupCountdown > 60 ? 'text-green-600' : signupCountdown > 30 ? 'text-yellow-600' : 'text-red-600'}`}>
+                          <p className={`text-lg font-bold ${signupCountdown > 60 ? 'text-green-600' : signupCountdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
                             {signupCountdown} ثانیه
                           </p>
                         ) : (

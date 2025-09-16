@@ -14,6 +14,15 @@ export async function POST(request: NextRequest) {
     await connect();
     console.log("Connected to DB");
 
+    // Check if user already exists
+    const existingUser = await User.findOne({ phoneNumber });
+    if (existingUser) {
+      return NextResponse.json(
+        { message: "User already exists" },
+        { status: 400 }
+      );
+    }
+
     console.log("Starting deployment creation...");
 
     // IMPORTANT: Don't manually set replicas if you use HPA to auto-scale.
@@ -34,7 +43,7 @@ export async function POST(request: NextRequest) {
     // const DiskUrl = `${process.env.VPS_URL}/${storeId}`
 
     console.log("Starting folder creation...");
-    await initStore(storeId);
+    // await initStore(storeId);
 
     console.log("Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);

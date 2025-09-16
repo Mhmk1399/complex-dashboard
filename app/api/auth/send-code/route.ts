@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connect from '@/lib/data';
 import Verification from '@/models/verification';
+import User from '@/models/users';
 import { sendVerificationCode, generateVerificationCode } from '@/lib/sms';
 
 export async function POST(request: NextRequest) {
@@ -16,6 +17,15 @@ export async function POST(request: NextRequest) {
     }
 
     await connect();
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ phoneNumber });
+    if (existingUser) {
+      return NextResponse.json(
+        { message: 'User already exists' },
+        { status: 400 }
+      );
+    }
 
     const code = generateVerificationCode();
     const expiresAt = new Date(Date.now() + 1 * 60 * 1000);
