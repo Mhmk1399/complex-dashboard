@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema(
     phoneNumber: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     title: { type: String, required: false },
-    DiskUrl: { type: String, required: false },
+    // DiskUrl: { type: String, required: false },
     DeployedUrl: { type: String, required: false },
     storeId: { type: String, required: true, unique: true },
     trialDate: {type: Date},

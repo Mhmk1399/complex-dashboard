@@ -13,7 +13,7 @@ interface StartComponentProps {
 const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const router = useRouter();
   const [userName, setUserName] = useState("کاربر");
-  const [DiskUrl, setDiskUrl] = useState("");
+  const [storeId, setStoreId] = useState("");
   const [hasProducts, setHasProducts] = useState(false);
   const [hasBlogs, setHasBlogs] = useState(false);
   const [hasCollections, setHasCollections] = useState(false);
@@ -23,7 +23,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
     if (token) {
       const decodedToken = jwt.decode(token);
       if (decodedToken && typeof decodedToken === "object") {
-        setDiskUrl(decodedToken.DiskUrl || "");
+        setStoreId(decodedToken.storeId || "");
       }
     }
   }, []);
@@ -238,7 +238,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
             
             <div className="mt-8 pt-8 border-t border-gray-200">
               <Link
-                href={`${process.env.NEXT_PUBLIC_COMPLEX_URL}?DiskUrl=${DiskUrl}`}
+                href={`${process.env.NEXT_PUBLIC_COMPLEX_URL}?storeId=${storeId}`}
                 target="_blank"
                 className="flex items-center justify-between p-4 bg-gradient-to-r from-[#0077b6] to-blue-400 text-white rounded-xl hover:shadow-lg transition-all duration-200"
               >

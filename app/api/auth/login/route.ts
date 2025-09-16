@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       id: user._id,
       storeId: user.storeId,
       DeployedUrl: user.DeployedUrl,
-      DiskUrl: user.DiskUrl,
+      // DiskUrl: user.DiskUrl,
     },
     tokenSecret,
     { expiresIn: "10000h" }

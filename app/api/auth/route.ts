@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     // const DeployedUrl = `http://localhost:3002/`;
     if (!DeployedUrl) throw new Error("Deployment URL missing");
 
-    const DiskUrl = `${process.env.VPS_URL}/${storeId}`
+    // const DiskUrl = `${process.env.VPS_URL}/${storeId}`
 
     console.log("Starting folder creation...");
     await initStore(storeId);
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
       title,
       DeployedUrl,
-      DiskUrl,
+      // DiskUrl,
       storeId,
       trialDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days trial
     });
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         id: newUser._id,
         storeId,
         DeployedUrl,
-        DiskUrl
+        // DiskUrl
       },
       process.env.JWT_SECRET!,
       { expiresIn: "10000h" }
