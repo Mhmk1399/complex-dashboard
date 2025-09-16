@@ -64,10 +64,10 @@ export async function POST(request: NextRequest) {
 
     
 
-    if (
-  user.type === "paidUser" ||
-  (user.type !== "paidUser" && Date.now() < new Date(user.trialDate).getTime())
-) {
+//     if (
+//   user.type === "paidUser" ||
+//   (user.type !== "paidUser" && Date.now() < new Date(user.trialDate).getTime())
+// ) {
   const token = jwt.sign(
     {
       id: user._id,
@@ -81,15 +81,15 @@ export async function POST(request: NextRequest) {
 
   console.log("Login successful");
   return NextResponse.json({ token });
-}
+// }
 
 // Trial expired case
-if (Date.now() > new Date(user.trialDate).getTime()) {
-  return NextResponse.json(
-    { message: "Your trial has expired" },
-    { status: 401 }
-  );
-}
+// if (Date.now() > new Date(user.trialDate).getTime()) {
+//   return NextResponse.json(
+//     { message: "Your trial has expired" },
+//     { status: 401 }
+//   );
+// }
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

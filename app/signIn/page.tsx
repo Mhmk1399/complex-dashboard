@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { FiArrowLeft } from "react-icons/fi";
+
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
   const randomStr = Math.random().toString(36).substring(2, 8);
@@ -11,7 +12,6 @@ const generateStoreId = () => {
 
 const SignInForm = () => {
   const router = useRouter();
-
   const [formData, setFormData] = useState({
     phoneNumber: "",
     password: "",
@@ -30,19 +30,13 @@ const SignInForm = () => {
 
   useEffect(() => {
     if (!smsExpiresAt) return;
-
     const timer = setInterval(() => {
       const now = Date.now();
       const expiryTime = new Date(smsExpiresAt).getTime();
       const remaining = Math.max(0, Math.floor((expiryTime - now) / 1000));
-      
       setCountdown(remaining);
-      
-      if (remaining === 0) {
-        clearInterval(timer);
-      }
+      if (remaining === 0) clearInterval(timer);
     }, 1000);
-
     return () => clearInterval(timer);
   }, [smsExpiresAt]);
 
@@ -52,14 +46,12 @@ const SignInForm = () => {
       setShowModal(true);
       return;
     }
-
     try {
       const response = await fetch("/api/auth/send-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber: formData.phoneNumber }),
       });
-
       const data = await response.json();
       if (response.ok) {
         setCodeSent(true);
@@ -83,14 +75,12 @@ const SignInForm = () => {
       setShowModal(true);
       return;
     }
-
     try {
       const response = await fetch("/api/auth/verify-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber: formData.phoneNumber, code: verificationCode }),
       });
-
       const data = await response.json();
       if (response.ok) {
         setStep(3);
@@ -110,17 +100,14 @@ const SignInForm = () => {
       setShowModal(true);
       return;
     }
-
     setIsLoading(true);
     setShowModal(true);
-
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       const result = await response.json();
       if (response.ok) {
         localStorage.setItem("token", result.token);
@@ -145,26 +132,10 @@ const SignInForm = () => {
   const LoadingModal = () => {
     const [currentStep] = useState(0);
     const steps = [
-      {
-        title: "شروع فرآیند",
-        message: "در حال آماده سازی ساخت وبسایت شما...",
-        icon: "🚀",
-      },
-      {
-        title: "ایجاد مخزن",
-        message: "در حال ایجاد مخزن از قالب اصلی...",
-        icon: "⚡",
-      },
-      {
-        title: "پیکربندی فروشگاه",
-        message: "در حال اعمال تنظیمات فروشگاه شما...",
-        icon: "⚙",
-      },
-      {
-        title: "اتمام فرآیند",
-        message: "وبسایت شما با موفقیت ایجاد شد!",
-        icon: "🎉",
-      },
+      { title: "شروع فرآیند", message: "در حال آماده سازی ساخت وبسایت شما...", icon: "🚀" },
+      { title: "ایجاد مخزن", message: "در حال ایجاد مخزن از قالب اصلی...", icon: "⚡" },
+      { title: "پیکربندی فروشگاه", message: "در حال اعمال تنظیمات فروشگاه شما...", icon: "⚙️" },
+      { title: "اتمام فرآیند", message: "وبسایت شما با موفقیت ایجاد شد!", icon: "🎉" },
     ];
 
     return (
@@ -187,14 +158,9 @@ const SignInForm = () => {
                   <motion.div
                     key={index}
                     initial={{ x: -50, opacity: 0 }}
-                    animate={{
-                      x: 0,
-                      opacity: currentStep >= index ? 1 : 0.3,
-                    }}
+                    animate={{ x: 0, opacity: currentStep >= index ? 1 : 0.3 }}
                     transition={{ delay: index * 0.2 }}
-                    className={`flex items-center space-x-4 ${
-                      currentStep >= index ? "text-blue-600" : "text-gray-400"
-                    }`}
+                    className={`flex items-center space-x-4 ${currentStep >= index ? "text-blue-600" : "text-gray-400"}`}
                   >
                     <span className="text-2xl">{step.icon}</span>
                     <div className="flex-1">
@@ -202,33 +168,14 @@ const SignInForm = () => {
                       <p className="text-sm">{step.message}</p>
                     </div>
                     {currentStep > index && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="text-green-500"
-                      >
-                        ✓
-                      </motion.div>
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-green-500">✓</motion.div>
                     )}
                   </motion.div>
                 ))}
               </div>
-
               {currentStep === steps.length && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-6 text-center"
-                >
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 text-center">
                   <p className="text-green-600 font-bold">آدرس مخزن شما:</p>
-                  <a
-                    // href={DiskUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline break-all"
-                  >
-                    {/* {DiskUrl} */}fffg
-                  </a>
                   <button
                     onClick={() => router.push("/")}
                     className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
@@ -248,7 +195,7 @@ const SignInForm = () => {
     <motion.div
       initial={{ opacity: 0, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen  flex flex-col items-center justify-center p-4"
+      className="min-h-screen flex flex-col items-center justify-center p-4"
       dir="rtl"
     >
       <motion.div className="bg-white/20 bg-opacity-20 backdrop-blur-3xl rounded-2xl px-10 py-12 w-full max-w-4xl border border-[#0077b6]">
@@ -256,7 +203,7 @@ const SignInForm = () => {
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
         >
-          <h1 className="text-2xl  lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-[#0077b6] my-4 lg:my-10">
+          <h1 className="text-2xl lg:text-4xl bg-white/10 p-3 rounded-2xl backdrop-blur-sm font-bold text-center text-[#0077b6] my-4 lg:my-10">
             خوش اومدی به سایکو بیا باهم سایت بسازیم
           </h1>
           <hr />
@@ -384,10 +331,8 @@ const SignInForm = () => {
         </motion.div>
       </motion.div>
       <LoadingModal />
-
-      {/* <Modal /> */}
     </motion.div>
   );
 };
 
-export default SignInForm;
+export default SignInForm;

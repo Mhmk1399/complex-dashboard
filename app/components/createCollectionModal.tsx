@@ -3,10 +3,42 @@ import {
   XMarkIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { CreateCollectionModalProps, ProductCollection } from "@/types/type";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+// CSS animations to replace framer motion
+const styles = `
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+  .animate-scale-in { animation: scaleIn 0.3s ease-out; }
+  .animate-slide-in { animation: slideIn 0.3s ease-out 0.1s both; }
+  .animate-fade-in-up { animation: fadeInUp 0.3s ease-out 0.2s both; }
+
+`;
+
+// Inject styles
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
 
 export const CreateCollectionModal = ({
   isOpen,
@@ -145,21 +177,12 @@ export const CreateCollectionModal = ({
 
   if (products.length === 0) {
     return (
-      <AnimatePresence>
-        <motion.div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+      <>
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
           onClick={onClose}
         />
-        <motion.div
-          className="fixed inset-0 flex items-center justify-center z-50 p-4"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ type: "spring", duration: 0.3, bounce: 0.1 }}
-        >
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4 animate-scale-in">
           <div className="bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl p-8 max-w-md w-full">
             <div className="flex flex-col justify-center items-center space-y-6 text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
@@ -173,47 +196,31 @@ export const CreateCollectionModal = ({
                   برای ایجاد کالکشن، ابتدا محصولاتی به فروشگاه خود اضافه کنید
                 </p>
               </div>
-              <motion.button
+              <button
                 onClick={onClose}
-                className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-300 hover:scale-105 active:scale-95"
               >
                 متوجه شدم
-              </motion.button>
+              </button>
             </div>
           </div>
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      </>
     );
   }
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+    <>
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
         onClick={onClose}
       />
-      <motion.div
-        className="fixed inset-0 flex items-center justify-center z-50 p-4"
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ type: "spring", duration: 0.3, bounce: 0.1 }}
-      >
-        <div className="bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl w-full max-w-5xl h-[90vh] overflow-y-scroll">
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-4 animate-scale-in">
+        <div className="bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl w-full max-w-5xl h-[90vh] overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 border-b border-gray-200/20">
             <div className="flex items-center justify-between">
-              <motion.h2
-                className="text-2xl font-bold text-white flex items-center gap-3"
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-              >
+              <h2 className="text-2xl font-bold text-white flex items-center gap-3 animate-slide-in">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -228,26 +235,21 @@ export const CreateCollectionModal = ({
                   />
                 </svg>
                 ایجاد کالکشن جدید
-              </motion.h2>
-              <motion.button
+              </h2>
+              <button
                 onClick={onClose}
-                className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-all duration-200"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110 active:scale-90"
               >
                 <XMarkIcon className="w-6 h-6" />
-              </motion.button>
+              </button>
             </div>
           </div>
 
           {/* Content */}
-          <div className="overflow-y-auto max-h-[calc(90vh-140px)] custom-scrollbar">
-            <motion.form
+          <div className="overflow-y-auto max-h-[calc(85vh-150px)] scrollbar-hide">
+            <form
               onSubmit={handleSubmit}
-              className="p-8"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
+              className="p-8 animate-fade-in-up"
             >
               {/* Collection Information Section */}
               <div className="mb-8">
@@ -290,11 +292,7 @@ export const CreateCollectionModal = ({
                       placeholder="نام کالکشن را وارد کنید"
                     />
                     {errors.name && (
-                      <motion.p
-                        className="text-red-500 text-sm flex items-center gap-1"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                      >
+                      <p className="text-red-500 text-sm flex items-center gap-1 animate-fade-in">
                         <svg
                           className="w-4 h-4"
                           fill="none"
@@ -309,7 +307,7 @@ export const CreateCollectionModal = ({
                           />
                         </svg>
                         {errors.name}
-                      </motion.p>
+                      </p>
                     )}
                   </div>
 
@@ -335,11 +333,7 @@ export const CreateCollectionModal = ({
                       placeholder="توضیحات کالکشن را وارد کنید"
                     />
                     {errors.description && (
-                      <motion.p
-                        className="text-red-500 text-sm flex items-center gap-1"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                      >
+                      <p className="text-red-500 text-sm flex items-center gap-1 animate-fade-in">
                         <svg
                           className="w-4 h-4"
                           fill="none"
@@ -354,7 +348,7 @@ export const CreateCollectionModal = ({
                           />
                         </svg>
                         {errors.description}
-                      </motion.p>
+                      </p>
                     )}
                   </div>
                 </div>
@@ -495,18 +489,13 @@ export const CreateCollectionModal = ({
                   محصولات موجود برای انتخاب
                 </h3>
                 <div className="bg-gray-50 rounded-xl p-6">
-                  <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg bg-white">
+                  <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg bg-white scrollbar-hide">
                     {filteredProducts.length > 0 ? (
-                      filteredProducts.map((product, index) => (
-                        <motion.div
-                          key={`available-product-${product._id}`}
+                      filteredProducts.filter(product => product && product._id).map((product, index) => (
+                        <div
+                          key={`filtered-${index}`}
                           className="flex items-center justify-between p-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors duration-200 cursor-pointer"
                           onClick={() => toggleProduct(product)}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
                         >
                           <div className="flex items-center gap-4 flex-1">
                             <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center">
@@ -542,11 +531,7 @@ export const CreateCollectionModal = ({
                               </div>
                             </div>
                           </div>
-                          <motion.div
-                            className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all duration-200"
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                          >
+                          <div className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all duration-200">
                             <svg
                               className="w-5 h-5"
                               fill="none"
@@ -560,8 +545,8 @@ export const CreateCollectionModal = ({
                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                               />
                             </svg>
-                          </motion.div>
-                        </motion.div>
+                          </div>
+                        </div>
                       ))
                     ) : (
                       <div className="p-8 text-center text-gray-500">
@@ -611,15 +596,12 @@ export const CreateCollectionModal = ({
                     errors.products ? "border-2 border-red-200" : ""
                   }`}
                 >
-                  <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg bg-white">
+                  <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg bg-white scrollbar-hide">
                     {selectedProducts.length > 0 ? (
-                      selectedProducts.map((product, index) => (
-                        <motion.div
-                          key={`selected-product-${product._id}`}
+                      selectedProducts.filter(product => product && product._id).map((product, index) => (
+                        <div
+                          key={`selected-${index}`}
                           className="flex items-center justify-between p-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors duration-200"
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: index * 0.05 }}
                         >
                           <div className="flex items-center gap-4 flex-1">
                             <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
@@ -655,12 +637,10 @@ export const CreateCollectionModal = ({
                               </div>
                             </div>
                           </div>
-                          <motion.button
+                          <button
                             type="button"
                             onClick={() => toggleProduct(product)}
                             className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200"
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
                           >
                             <svg
                               className="w-5 h-5"
@@ -675,8 +655,8 @@ export const CreateCollectionModal = ({
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                               />
                             </svg>
-                          </motion.button>
-                        </motion.div>
+                          </button>
+                        </div>
                       ))
                     ) : (
                       <div className="p-8 text-center text-gray-500">
@@ -701,11 +681,7 @@ export const CreateCollectionModal = ({
                     )}
                   </div>
                   {errors.products && (
-                    <motion.p
-                      className="text-red-500 text-sm flex items-center gap-1 mt-2"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                    >
+                    <p className="text-red-500 text-sm flex items-center gap-1 mt-2 animate-fade-in">
                       <svg
                         className="w-4 h-4"
                         fill="none"
@@ -720,18 +696,14 @@ export const CreateCollectionModal = ({
                         />
                       </svg>
                       {errors.products}
-                    </motion.p>
+                    </p>
                   )}
                 </div>
               </div>
 
               {/* Collection Summary */}
               {selectedProducts.length > 0 && (
-                <motion.div
-                  className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
+                <div className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 animate-fade-in-up">
                   <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <svg
                       className="w-5 h-5 text-blue-600"
@@ -774,20 +746,18 @@ export const CreateCollectionModal = ({
                       </span>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )}
-            </motion.form>
+            </form>
           </div>
 
           {/* Footer */}
-          <div className="bg-gray-50 border-t border-gray-200 px-8 py-6">
+          <div className="bg-gray-50 border-t border-gray-200 px-8 py-6 mb-10">
             <div className="flex flex-col sm:flex-row justify-start gap-4">
-              <motion.button
+              <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
                 disabled={isSubmitting}
               >
                 <svg
@@ -804,8 +774,8 @@ export const CreateCollectionModal = ({
                   />
                 </svg>
                 لغو
-              </motion.button>
-              <motion.button
+              </button>
+              <button
                 type="submit"
                 onClick={handleSubmit}
                 disabled={
@@ -813,23 +783,13 @@ export const CreateCollectionModal = ({
                   !collectionName ||
                   selectedProducts.length === 0
                 }
-                className={`px-8 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg ${
+                className={`px-8 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-105 active:scale-95 ${
                   isSubmitting ||
                   !collectionName ||
                   selectedProducts.length === 0
                     ? "bg-gray-400 cursor-not-allowed text-white"
                     : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
                 }`}
-                whileHover={
-                  !isSubmitting && collectionName && selectedProducts.length > 0
-                    ? { scale: 1.02 }
-                    : {}
-                }
-                whileTap={
-                  !isSubmitting && collectionName && selectedProducts.length > 0
-                    ? { scale: 0.98 }
-                    : {}
-                }
               >
                 {isSubmitting ? (
                   <>
@@ -872,11 +832,11 @@ export const CreateCollectionModal = ({
                     ایجاد کالکشن
                   </>
                 )}
-              </motion.button>
+              </button>
             </div>
           </div>
         </div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </>
   );
 };
