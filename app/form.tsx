@@ -315,7 +315,7 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
               </motion.div>
 
               {/* Menu Items with improved scrolling */}
-              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar relative">
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-hide relative">
                 {/* Subtle gradient overlay for depth */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent pointer-events-none" />
 
@@ -376,50 +376,7 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
         )}
       </AnimatePresence>
 
-      {/* Enhanced Custom Scrollbar Styles */}
-      <style jsx global>{`
-        .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-        }
 
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
-          margin: 8px 0;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.3) 0%,
-            rgba(255, 255, 255, 0.1) 100%
-          );
-          border-radius: 10px;
-          border: 2px solid transparent;
-          background-clip: content-box;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.5) 0%,
-            rgba(255, 255, 255, 0.2) 100%
-          );
-          background-clip: content-box;
-        }
-
-        /* Glass morphism support */
-        @supports (backdrop-filter: blur(20px)) {
-          .backdrop-blur-3xl {
-            backdrop-filter: blur(20px);
-          }
-        }
-      `}</style>
     </>
   );
 };

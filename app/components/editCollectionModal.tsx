@@ -182,7 +182,7 @@ export const EditCollectionModal = ({
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: "spring", duration: 0.3, bounce: 0.1 }}
           >
-            <div className="bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl w-full max-w-5xl h-[90vh] overflow-y-scroll">
+            <div className="bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl w-full max-w-5xl h-[90vh] overflow-hidden">
               {/* Header */}
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 border-b border-gray-200/20">
                 <div className="flex items-center justify-between">
@@ -231,7 +231,7 @@ export const EditCollectionModal = ({
               </div>
 
               {/* Content */}
-              <div className="overflow-y-auto max-h-[calc(90vh-140px)] custom-scrollbar">
+              <div className="overflow-y-auto max-h-[calc(85vh-140px)] scrollbar-hide">
                 <motion.form
                   onSubmit={handleSubmit}
                   className="p-8"
@@ -443,7 +443,7 @@ export const EditCollectionModal = ({
                       محصولات موجود برای افزودن
                     </h3>
                     <div className="bg-gray-50 rounded-xl p-6">
-                      <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg bg-white">
+                      <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg bg-white scrollbar-hide">
                         {filteredProducts.length > 0 ? (
                           filteredProducts.map((product, index) => (
                             <motion.div
@@ -557,7 +557,7 @@ export const EditCollectionModal = ({
                         errors.products ? "border-2 border-red-200" : ""
                       }`}
                     >
-                      <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg bg-white">
+                      <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg bg-white scrollbar-hide">
                         {selectedProducts.length > 0 ? (
                           selectedProducts.map((product, index) => (
                             <motion.div
