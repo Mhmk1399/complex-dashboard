@@ -2,6 +2,7 @@ import connect from "@/lib/data";
 import { NextRequest, NextResponse } from "next/server";
 import Products from "@/models/products";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import category from "@/models/category";
 interface CustomJwtPayload extends JwtPayload {
   storeId?: string;
 }
@@ -61,7 +62,11 @@ export async function GET(request: NextRequest) {
     if (!storeId)
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
-    const products = await Products.find({ storeId }).populate("category");
+    const products = await Products.find({ storeId })
+    .populate({
+      path:"category",
+      model:category
+    });
     return NextResponse.json({ products }, { status: 200 });
   } catch (error) {
     console.error("Error fetching products:", error);
