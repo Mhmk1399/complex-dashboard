@@ -158,7 +158,7 @@ const SignInForm = () => {
       {
         title: "پیکربندی فروشگاه",
         message: "در حال اعمال تنظیمات فروشگاه شما...",
-        icon: "⚙️",
+        icon: "⚙",
       },
       {
         title: "اتمام فرآیند",
@@ -390,4 +390,4 @@ const SignInForm = () => {
   );
 };
 
-export default SignInForm;
+export default SignInForm;
