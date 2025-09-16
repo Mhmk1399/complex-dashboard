@@ -145,8 +145,9 @@ export default function LoginPage() {
   };
 
   const resetPassword = async () => {
-    if (!newPassword) {
-      toast.error("رمز جدید را وارد کنید");
+    const passwordValidation = validatePassword(newPassword);
+    if (passwordValidation) {
+      toast.error(passwordValidation);
       return;
     }
     try {
@@ -178,14 +179,13 @@ export default function LoginPage() {
     e.preventDefault();
     
     const phoneValidation = validatePhoneNumber(phoneNumber);
-    const passwordValidation = validatePassword(password);
     
     if (phoneValidation) {
       setPhoneError(phoneValidation);
       return;
     }
-    if (passwordValidation) {
-      setPasswordError(passwordValidation);
+    if (!password) {
+      setPasswordError("رمز عبور را وارد کنید");
       return;
     }
     
