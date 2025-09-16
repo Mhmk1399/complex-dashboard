@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiArrowLeft, FiGithub } from "react-icons/fi";
-import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FiArrowLeft } from "react-icons/fi";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const generateStoreId = () => {
@@ -365,367 +365,642 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-100 via-teal-50 to-cyan-100 p-4" dir="rtl">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="relative w-full max-w-4xl h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden"
-      >
-        <motion.div
-          className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-br from-cyan-400 to-blue-500 z-10 flex items-center justify-center"
-          animate={{ x: isSignUp ? "-100%" : "0%" }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-100 via-teal-50 to-cyan-100 p-4 flex items-center justify-center" dir="rtl">
+      <div className="w-full max-w-md lg:max-w-4xl">
+        {/* Mobile Header */}
+        <div className="lg:hidden text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            {isSignUp ? "ثبت نام" : "ورود"}
+          </h1>
+          <p className="text-gray-600 text-sm">
+            {isSignUp ? "حساب جدید بسازید" : "به حساب خود وارد شوید"}
+          </p>
+        </div>
+
+        {/* Desktop Layout */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="hidden lg:block relative w-full h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden"
         >
-          <div className="text-center text-white px-8">
-            <motion.h2 
-              className="text-4xl font-bold mb-4"
-              key={isSignUp ? "create" : "signin"}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              {isSignUp ? "ورود" : "ساخت حساب!"}
-            </motion.h2>
-            <motion.p 
-              className="text-lg mb-8 opacity-90"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {isSignUp 
-                ? "با جزئیات شخصی خود وارد شوید تا از تمام امکانات سایت استفاده کنید" 
-                : "اگر هنوز حساب کاربری ندارید ثبت نام کنید ..."}
-            </motion.p>
-            <motion.button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="px-8 py-3 border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-blue-500 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {isSignUp ? "ورود" : "ثبت نام"}
-            </motion.button>
+          <motion.div
+            className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-br from-cyan-400 to-blue-500 z-10 flex items-center justify-center"
+            animate={{ x: isSignUp ? "-100%" : "0%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <div className="text-center text-white px-8">
+              <motion.h2 
+                className="text-4xl font-bold mb-4"
+                key={isSignUp ? "create" : "signin"}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {isSignUp ? "ورود" : "ساخت حساب!"}
+              </motion.h2>
+              <motion.p 
+                className="text-lg mb-8 opacity-90"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                {isSignUp 
+                  ? "با جزئیات شخصی خود وارد شوید تا از تمام امکانات سایت استفاده کنید" 
+                  : "اگر هنوز حساب کاربری ندارید ثبت نام کنید ..."}
+              </motion.p>
+              <motion.button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="px-8 py-3 border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-blue-500 transition-all duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isSignUp ? "ورود" : "ثبت نام"}
+              </motion.button>
+            </div>
+          </motion.div>
+
+          {/* Desktop Login Panel */}
+          <div className="absolute left-0 top-0 w-1/2 h-full flex items-center justify-center p-8">
+            <AnimatePresence mode="wait">
+              {!isSignUp && (
+                <motion.div
+                  key="signin"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full max-w-sm"
+                >
+                  <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+                    {isForgotPassword ? "فراموشی رمز عبور" : "ورود"}
+                  </h2>
+                  
+                  <p className="text-center text-gray-500 mb-6">یا با شماره تلفن وارد شوید</p>
+
+                  {step === 1 && (
+                    <div className="space-y-4">
+                      <div>
+                        <input
+                          type="tel"
+                          placeholder="شماره تلفن"
+                          value={phoneNumber}
+                          maxLength={11}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            setPhoneNumber(value);
+                            setPhoneError("");
+                          }}
+                          onKeyUp={(e) => handlePhoneKeyUp(e, setPhoneError)}
+                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${phoneError ? 'border-2 border-red-500' : ''}`}
+                        />
+                        {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
+                      </div>
+                      <motion.button
+                        onClick={sendCode}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        ارسال کد تایید
+                      </motion.button>
+                    </div>
+                  )}
+
+                  {step === 2 && (
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="کد 6 رقمی"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-center"
+                      />
+                      {smsExpiresAt && (
+                        <div className="text-center">
+                          {countdown > 0 ? (
+                            <p className={`text-lg font-bold ${countdown > 60 ? 'text-green-600' : countdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
+                              {countdown} ثانیه
+                            </p>
+                          ) : (
+                            <motion.button onClick={sendCode} className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium" whileHover={{ scale: 1.05 }}>
+                              ارسال مجدد کد
+                            </motion.button>
+                          )}
+                        </div>
+                      )}
+                      <motion.button
+                        onClick={verifyCode}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        تایید کد
+                      </motion.button>
+                    </div>
+                  )}
+
+                  {step === 3 && !isForgotPassword && (
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="رمز عبور"
+                          value={password}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            setPasswordError("");
+                          }}
+                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${passwordError ? 'border-2 border-red-500' : ''}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute left-3 top-3 text-gray-500"
+                        >
+                          {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                      </div>
+                      {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+                      <motion.button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        ورود
+                      </motion.button>
+                    </form>
+                  )}
+
+                  {step === 3 && isForgotPassword && (
+                    <div className="space-y-4">
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="رمز جدید"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute left-3 top-3 text-gray-500"
+                        >
+                          {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                      </div>
+                      <motion.button
+                        onClick={resetPassword}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        تغییر رمز
+                      </motion.button>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center mt-4 text-sm">
+                    <button 
+                      onClick={() => setIsSignUp(true)}
+                      className="text-blue-500 hover:underline"
+                    >
+                      ثبت نام
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setIsForgotPassword(!isForgotPassword);
+                        setStep(1);
+                        setPhoneNumber("");
+                        setVerificationCode("");
+                        setNewPassword("");
+                        setSmsExpiresAt(null);
+                      }}
+                      className="text-blue-500 hover:underline"
+                    >
+                      {isForgotPassword ? "برگشت به ورود" : "فراموشی رمز عبور"}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Desktop Signup Panel */}
+          <div className="absolute right-0 top-0 w-1/2 h-full flex items-center justify-center p-8">
+            <AnimatePresence mode="wait">
+              {isSignUp && (
+                <motion.div
+                  key="signup"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full max-w-sm"
+                >
+                  <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">خوش اومدی به سایکو</h2>
+                  
+                  <p className="text-center text-gray-500 mb-6">یا با شماره تلفن ثبت نام کنید</p>
+
+                  {signupStep === 1 && (
+                    <div className="space-y-4">
+                      <div>
+                        <input
+                          type="tel"
+                          placeholder="شماره تلفن خود را وارد کنید"
+                          maxLength={11}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            setSignupFormData({ ...signupFormData, phoneNumber: value });
+                            setSignupPhoneError("");
+                          }}
+                          onKeyUp={(e) => handlePhoneKeyUp(e, setSignupPhoneError)}
+                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${signupPhoneError ? 'border-2 border-red-500' : ''}`}
+                        />
+                        {signupPhoneError && <p className="text-red-500 text-sm mt-1">{signupPhoneError}</p>}
+                      </div>
+                      <motion.button
+                        onClick={sendSignupCode}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex justify-center items-center gap-1"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        ارسال کد تایید
+                        <FiArrowLeft />
+                      </motion.button>
+                    </div>
+                  )}
+
+                  {signupStep === 2 && (
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="کد 6 رقمی را وارد کنید"
+                        value={signupVerificationCode}
+                        onChange={(e) => setSignupVerificationCode(e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-center"
+                      />
+                      {signupSmsExpiresAt && (
+                        <div className="text-center">
+                          {signupCountdown > 0 ? (
+                            <p className={`text-lg font-bold ${signupCountdown > 60 ? 'text-green-600' : signupCountdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
+                              {signupCountdown} ثانیه
+                            </p>
+                          ) : (
+                            <motion.button onClick={sendSignupCode} className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium" whileHover={{ scale: 1.05 }}>
+                              ارسال مجدد کد
+                            </motion.button>
+                          )}
+                        </div>
+                      )}
+                      <motion.button
+                        onClick={verifySignupCode}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex justify-center items-center gap-1"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        تایید کد
+                        <FiArrowLeft />
+                      </motion.button>
+                    </div>
+                  )}
+
+                  {signupStep === 3 && (
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="اسم فروشگاهتو اینجا وارد کن"
+                        onChange={(e) => setSignupFormData({ ...signupFormData, title: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right"
+                      />
+                      <div>
+                        <input
+                          type="password"
+                          placeholder="رمز عبور خود را وارد کنید"
+                          onChange={(e) => {
+                            setSignupFormData({ ...signupFormData, password: e.target.value });
+                            setSignupPasswordError("");
+                          }}
+                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${signupPasswordError ? 'border-2 border-red-500' : ''}`}
+                        />
+                        {signupPasswordError && <p className="text-red-500 text-sm mt-1">{signupPasswordError}</p>}
+                      </div>
+                      <motion.button
+                        onClick={submitSignupData}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex justify-center items-center gap-1"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        ثبت نام
+                        <FiArrowLeft />
+                      </motion.button>
+                    </div>
+                  )}
+
+                  {signupErrors && (
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 mt-2 font-bold text-center">
+                      {signupErrors}
+                    </motion.p>
+                  )}
+
+                  <div className="flex justify-center items-center mt-4">
+                    <motion.button
+                      onClick={() => setIsSignUp(false)}
+                      className="py-3 text-blue-500 font-medium flex items-center gap-1 hover:opacity-70 transition-colors duration-300"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      ورود به حساب
+                    </motion.button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
 
-        {/* Login Panel */}
-        <div className="absolute left-0 top-0 w-1/2 h-full flex items-center justify-center p-8">
-          <AnimatePresence mode="wait">
-            {!isSignUp && (
-              <motion.div
-                key="signin"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.3 }}
-                className="w-full max-w-sm"
+        {/* Mobile Layout */}
+        <div className="lg:hidden">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl shadow-xl p-6"
+          >
+            {/* Mobile Toggle */}
+            <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+              <button
+                onClick={() => setIsSignUp(false)}
+                className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                  !isSignUp ? 'bg-blue-500 text-white shadow-lg' : 'text-gray-600 hover:text-gray-800'
+                }`}
               >
-                <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-                  {isForgotPassword ? "فراموشی رمز عبور" : "ورود"}
-                </h2>
-                
-                <div className="flex justify-center space-x-4 mb-6">
-                  <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-blue-500 transition-colors">
-                    <FiGithub className="text-xl" />
-                  </motion.button>
-                  <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-blue-500 transition-colors">
-                    <FaGoogle className="text-xl" />
-                  </motion.button>
-                </div>
+                ورود
+              </button>
+              <button
+                onClick={() => setIsSignUp(true)}
+                className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                  isSignUp ? 'bg-blue-500 text-white shadow-lg' : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                ثبت نام
+              </button>
+            </div>
 
-                <p className="text-center text-gray-500 mb-6">یا با شماره تلفن وارد شوید</p>
-
-                {step === 1 && (
-                  <div className="space-y-4">
-                    <div>
-                      <input
-                        type="tel"
-                        placeholder="شماره تلفن"
-                        value={phoneNumber}
-                        maxLength={11}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '');
-                          setPhoneNumber(value);
-                          setPhoneError("");
-                        }}
-                        onKeyUp={(e) => handlePhoneKeyUp(e, setPhoneError)}
-                        className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${phoneError ? 'border-2 border-red-500' : ''}`}
-                      />
-                      {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
-                    </div>
-                    <motion.button
-                      onClick={sendCode}
-                      className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      ارسال کد تایید
-                    </motion.button>
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div className="space-y-4">
-                    <input
-                      type="text"
-                      placeholder="کد 6 رقمی"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-center"
-                    />
-                    {smsExpiresAt && (
-                      <div className="text-center">
-                        {countdown > 0 ? (
-                          <p className={`text-lg font-bold ${countdown > 60 ? 'text-green-600' : countdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
-                            {countdown} ثانیه
-                          </p>
-                        ) : (
-                          <motion.button onClick={sendCode} className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium" whileHover={{ scale: 1.05 }}>
-                            ارسال مجدد کد
-                          </motion.button>
-                        )}
+            {/* Mobile Forms */}
+            <AnimatePresence mode="wait">
+              {!isSignUp ? (
+                <motion.div
+                  key="mobile-login"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="min-h-[250px]"
+                >
+                  <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
+                    {isForgotPassword ? "فراموشی رمز عبور" : "ورود به حساب"}
+                  </h3>
+                  
+                  {step === 1 && (
+                    <div className="space-y-4">
+                      <div>
+                        <input
+                          type="tel"
+                          placeholder="شماره تلفن"
+                          value={phoneNumber}
+                          maxLength={11}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            setPhoneNumber(value);
+                            setPhoneError("");
+                          }}
+                          onKeyUp={(e) => handlePhoneKeyUp(e, setPhoneError)}
+                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${phoneError ? 'border-red-500' : 'border-gray-200'}`}
+                        />
+                        {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
                       </div>
-                    )}
-                    <motion.button
-                      onClick={verifyCode}
-                      className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      تایید کد
-                    </motion.button>
-                  </div>
-                )}
-
-                {step === 3 && !isForgotPassword && (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="رمز عبور"
-                        value={password}
-                        onChange={(e) => {
-                          setPassword(e.target.value);
-                          setPasswordError("");
-                        }}
-                        className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${passwordError ? 'border-2 border-red-500' : ''}`}
-                      />
                       <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute left-3 top-3 text-gray-500"
+                        onClick={sendCode}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
                       >
-                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        ارسال کد تایید
                       </button>
                     </div>
-                    {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
-                    <motion.button
-                      type="submit"
-                      className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      ورود
-                    </motion.button>
-                  </form>
-                )}
+                  )}
 
-                {step === 3 && isForgotPassword && (
-                  <div className="space-y-4">
-                    <div className="relative">
+                  {step === 2 && (
+                    <div className="space-y-4">
                       <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="رمز جدید"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right"
+                        type="text"
+                        placeholder="کد 6 رقمی"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-50 rounded-lg border-2 border-gray-200 outline-none focus:border-blue-500 transition-colors text-center"
                       />
+                      {smsExpiresAt && (
+                        <div className="text-center">
+                          {countdown > 0 ? (
+                            <p className={`text-sm font-medium ${countdown > 60 ? 'text-green-600' : countdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
+                              {countdown} ثانیه تا انقضا
+                            </p>
+                          ) : (
+                            <button onClick={sendCode} className="text-blue-500 text-sm font-medium">
+                              ارسال مجدد کد
+                            </button>
+                          )}
+                        </div>
+                      )}
                       <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute left-3 top-3 text-gray-500"
+                        onClick={verifyCode}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
                       >
-                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        تایید کد
                       </button>
                     </div>
-                    <motion.button
-                      onClick={resetPassword}
-                      className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      تغییر رمز
-                    </motion.button>
-                  </div>
-                )}
+                  )}
 
-                <div className="flex justify-between items-center mt-4 text-sm">
-                  <button 
-                    onClick={() => setIsSignUp(true)}
-                    className="text-blue-500 hover:underline"
-                  >
-                    ثبت نام
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setIsForgotPassword(!isForgotPassword);
-                      setStep(1);
-                      setPhoneNumber("");
-                      setVerificationCode("");
-                      setNewPassword("");
-                      setSmsExpiresAt(null);
-                    }}
-                    className="text-blue-500 hover:underline"
-                  >
-                    {isForgotPassword ? "برگشت به ورود" : "فراموشی رمز عبور"}
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Signup Panel */}
-        <div className="absolute right-0 top-0 w-1/2 h-full flex items-center justify-center p-8">
-          <AnimatePresence mode="wait">
-            {isSignUp && (
-              <motion.div
-                key="signup"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 50 }}
-                transition={{ duration: 0.3 }}
-                className="w-full max-w-sm"
-              >
-                <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">خوش اومدی به سایکو</h2>
-                
-                <div className="flex justify-center space-x-4 mb-6">
-                  <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-blue-500 transition-colors">
-                    <FiGithub className="text-xl" />
-                  </motion.button>
-                  <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-blue-500 transition-colors">
-                    <FaGoogle className="text-xl" />
-                  </motion.button>
-                </div>
-
-                <p className="text-center text-gray-500 mb-6">یا با شماره تلفن ثبت نام کنید</p>
-
-                {signupStep === 1 && (
-                  <div className="space-y-4">
-                    <div>
-                      <input
-                        type="tel"
-                        placeholder="شماره تلفن خود را وارد کنید"
-                        maxLength={11}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '');
-                          setSignupFormData({ ...signupFormData, phoneNumber: value });
-                          setSignupPhoneError("");
-                        }}
-                        onKeyUp={(e) => handlePhoneKeyUp(e, setSignupPhoneError)}
-                        className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${signupPhoneError ? 'border-2 border-red-500' : ''}`}
-                      />
-                      {signupPhoneError && <p className="text-red-500 text-sm mt-1">{signupPhoneError}</p>}
-                    </div>
-                    <motion.button
-                      onClick={sendSignupCode}
-                      className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex justify-center items-center gap-1"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      ارسال کد تایید
-                      <FiArrowLeft />
-                    </motion.button>
-                  </div>
-                )}
-
-                {signupStep === 2 && (
-                  <div className="space-y-4">
-                    <input
-                      type="text"
-                      placeholder="کد 6 رقمی را وارد کنید"
-                      value={signupVerificationCode}
-                      onChange={(e) => setSignupVerificationCode(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-center"
-                    />
-                    {signupSmsExpiresAt && (
-                      <div className="text-center">
-                        {signupCountdown > 0 ? (
-                          <p className={`text-lg font-bold ${signupCountdown > 60 ? 'text-green-600' : signupCountdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
-                            {signupCountdown} ثانیه
-                          </p>
-                        ) : (
-                          <motion.button onClick={sendSignupCode} className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium" whileHover={{ scale: 1.05 }}>
-                            ارسال مجدد کد
-                          </motion.button>
-                        )}
+                  {step === 3 && !isForgotPassword && (
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="رمز عبور"
+                          value={password}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            setPasswordError("");
+                          }}
+                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${passwordError ? 'border-red-500' : 'border-gray-200'}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute left-3 top-3 text-gray-500"
+                        >
+                          {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
                       </div>
-                    )}
-                    <motion.button
-                      onClick={verifySignupCode}
-                      className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex justify-center items-center gap-1"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      تایید کد
-                      <FiArrowLeft />
-                    </motion.button>
-                  </div>
-                )}
+                      {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+                      <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                      >
+                        ورود
+                      </button>
+                    </form>
+                  )}
 
-                {signupStep === 3 && (
-                  <div className="space-y-4">
-                    <input
-                      type="text"
-                      placeholder="اسم فروشگاهتو اینجا وارد کن"
-                      onChange={(e) => setSignupFormData({ ...signupFormData, title: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right"
-                    />
-                    <div>
-                      <input
-                        type="password"
-                        placeholder="رمز عبور خود را وارد کنید"
-                        onChange={(e) => {
-                          setSignupFormData({ ...signupFormData, password: e.target.value });
-                          setSignupPasswordError("");
-                        }}
-                        className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${signupPasswordError ? 'border-2 border-red-500' : ''}`}
-                      />
-                      {signupPasswordError && <p className="text-red-500 text-sm mt-1">{signupPasswordError}</p>}
+                  {step === 3 && isForgotPassword && (
+                    <div className="space-y-4">
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="رمز جدید"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className="w-full px-4 py-3 bg-gray-50 rounded-lg border-2 border-gray-200 outline-none focus:border-blue-500 transition-colors text-right"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute left-3 top-3 text-gray-500"
+                        >
+                          {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                      </div>
+                      <button
+                        onClick={resetPassword}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                      >
+                        تغییر رمز
+                      </button>
                     </div>
-                    <motion.button
-                      onClick={submitSignupData}
-                      className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex justify-center items-center gap-1"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                  )}
+
+                  <div className="flex justify-center items-center mt-6 text-sm">
+                    <button 
+                      onClick={() => {
+                        setIsForgotPassword(!isForgotPassword);
+                        setStep(1);
+                        setPhoneNumber("");
+                        setVerificationCode("");
+                        setNewPassword("");
+                        setSmsExpiresAt(null);
+                      }}
+                      className="text-blue-500 hover:underline"
                     >
-                      ثبت نام
-                      <FiArrowLeft />
-                    </motion.button>
+                      {isForgotPassword ? "برگشت به ورود" : "فراموشی رمز عبور"}
+                    </button>
                   </div>
-                )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="mobile-signup"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="min-h-[250px]"
+                >
+                  <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">ساخت حساب جدید</h3>
+                  
+                  {signupStep === 1 && (
+                    <div className="space-y-4">
+                      <div>
+                        <input
+                          type="tel"
+                          placeholder="شماره تلفن"
+                          maxLength={11}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            setSignupFormData({ ...signupFormData, phoneNumber: value });
+                            setSignupPhoneError("");
+                          }}
+                          onKeyUp={(e) => handlePhoneKeyUp(e, setSignupPhoneError)}
+                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${signupPhoneError ? 'border-red-500' : 'border-gray-200'}`}
+                        />
+                        {signupPhoneError && <p className="text-red-500 text-sm mt-1">{signupPhoneError}</p>}
+                      </div>
+                      <button
+                        onClick={sendSignupCode}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                      >
+                        ارسال کد تایید
+                      </button>
+                    </div>
+                  )}
 
-                {signupErrors && (
-                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 mt-2 font-bold text-center">
-                    {signupErrors}
-                  </motion.p>
-                )}
+                  {signupStep === 2 && (
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="کد 6 رقمی"
+                        value={signupVerificationCode}
+                        onChange={(e) => setSignupVerificationCode(e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-50 rounded-lg border-2 border-gray-200 outline-none focus:border-blue-500 transition-colors text-center"
+                      />
+                      {signupSmsExpiresAt && (
+                        <div className="text-center">
+                          {signupCountdown > 0 ? (
+                            <p className={`text-sm font-medium ${signupCountdown > 60 ? 'text-green-600' : signupCountdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
+                              {signupCountdown} ثانیه تا انقضا
+                            </p>
+                          ) : (
+                            <button onClick={sendSignupCode} className="text-blue-500 text-sm font-medium">
+                              ارسال مجدد کد
+                            </button>
+                          )}
+                        </div>
+                      )}
+                      <button
+                        onClick={verifySignupCode}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                      >
+                        تایید کد
+                      </button>
+                    </div>
+                  )}
 
-                <div className="flex justify-center items-center mt-4">
-                  <motion.button
-                    onClick={() => setIsSignUp(false)}
-                    className="py-3 text-blue-500 font-medium flex items-center gap-1 hover:opacity-70 transition-colors duration-300"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    ورود به حساب
-                  </motion.button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  {signupStep === 3 && (
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="نام فروشگاه"
+                        onChange={(e) => setSignupFormData({ ...signupFormData, title: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-50 rounded-lg border-2 border-gray-200 outline-none focus:border-blue-500 transition-colors text-right"
+                      />
+                      <div>
+                        <input
+                          type="password"
+                          placeholder="رمز عبور"
+                          onChange={(e) => {
+                            setSignupFormData({ ...signupFormData, password: e.target.value });
+                            setSignupPasswordError("");
+                          }}
+                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${signupPasswordError ? 'border-red-500' : 'border-gray-200'}`}
+                        />
+                        {signupPasswordError && <p className="text-red-500 text-sm mt-1">{signupPasswordError}</p>}
+                      </div>
+                      <button
+                        onClick={submitSignupData}
+                        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                      >
+                        ثبت نام
+                      </button>
+                    </div>
+                  )}
+
+                  {signupErrors && (
+                    <p className="text-red-500 text-sm mt-4 text-center">{signupErrors}</p>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
       <LoadingModal />
     </div>
   );

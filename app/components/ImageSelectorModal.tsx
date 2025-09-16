@@ -22,7 +22,7 @@ export default function ImageSelectorModal({
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch("/api/uploadFile", {
+      const response = await fetch("/api/upload", {
         headers: {
           'Authorization': `Bearer ${token}`
         }
