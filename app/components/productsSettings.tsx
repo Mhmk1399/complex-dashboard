@@ -8,7 +8,12 @@ import ImageSelectorModal from "./ImageSelectorModal";
 import { ProductSettings } from "@/types/type";
 import { AIDescriptionGenerator } from "./AIDescriptionGenerator";
 
-export const ProductsSettings = () => {
+
+interface StartComponentProps {
+  setSelectedMenu: (menu: string) => void;
+}
+
+export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const [categories, setCategories] = useState<
     Array<{ _id: string; name: string }>
   >([]);
@@ -457,57 +462,22 @@ export const ProductsSettings = () => {
                 <label className="block mb-4 text-[#0077b6] font-bold text-xl">
                   تصاویر محصول (حداکثر 6 تصویر) *
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <div key={index} className="space-y-3">
-                      <div className="relative">
-                        {settings.blocks.images[index]?.imageSrc ? (
-                          <div className="relative">
-                            <img
-                              src={`${process.env.NEXT_PUBLIC_MAMAD_URL}${settings.blocks.images[index].imageSrc}`}
-                              alt={settings.blocks.images[index].imageAlt || `تصویر ${index + 1}`}
-                              className="w-full h-32 object-cover rounded-lg border border-blue-200"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newImages = [...settings.blocks.images];
-                                newImages.splice(index, 1);
-                                setSettings(prev => ({
-                                  ...prev,
-                                  blocks: { ...prev.blocks, images: newImages }
-                                }));
-                              }}
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="w-full h-32 border-2 border-dashed border-blue-300 rounded-lg flex flex-col items-center justify-center bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer"
-                               onClick={() => {
-                                 setCurrentImageIndex(index);
-                                 setIsImageSelectorOpen(true);
-                               }}>
-                            <svg className="w-8 h-8 text-blue-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            <span className="text-blue-600 text-sm font-medium">تصویر {index + 1}</span>
-                          </div>
-                        )}
-                      </div>
-                      <input
-                        type="text"
-                        placeholder={`متن جایگزین تصویر ${index + 1}`}
-                        value={settings.blocks.images[index]?.imageAlt || ""}
-                        onChange={(e) => handleImageChange(index, "imageAlt", e.target.value)}
-                        className="w-full px-3 py-2 border border-blue-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
-                        dir="rtl"
-                      />
-                    </div>
-                  ))}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setIsImageSelectorOpen(true);
+                      clearError("image");
+                    }}
+                    className="bg-white text-[#0077b6] border text-nowrap border-blue-200 px-4 py-2 rounded-xl"
+                  >
+                    انتخاب تصویر
+                  </button>
+                  <button
+                    onClick={() => setSelectedMenu("addFile")}
+                    className="bg-[#0077b6] text-white border text-nowrap border-blue-200 px-4 py-2 rounded-xl"
+                  >
+                    آپلود تصویر
+                  </button>
                 </div>
                 {errors.images && (
                   <p className="text-red-500 text-sm mt-2">{errors.images}</p>
@@ -629,6 +599,10 @@ export const ProductsSettings = () => {
                 <label className="block mb-2 font-bold text-[#0077b6]">
                   دسته بندی *
                 </label>
+                <button
+                 onClick={() => setSelectedMenu("addCategory")}
+                className="bg-[#0077b6] text-white border text-nowrap border-blue-200 px-4 py-2 rounded-xl mb-2"
+                >افزودن دسته بندی</button>
                 <select
                   value={settings.blocks.category._id}
                   onChange={(e) => {
