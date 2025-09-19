@@ -21,10 +21,10 @@ const SignInForm = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [errors, setErrors] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
-  const [setIsSuccess] = useState(false);
-  const [setIsLoading] = useState(false);
+  const [, setIsSuccess] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const [setCodeSent] = useState(false);
+  const [, setCodeSent] = useState(false);
   const [smsExpiresAt, setSmsExpiresAt] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
 
@@ -63,7 +63,7 @@ const SignInForm = () => {
         setErrors(data.message);
         setShowModal(true);
       }
-    } catch (error) {
+    } catch {
       setErrors("خطا در ارسال کد");
       setShowModal(true);
     }
@@ -88,7 +88,7 @@ const SignInForm = () => {
         setErrors(data.message);
         setShowModal(true);
       }
-    } catch (error) {
+    } catch {
       setErrors("خطا در تایید کد");
       setShowModal(true);
     }
@@ -121,7 +121,7 @@ const SignInForm = () => {
         setErrors(result.message || "Registration failed");
         setShowModal(true);
       }
-    } catch (error) {
+    } catch {
       setIsLoading(false);
       setIsSuccess(false);
       setErrors("An unexpected error occurred");

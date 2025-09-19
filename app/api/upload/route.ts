@@ -10,7 +10,7 @@ interface UploadResponse {
   message?: string;
   error?: string;
   status?: number;
-  images?: any[];
+  images?: unknown[];
 }
 
 export async function POST(
@@ -239,12 +239,10 @@ export async function DELETE(
     const resource = `/${bucketName}/${objectName}`;
     const stringToSign = `DELETE\n\n\n${dateValue}\n${resource}`;
     
-    const signature = crypto
+    crypto
       .createHmac("sha1", secretKey)
       .update(stringToSign)
       .digest("base64");
-
-    const deleteUrl = `https://${bucketName}.s3.ir-thr-at1.arvanstorage.ir/${objectName}`;
     
     // const response = await fetch(deleteUrl, {
     //   method: "DELETE",

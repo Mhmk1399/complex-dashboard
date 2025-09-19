@@ -116,7 +116,7 @@ export default function LoginPage() {
       } else {
         toast.error(data.message || "خطا در ارسال کد");
       }
-    } catch (err) {
+    } catch {
       toast.error("خطا در ارسال کد");
     }
   };
@@ -138,7 +138,7 @@ export default function LoginPage() {
       } else {
         toast.error(data.message || "کد نامعتبر است");
       }
-    } catch (err) {
+    } catch {
       toast.error("خطا در تایید کد");
     }
   };
@@ -169,7 +169,7 @@ export default function LoginPage() {
       } else {
         toast.error(data.message || "خطا در تغییر رمز");
       }
-    } catch (err) {
+    } catch {
       toast.error("خطا در تغییر رمز");
     }
   };
@@ -204,7 +204,7 @@ export default function LoginPage() {
       } else {
         toast.error(data.message || "نام کاربری یا رمز اشتباه است");
       }
-    } catch (err) {
+    } catch {
       toast.error("خطا در ورود");
     }
   };
@@ -232,7 +232,7 @@ export default function LoginPage() {
       } else {
         setSignupErrors(data.message);
       }
-    } catch (error) {
+    } catch {
       setSignupErrors("خطا در ارسال کد");
     }
   };
@@ -254,7 +254,7 @@ export default function LoginPage() {
       } else {
         setSignupErrors(data.message);
       }
-    } catch (error) {
+    } catch {
       setSignupErrors("خطا در تایید کد");
     }
   };
@@ -295,7 +295,7 @@ export default function LoginPage() {
         setSignupErrors(result.message || "Registration failed");
         setShowSignupModal(false);
       }
-    } catch (error) {
+    } catch {
       setSignupErrors("An unexpected error occurred");
       setShowSignupModal(false);
     }

@@ -46,7 +46,7 @@ Return ONLY the HTML content without any explanations or markdown.`;
       const content = await DeepSeekClient.sendPrompt(prompt);
       onBlogGenerated(content.trim());
       toast.success("مقاله با موفقیت تولید شد!");
-    } catch (error) {
+    } catch {
       toast.error("خطا در تولید مقاله");
     } finally {
       setIsLoading(false);
