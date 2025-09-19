@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaStore,
@@ -50,6 +50,30 @@ export const InformationData: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    const loadExistingData = async () => {
+      try {
+        const response = await fetch("/api/userInfo", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (response.ok) {
+          const { userInfo } = await response.json();
+          setFormData({
+            basic: userInfo.basic || formData.basic,
+            design: userInfo.design || formData.design,
+            contact: userInfo.contact || formData.contact,
+            social: userInfo.social || formData.social,
+          });
+        }
+      } catch (error) {
+        console.log("No existing data found");
+      }
+    };
+    loadExistingData();
+  }, []);
+
   const handleSubmitForm = async () => {
     try {
       const response = await fetch("/api/userInfo", {
@@ -72,12 +96,28 @@ export const InformationData: React.FC = () => {
     }
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
+    await handleSaveStep();
     const menuOrder = ["basic", "design", "contact", "social"];
     const currentIndex = menuOrder.indexOf(activeMenu);
 
     if (currentIndex < menuOrder.length - 1) {
       setActiveMenu(menuOrder[currentIndex + 1]);
+    }
+  };
+
+  const handleSaveStep = async () => {
+    try {
+      await fetch("/api/userInfo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(formData),
+      });
+    } catch (error) {
+      console.log("Error saving step:", error);
     }
   };
 
@@ -126,10 +166,18 @@ export const InformationData: React.FC = () => {
                 onClick={() => setIsImageSelectorOpen(true)}
                 className="w-full h-40 border-2 border-dashed border-[#0077b6] rounded-2xl hover:bg-[#0077b6]/5 transition-all duration-300"
               >
-                <div className="flex flex-col items-center justify-center h-full gap-3">
-                  <FaImage className="text-3xl text-[#0077b6]" />
-                  <span className="text-[#0077b6]">آپلود لوگو</span>
-                </div>
+                {formData.basic.logo ? (
+                  <img
+                    src={formData.basic.logo}
+                    alt="Selected logo"
+                    className="w-full h-full object-contain rounded-2xl"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full gap-3">
+                    <FaImage className="text-3xl text-[#0077b6]" />
+                    <span className="text-[#0077b6]">آپلود لوگو</span>
+                  </div>
+                )}
               </motion.button>
             </div>
 
@@ -137,6 +185,16 @@ export const InformationData: React.FC = () => {
               label="توضیحات"
               icon={<MdDescription />}
               placeholder="توضیحات فروشگاه خود را وارد کنید"
+              value={formData.basic.description}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setFormData({
+                  ...formData,
+                  basic: {
+                    ...formData.basic,
+                    description: e.target.value,
+                  },
+                })
+              }
             />
           </motion.div>
         );
@@ -153,7 +211,13 @@ export const InformationData: React.FC = () => {
             <div className="grid grid-cols-2 gap-6">
               <ColorPicker
                 label="رنگ پس زمینه صفحات سایت"
-                defaultValue="#ffffff"
+                value={formData.design.backgroundColor}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    design: { ...formData.design, backgroundColor: e.target.value },
+                  })
+                }
               />
             </div>
             <FloatingSelect
@@ -164,6 +228,13 @@ export const InformationData: React.FC = () => {
                 { value: "vazir", label: "وزیر" },
                 { value: "yekan", label: "یکان" },
               ]}
+              value={formData.design.font}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  design: { ...formData.design, font: e.target.value },
+                })
+              }
             />
           </motion.div>
         );
@@ -183,18 +254,39 @@ export const InformationData: React.FC = () => {
                 icon={<FaPhone />}
                 placeholder="09xxxxxxxxx"
                 type="tel"
+                value={formData.contact.phone}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    contact: { ...formData.contact, phone: e.target.value },
+                  })
+                }
               />
               <FloatingInput
                 label="ایمیل"
                 icon={<MdEmail />}
                 placeholder="example@domain.com"
                 type="email"
+                value={formData.contact.email}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    contact: { ...formData.contact, email: e.target.value },
+                  })
+                }
               />
             </div>
             <FloatingTextarea
               label="آدرس"
               icon={<MdDescription />}
               placeholder="آدرس کامل"
+              value={formData.contact.address}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  contact: { ...formData.contact, address: e.target.value },
+                })
+              }
             />
           </motion.div>
         );
@@ -213,18 +305,39 @@ export const InformationData: React.FC = () => {
               icon={<FaInstagram />}
               placeholder="@username"
               prefix="@"
+              value={formData.social.instagram}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  social: { ...formData.social, instagram: e.target.value },
+                })
+              }
             />
             <FloatingInput
               label="تلگرام"
               icon={<FaTelegram />}
               placeholder="@username"
               prefix="@"
+              value={formData.social.telegram}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  social: { ...formData.social, telegram: e.target.value },
+                })
+              }
             />
             <FloatingInput
               label="واتساپ"
               icon={<FaWhatsapp />}
               placeholder="+98xxxxxxxxxx"
               prefix="+98"
+              value={formData.social.whatsapp}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  social: { ...formData.social, whatsapp: e.target.value },
+                })
+              }
             />
           </motion.div>
         );
@@ -285,7 +398,13 @@ export const InformationData: React.FC = () => {
         isOpen={isImageSelectorOpen}
         onClose={() => setIsImageSelectorOpen(false)}
         onSelectImage={(image) => {
-          console.log(image);
+          setFormData({
+            ...formData,
+            basic: {
+              ...formData.basic,
+              logo: image,
+            },
+          });
           setIsImageSelectorOpen(false);
         }}
       />
@@ -329,7 +448,9 @@ const FloatingTextarea: React.FC<{
   label: string;
   icon?: React.ReactNode;
   placeholder?: string;
-}> = ({ label, icon, placeholder }) => (
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+}> = ({ label, icon, placeholder, value, onChange }) => (
   <div className="relative group">
     <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
       {icon}
@@ -338,6 +459,8 @@ const FloatingTextarea: React.FC<{
     <textarea
       className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300 min-h-[120px]"
       placeholder={placeholder}
+      value={value}
+      onChange={onChange}
     />
   </div>
 );
@@ -346,13 +469,19 @@ const FloatingSelect: React.FC<{
   label: string;
   icon?: React.ReactNode;
   options: Array<{ value: string; label: string }>;
-}> = ({ label, icon, options }) => (
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}> = ({ label, icon, options, value, onChange }) => (
   <div className="relative group">
     <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
       {icon}
       {label}
     </label>
-    <select className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300">
+    <select 
+      className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300"
+      value={value}
+      onChange={onChange}
+    >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}
@@ -364,15 +493,17 @@ const FloatingSelect: React.FC<{
 
 const ColorPicker: React.FC<{
   label: string;
-  defaultValue?: string;
-}> = ({ label, defaultValue }) => (
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}> = ({ label, value, onChange }) => (
   <div className="relative group">
     <label className="text-lg font-medium text-gray-700 mb-2 block">
       {label}
     </label>
     <input
       type="color"
-      defaultValue={defaultValue}
+      value={value}
+      onChange={onChange}
       className="w-full h-[54px] p-1 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300"
     />
   </div>

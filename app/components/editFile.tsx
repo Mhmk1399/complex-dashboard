@@ -150,25 +150,25 @@ const confirmDelete = async () => {
   };
 
   return (
-    <div className="min-h-screen mt-12 md:mt-0 flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+    <div className="min-h-screen mt-20 md:mt-0 flex items-center justify-center p-4 ">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-8 border-2 border-[#0077b6]"
+        className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-8 border-2 mt-10 border-[#0077b6]"
       >
         <div className="text-center mb-6">
           <FiImage className="mx-auto text-5xl text-[#0077b6] mb-4" />
           <h2 className="text-2xl font-bold text-gray-800">گالری تصاویر</h2>
           <p className="text-gray-500 mt-2">مدیریت و مشاهده تصاویر آپلود شده</p>
-          <motion.button
+          {/* <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={fetchImages}
             className="mt-4 px-4 py-2 bg-[#0077b6] text-white rounded-lg text-sm hover:bg-[#005a8b] transition-colors"
           >
             بروزرسانی
-          </motion.button>
+          </motion.button> */}
         </div>
 
         {loading ? (
