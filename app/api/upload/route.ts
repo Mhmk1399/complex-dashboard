@@ -246,14 +246,14 @@ export async function DELETE(
 
     const deleteUrl = `https://${bucketName}.s3.ir-thr-at1.arvanstorage.ir/${objectName}`;
     
-    const response = await fetch(deleteUrl, {
-      method: "DELETE",
-      headers: {
-        Host: `${bucketName}.s3.ir-thr-at1.arvanstorage.ir`,
-        Date: dateValue,
-        Authorization: `AWS ${accessKey}:${signature}`,
-      },
-    });
+    // const response = await fetch(deleteUrl, {
+    //   method: "DELETE",
+    //   headers: {
+    //     Host: `${bucketName}.s3.ir-thr-at1.arvanstorage.ir`,
+    //     Date: dateValue,
+    //     Authorization: `AWS ${accessKey}:${signature}`,
+    //   },
+    // });
 
     // Delete from database regardless of bucket response
     await images.findByIdAndDelete(fileId);

@@ -36,7 +36,6 @@ export default function LoginPage() {
   });
   const [signupVerificationCode, setSignupVerificationCode] = useState("");
   const [signupErrors, setSignupErrors] = useState<string>("");
-  const [loginErrors, setLoginErrors] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
   const [phoneError, setPhoneError] = useState<string>("");
   const [signupPasswordError, setSignupPasswordError] = useState<string>("");

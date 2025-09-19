@@ -1,18 +1,18 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: secret-asdfasdfasfd
+  name: secret-{name-of-the-deployment}
   namespace: mamad
 data:
-  STOREID: asdfasdfasdf
+  STOREID: {base64-encoded-storeid}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ghasem
+  name: {name-of-the-deployment}
   namespace: mamad
   labels:
-    app: ghasem
+    app: {name-of-the-deployment}
 spec:
   clusterIP: None
   internalTrafficPolicy: Cluster
@@ -25,29 +25,29 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: ghasem
+    app: {name-of-the-deployment}
   sessionAffinity: None
   type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ghasem
+  name: {name-of-the-deployment}
   namespace: mamad
   labels:
-    app: ghasem
+    app: {name-of-the-deployment}
 spec:
   replicas: 1 # Initial replicas, HPA will scale this
   selector:
     matchLabels:
-      app: ghasem
+      app: {name-of-the-deployment}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: ghasem
-        name: ghasem
+        app: {name-of-the-deployment}
+        name: {name-of-the-deployment}
     spec:
       affinity:
         nodeAffinity:
@@ -64,8 +64,8 @@ spec:
           operator: Equal
           value: cloud-container-g2
       containers:
-        - name: ghasem
-          image: wolfix1245/userwebsite:1.3
+        - name: {name-of-the-deployment}
+          image: wolfix1245/userwebsite:1.5
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -100,19 +100,20 @@ spec:
             - name: STOREID
               valueFrom:
                 secretKeyRef:
-                  name: secret-ghasem
+                  name: secret-{name-of-the-deployment}
                   key: STOREID
             - name: NEXT_PUBLIC_BASE_USERWEBSITE_PAYMENT_URL
-              value: "ghasem-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir"
+              # value: "{name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir"
+              value: "tomakdigitalagency.ir"
           resources:
             requests:
-              cpu: "100m"
-              memory: "200Mi"
-              ephemeral-storage: "300Mi"
+              cpu: "500m"
+              memory: "1000Mi"
+              ephemeral-storage: "500Mi"
             limits:
-              cpu: "200m"
-              memory: "400Mi"
-              ephemeral-storage: "600Mi"
+              cpu: "1000m"
+              memory: "2000Mi"
+              ephemeral-storage: "500Mi"
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
@@ -124,13 +125,13 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: ghasem-hpa
+  name: {name-of-the-deployment}-hpa
   namespace: mamad
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: ghasem
+    name: {name-of-the-deployment}
   minReplicas: 2
   maxReplicas: 10
   metrics:
@@ -140,46 +141,46 @@ spec:
         target:
           type: Utilization
           averageUtilization: 60
----
-apiVersion: autoscaling.k8s.io/v1
-kind: VerticalPodAutoscaler
-metadata:
-  name: ghasem-vpa
-  namespace: mamad
-spec:
-  targetRef:
-    apiVersion: "apps/v1"
-    kind: Deployment
-    name: ghasem
-  updatePolicy:
-    updateMode: "Auto" # Automatically adjusts pod resources
-  resourcePolicy:
-    containerPolicies:
-      - containerName: ghasem
-        minAllowed:
-          cpu: 100m
-          memory: 200Mi
-        maxAllowed:
-          cpu: 2
-          memory: 2Gi
+# ---
+# apiVersion: autoscaling.k8s.io/v1
+# kind: VerticalPodAutoscaler
+# metadata:
+#   name: {name-of-the-deployment}-vpa
+#   namespace: mamad
+# spec:
+#   targetRef:
+#     apiVersion: "apps/v1"
+#     kind: Deployment
+#     name: {name-of-the-deployment}
+#   updatePolicy:
+#     updateMode: "Auto" # Automatically adjusts pod resources
+#   resourcePolicy:
+#     containerPolicies:
+#       - containerName: {name-of-the-deployment}
+#         minAllowed:
+#           cpu: 100m
+#           memory: 200Mi
+#         maxAllowed:
+#           cpu: 2
+#           memory: 2Gi
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ghasem-ingress
+  name: {name-of-the-deployment}-ingress
   namespace: mamad
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: ghasem-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
+    - host: {name-of-the-deployment}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: ghasem
+                name: {name-of-the-deployment}
                 port:
                   number: 80

@@ -18,7 +18,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
     Array<{ _id: string; name: string }>
   >([]);
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [settings, setSettings] = useState<ProductSettings>({

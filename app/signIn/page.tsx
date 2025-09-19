@@ -21,10 +21,10 @@ const SignInForm = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [errors, setErrors] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [setIsSuccess] = useState(false);
+  const [setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const [codeSent, setCodeSent] = useState(false);
+  const [setCodeSent] = useState(false);
   const [smsExpiresAt, setSmsExpiresAt] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
 
