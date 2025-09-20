@@ -142,6 +142,29 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const completedCount = progressItems.filter(item => item.completed).length;
   const progressPercentage = (completedCount / progressItems.length) * 100;
 
+  const handleRedirectToSite = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    
+    try {
+      const response = await fetch("/api/auth/generate-redirect-token", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+      
+      if (response.ok) {
+        const { redirectToken } = await response.json();
+        const redirectUrl = `${process.env.NEXT_PUBLIC_COMPLEX_URL}?token=${redirectToken}`;
+        window.open(redirectUrl, "_blank");
+      }
+    } catch (error) {
+      console.error("Error generating redirect token:", error);
+    }
+  };
+
   return (
     <>
       <div
@@ -237,10 +260,9 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
             </div>
             
             <div className="mt-8 pt-8 border-t border-gray-200">
-              <Link
-                href={`${process.env.NEXT_PUBLIC_COMPLEX_URL}?storeId=${storeId}`}
-                target="_blank"
-                className="flex items-center justify-between p-4 bg-gradient-to-r from-[#0077b6] to-blue-400 text-white rounded-xl hover:shadow-lg transition-all duration-200"
+              <button
+                onClick={handleRedirectToSite}
+                className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-[#0077b6] to-blue-400 text-white rounded-xl hover:shadow-lg transition-all duration-200"
               >
                 <div>
                   <h3 className="font-bold mb-1">مشاهده سایت</h3>
@@ -249,7 +271,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M14 3V5H17.59L7.76 14.83L9.17 16.24L19 6.41V10H21V3H14Z" />
                 </svg>
-              </Link>
+              </button>
             </div>
           </div>
         </div>

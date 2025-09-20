@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
 
   try {
     await connect();
-    console.log("Connected to DB");
 
     // Check if user already exists
     const existingUser = await User.findOne({ phoneNumber });
@@ -23,13 +22,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("Starting deployment creation...");
-
     const createNewDeployment = await createDeployment({
       namespace: process.env.NAMESPACE || "mamad",
       storeId,
     });
-    console.log("Deployment created:", createNewDeployment);
 
     const DeployedUrl = createNewDeployment.config?.host;
     // const DeployedUrl = `http://localhost:3002/`;
@@ -37,13 +33,10 @@ export async function POST(request: NextRequest) {
 
     // const DiskUrl = `${process.env.VPS_URL}/${storeId}`
 
-    console.log("Starting folder creation...");
     // await initStore(storeId);
 
-    console.log("Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log("Creating new user...");
     const newUser = new User({
       phoneNumber,
       password: hashedPassword,
@@ -55,7 +48,6 @@ export async function POST(request: NextRequest) {
     });
 
     await newUser.save();
-    console.log("User saved to DB");
 
     const token = jwt.sign(
       {
@@ -68,7 +60,6 @@ export async function POST(request: NextRequest) {
       { expiresIn: "10000h" }
     );
 
-    console.log("Signup successful");
     return NextResponse.json(
       {
         message: "User created successfully",
