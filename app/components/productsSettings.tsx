@@ -242,7 +242,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
   // This modal displays the list of added properties
   const PropertiesModal = () => (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center mt-5 z-50"
       dir="rtl"
     >
       <div className="bg-white/50 backdrop-blur-sm border border-[#0077b6] p-6 rounded-xl w-96 max-h-[80vh] overflow-y-auto">
@@ -430,7 +430,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br py-8">
+    <div className="min-h-screen bg-gradient-to-br py-8 mt-8">
       <div className="max-w-7xl mx-auto px-4">
         <div className="bg-white rounded-2xl p-4" dir="rtl">
           {/* Header */}
