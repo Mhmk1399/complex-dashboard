@@ -67,7 +67,7 @@ export const InformationData: React.FC = () => {
             social: userInfo.social || formData.social,
           });
         }
-      } catch (error) {
+      } catch {
         console.log("No existing data found");
       }
     };
@@ -402,7 +402,7 @@ export const InformationData: React.FC = () => {
             ...formData,
             basic: {
               ...formData.basic,
-              logo: image,
+              logo: `${process.env.NEXT_PUBLIC_MAMAD_URL}${image.fileUrl}`,
             },
           });
           setIsImageSelectorOpen(false);

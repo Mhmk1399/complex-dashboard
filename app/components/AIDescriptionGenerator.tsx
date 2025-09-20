@@ -7,7 +7,7 @@ interface ProductData {
   category?: string;
   features?: string[];
   colors?: string[];
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   targetAudience?: string;
   tone?: string;
 }

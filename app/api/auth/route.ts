@@ -4,10 +4,10 @@ import User from "@/models/users";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { createDeployment } from "@/utilities/createNewDeployment";
-import { initStore } from "@/utilities/createFolderDisk";
+
 
 export async function POST(request: NextRequest) {
-  console.log("Signup API hit");
+  
   const { phoneNumber, password, title, storeId } = await request.json();
 
   try {
@@ -25,13 +25,8 @@ export async function POST(request: NextRequest) {
 
     console.log("Starting deployment creation...");
 
-    // IMPORTANT: Don't manually set replicas if you use HPA to auto-scale.
-    // You can omit replicas here or set it to your HPA minReplicas (e.g., 2).
     const createNewDeployment = await createDeployment({
-      name: `${title}-${storeId}`,                  // deployment name
-      image: process.env.IMAGE_NAME || "",          // should be something like "wolfix1245/fastapi:1.1"
-      // replicas: Number(process.env.REPLICAS) || 2, // optional, can omit for HPA auto-scaling
-      namespace: process.env.NAMESPACE || "mamad",  // your k8s namespace
+      namespace: process.env.NAMESPACE || "mamad",
       storeId,
     });
     console.log("Deployment created:", createNewDeployment);

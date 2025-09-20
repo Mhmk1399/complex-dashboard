@@ -18,7 +18,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
     Array<{ _id: string; name: string }>
   >([]);
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [settings, setSettings] = useState<ProductSettings>({
@@ -70,8 +70,8 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
         });
         const data = await response.json();
         setCategories(data);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        console.log("Error fetching categories");
         toast.error("خطا در دریافت دسته‌بندی‌ها");
       }
     };
@@ -140,19 +140,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
     }
   };
 
-  const handleImageChange = (index: number, field: string, value: string) => {
-    setSettings((prev) => {
-      const newImages = [...prev.blocks.images];
-      newImages[index] = { ...newImages[index], [field]: value };
-      return {
-        ...prev,
-        blocks: {
-          ...prev.blocks,
-          images: newImages,
-        },
-      };
-    });
-  };
+
   // add property
   const addProperty = () => {
     const propertyErrors: { [key: string]: string } = {};
@@ -498,8 +486,8 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                       blocks: { 
                         ...prev.blocks, 
                         video: {
-                          ...prev.blocks.video,
-                          videoSrc: e.target.value
+                          videoSrc: e.target.value,
+                          videoAlt: prev.blocks.video?.videoAlt || ""
                         }
                       }
                     }));
@@ -517,7 +505,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                       blocks: { 
                         ...prev.blocks, 
                         video: {
-                          ...prev.blocks.video,
+                          videoSrc: prev.blocks.video?.videoSrc || "",
                           videoAlt: e.target.value
                         }
                       }
@@ -566,7 +554,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                       properties: settings.blocks.properties.reduce((acc, prop) => {
                         acc[prop.name] = prop.value;
                         return acc;
-                      }, {} as Record<string, any>)
+                      }, {} as Record<string, unknown>)
                     }}
                     onDescriptionGenerated={(description) => {
                       handleChange("blocks", "description", description);

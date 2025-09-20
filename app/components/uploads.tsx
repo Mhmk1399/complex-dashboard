@@ -16,7 +16,7 @@ export default function UploadPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [showImageTips, setShowImageTips] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState<
+  const [, setUploadStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
   const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
@@ -91,7 +91,7 @@ export default function UploadPage() {
             fileId
           });
         }
-      } catch (error) {
+      } catch {
         results.push({
           success: false,
           url: "",
