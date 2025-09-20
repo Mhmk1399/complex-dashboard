@@ -21,24 +21,45 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: NextRequest) {
-
-
     try {
         await connect();
-         const token = request.headers.get("Authorization")?.split(" ")[1]
-                if (!token)
-                    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-        
-                const decodedToken = jwt.decode(token) as CustomJwtPayload
-                if (!decodedToken)
-                    return NextResponse.json({ error: "Invalid token" }, { status: 401 })
-        
-                const storeId = decodedToken.storeId
-                if (!storeId)
-                    return NextResponse.json({ error: "Invalid token" }, { status: 401 })
-        
-        const collections = await Collections.find({storeId});
-        return NextResponse.json({ collections }, { status: 200 });
+        const token = request.headers.get("Authorization")?.split(" ")[1]
+        if (!token)
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+        const decodedToken = jwt.decode(token) as CustomJwtPayload
+        if (!decodedToken)
+            return NextResponse.json({ error: "Invalid token" }, { status: 401 })
+
+        const storeId = decodedToken.storeId
+        if (!storeId)
+            return NextResponse.json({ error: "Invalid token" }, { status: 401 })
+
+        // Get pagination parameters
+        const { searchParams } = new URL(request.url);
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '5');
+        const skip = (page - 1) * limit;
+
+        // Get total count
+        const totalCollections = await Collections.countDocuments({ storeId });
+        const totalPages = Math.ceil(totalCollections / limit);
+
+        // Get paginated collections
+        const collections = await Collections.find({ storeId })
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        const pagination = {
+            totalCollections,
+            totalPages,
+            currentPage: page,
+            hasNext: page < totalPages,
+            hasPrev: page > 1
+        };
+
+        return NextResponse.json({ collections, pagination }, { status: 200 });
     } catch (error) {
         console.log("Error fetching collections:", error);
         return NextResponse.json({ message: "Error fetching collections" }, { status: 500 });

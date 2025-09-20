@@ -5,7 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Tooltip } from "react-tooltip"; // Add this import
 import ImageSelectorModal from "./ImageSelectorModal";
-import { ProductSettings } from "@/types/type";
+import { ProductSettings, ImageFile } from "@/types/type";
 import { AIDescriptionGenerator } from "./AIDescriptionGenerator";
 
 
@@ -18,7 +18,6 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
     Array<{ _id: string; name: string }>
   >([]);
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
-  const [currentImageIndex] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [settings, setSettings] = useState<ProductSettings>({
@@ -44,10 +43,15 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
     },
   });
 
-  const handleImageSelect = (image: { fileUrl: string }, index: number) => {
+  const handleImageSelect = (image: ImageFile) => {
+    console.log('Selected image:', image);
     setSettings((prev) => {
-      const newImages = [...prev.blocks.images];
-      newImages[index] = { imageSrc: image.fileUrl, imageAlt: "" };
+      if (prev.blocks.images.length >= 6) return prev;
+      const newImages = [...prev.blocks.images, { 
+        imageSrc: image.fileUrl, 
+        imageAlt: image.fileName || "Product image" 
+      }];
+      console.log('New images array:', newImages);
       return {
         ...prev,
         blocks: {
@@ -57,7 +61,16 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
       };
     });
     clearError("images");
-    setIsImageSelectorOpen(false);
+  };
+
+  const removeImage = (index: number) => {
+    setSettings((prev) => ({
+      ...prev,
+      blocks: {
+        ...prev.blocks,
+        images: prev.blocks.images.filter((_, i) => i !== index),
+      },
+    }));
   };
 
   useEffect(() => {
@@ -450,15 +463,20 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                 <label className="block mb-4 text-[#0077b6] font-bold text-xl">
                   تصاویر محصول (حداکثر 6 تصویر) *
                 </label>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mb-4">
                   <button
                     onClick={() => {
                       setIsImageSelectorOpen(true);
-                      clearError("image");
+                      clearError("images");
                     }}
-                    className="bg-white text-[#0077b6] border text-nowrap border-blue-200 px-4 py-2 rounded-xl"
+                    disabled={settings.blocks.images.length >= 6}
+                    className={`border text-nowrap px-4 py-2 rounded-xl ${
+                      settings.blocks.images.length >= 6
+                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        : "bg-white text-[#0077b6] border-blue-200"
+                    }`}
                   >
-                    انتخاب تصویر
+                    انتخاب تصویر ({settings.blocks.images.length}/6)
                   </button>
                   <button
                     onClick={() => setSelectedMenu("addFile")}
@@ -467,13 +485,50 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                     آپلود تصویر
                   </button>
                 </div>
+                
+                {/* Display Selected Images */}
+                <div className="mb-4">
+                  <p className="text-sm text-gray-600 mb-2">تعداد تصاویر انتخاب شده: {settings.blocks.images.length}</p>
+                  {settings.blocks.images.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                      {settings.blocks.images.map((image, index) => {
+                        console.log('Rendering image:', image.imageSrc);
+                        return (
+                          <div key={index} className="relative group">
+                            <img
+                              src={image.imageSrc}
+                              alt={`Product ${index + 1}`}
+                              className="w-full h-24 object-cover rounded-lg border-2 border-blue-200"
+                              onLoad={() => console.log('Image loaded successfully:', image.imageSrc)}
+                              onError={(e) => {
+                                console.log('Image failed to load:', image.imageSrc);
+                                e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                e.currentTarget.style.display = 'flex';
+                                e.currentTarget.style.alignItems = 'center';
+                                e.currentTarget.style.justifyContent = 'center';
+                                e.currentTarget.innerHTML = 'خطا در بارگیری';
+                              }}
+                            />
+                            <button
+                              onClick={() => removeImage(index)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+                
                 {errors.images && (
                   <p className="text-red-500 text-sm mt-2">{errors.images}</p>
                 )}
               </div>
 
               {/* Video Section */}
-              <div className="space-y-3">
+              {/* <div className="space-y-3">
                 <label className="block mb-2 font-bold text-[#0077b6]">
                   ویدیو محصول (اختیاری)
                 </label>
@@ -515,7 +570,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                   placeholder="متن جایگزین ویدیو"
                   dir="rtl"
                 />
-              </div>
+              </div> */}
             </div>
 
             {/* Basic Info Section */}
@@ -915,7 +970,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
       <ImageSelectorModal
         isOpen={isImageSelectorOpen}
         onClose={() => setIsImageSelectorOpen(false)}
-        onSelectImage={(image) => handleImageSelect(image, currentImageIndex)}
+        onSelectImage={handleImageSelect}
       />
 
       <ToastContainer rtl={true} position="top-center" autoClose={3000} />

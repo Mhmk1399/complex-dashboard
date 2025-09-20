@@ -7,13 +7,21 @@ import { FiImage, FiX, FiCheck } from "react-icons/fi";
 import { FaSpinner } from "react-icons/fa";
 import { ImageFile, ImageSelectorModalProps } from "@/types/type";
 
+interface ImageResponse {
+  id: string;
+  filename: string;
+  url: string;
+  uploadedAt: string;
+  size: number;
+}
+
 export default function ImageSelectorModal({
   isOpen,
   onClose,
   onSelectImage,
 }: ImageSelectorModalProps) {
   const [images, setImages] = useState<ImageFile[]>([]);
-  const [selectedImage, setSelectedImage] = useState<ImageFile | null>(null);
+  const [selectedImages, setSelectedImages] = useState<ImageFile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -23,13 +31,27 @@ export default function ImageSelectorModal({
     try {
       const token = localStorage.getItem('token');
       const response = await fetch("/api/upload", {
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch images");
+      }
+
       const data = await response.json();
-      console.log("Fetched images:", data);
-      setImages(data.images.images || []);
+      const imageUrls = data.images.map((image: ImageResponse) => ({
+        _id: image.id,
+        fileName: image.filename,
+        storeId: image.id,
+        fileUrl: image.url,
+        fileSize: image.size,
+        fileType: 'image'
+      }));
+
+      setImages(imageUrls);
     } catch (error) {
       console.error("Error fetching images:", error);
       setImages([]);
@@ -42,20 +64,28 @@ export default function ImageSelectorModal({
   useEffect(() => {
     if (isOpen) {
       fetchImages();
-      setSelectedImage(null);
+      setSelectedImages([]);
       setSearchTerm("");
     }
   }, [isOpen]);
 
   // Handle image selection
   const handleImageSelect = (image: ImageFile) => {
-    setSelectedImage(image);
+    setSelectedImages(prev => {
+      const isSelected = prev.some(img => img._id === image._id);
+      if (isSelected) {
+        return prev.filter(img => img._id !== image._id);
+      } else if (prev.length < 6) {
+        return [...prev, image];
+      }
+      return prev;
+    });
   };
 
   // Confirm image selection
   const confirmSelection = () => {
-    if (selectedImage) {
-      onSelectImage(selectedImage);
+    if (selectedImages.length > 0) {
+      selectedImages.forEach(image => onSelectImage(image));
       onClose();
     }
   };
@@ -175,36 +205,46 @@ export default function ImageSelectorModal({
               </div>
             ) : (
               /* Images Grid */
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 {filteredImages.map((image, index) => (
                   <motion.div
                     key={image._id}
                     className={`relative cursor-pointer rounded-xl overflow-hidden group transition-all duration-300 ${
-                      selectedImage?._id === image._id
+                      selectedImages.some(img => img._id === image._id)
                         ? "ring-4 ring-blue-500 ring-offset-2 shadow-xl scale-105"
                         : "hover:shadow-lg hover:scale-102"
+                    } ${
+                      selectedImages.length >= 6 && !selectedImages.some(img => img._id === image._id)
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
                     }`}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.05 }}
-                    onClick={() => handleImageSelect(image)}
+                    onClick={() => {
+                      if (selectedImages.length < 6 || selectedImages.some(img => img._id === image._id)) {
+                        handleImageSelect(image);
+                      }
+                    }}
                     whileHover={{ y: -2 }}
                   >
                     {/* Image Container */}
                     <div className="relative aspect-square bg-gray-100">
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_MAMAD_URL}${image.fileUrl}`}
+                      <img
+                        src={image.fileUrl}
                         alt={image.fileName}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        onError={(e) => {
+                          console.log('Failed to load image:', image.fileUrl);
+                          e.currentTarget.style.display = 'none';
+                        }}
                       />
 
                       {/* Overlay */}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
 
                       {/* Selection Indicator */}
-                      {selectedImage?._id === image._id && (
+                      {selectedImages.some(img => img._id === image._id) && (
                         <motion.div
                           className="absolute top-2 right-2 bg-blue-500 text-white p-2 rounded-full shadow-lg"
                           initial={{ scale: 0 }}
@@ -213,6 +253,13 @@ export default function ImageSelectorModal({
                         >
                           <FiCheck className="w-4 h-4" />
                         </motion.div>
+                      )}
+                      
+                      {/* Selection Count */}
+                      {selectedImages.some(img => img._id === image._id) && (
+                        <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                          {selectedImages.findIndex(img => img._id === image._id) + 1}
+                        </div>
                       )}
                     </div>
 
@@ -234,29 +281,35 @@ export default function ImageSelectorModal({
           {/* Footer Actions - Fixed at Bottom */}
           <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
             <div className="text-sm text-gray-600 flex-1 min-w-0">
-              {selectedImage ? (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 relative rounded-lg overflow-hidden flex-shrink-0 shadow-md">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_MAMAD_URL}${selectedImage.fileUrl}`}
-                      alt={selectedImage.fileName}
-                      fill
-                      className="object-cover"
-                    />
+              {selectedImages.length > 0 ? (
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {selectedImages.slice(0, 3).map((image, index) => (
+                      <div key={image._id} className="w-8 h-8 relative rounded-lg overflow-hidden border-2 border-white shadow-md">
+                        <img
+                          src={image.fileUrl}
+                          alt={image.fileName}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                    {selectedImages.length > 3 && (
+                      <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-xs font-medium">
+                        +{selectedImages.length - 3}
+                      </div>
+                    )}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-gray-800 truncate">
-                      {selectedImage.fileName}
-                    </p>
-                    <p className="text-gray-500 text-xs">
-                      {formatFileSize(selectedImage.fileSize)}
-                    </p>
-                  </div>
+                  <span className="font-medium text-gray-800">
+                    {selectedImages.length} تصویر انتخاب شده
+                  </span>
+                  {selectedImages.length >= 6 && (
+                    <span className="text-orange-500 text-xs">(حداکثر)</span>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-gray-500">
                   <FiImage className="w-5 h-5" />
-                  <span>تصویر مورد نظر خود را انتخاب کنید</span>
+                  <span>تصاویر مورد نظر خود را انتخاب کنید (حداکثر 6)</span>
                 </div>
               )}
             </div>
@@ -270,14 +323,14 @@ export default function ImageSelectorModal({
               </button>
               <button
                 onClick={confirmSelection}
-                disabled={!selectedImage}
+                disabled={selectedImages.length === 0}
                 className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-300 ${
-                  selectedImage
+                  selectedImages.length > 0
                     ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >
-                {selectedImage ? "تایید انتخاب" : "انتخاب کنید"}
+                {selectedImages.length > 0 ? `تایید انتخاب (${selectedImages.length})` : "انتخاب کنید"}
               </button>
             </div>
           </div>

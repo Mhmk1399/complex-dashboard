@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TrashIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PencilIcon, PlusIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import EditModal from "./editModal";
 import Modal from "./Modal";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,13 +8,26 @@ import { InventoryProps, Product } from "@/types/type";
 
 export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<{_id: string, name: string}[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
-    null
-  );
+  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(null);
+  
+  // Filter states
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+  const [pagination, setPagination] = useState({
+    totalPages: 0,
+    totalProducts: 0,
+    hasNextPage: false,
+    hasPrevPage: false
+  });
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
@@ -68,7 +81,14 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
   };
 
   const fetchProducts = () => {
-    return fetch("/api/products", {
+    const params = new URLSearchParams({
+      page: currentPage.toString(),
+      limit: itemsPerPage.toString(),
+      ...(categoryFilter && { category: categoryFilter }),
+      ...(statusFilter && { status: statusFilter })
+    });
+
+    return fetch(`/api/products?${params}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -78,8 +98,8 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
       .then((result) => result.json())
       .then((data) => {
         setProducts(data.products);
+        setPagination(data.pagination);
         setIsLoading(false);
-        console.log(data);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -87,9 +107,36 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
       });
   };
 
+  const fetchCategories = () => {
+    fetch("/api/category", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((result) => result.json())
+      .then((data) => setCategories(data))
+      .catch((error) => console.error("Error:", error));
+  };
+
+  const clearFilters = () => {
+    setCategoryFilter("");
+    setStatusFilter("");
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [currentPage, categoryFilter, statusFilter]);
+
+  // Pagination logic
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
+  const indexOfLastItem = Math.min(currentPage * itemsPerPage, pagination.totalProducts);
 
   if (isLoading) {
     return (
@@ -158,15 +205,15 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
 
   return (
     <div
-      className="px-4 py-8 min-h-screen "
+      className="px-2 md:px-4 py-4 md:py-8 min-h-screen mt-12"
       dir="rtl"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="bg-white rounded-2xl shadow-xl mb-6 p-6">
-          <div className="flex justify-between items-center">
+        <div className="bg-white rounded-2xl shadow-xl mb-4 md:mb-6 p-3 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <div>
-              <h2 className="md:text-3xl font-bold bg-gradient-to-r from-[#0077b6] to-blue-400 bg-clip-text text-transparent">
+              <h2 className="text-lg md:text-3xl font-bold bg-gradient-to-r from-[#0077b6] to-blue-400 bg-clip-text text-transparent">
                 مدیریت موجودی محصولات
               </h2>
               <p className="text-gray-500 hidden md:block mt-2">
@@ -175,28 +222,69 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
             </div>
             <button
               onClick={() => setSelectedMenu("addProduct")}
-              className="bg-gradient-to-r from-[#0077b6] to-blue-600 text-sm md:text-lg hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg"
+              className="bg-gradient-to-r from-[#0077b6] to-blue-600 text-xs md:text-lg hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 md:py-3 px-3 md:px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg w-fit"
             >
-              افزودن محصول جدید
+              <PlusIcon className="h-4 w-4 md:h-5 md:w-5" />
+              <span className="whitespace-nowrap">افزودن محصول</span>
             </button>
           </div>
         </div>
 
         {/* Products Table */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Filters Section */}
+          <div className="p-3 md:p-6 border-b">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
+              <div className="flex items-center gap-2">
+                <FunnelIcon className="h-4 w-4 md:h-5 md:w-5 text-[#0077b6]" />
+                <span className="font-medium text-[#0077b6] text-sm md:text-base">فیلترها:</span>
+              </div>
+              
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#0077b6] focus:border-transparent"
+              >
+                <option value="">همه دسته‌بندی‌ها</option>
+                {categories.map(cat => (
+                  <option key={cat._id} value={cat._id}>{cat.name}</option>
+                ))}
+              </select>
+
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#0077b6] focus:border-transparent"
+              >
+                <option value="">همه وضعیت‌ها</option>
+                <option value="available">موجود</option>
+                <option value="unavailable">ناموجود</option>
+              </select>
+
+
+
+              <button
+                onClick={clearFilters}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                پاک کردن فیلترها
+              </button>
+            </div>
+          </div>
+
           {/* Table Header with Stats */}
-          <div className="bg-gradient-to-r from-[#0077b6] to-blue-600 p-6">
-            <div className="flex justify-between items-center text-white">
+          <div className="bg-gradient-to-r from-[#0077b6] to-blue-600 p-3 md:p-6">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center text-white gap-3">
               <div>
-                <h3 className="md:text-xl font-bold">لیست محصولات</h3>
-                <p className="text-blue-100 text-sm mt-1">
-                  مجموع {products.length} محصول
+                <h3 className="text-base md:text-xl font-bold">لیست محصولات</h3>
+                <p className="text-blue-100 text-xs md:text-sm mt-1">
+                  {pagination.totalProducts} محصول
                 </p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="bg-white/20 flex items-center justify-center backdrop-blur-sm rounded-lg px-4 py-2">
-                  <span className="text-sm">محصولات موجود: </span>
-                  <span className="font-bold">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <div className="bg-white/20 flex items-center justify-center backdrop-blur-sm rounded-lg px-2 md:px-3 py-1 md:py-2">
+                  <span className="text-xs md:text-sm">موجود: </span>
+                  <span className="font-bold mr-1">
                     {
                       products.filter(
                         (product) => product.status === "available"
@@ -204,9 +292,9 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                     }
                   </span>
                 </div>
-                <div className="bg-white/20 flex items-center justify-center backdrop-blur-sm rounded-lg px-4 py-2">
-                  <span className="text-sm">کل موجودی: </span>
-                  <span className="font-bold">
+                <div className="bg-white/20 flex items-center justify-center backdrop-blur-sm rounded-lg px-2 md:px-3 py-1 md:py-2">
+                  <span className="text-xs md:text-sm">کل: </span>
+                  <span className="font-bold mr-1">
                     {products.reduce(
                       (total, product) => total + quantity(product),
                       0
@@ -242,100 +330,62 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {products.map((product, index) => (
-                  <tr
-                    key={product._id}
-                    className={`hover:bg-blue-50 transition-all duration-200 ${
-                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    }`}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center justify-center">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 bg-gradient-to-br from-[#0077b6] to-blue-400 rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">
-                              {product.name.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">
-                              {product.name}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {product.description.substring(0, 30)}...
-                            </div>
+                  <tr key={product._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-2 md:px-6 py-3 md:py-4">
+                      <div className="flex items-center">
+                        <div className="h-8 w-8 md:h-12 md:w-12 flex-shrink-0">
+                          <img
+                            className="h-8 w-8 md:h-12 md:w-12 rounded-lg object-cover"
+                            src={product.images?.[0]?.imageSrc || '/placeholder.jpg'}
+                            alt={product.name}
+                          />
+                        </div>
+                        <div className="mr-2 md:mr-4">
+                          <div className="text-xs md:text-sm font-medium text-gray-900 truncate max-w-[100px] md:max-w-none">
+                            {product.name}
                           </div>
                         </div>
                       </div>
                     </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center justify-center">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-                          {product?.category?.name}
-                        </span>
-                      </div>
+                    <td className="px-6 py-4 text-center">
+                      <span className="text-sm text-gray-900">
+                        {product.category?.name || 'بدون دسته‌بندی'}
+                      </span>
                     </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-center">
-                        <div className="text-sm font-medium text-gray-900">
-                          {product.price} تومان
-                        </div>
-                        {product.discount !== "0" && (
-                          <div className="text-xs text-green-600">
-                            -{product.discount}% تخفیف
-                          </div>
-                        )}
-                      </div>
+                    <td className="px-6 py-4 text-center">
+                      <span className="text-sm font-medium text-gray-900">
+                        {parseInt(product.price).toLocaleString()} تومان
+                      </span>
                     </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center justify-center">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                            product.status === "available"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
-                          {product.status === "available" ? "موجود" : "ناموجود"}
-                        </span>
-                      </div>
+                    <td className="px-6 py-4 text-center">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        product.status === 'available'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {product.status === 'available' ? 'موجود' : 'ناموجود'}
+                      </span>
                     </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center justify-center">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                            quantity(product) > 10
-                              ? "bg-green-100 text-green-800"
-                              : quantity(product) > 0
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
-                          {quantity(product)} عدد
-                        </span>
-                      </div>
+                    <td className="px-6 py-4 text-center">
+                      <span className="text-sm font-medium text-gray-900">
+                        {quantity(product)}
+                      </span>
                     </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2 justify-center">
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex justify-center gap-2">
                         <button
-                          title="ویرایش"
                           onClick={() => handleEdit(product)}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition-colors duration-200"
+                          className="text-blue-600 hover:text-blue-900 p-1"
                         >
-                          <PencilIcon className="h-4 w-4" />
+                          <PencilIcon className="h-5 w-5" />
                         </button>
                         <button
-                          title="حذف"
                           onClick={() => openModal(product._id)}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
+                          className="text-red-600 hover:text-red-900 p-1"
                         >
-                          <TrashIcon className="h-4 w-4" />
+                          <TrashIcon className="h-5 w-5" />
                         </button>
                       </div>
                     </td>
@@ -345,163 +395,77 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
             </table>
           </div>
 
-          {/* Table Footer */}
-          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <div>نمایش {products.length} محصول</div>
-              <div className="flex items-center gap-4">
-                <span>
-                  آخرین بروزرسانی: {new Date().toLocaleDateString("fa-IR")}
-                </span>
+          {/* Pagination */}
+          {pagination.totalPages > 1 && (
+            <div className="px-3 md:px-6 py-3 md:py-4 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div className="text-xs md:text-sm text-gray-700 text-center md:text-right">
+                نمایش {indexOfFirstItem} تا {indexOfLastItem} از {pagination.totalProducts} محصول
+              </div>
+              <div className="flex gap-1 md:gap-2 justify-center md:justify-end overflow-x-auto">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={!pagination.hasPrevPage}
+                  className="px-2 md:px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-xs md:text-sm whitespace-nowrap"
+                >
+                  قبلی
+                </button>
+                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => {
+                  let page;
+                  if (pagination.totalPages <= 5) {
+                    page = i + 1;
+                  } else if (currentPage <= 3) {
+                    page = i + 1;
+                  } else if (currentPage >= pagination.totalPages - 2) {
+                    page = pagination.totalPages - 4 + i;
+                  } else {
+                    page = currentPage - 2 + i;
+                  }
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-2 md:px-3 py-1 border rounded text-xs md:text-sm ${
+                        currentPage === page
+                          ? 'bg-[#0077b6] text-white'
+                          : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+                  disabled={!pagination.hasNextPage}
+                  className="px-2 md:px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-xs md:text-sm whitespace-nowrap"
+                >
+                  بعدی
+                </button>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
-      
+        {/* Modals */}
+        {isEditModalOpen && selectedProduct && (
+          <EditModal
+            product={selectedProduct}
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onSave={fetchProducts}
+          />
+        )}
 
-        {/* Statistics Cards */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">کل محصولات</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {products.length}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="h-6 w-6 text-blue-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
+        {isModalOpen && (
+          <Modal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onConfirm={confirmDelete}
+          />
+        )}
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  محصولات موجود
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {
-                    products.filter((product) => product.status === "available")
-                      .length
-                  }
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="h-6 w-6 text-green-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  محصولات ناموجود
-                </p>
-                <p className="text-2xl font-bold text-red-600">
-                  {
-                    products.filter((product) => product.status !== "available")
-                      .length
-                  }
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="h-6 w-6 text-red-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">کل موجودی</p>
-                <p className="text-2xl font-bold text-purple-600">
-                  {products.reduce(
-                    (total, product) => total + quantity(product),
-                    0
-                  )}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="h-6 w-6 text-purple-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ToastContainer position="top-right" autoClose={3000} />
       </div>
-
-      {/* Modals */}
-      {isEditModalOpen && selectedProduct && (
-        <EditModal
-          product={selectedProduct}
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onSave={() => {
-            fetchProducts();
-          }}
-        />
-      )}
-
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onConfirm={confirmDelete}
-      />
-
-      <ToastContainer position="top-center" className="text-sm" rtl={true} />
     </div>
   );
 };
-
-export default Inventory;

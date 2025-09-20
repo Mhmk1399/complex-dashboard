@@ -57,6 +57,8 @@ export interface Product {
     code: string;
     quantity: string;
   }[];
+  createdAt: string;
+  updatedAt: string;
 }
 export interface InventoryProps {
   setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
