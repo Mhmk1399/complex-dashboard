@@ -5,7 +5,7 @@ import Form from "./form";
 import { ProductsSettings } from "./components/productsSettings";
 import { Inventory } from "./components/inventory";
 import { Collections } from "./components/collections";
-import { AddBlog } from "./components/addBlog";
+import  AddPostBlog  from "./components/addBlog";
 import { EditBlogs } from "./components/editBlogs";
 import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken";
@@ -300,7 +300,7 @@ export const Dashboard = () => {
       addProduct: <ProductsSettings setSelectedMenu={setSelectedMenu}/>,
       inventory: <Inventory setSelectedMenu={setSelectedMenu} />,
       collections: <Collections />,
-      addBlogs: <AddBlog />,
+      addBlogs: <AddPostBlog />,
       editBlogs: <EditBlogs />,
       orders: <Orders />,
       costumers: <Costumers />,

@@ -242,6 +242,9 @@ export interface Blog {
   content: string;
   description: string;
   seoTitle: string;
+  image: string;
+  secondImage:string;
+  tags:[string]
 }
 
 // --------------------------------- Edit File Type ---------------------------------

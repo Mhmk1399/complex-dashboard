@@ -10,7 +10,6 @@ import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
-import Heading from "@tiptap/extension-heading";
 import { motion } from "framer-motion";
 import { CustomEditor } from "@/types/editor";
 import Image from "@tiptap/extension-image";
@@ -217,13 +216,6 @@ export default function AddPostBlog() {
         paragraph: { HTMLAttributes: { dir: "auto" } },
         bulletList: false,
         orderedList: false,
-        heading: false,
-      }),
-      Heading.configure({
-        levels: [1, 2, 3, 4, 5, 6],
-        HTMLAttributes: {
-          dir: "auto",
-        },
       }),
       BulletList.configure({
         keepMarks: true,
@@ -255,7 +247,7 @@ export default function AddPostBlog() {
     ],
     editorProps: {
       attributes: {
-        class: "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&_h4]:text-lg [&_h4]:font-bold [&_h5]:text-base [&_h5]:font-bold [&_h6]:text-sm [&_h6]:font-bold",
+        class: "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl",
       },
     },
     onUpdate: ({ editor }: { editor: CustomEditor }) => {

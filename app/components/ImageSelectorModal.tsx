@@ -279,8 +279,8 @@ export default function ImageSelectorModal({
           </div>
 
           {/* Footer Actions - Fixed at Bottom */}
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-            <div className="text-sm text-gray-600 flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0 gap-4">
+            <div className="text-sm text-gray-600 w-full sm:flex-1 sm:min-w-0">
               {selectedImages.length > 0 ? (
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
@@ -314,7 +314,7 @@ export default function ImageSelectorModal({
               )}
             </div>
 
-            <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+            <div className="flex items-center justify-between gap-3 flex-shrink-0">
               <button
                 onClick={onClose}
                 className="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-medium"
