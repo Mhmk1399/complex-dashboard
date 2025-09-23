@@ -99,7 +99,7 @@ export const AddStory = () => {
   };
 
   const isFormValid = settings.title.trim() && settings.image;
-
+  
   return (
     <>
       <div

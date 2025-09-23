@@ -28,16 +28,9 @@ export async function POST(request: Request) {
     const existingUserInfo = await UserInfo.findOne({ storeId: decodedToken.storeId });
     
     if (existingUserInfo) {
-      const mergedData = {
-        basic: { ...existingUserInfo.basic, ...userInfoData.basic },
-        design: { ...existingUserInfo.design, ...userInfoData.design },
-        contact: { ...existingUserInfo.contact, ...userInfoData.contact },
-        social: { ...existingUserInfo.social, ...userInfoData.social },
-        storeId: decodedToken.storeId
-      };
       const updatedUserInfo = await UserInfo.findOneAndUpdate(
         { storeId: decodedToken.storeId },
-        mergedData,
+        userInfoData,
         { new: true }
       );
       return NextResponse.json(

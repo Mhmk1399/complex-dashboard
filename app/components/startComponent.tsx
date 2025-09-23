@@ -17,6 +17,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const [hasProducts, setHasProducts] = useState(false);
   const [hasBlogs, setHasBlogs] = useState(false);
   const [hasCollections, setHasCollections] = useState(false);
+  const [hasUserInfo, setHasUserInfo] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -61,6 +62,17 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
       if (collectionsRes.ok) {
         const data = await collectionsRes.json();
         setHasCollections(data.collections && data.collections.length > 0);
+      }
+      
+      const userInfoRes = await fetch("/api/userInfo", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (userInfoRes.ok) {
+        setHasUserInfo(true);
+      } else {
+        setHasUserInfo(false);
       }
     } catch (error) {
       console.error("Error checking progress:", error);
@@ -116,6 +128,13 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   }, [router]);
 
   const progressItems = [
+    {
+      id: 'userInfo',
+      title: 'اطلاعات فروشگاه',
+      description: 'تکمیل اطلاعات پایه فروشگاه',
+      completed: hasUserInfo,
+      action: () => setSelectedMenu('accountSettings')
+    },
     {
       id: 'products',
       title: 'محصولات',
@@ -208,8 +227,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="relative">
-              <div className="absolute right-6 top-0 bottom-0 w-0.5 bg-gray-200" />
-              
+              <div className="absolute right-6 top-0 bottom-0 w-0.5 bg-gray-200"/>
               {progressItems.map((item, index) => (
                 <motion.div
                   key={item.id}

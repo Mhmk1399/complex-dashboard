@@ -50,6 +50,7 @@ export const InformationData: React.FC = () => {
     },
   });
 
+
   useEffect(() => {
     const loadExistingData = async () => {
       try {
@@ -61,10 +62,25 @@ export const InformationData: React.FC = () => {
         if (response.ok) {
           const { userInfo } = await response.json();
           setFormData({
-            basic: userInfo.basic || formData.basic,
-            design: userInfo.design || formData.design,
-            contact: userInfo.contact || formData.contact,
-            social: userInfo.social || formData.social,
+            basic: userInfo.basic || {
+              storeName: "",
+              logo: "",
+              description: "",
+            },
+            design: userInfo.design || {
+              backgroundColor: "#ffffff",
+              font: "iranSans",
+            },
+            contact: userInfo.contact || {
+              phone: "",
+              email: "",
+              address: "",
+            },
+            social: userInfo.social || {
+              instagram: "",
+              telegram: "",
+              whatsapp: "",
+            },
           });
         }
       } catch {
@@ -168,7 +184,7 @@ export const InformationData: React.FC = () => {
               >
                 {formData.basic.logo ? (
                   <img
-                    src={formData.basic.logo}
+                    src={formData.basic.logo }
                     alt="Selected logo"
                     className="w-full h-full object-contain rounded-2xl"
                   />
@@ -227,6 +243,8 @@ export const InformationData: React.FC = () => {
                 { value: "iranSans", label: "ایران سنس" },
                 { value: "vazir", label: "وزیر" },
                 { value: "yekan", label: "یکان" },
+                { value: "rey", label: "ری" },
+                { value: "sahel", label: "ساحل" },
               ]}
               value={formData.design.font}
               onChange={(e) =>
@@ -398,11 +416,12 @@ export const InformationData: React.FC = () => {
         isOpen={isImageSelectorOpen}
         onClose={() => setIsImageSelectorOpen(false)}
         onSelectImage={(image) => {
+          const filename =  image.fileUrl;
           setFormData({
             ...formData,
             basic: {
               ...formData.basic,
-              logo: `${process.env.NEXT_PUBLIC_MAMAD_URL}${image.fileUrl}`,
+              logo: filename,
             },
           });
           setIsImageSelectorOpen(false);
@@ -421,7 +440,7 @@ const FloatingInput: React.FC<{
   prefix?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ label, icon, placeholder, type = "text", prefix }) => (
+}> = ({ label, icon, placeholder, type = "text", prefix, value, onChange }) => (
   <div className="relative group">
     <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
       {icon}
@@ -436,9 +455,11 @@ const FloatingInput: React.FC<{
       <input
         type={type}
         className={`w-full p-4 ${
-          prefix ? "pr-12" : ""
+          prefix ? "pr-12" :" "
         } bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300`}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
       />
     </div>
   </div>

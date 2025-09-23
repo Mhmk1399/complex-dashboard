@@ -389,9 +389,9 @@ const AddCategory = () => {
               exit={{ opacity: 0, scale: 0.75 }}
               className="fixed inset-4 z-50 overflow-auto"
             >
-              <div className="min-h-full flex items-center justify-center p-1">
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-auto">
-                  <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center rounded-t-2xl">
+              <div className="min-h-full flex items-center justify-center p-1 scrollbar-hide">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] scrollbar-hide overflow-auto">
+                  <div className="sticky z-50 top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center rounded-t-2xl">
                     <h3 className="text-xl font-bold text-gray-900">
                       ویرایش دسته‌بندی‌ها
                     </h3>
