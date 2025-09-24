@@ -5,7 +5,7 @@ interface DeploymentConfig {
 
 const ARVAN_API_BASE = 'https://napi.arvancloud.ir/caas/v2/zones/ir-thr-ba1';
 
-export async function createDeployment(config: DeploymentConfig): Promise<{
+export async function createIngress(config: DeploymentConfig): Promise<{
   message: string;
   config?: { host: string };
 }> {
