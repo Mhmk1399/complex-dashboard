@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiArrowLeft } from "react-icons/fi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import NetworkBackground from "../components/networkBg";
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -364,7 +365,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-100 via-teal-50 to-cyan-100 p-4 flex items-center justify-center" dir="rtl">
+    <div className="min-h-screen  flex items-center justify-center relative" dir="rtl">
+      <NetworkBackground />
       <div className="w-full max-w-md lg:max-w-4xl">
         {/* Mobile Header */}
         <div className="lg:hidden text-center mb-8">
@@ -381,10 +383,10 @@ export default function LoginPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="hidden lg:block relative w-full h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden"
+          className="hidden lg:block relative w-full h-[600px] bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden"
         >
           <motion.div
-            className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-br from-cyan-400 to-blue-500 z-10 flex items-center justify-center"
+            className="absolute top-0 right-0 w-1/2 h-full bg-blue-500/80 backdrop-blur-sm z-10 flex items-center justify-center"
             animate={{ x: isSignUp ? "-100%" : "0%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
@@ -725,7 +727,7 @@ export default function LoginPage() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-xl p-6"
+            className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-xl p-6"
           >
             {/* Mobile Toggle */}
             <div className="flex bg-gray-100 rounded-xl p-1 mb-6">

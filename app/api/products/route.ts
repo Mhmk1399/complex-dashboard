@@ -3,8 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 import Products from "@/models/products";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import category from "@/models/category";
+
 interface CustomJwtPayload extends JwtPayload {
   storeId?: string;
+}
+
+interface ProductFilterQuery {
+  storeId: string;
+  category?: string;
+  status?: string;
 }
 export async function POST(request: Request) {
   const productData = await request.json();
@@ -71,7 +78,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build filter query
-    const filterQuery: any = { storeId };
+    const filterQuery: ProductFilterQuery = { storeId };
     if (categoryFilter) {
       filterQuery.category = categoryFilter;
     }

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
@@ -13,7 +12,6 @@ interface StartComponentProps {
 const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const router = useRouter();
   const [userName, setUserName] = useState("کاربر");
-  const [storeId, setStoreId] = useState("");
   const [hasProducts, setHasProducts] = useState(false);
   const [hasBlogs, setHasBlogs] = useState(false);
   const [hasCollections, setHasCollections] = useState(false);
@@ -24,7 +22,6 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
     if (token) {
       const decodedToken = jwt.decode(token);
       if (decodedToken && typeof decodedToken === "object") {
-        setStoreId(decodedToken.storeId || "");
       }
     }
   }, []);

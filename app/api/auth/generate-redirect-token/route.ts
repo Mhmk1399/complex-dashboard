@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { sub: string; storeId: string; type: string; iat: number; exp: number; id:string; userId:string}
     
     // Generate short-lived redirect token (5 minutes)
     const redirectToken = jwt.sign(
@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ redirectToken });
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 }

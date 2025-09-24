@@ -27,6 +27,7 @@ const menuItems = [
 export const InformationData: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState("basic");
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   const [formData, setFormData] = useState({
     basic: {
@@ -49,6 +50,59 @@ export const InformationData: React.FC = () => {
       whatsapp: "",
     },
   });
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateInstagram = (username: string): boolean => {
+    const instagramRegex = /^[a-zA-Z0-9._]{1,30}$/;
+    return instagramRegex.test(username.replace('@', ''));
+  };
+
+  const validateTelegram = (username: string): boolean => {
+    const telegramRegex = /^[a-zA-Z0-9_]{5,32}$/;
+    return telegramRegex.test(username.replace('@', ''));
+  };
+
+  const validateWhatsApp = (phone: string): boolean => {
+    const whatsappRegex = /^\+?[1-9]\d{1,14}$/;
+    return whatsappRegex.test(phone.replace(/\s/g, ''));
+  };
+
+  const validateField = (field: string, value: string): string => {
+    if (!value) return '';
+    
+    switch (field) {
+      case 'email':
+        return validateEmail(value) ? '' : 'فرمت ایمیل صحیح نیست';
+      case 'instagram':
+        return validateInstagram(value) ? '' : 'نام کاربری اینستاگرام صحیح نیست';
+      case 'telegram':
+        return validateTelegram(value) ? '' : 'نام کاربری تلگرام صحیح نیست';
+      case 'whatsapp':
+        return validateWhatsApp(value) ? '' : 'شماره واتساپ صحیح نیست';
+      default:
+        return '';
+    }
+  };
+
+  const handleFieldChange = (section: string, field: string, value: string) => {
+    setFormData({
+      ...formData,
+      [section]: {
+        ...formData[section as keyof typeof formData],
+        [field]: value,
+      },
+    });
+
+    const error = validateField(field, value);
+    setErrors({
+      ...errors,
+      [`${section}.${field}`]: error,
+    });
+  };
 
 
   useEffect(() => {
@@ -286,12 +340,8 @@ export const InformationData: React.FC = () => {
                 placeholder="example@domain.com"
                 type="email"
                 value={formData.contact.email}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    contact: { ...formData.contact, email: e.target.value },
-                  })
-                }
+                error={errors['contact.email']}
+                onChange={(e) => handleFieldChange('contact', 'email', e.target.value)}
               />
             </div>
             <FloatingTextarea
@@ -324,12 +374,8 @@ export const InformationData: React.FC = () => {
               placeholder="@username"
               prefix="@"
               value={formData.social.instagram}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  social: { ...formData.social, instagram: e.target.value },
-                })
-              }
+              error={errors['social.instagram']}
+              onChange={(e) => handleFieldChange('social', 'instagram', e.target.value)}
             />
             <FloatingInput
               label="تلگرام"
@@ -337,12 +383,8 @@ export const InformationData: React.FC = () => {
               placeholder="@username"
               prefix="@"
               value={formData.social.telegram}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  social: { ...formData.social, telegram: e.target.value },
-                })
-              }
+              error={errors['social.telegram']}
+              onChange={(e) => handleFieldChange('social', 'telegram', e.target.value)}
             />
             <FloatingInput
               label="واتساپ"
@@ -350,12 +392,8 @@ export const InformationData: React.FC = () => {
               placeholder="+98xxxxxxxxxx"
               prefix="+98"
               value={formData.social.whatsapp}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  social: { ...formData.social, whatsapp: e.target.value },
-                })
-              }
+              error={errors['social.whatsapp']}
+              onChange={(e) => handleFieldChange('social', 'whatsapp', e.target.value)}
             />
           </motion.div>
         );
@@ -439,8 +477,9 @@ const FloatingInput: React.FC<{
   type?: string;
   prefix?: string;
   value?: string;
+  error?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ label, icon, placeholder, type = "text", prefix, value, onChange }) => (
+}> = ({ label, icon, placeholder, type = "text", prefix, value, error, onChange }) => (
   <div className="relative group">
     <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
       {icon}
@@ -456,12 +495,15 @@ const FloatingInput: React.FC<{
         type={type}
         className={`w-full p-4 ${
           prefix ? "pr-12" :" "
-        } bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300`}
+        } bg-gray-50 border ${error ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300`}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
       />
     </div>
+    {error && (
+      <p className="text-red-500 text-sm mt-1">{error}</p>
+    )}
   </div>
 );
 

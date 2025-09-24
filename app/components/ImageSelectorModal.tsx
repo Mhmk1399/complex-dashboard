@@ -230,9 +230,11 @@ export default function ImageSelectorModal({
                   >
                     {/* Image Container */}
                     <div className="relative aspect-square bg-gray-100">
-                      <img
+                      <Image
                         src={image.fileUrl}
                         alt={image.fileName}
+                        width={100}
+                        height={100}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                         onError={(e) => {
                           console.log('Failed to load image:', image.fileUrl);
@@ -284,7 +286,7 @@ export default function ImageSelectorModal({
               {selectedImages.length > 0 ? (
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
-                    {selectedImages.slice(0, 3).map((image, index) => (
+                    {selectedImages.slice(0, 3).map((image) => (
                       <div key={image._id} className="w-8 h-8 relative rounded-lg overflow-hidden border-2 border-white shadow-md">
                         <img
                           src={image.fileUrl}

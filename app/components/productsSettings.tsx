@@ -7,17 +7,96 @@ import { Tooltip } from "react-tooltip"; // Add this import
 import ImageSelectorModal from "./ImageSelectorModal";
 import { ProductSettings, ImageFile } from "@/types/type";
 import { AIDescriptionGenerator } from "./AIDescriptionGenerator";
+import UploadPage from "./uploads";
 
 
 interface StartComponentProps {
   setSelectedMenu: (menu: string) => void;
 }
 
-export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
+interface CategoryFormProps {
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const CategoryForm: React.FC<CategoryFormProps> = ({ onClose, onSuccess }) => {
+  const [categoryName, setCategoryName] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!categoryName.trim()) {
+      toast.error("نام دستهبندی الزامی است");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/category", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          name: categoryName,
+          children: [],
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("دستهبندی با موفقیت ایجاد شد");
+        onSuccess();
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || "خطا در ایجاد دستهبندی");
+      }
+    } catch {
+      toast.error("خطا در ایجاد دستهبندی");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block mb-2 font-medium text-gray-700">نام دسته بندی</label>
+        <input
+          type="text"
+          value={categoryName}
+          onChange={(e) => setCategoryName(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all"
+          placeholder="نام دسته بندی را وارد کنید"
+          required
+        />
+      </div>
+      <div className="flex gap-3 pt-4">
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          انصراف
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex-1 px-4 py-2 bg-[#0077b6] hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-xl font-medium transition-colors"
+        >
+          {loading ? "در حال ذخیره..." : "ذخیره"}
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
   const [categories, setCategories] = useState<
     Array<{ _id: string; name: string }>
   >([]);
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [settings, setSettings] = useState<ProductSettings>({
@@ -73,22 +152,22 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
     }));
   };
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/category", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await response.json();
-        setCategories(data);
-      } catch {
-        console.log("Error fetching categories");
-        toast.error("خطا در دریافت دستهبندیها");
-      }
-    };
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/category", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await response.json();
+      setCategories(data);
+    } catch {
+      console.log("Error fetching categories");
+      toast.error("خطا در دریافت دستهبندیها");
+    }
+  };
 
+  useEffect(() => {
     fetchCategories();
   }, []);
   const [newProperty, setNewProperty] = useState({ name: "", value: "" });
@@ -479,7 +558,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                     انتخاب تصویر ({settings.blocks.images.length}/6)
                   </button>
                   <button
-                    onClick={() => setSelectedMenu("addFile")}
+                    onClick={() => setIsUploadModalOpen(true)}
                     className="flex-1 sm:flex-none bg-[#0077b6] hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-medium transition-all"
                   >
                     آپلود تصویر
@@ -553,16 +632,129 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                 </div>
               </div>
 
+              {/* Properties Section */}
               <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
-                  <label className="block font-bold text-[#0077b6] text-lg">
-                    توضیحات *
-                  </label>
+                <h3 className="text-[#0077b6] font-bold text-lg sm:text-xl mb-4">
+                  افزودن ویژگی *
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm text-gray-600 mb-2 block">نام ویژگی</label>
+                      <input
+                        type="text"
+                        placeholder="نام ویژگی"
+                        value={newProperty.name}
+                        onChange={(e) => {
+                          setNewProperty({ ...newProperty, name: e.target.value });
+                          clearError("propertyName");
+                        }}
+                        className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
+                          errors.propertyName ? "border-red-500" : "border-blue-200"
+                        }`}
+                      />
+                      {errors.propertyName && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.propertyName}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="text-sm text-gray-600 mb-2 block">مقدار</label>
+                      <input
+                        type="text"
+                        placeholder="مقدار"
+                        value={newProperty.value}
+                        onChange={(e) => {
+                          setNewProperty({ ...newProperty, value: e.target.value });
+                          clearError("propertyValue");
+                        }}
+                        className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
+                          errors.propertyValue
+                            ? "border-red-500"
+                            : "border-blue-200"
+                        }`}
+                      />
+                      {errors.propertyValue && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.propertyValue}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <button
+                      onClick={addProperty}
+                      className="flex-1 sm:flex-none bg-[#0077b6] hover:bg-blue-700 text-white p-4 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                      data-tooltip-id="add-property"
+                      data-tooltip-content="افزودن ویژگی جدید"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24px"
+                        viewBox="0 -960 960 960"
+                        width="24px"
+                        fill="white"
+                      >
+                        <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z" />
+                      </svg>
+                      <span className="font-medium">افزودن</span>
+                    </button>
+
+                    {settings.blocks.properties.length > 0 && (
+                      <button
+                        data-tooltip-id="view-properties"
+                        data-tooltip-content="مشاهده ویژگیها"
+                        onClick={() => setShowPropertiesModal(true)}
+                        className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-4 flex items-center justify-center rounded-xl gap-2 transition-all duration-300 transform hover:scale-105"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="24px"
+                          viewBox="0 -960 960 960"
+                          width="24px"
+                          fill="#ffffff"
+                        >
+                          <path d="M120-280v-80h560v80H120Zm0-160v-80h560v80H120Zm0-160v-80h560v80H120Zm680 320q-17 0-28.5-11.5T760-320q0-17 11.5-28.5T800-360q17 0 28.5 11.5T840-320q0 17-11.5 28.5T800-280Zm0-160q-17 0-28.5-11.5T760-480q0-17 11.5-28.5T800-520q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440Zm0-160q-17 0-28.5-11.5T760-640q0-17 11.5-28.5T800-680q17 0 28.5 11.5T840-640q0 17-11.5 28.5T800-600Z" />
+                        </svg>
+                        <span className="font-medium">
+                          مشاهده ({settings.blocks.properties.length})
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {errors.properties && (
+                  <p className="text-red-500 text-sm mt-3">{errors.properties}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Description Section */}
+            <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
+                <label className="block font-bold text-[#0077b6] text-lg">
+                  توضیحات *
+                </label>
+                <div 
+                  data-tooltip-id="ai-generator"
+                  data-tooltip-content={
+                    !settings.blocks.name.trim() || !settings.blocks.category.name.trim() || settings.blocks.properties.length === 0
+                      ? `برای عملکرد بهتر هوش مصنوعی، لطفاً ابتدا ${[
+                          !settings.blocks.name.trim() && "نام محصول",
+                          !settings.blocks.category.name.trim() && "دسته بندی",
+                          settings.blocks.properties.length === 0 && "ویژگیها"
+                        ].filter(Boolean).join("، ")} را وارد کنید`
+                      : "ایجاد توضیحات با هوش مصنوعی"
+                  }
+                >
                   <AIDescriptionGenerator
                     productData={{
                       name: settings.blocks.name,
                       category: settings.blocks.category.name,
-                      colors: settings.blocks.colors.map(c => c.code),
                       properties: settings.blocks.properties.reduce((acc, prop) => {
                         acc[prop.name] = prop.value;
                         return acc;
@@ -574,38 +766,40 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                     }}
                   />
                 </div>
-                <textarea
-                  value={settings.blocks.description}
-                  onChange={(e) => {
-                    handleChange("blocks", "description", e.target.value);
-                    clearError("description");
-                  }}
-                  className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all min-h-[120px] resize-none ${
-                    errors.description ? "border-red-500" : "border-blue-200"
-                  }`}
-                  placeholder="توضیحات محصول را وارد کنید"
-                />
-                {errors.description && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {errors.description}
-                  </p>
-                )}
               </div>
+              <textarea
+                value={settings.blocks.description}
+                onChange={(e) => {
+                  handleChange("blocks", "description", e.target.value);
+                  clearError("description");
+                }}
+                className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all min-h-[120px] resize-none ${
+                  errors.description ? "border-red-500" : "border-blue-200"
+                }`}
+                placeholder="توضیحات محصول را وارد کنید"
+              />
+              {errors.description && (
+                <p className="text-red-500 text-sm mt-2">
+                  {errors.description}
+                </p>
+              )}
             </div>
 
             {/* Category & Status Section */}
             <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
               <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-                <label className="block mb-3 font-bold text-[#0077b6] text-lg">
+              <div className="flex justify-between items-center mb-4">
+                  <label className="block mb-3 font-bold text-[#0077b6] text-lg">
                   دسته بندی *
-                </label>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => setSelectedMenu("addCategory")}
+                </label>  <button
+                    onClick={() => setIsCategoryModalOpen(true)}
                     className="w-full sm:w-auto bg-[#0077b6] hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-medium transition-all"
                   >
                     افزودن دسته بندی
                   </button>
+              </div>
+                <div className="space-y-3">
+                
                   <select
                     value={settings.blocks.category._id}
                     onChange={(e) => {
@@ -744,105 +938,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
               )}
             </div>
 
-            {/* Properties Section */}
-            <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-              <h3 className="text-[#0077b6] font-bold text-lg sm:text-xl mb-4">
-                افزودن ویژگی *
-              </h3>
 
-              <div className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm text-gray-600 mb-2 block">نام ویژگی</label>
-                    <input
-                      type="text"
-                      placeholder="نام ویژگی"
-                      value={newProperty.name}
-                      onChange={(e) => {
-                        setNewProperty({ ...newProperty, name: e.target.value });
-                        clearError("propertyName");
-                      }}
-                      className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
-                        errors.propertyName ? "border-red-500" : "border-blue-200"
-                      }`}
-                    />
-                    {errors.propertyName && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.propertyName}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="text-sm text-gray-600 mb-2 block">مقدار</label>
-                    <input
-                      type="text"
-                      placeholder="مقدار"
-                      value={newProperty.value}
-                      onChange={(e) => {
-                        setNewProperty({ ...newProperty, value: e.target.value });
-                        clearError("propertyValue");
-                      }}
-                      className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
-                        errors.propertyValue
-                          ? "border-red-500"
-                          : "border-blue-200"
-                      }`}
-                    />
-                    {errors.propertyValue && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.propertyValue}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <button
-                    onClick={addProperty}
-                    className="flex-1 sm:flex-none bg-[#0077b6] hover:bg-blue-700 text-white p-4 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
-                    data-tooltip-id="add-property"
-                    data-tooltip-content="افزودن ویژگی جدید"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="24px"
-                      viewBox="0 -960 960 960"
-                      width="24px"
-                      fill="white"
-                    >
-                      <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z" />
-                    </svg>
-                    <span className="font-medium">افزودن</span>
-                  </button>
-
-                  {settings.blocks.properties.length > 0 && (
-                    <button
-                      data-tooltip-id="view-properties"
-                      data-tooltip-content="مشاهده ویژگیها"
-                      onClick={() => setShowPropertiesModal(true)}
-                      className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-4 flex items-center justify-center rounded-xl gap-2 transition-all duration-300 transform hover:scale-105"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        fill="#ffffff"
-                      >
-                        <path d="M120-280v-80h560v80H120Zm0-160v-80h560v80H120Zm0-160v-80h560v80H120Zm680 320q-17 0-28.5-11.5T760-320q0-17 11.5-28.5T800-360q17 0 28.5 11.5T840-320q0 17-11.5 28.5T800-280Zm0-160q-17 0-28.5-11.5T760-480q0-17 11.5-28.5T800-520q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440Zm0-160q-17 0-28.5-11.5T760-640q0-17 11.5-28.5T800-680q17 0 28.5 11.5T840-640q0 17-11.5 28.5T800-600Z" />
-                      </svg>
-                      <span className="font-medium">
-                        مشاهده ({settings.blocks.properties.length})
-                      </span>
-                    </button>
-                  )}
-                </div>
-              </div>
-              {errors.properties && (
-                <p className="text-red-500 text-sm mt-3">{errors.properties}</p>
-              )}
-            </div>
 
             {/* Price & Discount Section */}
             <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
@@ -851,11 +947,14 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
                   قیمت *
                 </label>
                 <input
-                  type="number"
-                  value={settings.blocks.price}
+                  type="text"
+                  value={settings.blocks.price ? Number(settings.blocks.price).toLocaleString() : ""}
                   onChange={(e) => {
-                    handleChange("blocks", "price", e.target.value);
-                    clearError("price");
+                    const value = e.target.value.replace(/,/g, "");
+                    if (/^\d*$/.test(value)) {
+                      handleChange("blocks", "price", value);
+                      clearError("price");
+                    }
                   }}
                   className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
                     errors.price ? "border-red-500" : "border-blue-200"
@@ -946,6 +1045,47 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
         onSelectImage={handleImageSelect}
       />
 
+      {/* Upload Modal */}
+      {isUploadModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 scrollbar-hide" dir="rtl">
+          <div className="bg-white rounded-2xl p-2 w-full max-w-md  max-h-[90vh] overflow-y-auto scrollbar-hide">
+            <div className="flex flex-row-reverse items-center ">
+              <button
+                onClick={() => setIsUploadModalOpen(false)}
+                className="text-gray-500 text-2xl hover:text-gray-700 p-2"
+              >
+                ×
+              </button>
+            </div>
+            <UploadPage />
+          </div>
+        </div>
+      )}
+
+      {/* Category Modal */}
+      {isCategoryModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" dir="rtl">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-[#0077b6]">افزودن دسته بندی</h3>
+              <button
+                onClick={() => setIsCategoryModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700 p-2"
+              >
+                ×
+              </button>
+            </div>
+            <CategoryForm 
+              onClose={() => setIsCategoryModalOpen(false)} 
+              onSuccess={() => {
+                setIsCategoryModalOpen(false);
+                fetchCategories();
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       <ToastContainer rtl={true} position="top-center" autoClose={3000} />
       {showPropertiesModal && <PropertiesModal />}
       {showColorsModal && <ColorsModal />}
@@ -953,6 +1093,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({ setSelectedMen
       <Tooltip id="view-properties" place="top" />
       <Tooltip id="add-color" place="top" />
       <Tooltip id="view-colors" place="top" />
+      <Tooltip id="ai-generator" place="top" />
     </div>
   );
 };

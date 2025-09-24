@@ -7,7 +7,7 @@ import { Inventory } from "./components/inventory";
 import { Collections } from "./components/collections";
 import  AddPostBlog  from "./components/addBlog";
 import { EditBlogs } from "./components/editBlogs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import jwt from "jsonwebtoken";
 import { Orders } from "./components/orders";
 import { Costumers } from "./components/costumers";
@@ -238,9 +238,21 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
 
 export const Dashboard = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedMenu, setSelectedMenu] = useState("start");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const updateURL = (menu: string) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('section', menu);
+    window.history.pushState({}, '', url.toString());
+  };
+
+  const handleMenuChange = (menu: string) => {
+    setSelectedMenu(menu);
+    updateURL(menu);
+  };
 
   const initializeDashboard = async () => {
     try {
@@ -294,11 +306,29 @@ export const Dashboard = () => {
     initializeDashboard();
   }, [router]);
 
+  useEffect(() => {
+    const section = searchParams.get('section');
+    if (section) {
+      setSelectedMenu(section);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const url = new URL(window.location.href);
+      const section = url.searchParams.get('section') || 'start';
+      setSelectedMenu(section);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const RenderForms = () => {
     const formComponents: Record<string, React.ReactNode> = {
-      start: <StartComponent setSelectedMenu={setSelectedMenu} />,
-      addProduct: <ProductsSettings setSelectedMenu={setSelectedMenu}/>,
-      inventory: <Inventory setSelectedMenu={setSelectedMenu} />,
+      start: <StartComponent setSelectedMenu={handleMenuChange} />,
+      addProduct: <ProductsSettings setSelectedMenu={handleMenuChange}/>,
+      inventory: <Inventory setSelectedMenu={handleMenuChange} />,
       collections: <Collections />,
       addBlogs: <AddPostBlog />,
       editBlogs: <EditBlogs />,
@@ -352,7 +382,7 @@ export const Dashboard = () => {
       <SwirlBackground />
       {/* Enhanced Form Component */}
       <div className=" z-20 pointer-events-auto">
-        <Form setSelectedMenu={setSelectedMenu} />
+        <Form setSelectedMenu={handleMenuChange} />
       </div>
 
       {/* Main Content Area */}

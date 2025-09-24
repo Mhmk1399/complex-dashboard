@@ -331,7 +331,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {products.map((product, index) => (
+                {products.map((product) => (
                   <tr key={product._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-2 md:px-6 py-3 md:py-4">
                       <div className="flex items-center">

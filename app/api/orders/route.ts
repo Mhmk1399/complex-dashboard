@@ -3,7 +3,8 @@ import connect from "@/lib/data";
 import Order from "@/models/orders";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import StoreUsers from "@/models/storesUsers";
-interface Order {
+
+interface OrderType {
   _id: string;
   userId: string;
   storeId: string;
@@ -26,8 +27,18 @@ interface Order {
   createdAt: string;
   updatedAt: string;
 }
+
 interface CustomJwtPayload extends JwtPayload {
   storeId: string;
+}
+
+interface FilterQuery {
+  storeId: string;
+  status?: string;
+  createdAt?: {
+    $gte?: Date;
+    $lte?: Date;
+  };
 }
 
 export async function POST(req: Request) {
@@ -83,7 +94,7 @@ export async function GET(req: Request) {
     const skip = (page - 1) * limit;
 
     // Build filter query
-    const filterQuery: any = { storeId };
+    const filterQuery: FilterQuery = { storeId };
     if (status) filterQuery.status = status;
     
     // Date range filter
@@ -144,7 +155,7 @@ export async function PATCH(request: Request) {
   const result = await findByIdAndUpdate(body._id, body);
   return NextResponse.json(result);
 }
-async function findByIdAndUpdate(orderId: string, updateData: Order) {
+async function findByIdAndUpdate(orderId: string, updateData: OrderType) {
   try {
     const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, {
       new: true,

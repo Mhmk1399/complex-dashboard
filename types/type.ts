@@ -61,7 +61,7 @@ export interface Product {
   updatedAt: string;
 }
 export interface InventoryProps {
-  setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedMenu: (menu: string) => void;
 }
 
 // --------------------------------- Edit Story Type ---------------------------------
@@ -155,7 +155,7 @@ export interface CreateCollectionModalProps {
 // --------------------------------- Form.tsx Type ---------------------------------
 
 export interface FormProps {
-  setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedMenu: (menu: string) => void;
 }
 export interface AccordionItemProps {
   title: string;
