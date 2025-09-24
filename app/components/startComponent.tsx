@@ -158,7 +158,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
       if (response.ok) {
         const { redirectToken } = await response.json();
         const redirectUrl = `${process.env.NEXT_PUBLIC_COMPLEX_URL}?token=${redirectToken}`;
-        window.open(redirectUrl, "_blank");
+        window.open(redirectUrl, "_blank", "noopener,noreferrer");
       }
     } catch (error) {
       console.error("Error generating redirect token:", error);

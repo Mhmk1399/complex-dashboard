@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     verification.verified = true;
+    verification.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     await verification.save();
 
     return NextResponse.json({ message: 'Code verified successfully' });

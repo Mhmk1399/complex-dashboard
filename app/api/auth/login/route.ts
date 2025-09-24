@@ -10,8 +10,6 @@ export async function POST(request: NextRequest) {
   try {
     const { phoneNumber, password } = await request.json();
 
-    // Add validation logging
-    console.log("Login attempt for:", phoneNumber);
 
     if (!phoneNumber || !password) {
       console.log("Missing credentials");
@@ -21,10 +19,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if phone is verified
-    const verification = await Verification.findOne({ phone: phoneNumber, verified: true });
+    // Check if phone is verified and not expired
+    const verification = await Verification.findOne({ 
+      phone: phoneNumber, 
+      verified: true,
+      expiresAt: { $gt: new Date() }
+    });
     if (!verification) {
-      return NextResponse.json({ message: "Phone not verified" }, { status: 400 });
+      return NextResponse.json({ message: "Phone verification expired or not verified" }, { status: 400 });
     }
 
     const user = await User.findOne({ phoneNumber });
@@ -78,8 +80,6 @@ export async function POST(request: NextRequest) {
     tokenSecret,
     { expiresIn: "10000h" }
   );
-
-  console.log("Login successful");
   return NextResponse.json({ token });
 // }
 

@@ -22,14 +22,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const createNewDeployment = await createDeployment({
-      namespace: process.env.NAMESPACE || "mamad",
-      storeId,
-    });
+    // const createNewDeployment = await createDeployment({
+    //   namespace: process.env.NAMESPACE || "mamad",
+    //   storeId,
+    // });
 
-    const DeployedUrl = createNewDeployment.config?.host;
-    // const DeployedUrl = `http://localhost:3002/`;
-    if (!DeployedUrl) throw new Error("Deployment URL missing");
+    // const DeployedUrl = createNewDeployment.config?.host;
+    // // const DeployedUrl = `http://localhost:3002/`;
+    // if (!DeployedUrl) throw new Error("Deployment URL missing");
 
     // const DiskUrl = `${process.env.VPS_URL}/${storeId}`
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       password: hashedPassword,
       title,
-      DeployedUrl,
+      // DeployedUrl,
       // DiskUrl,
       storeId,
       trialDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days trial
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       {
         id: newUser._id,
         storeId,
-        DeployedUrl,
+        // DeployedUrl,
         // DiskUrl
       },
       process.env.JWT_SECRET!,
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
         message: "User created successfully",
         token,
         userId: newUser._id,
-        websiteUrl: DeployedUrl,
+        // websiteUrl: DeployedUrl,
       },
       { status: 201 }
     );
