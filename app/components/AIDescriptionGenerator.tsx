@@ -23,6 +23,10 @@ export const AIDescriptionGenerator = ({
 }: AIDescriptionGeneratorProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const isDisabled = !productData.name?.trim() || !productData.category?.trim() || !productData.properties || Object.keys(productData.properties).length === 0;
+  
+
+
   const generateDescription = async () => {
     setIsLoading(true);
     try {
@@ -55,11 +59,16 @@ Output a single paragraph (3-5 sentences) that highlights the key benefits, spea
   };
 
   return (
-    <button
-      onClick={generateDescription}
-      disabled={isLoading}
-      className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-50"
-    >
+    <div  className="inline-block">
+      <button
+        onClick={generateDescription}
+        disabled={isLoading || isDisabled}
+        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition ${
+          isDisabled 
+            ? "bg-gray-400 text-gray-200 cursor-not-allowed" 
+            : "bg-purple-600 text-white hover:bg-purple-700"
+        } ${isLoading ? "opacity-50" : ""}`}
+      >
       {isLoading ? (
         <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -70,7 +79,8 @@ Output a single paragraph (3-5 sentences) that highlights the key benefits, spea
           <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
         </svg>
       )}
-      {isLoading ? "Generating..." : "Generate AI Description"}
-    </button>
+      {isLoading ? "درحال بارگذاری..." : "ایجاد توسط دستیار هوش مصنوعی"}
+      </button>
+    </div>
   );
 };

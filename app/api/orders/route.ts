@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import connect from "@/lib/data";
 import Order from "@/models/orders";
 import jwt, { JwtPayload } from "jsonwebtoken";
-interface Order {
+import StoreUsers from "@/models/storesUsers";
+
+interface OrderType {
   _id: string;
   userId: string;
   storeId: string;
@@ -25,8 +27,18 @@ interface Order {
   createdAt: string;
   updatedAt: string;
 }
+
 interface CustomJwtPayload extends JwtPayload {
   storeId: string;
+}
+
+interface FilterQuery {
+  storeId: string;
+  status?: string;
+  createdAt?: {
+    $gte?: Date;
+    $lte?: Date;
+  };
 }
 
 export async function POST(req: Request) {
@@ -72,8 +84,55 @@ export async function GET(req: Request) {
     if (!storeId)
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
-    const orders = await Order.find({ storeId: storeId });
-    return NextResponse.json(orders, { status: 200 });
+    // Get pagination and filter parameters
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '5');
+    const status = searchParams.get('status');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    const skip = (page - 1) * limit;
+
+    // Build filter query
+    const filterQuery: FilterQuery = { storeId };
+    if (status) filterQuery.status = status;
+    
+    // Date range filter
+    if (startDate || endDate) {
+      filterQuery.createdAt = {};
+      if (startDate) {
+        filterQuery.createdAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        const endDateTime = new Date(endDate);
+        endDateTime.setHours(23, 59, 59, 999); // End of day
+        filterQuery.createdAt.$lte = endDateTime;
+      }
+    }
+
+    // Get total count
+    const totalOrders = await Order.countDocuments(filterQuery);
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    // Get paginated orders
+    const orders = await Order.find(filterQuery)
+      .populate({
+        path: "userId",
+        model: StoreUsers
+      })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const pagination = {
+      totalOrders,
+      totalPages,
+      currentPage: page,
+      hasNext: page < totalPages,
+      hasPrev: page > 1
+    };
+
+    return NextResponse.json({ orders, pagination }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -96,7 +155,7 @@ export async function PATCH(request: Request) {
   const result = await findByIdAndUpdate(body._id, body);
   return NextResponse.json(result);
 }
-async function findByIdAndUpdate(orderId: string, updateData: Order) {
+async function findByIdAndUpdate(orderId: string, updateData: OrderType) {
   try {
     const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, {
       new: true,

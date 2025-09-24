@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { FiArrowLeft } from "react-icons/fi";
+import NetworkBackground from "../components/networkBg";
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -195,9 +196,10 @@ const SignInForm = () => {
     <motion.div
       initial={{ opacity: 0, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen flex flex-col items-center justify-center p-4"
+      className="min-h-screen flex flex-col items-center justify-center p-4 relative"
       dir="rtl"
     >
+      <NetworkBackground />
       <motion.div className="bg-white/20 bg-opacity-20 backdrop-blur-3xl rounded-2xl px-10 py-12 w-full max-w-4xl border border-[#0077b6]">
         <motion.div
           initial={{ x: 20, opacity: 0 }}

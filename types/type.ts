@@ -57,9 +57,11 @@ export interface Product {
     code: string;
     quantity: string;
   }[];
+  createdAt: string;
+  updatedAt: string;
 }
 export interface InventoryProps {
-  setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedMenu: (menu: string) => void;
 }
 
 // --------------------------------- Edit Story Type ---------------------------------
@@ -153,7 +155,7 @@ export interface CreateCollectionModalProps {
 // --------------------------------- Form.tsx Type ---------------------------------
 
 export interface FormProps {
-  setSelectedMenu: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedMenu: (menu: string) => void;
 }
 export interface AccordionItemProps {
   title: string;
@@ -240,6 +242,9 @@ export interface Blog {
   content: string;
   description: string;
   seoTitle: string;
+  image: string;
+  secondImage:string;
+  tags:[string]
 }
 
 // --------------------------------- Edit File Type ---------------------------------

@@ -8,8 +8,12 @@ import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
+import Heading from "@tiptap/extension-heading";
 import { toast, ToastContainer } from "react-toastify";
-import { Blog } from "@/types/type";
+import { Blog, ImageFile } from "@/types/type";
+import ImageSelectorModal from "./ImageSelectorModal";
+import Image from "@tiptap/extension-image";
+import { AIBlogGenerator } from "./AIBlogGenerator";
 
 
 
@@ -23,6 +27,31 @@ export const EditBlogs = () => {
   const [loading, setLoading] = useState(true);
   const [description, setDescription] = useState("");
   const [seoTitle, setSeoTitle] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+  const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [showSeoTips, setShowSeoTips] = useState(false);
+
+  const handleAddTag = () => {
+    if (tags.length >= 3) {
+      toast.error("شما فقط میتوانید ۳ برچسب اضافه کنید");
+      return;
+    }
+
+    if (tagInput.trim()) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  const handleImageSelect = (image: ImageFile) => {
+    if (images.length >= 5) {
+      toast.error("حداکثر 5 تصویر میتوانید اضافه کنید");
+      return;
+    }
+    setImages(prev => [...prev, image.fileUrl]);
+  };
 
   const ColorPickerDropdown = ({
     isOpen,
@@ -155,6 +184,13 @@ export const EditBlogs = () => {
         },
         bulletList: false,
         orderedList: false,
+        heading: false,
+      }),
+      Heading.configure({
+        levels: [1, 2, 3, 4, 5, 6],
+        HTMLAttributes: {
+          dir: "auto",
+        },
       }),
       BulletList.configure({
         keepMarks: true,
@@ -182,11 +218,16 @@ export const EditBlogs = () => {
         alignments: ["left", "center", "right"],
         defaultAlignment: "left",
       }),
+      Image.configure({
+        HTMLAttributes: {
+          class: "w-full h-64 object-cover rounded-lg my-4",
+        },
+      }),
     ],
     content: "",
     editorProps: {
       attributes: {
-        class: "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl",
+        class: "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&_h4]:text-lg [&_h4]:font-bold [&_h5]:text-base [&_h5]:font-bold [&_h6]:text-sm [&_h6]:font-bold",
       },
     },
     onUpdate: ({ editor }) => {
@@ -216,6 +257,8 @@ export const EditBlogs = () => {
     setTitle(blog.title);
     setDescription(blog.description);
     setSeoTitle(blog.seoTitle);
+    setImages([blog.image, blog.secondImage].filter(Boolean));
+    setTags(blog.tags || []);
     editor?.commands.setContent(blog.content);
   };
   // Add this delete handler function inside the EditBlogs component
@@ -277,6 +320,10 @@ export const EditBlogs = () => {
           content,
           description,
           seoTitle,
+          image: images[0] || "",
+          secondImage: images[1] || "",
+          tags,
+          readTime: Math.ceil(wordCount / 200),
         }),
       });
 
@@ -379,29 +426,149 @@ export const EditBlogs = () => {
           {selectedBlog && (
             <form onSubmit={handleUpdate} className="space-y-6">
               <div>
-                <div className="border rounded-lg p-2 mb-6">
-                  <h1 className="text-2xl my-2">سئو</h1>
+                <div className="bg-blue-50/50 rounded-xl p-6 border border-blue-100 mb-6 mt-14">
+                  <div className="relative">
+                    <h1
+                      className="text-xl text-right mb-4 flex items-center justify-start gap-2"
+                      onMouseEnter={() => setShowSeoTips(true)}
+                      onMouseLeave={() => setShowSeoTips(false)}
+                    >
+                      بخش سئو
+                      <i className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors" />
+                    </h1>
+
+                    {showSeoTips && (
+                      <div className="absolute z-10 bg-blue-600 backdrop-blur-md border-2 border-white/50 rounded-xl shadow-lg p-5 right-0 mt-1 text-sm text-white">
+                        <ul className="text-right space-y-2">
+                          <li className="flex items-center gap-2">
+                            <i className="fas fa-check-circle" />
+                            عنوان سئو باید کوتاه و گویا باشد
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <i className="fas fa-check-circle" />
+                            از کلمات کلیدی مرتبط استفاده کنید
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <i className="fas fa-check-circle" />
+                            توضیحات کوتاه را در 160 کاراکتر بنویسید
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                  
                   <label className="block text-sm font-medium text-gray-700 text-right mb-2">
-                    عنوان بلاگ
+                    عنوان سئو
                   </label>
                   <input
                     type="text"
                     value={seoTitle}
                     onChange={(e) => setSeoTitle(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    placeholder="عنوان بلاگ را وارد کنید"
+                    className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                    placeholder="عنوان سئو را وارد کنید..."
                   />
+                  
                   <div>
                     <label className="block text-sm font-medium text-gray-700 text-right my-2">
                       توضیحات کوتاه
                     </label>
-                    <input
+                    <textarea
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                      placeholder="توضیحات کوتاه بلاگ را وارد کنید"
+                      className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 min-h-[100px]"
+                      placeholder="توضیحات کوتاه را وارد کنید..."
                     />
                   </div>
+
+                  {/* Tags Section */}
+                  <div className="space-y-4 mt-5">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyPress={(e) =>
+                          e.key === "Enter" && (e.preventDefault(), handleAddTag())
+                        }
+                        className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                        placeholder="برچسبها را وارد کنید..."
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddTag}
+                        className="bg-blue-500 text-white px-6 rounded-xl hover:bg-blue-600 transition-all duration-300"
+                      >
+                        <i className="fas fa-plus"></i>
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full flex items-center gap-2 font-medium"
+                        >
+                          {tag}
+                          <button
+                            type="button"
+                            onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                            className="hover:text-red-500 transition-colors"
+                          >
+                            <i className="fas fa-times"></i>
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Images Section */}
+                <div className="bg-blue-50/50 rounded-xl p-6 border border-blue-100 mb-6">
+                  <label className="block mb-4 text-xl font-bold text-blue-700 flex items-center gap-2">
+                    <i className="fas fa-images" />
+                    تصاویر بلاگ (حداکثر 5 تصویر)
+                  </label>
+
+                  <div className="flex gap-2 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setIsImageSelectorOpen(true)}
+                      disabled={images.length >= 5}
+                      className={`px-4 py-3 rounded-xl font-medium transition-all ${
+                        images.length >= 5
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-white text-blue-600 border-2 border-blue-200 hover:bg-blue-50"
+                      }`}
+                    >
+                      انتخاب تصویر ({images.length}/5)
+                    </button>
+                  </div>
+
+                  {images.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
+                      {images.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={image}
+                            alt={`تصویر ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg"
+                          />
+                          <div className="absolute top-1 right-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                            {index === 0 ? "اصلی" : index + 1}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setImages((prev) => prev.filter((_, i) => i !== index))
+                            }
+                            className="absolute top-1 left-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <label className="block text-sm font-medium text-gray-700 text-right mb-2">
                   عنوان بلاگ
@@ -416,9 +583,21 @@ export const EditBlogs = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 text-right mb-2">
-                  محتوای بلاگ
-                </label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-gray-700 text-right">
+                    محتوای بلاگ
+                  </label>
+                  <AIBlogGenerator
+                    blogData={{
+                      title,
+                      seoTitle,
+                      description
+                    }}
+                    onBlogGenerated={(content) => {
+                      editor?.commands.setContent(content);
+                    }}
+                  />
+                </div>
                 <div className="border border-gray-300 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 p-2 border-b border-gray-300 flex flex-wrap gap-2">
                     <MenuButton
@@ -541,7 +720,37 @@ export const EditBlogs = () => {
                       <i className="fas fa-list-ol"></i>
                     </MenuButton>
 
-                    {/* <ImageUploadButton editor={editor} /> */}
+                    {/* Image Insertion Dropdown */}
+                    {images.length > 0 && (
+                      <div className="relative">
+                        <select
+                          onChange={async (e) => {
+                            if (!e.target.value) return;
+                            const imageUrl = e.target.value;
+                            const imageIndex = images.indexOf(imageUrl);
+
+                            editor
+                              ?.chain()
+                              .focus()
+                              .setImage({
+                                src: imageUrl,
+                                alt: `تصویر ${imageIndex + 1}`,
+                              })
+                              .run();
+
+                            e.target.value = "";
+                          }}
+                          className="px-3 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700"
+                        >
+                          <option value="">درج تصویر</option>
+                          {images.map((image, index) => (
+                            <option key={index} value={image}>
+                              تصویر {index + 1} {index === 0 ? "(اصلی)" : ""}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-4 bg-white">
@@ -572,6 +781,12 @@ export const EditBlogs = () => {
           )}
         </div>
       )}
+      
+      <ImageSelectorModal
+        isOpen={isImageSelectorOpen}
+        onClose={() => setIsImageSelectorOpen(false)}
+        onSelectImage={handleImageSelect}
+      />
     </>
   );
 };

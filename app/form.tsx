@@ -19,12 +19,10 @@ import {
   FaImages,
   FaInstagram,
   FaBlog,
-  FaDatabase,
   FaEdit,
   FaCog,
   FaUserCog,
   FaCreditCard,
-  FaShieldAlt,
   FaChevronDown,
   FaSignOutAlt,
 } from "react-icons/fa";
@@ -65,14 +63,17 @@ const dashboardMenuItems = [
     color: "from-blue-500 to-blue-600",
     subMenuItems: [
       { title: "سفارش ها", value: "orders", icon: <FaShoppingBag /> },
-    ],
+    ]
   },
   {
     id: "costumers",
     title: "کاربران",
     icon: <CustomersIcon />,
     color: "from-blue-500 to-blue-600",
-    subMenuItems: [{ title: "کاربران", value: "costumers", icon: <FaUsers /> },{title: " درخواست ها", value: "contact", icon: <FaUserCog />},],
+    subMenuItems: [
+    { title: "کاربران", value: "costumers", icon: <FaUsers /> },
+    {title: " درخواست ها", value: "contact", icon: <FaUserCog />},
+  ]
     
   },
   {
@@ -93,11 +94,7 @@ const dashboardMenuItems = [
     color: "from-blue-500 to-blue-600",
     subMenuItems: [
       { title: "افزودن وبلاگ", value: "addBlogs", icon: <FaBlog /> },
-      {
-        title: "افزودن متا دیتا ها",
-        value: "addMetaData",
-        icon: <FaDatabase />,
-      },
+     
       { title: "ویرایش وبلاگ", value: "editBlogs", icon: <FaEdit /> },
     ],
   },
@@ -109,16 +106,7 @@ const dashboardMenuItems = [
     subMenuItems: [
       { title: "تنظیمات سایت", value: "siteSettings", icon: <FaCog /> },
       { title: "تنظیمات حساب", value: "accountSettings", icon: <FaUserCog /> },
-      {
-        title: "تنظیمات پرداخت",
-        value: "paymentSettings",
-        icon: <FaCreditCard />,
-      },
-      {
-        title: "تنظیمات امنیت",
-        value: "securitySettings",
-        icon: <FaShieldAlt />,
-      },
+     
     ],
   },
 ];
@@ -213,7 +201,7 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
         icon: React.ReactNode;
       }>;
     },
-    setSelectedMenu: React.Dispatch<React.SetStateAction<string>>
+    setSelectedMenu: (menu: string) => void
   ) => {
     return (
       <div className="p-2">

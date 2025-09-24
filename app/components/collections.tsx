@@ -18,6 +18,17 @@ export const Collections = () => {
   const [collectionIdToDelete, setCollectionIdToDelete] = useState<
     string | null
   >(null);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+  const [pagination, setPagination] = useState({
+    totalCollections: 0,
+    totalPages: 0,
+    currentPage: 1,
+    hasNext: false,
+    hasPrev: false
+  });
 
   const openDeleteModal = (collectionId: string) => {
     setCollectionIdToDelete(collectionId);
@@ -58,14 +69,14 @@ export const Collections = () => {
     }
   };
 
-  // Fetch collections on component mount
-  useEffect(() => {
-    fetchCollections();
-  }, []);
-
   const fetchCollections = async () => {
     try {
-      const response = await fetch("/api/collections", {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString()
+      });
+
+      const response = await fetch(`/api/collections?${params}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -74,12 +85,18 @@ export const Collections = () => {
       });
       const data = await response.json();
       setCollections(data.collections);
+      setPagination(data.pagination);
       setIsLoading(false);
     } catch (error) {
       console.log("Error fetching collections:", error);
       setIsLoading(false);
     }
   };
+
+  // Fetch collections on component mount and page change
+  useEffect(() => {
+    fetchCollections();
+  }, [currentPage]);
 
   const handleDelete = async (id: string | null) => {
     if (id) {
@@ -103,6 +120,10 @@ export const Collections = () => {
     }
   };
 
+  // Pagination logic
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
+  const indexOfLastItem = Math.min(currentPage * itemsPerPage, pagination.totalCollections);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -114,16 +135,16 @@ export const Collections = () => {
   // Empty collections section
   if (!collections || collections.length === 0) {
     return (
-      <div className="min-h-screen py-8" dir="rtl">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-white rounded-2xl p-8">
+      <div className="min-h-screen py-4 md:py-8" dir="rtl">
+        <div className="max-w-7xl mx-auto px-2 md:px-4">
+          <div className="bg-white rounded-2xl p-4 md:p-8">
             {/* Header */}
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold  text-black">
-                مدیریت کالکشن‌ها
+                مدیریت کالکشنها
               </h2>
               <p className="text-gray-500 mt-2">
-                کالکشن‌های محصولات خود را مدیریت کنید
+                کالکشنهای محصولات خود را مدیریت کنید
               </p>
             </div>
 
@@ -148,8 +169,8 @@ export const Collections = () => {
                 هیچ کالکشنی یافت نشد
               </h3>
               <p className="text-gray-500 mb-8 max-w-md text-center">
-                شما هنوز هیچ کالکشنی ایجاد نکرده‌اید. کالکشن‌ها به شما کمک
-                می‌کنند محصولات مرتبط را گروه‌بندی کنید.
+                شما هنوز هیچ کالکشنی ایجاد نکردهاید. کالکشنها به شما کمک
+                میکنند محصولات مرتبط را گروهبندی کنید.
               </p>
               <button
                 onClick={() => setIsCreateModalOpen(true)}
@@ -180,25 +201,25 @@ export const Collections = () => {
   };
 
   return (
-    <div className="px-4 py-8 min-h-screen" dir="rtl">
+    <div className="px-2 md:px-4 py-4 md:py-8 min-h-screen mt-12" dir="rtl">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="bg-white rounded-2xl shadow-xl mb-6 p-6">
-          <div className="flex justify-between items-center">
+        <div className="bg-white rounded-2xl shadow-xl mb-4 md:mb-6 p-3 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <div>
-              <h2 className="md:text-3xl font-bold text-black">
-                مدیریت کالکشن‌ها
+              <h2 className="text-lg md:text-3xl font-bold text-black">
+                مدیریت کالکشنها
               </h2>
               <p className="text-gray-500 hidden md:block text-base mt-2">
-                کالکشن‌های محصولات خود را مدیریت کنید
+                کالکشنهای محصولات خود را مدیریت کنید
               </p>
             </div>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-gradient-to-r from-[#0077b6] md:text-lg text-sm to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg"
+              className="bg-gradient-to-r from-[#0077b6] text-xs md:text-lg to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 md:py-3 px-3 md:px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg w-fit"
             >
-              ایجاد کالکشن جدید
-              <PlusIcon className="h-5 w-5" />
+              <PlusIcon className="h-4 w-4 md:h-5 md:w-5" />
+              <span className="whitespace-nowrap">ایجاد کالکشن</span>
             </button>
           </div>
         </div>
@@ -206,17 +227,17 @@ export const Collections = () => {
         {/* Collections Table */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Table Header with Stats */}
-          <div className="bg-gradient-to-r from-[#0077b6] to-blue-600 p-6">
-            <div className="flex justify-between items-center text-white">
+          <div className="bg-gradient-to-r from-[#0077b6] to-blue-600 p-3 md:p-6">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center text-white gap-3">
               <div>
-                <h3 className="text-xl font-bold">لیست کالکشن‌ها</h3>
-                <p className="text-blue-100 mt-1">
-                  مجموع {collections.length} کالکشن
+                <h3 className="text-base md:text-xl font-bold">لیست کالکشنها</h3>
+                <p className="text-blue-100 text-xs md:text-sm mt-1">
+                  {pagination.totalCollections} کالکشن
                 </p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                  <span className="text-sm">تعداد کل محصولات: </span>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-2 md:px-3 py-1 md:py-2">
+                  <span className="text-xs md:text-sm">کل محصولات: </span>
                   <span className="font-bold">
                     {collections.reduce(
                       (total, collection) => total + collection.products.length,
@@ -233,17 +254,17 @@ export const Collections = () => {
             <table className="w-full">
               <thead className="bg-blue-50 border-b-2 border-[#0077b6]">
                 <tr>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-bold text-[#0077b6] uppercase tracking-wider">
                     نام کالکشن
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-bold text-[#0077b6] uppercase tracking-wider">
                     تعداد محصولات
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
                     تاریخ ایجاد
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
-                    عملیات‌ها
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                    عملیاتها
                   </th>
                 </tr>
               </thead>
@@ -255,16 +276,16 @@ export const Collections = () => {
                       index % 2 === 0 ? "bg-white" : "bg-gray-50"
                     }`}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                       <div className="flex items-center justify-center">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 bg-gradient-to-br from-[#0077b6] to-blue-400 rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">
+                        <div className="flex items-center gap-2 md:gap-3">
+                          <div className="h-8 w-8 md:h-10 md:w-10 bg-gradient-to-br from-[#0077b6] to-blue-400 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-xs md:text-sm">
                               {collection.name.charAt(0)}
                             </span>
                           </div>
                           <div>
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-xs md:text-sm font-medium text-gray-900">
                               {collection.name}
                             </div>
                           </div>
@@ -272,15 +293,15 @@ export const Collections = () => {
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                       <div className="flex items-center justify-center">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                          {collection.products.length} محصول
+                        <span className="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-blue-100 text-blue-800">
+                          {collection.products.length}
                         </span>
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 text-center">
                         {new Date(collection.createdAt).toLocaleDateString(
                           "fa-IR"
@@ -288,21 +309,21 @@ export const Collections = () => {
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2 justify-center">
+                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
+                      <div className="flex gap-1 md:gap-2 justify-center">
                         <button
                           title="ویرایش"
                           onClick={() => handleEdit(collection)}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition-colors duration-200"
+                          className="inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition-colors duration-200"
                         >
-                          <PencilIcon className="h-4 w-4" />
+                          <PencilIcon className="h-3 w-3 md:h-4 md:w-4" />
                         </button>
                         <button
                           title="حذف"
                           onClick={() => openDeleteModal(collection._id)}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
+                          className="inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
                         >
-                          <TrashIcon className="h-4 w-4" />
+                          <TrashIcon className="h-3 w-3 md:h-4 md:w-4" />
                         </button>
                       </div>
                     </td>
@@ -312,17 +333,43 @@ export const Collections = () => {
             </table>
           </div>
 
-          {/* Table Footer */}
-          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <div>نمایش {collections.length} کالکشن</div>
-              <div className="flex items-center gap-4">
-                <span>
-                  آخرین بروزرسانی: {new Date().toLocaleDateString("fa-IR")}
-                </span>
+          {/* Pagination */}
+          {pagination.totalPages > 1 && (
+            <div className="px-3 md:px-6 py-3 md:py-4 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div className="text-xs md:text-sm text-gray-700">
+                نمایش {indexOfFirstItem} تا {indexOfLastItem} از {pagination.totalCollections} کالکشن
+              </div>
+              <div className="flex gap-1 md:gap-2 justify-center md:justify-end">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-2 md:px-3 py-1 border rounded text-xs md:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                >
+                  قبلی
+                </button>
+                {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-2 md:px-3 py-1 border rounded text-xs md:text-sm ${
+                      currentPage === page
+                        ? 'bg-[#0077b6] text-white'
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+                  disabled={currentPage === pagination.totalPages}
+                  className="px-2 md:px-3 py-1 border rounded text-xs md:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                >
+                  بعدی
+                </button>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -350,7 +397,7 @@ export const Collections = () => {
         onConfirm={confirmDelete}
       />
 
-      <ToastContainer position="top-center" rtl={true} />
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

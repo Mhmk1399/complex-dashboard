@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { FiUploadCloud, FiCheckCircle, FiAlertTriangle, FiImage, FiX } from "react-icons/fi";
+import Image from "next/image";
 
 interface UploadResult {
   success: boolean;
@@ -371,7 +372,9 @@ export default function UploadPage() {
                       {result.success && result.url && (
                         <div className="space-y-3">
                           <div className="bg-white rounded-xl p-3 shadow-sm">
-                            <img
+                            <Image
+                              width={200}
+                              height={200}
                               src={result.url}
                               alt={result.displayName}
                               className="w-full h-auto rounded-lg shadow-md max-h-48 object-cover"
