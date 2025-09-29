@@ -30,6 +30,7 @@ import {
   FaCog,
 } from "react-icons/fa";
 import Contact from "./components/contact";
+import Tickets from "./components/tickets";
 import SwirlBackground from "./components/SwirlBackground";
 
 // Enhanced loading component
@@ -194,6 +195,11 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
         icon: <FaCog />,
         color: "text-gray-600",
       },
+      tickets: {
+        title: "تیکت های مشتریان",
+        icon: <FaUsers />,
+        color: "text-blue-600",
+      },
     };
 
     return (
@@ -342,6 +348,7 @@ export const Dashboard = () => {
       siteSettings: <StoreSettings />,
       accountSettings: <InformationData />,
       contact: <Contact />,
+      tickets: <Tickets />,
     };
 
     const component = formComponents[selectedMenu] || formComponents.start;

@@ -73,6 +73,7 @@ const dashboardMenuItems = [
     subMenuItems: [
     { title: "کاربران", value: "costumers", icon: <FaUsers /> },
     {title: " درخواست ها", value: "contact", icon: <FaUserCog />},
+    {title: "تیکت های مشتریان", value: "tickets", icon: <FaUsers />},
   ]
     
   },
