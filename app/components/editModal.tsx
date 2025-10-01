@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { EditModalProps } from "@/types/type";
+import { EditModalProps, ImageFile } from "@/types/type";
+import ImageSelectorModal from "./ImageSelectorModal";
 
 const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
   const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
   const [newColor, setNewColor] = useState({ code: "", quantity: "" });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
 
   // Fetch categories when the modal opens
   useEffect(() => {
@@ -76,6 +78,29 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
       }));
       setNewColor({ code: "", quantity: "" });
     }
+  };
+
+  // Handle image selection from modal
+  const handleImageSelect = (image: ImageFile) => {
+    setFormData((prev) => {
+      if (prev.images.length >= 6) return prev;
+      const newImages = [...prev.images, { 
+        imageSrc: image.fileUrl, 
+        imageAlt: image.fileName || "Product image" 
+      }];
+      return {
+        ...prev,
+        images: newImages,
+      };
+    });
+  };
+
+  // Remove image
+  const removeImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
   };
 
   // Add validation function
@@ -267,62 +292,45 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                       <label className="block text-sm font-medium text-gray-700">
                         تصاویر محصول (حداکثر 6 تصویر) <span className="text-red-500">*</span>
                       </label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {Array.from({ length: 6 }).map((_, index) => (
-                          <div key={index} className="space-y-2">
-                            <div className="relative">
-                              {formData.images[index]?.imageSrc ? (
-                                <div className="relative">
-                                  <img
-                                    src={`${process.env.NEXT_PUBLIC_MAMAD_URL}${formData.images[index].imageSrc}`}
-                                    alt={formData.images[index].imageAlt}
-                                    className="w-full h-32 object-cover rounded-lg border"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const newImages = [...formData.images];
-                                      newImages.splice(index, 1);
-                                      setFormData(prev => ({ ...prev, images: newImages }));
-                                    }}
-                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                                  >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                  </button>
-                                </div>
-                              ) : (
-                                <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                                  <span className="text-gray-400 text-sm">تصویر {index + 1}</span>
-                                </div>
-                              )}
-                            </div>
-                            <input
-                              type="text"
-                              placeholder={`آدرس تصویر ${index + 1}`}
-                              value={formData.images[index]?.imageSrc || ""}
-                              onChange={(e) => {
-                                const newImages = [...formData.images];
-                                newImages[index] = { ...newImages[index], imageSrc: e.target.value };
-                                setFormData(prev => ({ ...prev, images: newImages }));
-                              }}
-                              className="w-full px-3 py-2 border rounded-lg text-sm"
-                            />
-                            <input
-                              type="text"
-                              placeholder={`متن جایگزین ${index + 1}`}
-                              value={formData.images[index]?.imageAlt || ""}
-                              onChange={(e) => {
-                                const newImages = [...formData.images];
-                                newImages[index] = { ...newImages[index], imageAlt: e.target.value };
-                                setFormData(prev => ({ ...prev, images: newImages }));
-                              }}
-                              className="w-full px-3 py-2 border rounded-lg text-sm"
-                            />
-                          </div>
-                        ))}
+                      
+                      {/* Image Selection Button */}
+                      <div className="flex gap-2 mb-4">
+                        <button
+                          type="button"
+                          onClick={() => setIsImageSelectorOpen(true)}
+                          disabled={formData.images.length >= 6}
+                          className={`px-4 py-3 rounded-xl font-medium transition-all ${
+                            formData.images.length >= 6
+                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                              : "bg-blue-600 hover:bg-blue-700 text-white"
+                          }`}
+                        >
+                          انتخاب تصویر ({formData.images.length}/6)
+                        </button>
                       </div>
+
+                      {/* Display Selected Images */}
+                      {formData.images.length > 0 && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {formData.images.map((image, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={image.imageSrc}
+                                alt={image.imageAlt}
+                                className="w-full h-32 object-cover rounded-lg border transition-transform group-hover:scale-105"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-all shadow-lg"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
                       {errors.images && (
                         <p className="text-red-500 text-sm">{errors.images}</p>
                       )}
@@ -1052,6 +1060,13 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
               </div>
             </div>
           </motion.div>
+
+          {/* Image Selector Modal */}
+          <ImageSelectorModal
+            isOpen={isImageSelectorOpen}
+            onClose={() => setIsImageSelectorOpen(false)}
+            onSelectImage={handleImageSelect}
+          />
         </>
       )}
     </AnimatePresence>
