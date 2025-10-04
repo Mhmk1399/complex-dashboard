@@ -3,6 +3,11 @@ import CustomerTicket from "@/models/customerTicket";
 import  connect from "@/lib/data";
 import StoreUsers from "@/models/storesUsers";
 
+interface TicketFilter {
+  storeId?: string;
+  status?: string;
+}
+
 export async function GET(request: NextRequest) {
   try {
     await connect();
@@ -11,7 +16,7 @@ export async function GET(request: NextRequest) {
     const storeId = searchParams.get("storeId");
     const status = searchParams.get("status");
     
-    const filter: any = {};
+    const filter: TicketFilter = {};
     if (storeId) filter.storeId = storeId;
     if (status) filter.status = status;
     
@@ -24,6 +29,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(tickets);
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: "Failed to fetch tickets" }, { status: 500 });
   }
 }

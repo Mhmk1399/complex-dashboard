@@ -1,6 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 
+interface Ticket {
+  status: string;
+}
+
 interface TicketStats {
   total: number;
   open: number;
@@ -30,10 +34,10 @@ export default function TicketStats() {
       if (Array.isArray(tickets)) {
         const newStats = {
           total: tickets.length,
-          open: tickets.filter((t: any) => t.status === "open").length,
-          inProgress: tickets.filter((t: any) => t.status === "in-progress").length,
-          resolved: tickets.filter((t: any) => t.status === "resolved").length,
-          closed: tickets.filter((t: any) => t.status === "closed").length
+          open: tickets.filter((t: Ticket) => t.status === "open").length,
+          inProgress: tickets.filter((t: Ticket) => t.status === "in-progress").length,
+          resolved: tickets.filter((t: Ticket) => t.status === "resolved").length,
+          closed: tickets.filter((t: Ticket) => t.status === "closed").length
         };
         setStats(newStats);
       }

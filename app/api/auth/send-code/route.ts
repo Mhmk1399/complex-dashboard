@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     await connect();
 
     // Rate limiting: Check if code was sent recently
-    const existingVerification = await Verification.findOne({ phone: phoneNumber });
+    // const existingVerification = await Verification.findOne({ phone: phoneNumber });
     // if (existingVerification && existingVerification.expiresAt > new Date()) {
     //   return NextResponse.json({ 
     //     message: 'Code already sent. Please wait before requesting again.',

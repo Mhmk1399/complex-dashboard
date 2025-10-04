@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import CustomerTicket from "@/models/customerTicket";
 import connect from "@/lib/data";
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connect();
     const { content, sender } = await request.json();
+    const { id } = await params;
     
-    const ticket = await CustomerTicket.findById(params.id);
+    const ticket = await CustomerTicket.findById(id);
     if (!ticket) {
       return NextResponse.json({ error: "Ticket not found" }, { status: 404 });
     }
@@ -24,9 +25,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     
     await ticket.save();
     
-    const updatedTicket = await CustomerTicket.findById(params.id).populate("customer", "name email");
+    const updatedTicket = await CustomerTicket.findById(id).populate("customer", "name email");
     return NextResponse.json(updatedTicket);
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: "Failed to add message" }, { status: 500 });
   }
 }

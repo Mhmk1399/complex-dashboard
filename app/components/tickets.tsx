@@ -55,7 +55,7 @@ export default function Tickets() {
     });
     fetchTickets();
     if (selectedTicket?._id === ticketId) {
-      setSelectedTicket({ ...selectedTicket, status: status as any });
+      setSelectedTicket({ ...selectedTicket, status: status as Ticket['status'] });
     }
   };
 
