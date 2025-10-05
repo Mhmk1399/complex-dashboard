@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema(
     storeId: { type: String, required: true, unique: true },
     trialDate: {type: Date},
     type: { type: String, enum: ["trialUser", "paidUser"], default: "trialUser" },
-
+    selctedTemplate: { type: String , default:"" },
   },
   { timestamps: true }
 );

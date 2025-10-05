@@ -1,0 +1,201 @@
+{
+  "type": "contact",
+
+  "children": {
+    "metaData": {
+      "title": "تماس با ما - فروشگاه آنلاین",
+      "description": "با تیم پشتیبانی فروشگاه آنلاین در تماس باشید. راه‌های ارتباطی، آدرس دفتر مرکزی و فرم تماس"
+    },
+    "sections": [
+      {
+        "type": "RichText",
+        "blocks": {
+          "imageSrc": "",
+          "imageAlt": "",
+          "heading": "",
+          "description": "تیم پشتیبانی ما ۲۴ ساعته آماده پاسخگویی به سوالات و راهنمایی شماست. از طریق فرم زیر، تلفن یا شبکه‌های اجتماعی با ما در ارتباط باشید.",
+          "textHeading": "ما منتظر شنیدن صدای شما هستیم",
+          "btnText": "مشاهده سوالات متداول",
+          "btnLink": "/faq",
+          "setting": {
+            "textHeadingColor": "#FFFFFF",
+            "textHeadingFontSize": "46",
+            "textHeadingFontWeight": "800",
+            "descriptionColor": "#E0E0E0",
+            "descriptionFontSize": "20",
+            "descriptionFontWeight": "400",
+            "background": "#DC143C",
+            "btnTextColor": "#DC143C",
+            "btnBackgroundColor": "#FFFFFF",
+            "lineWidth": "200",
+            "lineHeight": "4",
+            "lineTop": "0",
+            "lineBottom": "25",
+            "lineColor": "#FFFFFF",
+            "btnWidth": "220",
+            "btnRadius": "30",
+            "backgroundRadius": "20",
+            "align": "center",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 8,
+            "shadowBlur": 30,
+            "shadowSpread": 0,
+            "shadowColor": "#AAAAAA"
+          }
+        },
+        "setting": {
+          "paddingTop": "100",
+          "paddingBottom": "80",
+          "marginTop": "0",
+          "marginLeft": "20",
+          "marginRight": "20",
+          "marginBottom": "0",
+          "paddingLeft": "40",
+          "paddingRight": "40"
+        }
+      },
+      {
+        "type": "ContactForm",
+        "blocks": {
+          "heading": "فرم تماس با ما",
+          "setting": {
+            "headingColor": "#000000",
+            "headingFontSize": "38",
+            "headingFontWeight": "700",
+            "btnBackgroundColor": "#DC143C",
+            "btnTextColor": "#FFFFFF",
+            "formBackground": "#FFFFFF",
+            "boxRadiuos": "24",
+            "labelColor": "#666666",
+            "btnRadiuos": "30",
+            "btnWidth": "250",
+            "inputWidth": "400",
+            "inputRadiuos": "12",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 6,
+            "shadowBlur": 25,
+            "shadowSpread": 0,
+            "shadowColor": "#DDDDDD"
+          }
+        },
+        "setting": {
+          "paddingTop": "70",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "paddingBottom": "70",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "paddingLeft": "20",
+          "paddingRight": "20"
+        }
+      },
+      {
+        "type": "MultiColumn",
+        "blocks": [
+          {
+            "title1": "آدرس دفتر مرکزی",
+            "description1": "تهران، خیابان ولیعصر، نرسیده به میدان ونک، پلاک ۱۲۳۴، طبقه ۵، واحد ۱۰\n\nساعات کاری: شنبه تا پنجشنبه، ۹ صبح تا ۶ عصر\n\nکد پستی: ۱۹۱۱۸۱۳۴۵۶",
+            "imageSrc1": "/assets/images/banner1.jpg",
+            "imageAlt1": "آدرس دفتر",
+            "btnLable1": "مسیریابی",
+            "btnLink1": "#map"
+          },
+          {
+            "title2": "راه‌های ارتباطی",
+            "description2": "تلفن پشتیبانی: ۰۲۱-۱۲۳۴۵۶۷۸\n\nتلفن فروش: ۰۲۱-۸۷۶۵۴۳۲۱\n\nواتساپ: ۰۹۱۲۳۴۵۶۷۸۹\n\nپاسخگویی ۲۴ ساعته",
+            "imageSrc2": "/assets/images/banner3.jpg",
+            "imageAlt2": "تماس تلفنی",
+            "btnLable2": "تماس بگیرید",
+            "btnLink2": "tel:02112345678"
+          },
+          {
+            "title3": "ایمیل و شبکه‌های اجتماعی",
+            "description3": "ایمیل: info@shop.com\n\nاینستاگرام: @shop_online\n\nتلگرام: @shoponline\n\nپاسخ در کمتر از ۲۴ ساعت",
+            "imageSrc3": "/assets/images/banner.jpg",
+            "imageAlt3": "شبکه‌های اجتماعی",
+            "btnLable3": "ارسال ایمیل",
+            "btnLink3": "mailto:info@shop.com"
+          }
+        ],
+        "setting": {
+          "heading": "اطلاعات تماس",
+          "paddingTop": "70",
+          "paddingBottom": "70",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "paddinRight": "20",
+          "paddinLeft": "20",
+          "backgroundColorBox": "#FFFFFF",
+          "headingFontSize": "42",
+          "headingFontWeight": "700",
+          "headingColor": "#000000",
+          "imageRadious": "16",
+          "imageWidth": "100%",
+          "imageHeight": "250",
+          "titleColor": "#DC143C",
+          "titleFontSize": "26",
+          "titleFontWeight": "700",
+          "descriptionColor": "#666666",
+          "descriptionFontSize": "16",
+          "descriptionFontWeight": "400",
+          "btnColor": "#FFFFFF",
+          "btnBackgroundColor": "#000000",
+          "btnRadius": "25",
+          "formRadius": "16",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4,
+          "shadowBlur": 20,
+          "shadowSpread": 0,
+          "shadowColor": "#E0E0E0"
+        }
+      },
+      {
+        "type": "ImageText",
+        "blocks": {
+          "imageSrc": "/assets/images/banner3.jpg",
+          "imageAlt": "دفتر مرکزی فروشگاه",
+          "heading": "به دفتر ما بیایید",
+          "description": "دفتر مرکزی ما در قلب تهران واقع شده است. شما می‌توانید برای مشاوره حضوری، بازدید از محصولات نمونه یا دریافت خدمات پس از فروش به دفتر ما مراجعه کنید. تیم ما آماده پذیرایی گرم از شماست. پارکینگ رایگان برای مشتریان عزیز در نظر گرفته شده است.",
+          "btnLink": "#map",
+          "btnText": "مشاهده روی نقشه",
+          "setting": {
+            "headingColor": "#FFFFFF",
+            "headingFontSize": "44",
+            "headingFontWeight": "800",
+            "descriptionColor": "#E0E0E0",
+            "descriptionFontSize": "18",
+            "descriptionFontWeight": "400",
+            "btnTextColor": "#FFFFFF",
+            "btnBackgroundColor": "#DC143C",
+            "backgroundColorBox": "",
+            "backgroundBoxOpacity": 0.9,
+            "boxRadiuos": "24",
+            "opacityImage": 1,
+            "imageWidth": "600",
+            "imageRadius": "24",
+            "imageHeight": "450",
+            "background": "#000000",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 8,
+            "shadowBlur": 30,
+            "shadowSpread": 0,
+            "shadowColor": "#AAAAAA",
+            "btnRadiuos": "30",
+            "btnWidth": "220"
+          }
+        },
+        "setting": {
+          "paddingTop": "70",
+          "paddingBottom": "80",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "paddinRight": "20",
+          "paddinLeft": "20"
+        }
+      }
+    ],
+    "order": ["RichText", "ContactForm", "MultiColumn", "ImageText"]
+  }
+}

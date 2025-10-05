@@ -1,0 +1,232 @@
+{
+  "type": "about",
+
+  "children": {
+    "metaData": {
+      "title": "درباره ما - فروشگاه آنلاین",
+      "description": "آشنایی با فروشگاه آنلاین، ماموریت، چشم‌انداز و ارزش‌های ما در ارائه بهترین خدمات خرید آنلاین"
+    },
+    "sections": [
+      {
+        "type": "ImageText",
+        "blocks": {
+          "imageSrc": "/assets/images/banner3.jpg",
+          "imageAlt": "درباره فروشگاه آنلاین",
+          "heading": "داستان ما",
+          "description": "فروشگاه آنلاین ما در سال ۱۳۹۵ با هدف ارائه بهترین تجربه خرید آنلاین در ایران آغاز به کار کرد. ما معتقدیم که خرید آنلاین باید ساده، امن و لذت‌بخش باشد.",
+          "btnLink": "/shop",
+          "btnText": "شروع خرید",
+          "setting": {
+            "headingColor": "#FFFFFF",
+            "headingFontSize": "24",
+            "headingFontWeight": "700",
+            "descriptionColor": "#E0E0E0",
+            "descriptionFontSize": "13",
+            "descriptionFontWeight": "normal",
+            "btnTextColor": "#FFFFFF",
+            "btnBackgroundColor": "#DC143C",
+            "backgroundColorBox": "",
+            "backgroundBoxOpacity": 0.9,
+            "boxRadiuos": "16",
+            "opacityImage": 1,
+            "imageWidth": "350",
+            "imageRadius": "16",
+            "imageHeight": "250",
+            "background": "#000000",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 4,
+            "shadowBlur": 15,
+            "shadowSpread": 0,
+            "shadowColor": "#AAAAAA",
+            "btnRadiuos": "25",
+            "btnWidth": "140"
+          }
+        },
+        "setting": {
+          "paddingTop": "50",
+          "paddingBottom": "40",
+          "marginTop": "10",
+          "marginBottom": "0",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "paddinRight": "12",
+          "paddinLeft": "12"
+        }
+      },
+      {
+        "type": "RichText",
+        "blocks": {
+          "imageSrc": "",
+          "imageAlt": "",
+          "heading": "",
+          "description": "ماموریت ما ارائه محصولات اصل و باکیفیت با قیمت‌های رقابتی و خدمات بی‌نظیر است.",
+          "textHeading": "ماموریت ما",
+          "btnText": "تماس با ما",
+          "btnLink": "/contact",
+          "setting": {
+            "textHeadingColor": "#FFFFFF",
+            "textHeadingFontSize": "22",
+            "textHeadingFontWeight": "700",
+            "descriptionColor": "#E0E0E0",
+            "descriptionFontSize": "13",
+            "descriptionFontWeight": "400",
+            "background": "#DC143C",
+            "btnTextColor": "#DC143C",
+            "btnBackgroundColor": "#FFFFFF",
+            "lineWidth": "80",
+            "lineHeight": "3",
+            "lineTop": "0",
+            "lineBottom": "15",
+            "lineColor": "#FFFFFF",
+            "btnWidth": "140",
+            "btnRadius": "25",
+            "backgroundRadius": "16",
+            "align": "center",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 4,
+            "shadowBlur": 15,
+            "shadowSpread": 0,
+            "shadowColor": "#AAAAAA"
+          }
+        },
+        "setting": {
+          "paddingTop": "40",
+          "paddingBottom": "40",
+          "marginTop": "0",
+          "marginLeft": "12",
+          "marginRight": "12",
+          "marginBottom": "0",
+          "paddingLeft": "20",
+          "paddingRight": "20"
+        }
+      },
+      {
+        "type": "MultiColumn",
+        "blocks": [
+          {
+            "title1": "کیفیت برتر",
+            "description1": "ما فقط محصولات اصل و باکیفیت از برندهای معتبر جهانی را ارائه می‌دهیم. گارانتی اصالت کالا و ضمانت بازگشت وجه.",
+            "imageSrc1": "/assets/images/banner1.jpg",
+            "imageAlt1": "کیفیت برتر",
+            "btnLable1": "",
+            "btnLink1": ""
+          },
+          {
+            "title2": "خدمات حرفه‌ای",
+            "description2": "تیم پشتیبانی ما ۲۴ ساعته آماده پاسخگویی به سوالات شماست. رضایت شما اولویت اصلی ماست.",
+            "imageSrc2": "/assets/images/banner3.jpg",
+            "imageAlt2": "خدمات حرفه‌ای",
+            "btnLable2": "",
+            "btnLink2": ""
+          },
+          {
+            "title3": "قیمت مناسب",
+            "description3": "با حذف واسطه‌ها، بهترین قیمت‌ها را ارائه می‌دهیم. ضمانت قیمت را به شما می‌دهیم.",
+            "imageSrc3": "/assets/images/banner.jpg",
+            "imageAlt3": "قیمت مناسب",
+            "btnLable3": "",
+            "btnLink3": ""
+          }
+        ],
+        "setting": {
+          "heading": "ارزش‌های ما",
+          "paddingTop": "35",
+          "paddingBottom": "35",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "paddinRight": "12",
+          "paddinLeft": "12",
+          "backgroundColorBox": "#FFFFFF",
+          "headingFontSize": "22",
+          "headingFontWeight": "700",
+          "headingColor": "#000000",
+          "imageRadious": "12",
+          "imageWidth": "100%",
+          "imageHeight": "150",
+          "titleColor": "#DC143C",
+          "titleFontSize": "16",
+          "titleFontWeight": "700",
+          "descriptionColor": "#666666",
+          "descriptionFontSize": "13",
+          "descriptionFontWeight": "400",
+          "btnColor": "#FFFFFF",
+          "btnBackgroundColor": "#000000",
+          "btnRadius": "20",
+          "formRadius": "12",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3,
+          "shadowBlur": 12,
+          "shadowSpread": 0,
+          "shadowColor": "#E0E0E0"
+        }
+      },
+      {
+        "type": "MultiRow",
+        "title": "دستاوردهای ما",
+        "blocks": [
+          {
+            "heading": "۵۰۰ هزار مشتری راضی",
+            "description": "از سال ۱۳۹۵ تاکنون، بیش از نیم میلیون نفر به ما اعتماد کرده‌اند. این اعتماد بزرگ‌ترین سرمایه ما است. رضایت ۹۸٪ مشتریان ما گواه کیفیت خدمات ماست.",
+            "btnLable": "عضویت",
+            "btnLink": "/register",
+            "imageSrc": "/assets/images/banner1.jpg",
+            "imageAlt": "مشتریان راضی"
+          },
+          {
+            "heading": "ارسال سراسری",
+            "description": "ما با همکاری بهترین شرکت‌های حمل و نقل، محصولات را به تمام نقاط کشور ارسال می‌کنیم. سیستم پیگیری آنلاین و ارسال سریع و ایمن.",
+            "btnLable": "شرایط ارسال",
+            "btnLink": "/shipping",
+            "imageSrc": "/assets/images/banner3.jpg",
+            "imageAlt": "ارسال سراسری"
+          },
+          {
+            "heading": "برندهای معتبر",
+            "description": "ما نمایندگی رسمی معتبرترین برندهای داخلی و خارجی هستیم. محصولات ۱۰۰٪ اصل با گارانتی معتبر. اعتماد برندهای جهانی به ما.",
+            "btnLable": "برندها",
+            "btnLink": "/brands",
+            "imageSrc": "/assets/images/banner.jpg",
+            "imageAlt": "برندهای معتبر"
+          }
+        ],
+        "setting": {
+          "titleColor": "#000000",
+          "titleFontWeight": "700",
+          "titleFontSize": "20",
+          "paddingTop": "35",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "paddingBottom": "35",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "paddingLeft": "12",
+          "paddingRight": "12",
+          "backgroundColorMultiRow": "#F5F5F5",
+          "backgroundColorBox": "#FFFFFF",
+          "imageWidth": "100%",
+          "imageHeight": "200",
+          "imageRadius": "16",
+          "headingColor": "#DC143C",
+          "headingFontSize": "18",
+          "headingFontWeight": "700",
+          "descriptionColor": "#666666",
+          "descriptionFontSize": "13",
+          "descriptionFontWeight": "400",
+          "btnColor": "#FFFFFF",
+          "btnBackgroundColor": "#000000",
+          "imageAlign": "column",
+          "formRadius": "16",
+          "rowRadius": "16",
+          "btnRadius": "25",
+          "btnWidth": "140",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4,
+          "shadowBlur": 15,
+          "shadowSpread": 0,
+          "shadowColor": "#D5D5D5"
+        }
+      }
+    ],
+    "order": ["ImageText", "RichText", "MultiColumn", "MultiRow"]
+  }
+}

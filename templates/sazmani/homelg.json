@@ -1,0 +1,502 @@
+{
+  "type": "layout",
+  "settings": {
+    "fontFamily": "Vazir, Tahoma, sans-serif",
+    "colorSchema": {
+      "primary": "#485696",
+      "secondary": "#fc7a1e",
+      "text": "#333333"
+    }
+  },
+  "sections": {
+    "sectionHeader": {
+      "blocks": {
+        "imageLogo": "/assets/images/logo.webp",
+        "imageAlt": "شرکت ما",
+        "links": [
+          {
+            "name": "خدمات",
+            "url": "/services",
+            "megaMenu": [
+              {
+                "title": "خدمات فنی",
+                "items": [
+                  {
+                    "name": "مشاوره",
+                    "url": "/consulting"
+                  },
+                  {
+                    "name": "پشتیبانی",
+                    "url": "/support"
+                  },
+                  {
+                    "name": "آموزش",
+                    "url": "/training"
+                  }
+                ]
+              },
+              {
+                "title": "خدمات کسب و کار",
+                "items": [
+                  {
+                    "name": "استراتژی",
+                    "url": "/strategy",
+                    "image": "/assets/images/fridge.jpg"
+                  },
+                  {
+                    "name": "بازاریابی",
+                    "url": "/marketing",
+                    "image": "/assets/images/washer.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "درباره ما",
+            "url": "/about"
+          },
+          {
+            "name": "تماس با ما",
+            "url": "/contact"
+          },
+          {
+            "name": "بلاگ",
+            "url": "/blogs"
+          }
+        ],
+        "setting": {
+          "imageWidth": "80",
+          "imageHeight": "80",
+          "imageRadius": "8",
+          "itemColor": "#333333",
+          "itemHoverColor": "#fc7a1e",
+          "backgroundColorNavbar": "#FFFFFF",
+          "searchBarBorderColor": "#e7e7e7",
+          "searchBarBorderRadius": "25",
+          "buttonBorderColor": "#485696",
+          "buttonBorderRadius": "25",
+          "locationButtonBgColor": "#FFF5F0",
+          "locationButtonTextColor": "#fc7a1e",
+          "announcementText": "🎯 مشاوره رایگان برای کسب و کارها | تماس بگیرید",
+          "announcementBgColor": "#485696",
+          "announcementTextColor": "#FFFFFF",
+          "announcementFontSize": "14",
+          "bgColor": "#FFFFFF",
+          "gap": "15",
+          "megaMenuBg": "#FFFFFF",
+          "categoryItemColor": "#333333",
+          "categoryItemSize": "15",
+          "categoryItemHoverColor": "#fc7a1e",
+          "mobileBackground": "#FFFFFF",
+          "megaMenuRadius": "12",
+          "bgRadius": "0",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3,
+          "shadowBlur": 15,
+          "shadowSpread": 0,
+          "shadowColor": "#CCCCCC"
+        }
+      },
+      "setting": {
+        "paddingTop": "10",
+        "paddingBottom": "10",
+        "paddingLeft": "0",
+        "paddingRight": "0",
+        "marginTop": "",
+        "marginBottom": "0",
+        "navbarPosition": "fixed",
+        "bgColor": "#FFFFFF"
+      },
+      "type": "header"
+    },
+    "children": {
+      "metaData": {
+        "title": "شرکت ما - راهکارهای حرفه‌ای کسب و کار",
+        "description": "ارائه خدمات مشاوره، پشتیبانی و راهکارهای نوین برای کسب و کارها"
+      },
+      "sections": [
+        {
+          "type": "SlideBanner",
+          "blocks": {
+            "slides": [
+              {
+                "imageSrc": "/assets/images/org1.jpg",
+                "imageAlt": "راهکارهای حرفه‌ای",
+                "heading": "راهکارهای نوین کسب و کار",
+                "description": "با تیم متخصص ما، کسب و کار خود را به سطح جدیدی ارتقا دهید",
+                "link": "/services"
+              },
+              {
+                "imageSrc": "/assets/images/org2.jpg",
+                "imageAlt": "مشاوره تخصصی",
+                "heading": "مشاوره تخصصی و حرفه‌ای",
+                "description": "بیش از ۱۰ سال تجربه در ارائه خدمات مشاوره به شرکت‌ها",
+                "link": "/consulting"
+              },
+              {
+                "imageSrc": "/assets/images/org3.jpg",
+                "imageAlt": "پشتیبانی ۲۴/۷",
+                "heading": "پشتیبانی همیشگی",
+                "description": "تیم پشتیبانی ما ۲۴ ساعته در کنار شماست",
+                "link": "/support"
+              }
+            ],
+            "setting": {
+              "autoplay": true,
+              "autoplaySpeed": 4000,
+              "slideTransition": "fade",
+              "navigationStyle": "arrows",
+              "arrowsPosition": "bottom-right",
+              "height": "300",
+              "bgArrow": "#FFFFFF",
+              "activeDotColor": "#fc7a1e",
+              "inactiveDotColor": "#e7e7e7",
+              "arrowHeight": "50",
+              "arrowRadius": "50",
+              "arrowWidth": "50",
+              "arrowColor": "#485696",
+              "arrowBgHover": "#fc7a1e",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4,
+              "shadowBlur": 20,
+              "shadowSpread": 0,
+              "shadowColor": "#CCCCCC"
+            }
+          },
+          "setting": {
+            "marginTop": "0",
+            "marginBottom": "0",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingTop": "0",
+            "paddingBottom": "0",
+            "paddingLeft": "0",
+            "paddingRight": "0"
+          }
+        },
+        {
+          "type": "RichText",
+          "blocks": {
+            "imageSrc": "",
+            "imageAlt": "",
+            "heading": "",
+            "description": "ما با ارائه راهکارهای نوین و خدمات تخصصی، همراه قابل اعتماد کسب و کار شما هستیم. تیم متخصص ما آماده است تا با تجربه و دانش خود، شما را در مسیر موفقیت یاری کند.",
+            "textHeading": "شریک موفقیت شما",
+            "btnText": "درخواست مشاوره",
+            "btnLink": "/contact",
+            "setting": {
+              "textHeadingColor": "#FFFFFF",
+              "textHeadingFontSize": "44",
+              "textHeadingFontWeight": "700",
+              "descriptionColor": "#e7e7e7",
+              "descriptionFontSize": "19",
+              "descriptionFontWeight": "400",
+              "background": "#485696",
+              "btnTextColor": "#485696",
+              "btnBackgroundColor": "#FFFFFF",
+              "lineWidth": "180",
+              "lineHeight": "4",
+              "lineTop": "0",
+              "lineBottom": "20",
+              "lineColor": "#fc7a1e",
+              "btnWidth": "220",
+              "btnRadius": "30",
+              "backgroundRadius": "20",
+              "align": "center",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 6,
+              "shadowBlur": 25,
+              "shadowSpread": 0,
+              "shadowColor": "#AAAAAA"
+            }
+          },
+          "setting": {
+            "paddingTop": "80",
+            "paddingBottom": "80",
+            "marginTop": "0",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "marginBottom": "0",
+            "paddingLeft": "40",
+            "paddingRight": "40"
+          }
+        },
+        {
+          "type": "MultiColumn",
+          "blocks": [
+            {
+              "title1": "مشاوره حرفه‌ای",
+              "description1": "تیم مشاوران ما  بهترین راهکارها را ارائه می‌دهند. از تحلیل بازار تا استراتژی‌های رشد، همه چیز را پوشش می‌دهیم.",
+              "imageSrc": "/assets/images/org3.jpg",
+              "imageAlt1": "مشاوره",
+              "btnLable1": "اطلاعات بیشتر",
+              "btnLink1": "/consulting"
+            },
+            {
+              "title2": "پشتیبانی مستمر",
+              "description2": "پشتیبانی ۲۴ ساعته و ۷ روز هفته برای اطمینان از عملکرد بهینه سیستم‌های شما. تیم فنی ما همیشه آماده پاسخگویی است.",
+              "imageSrc": "/assets/images/org2.jpg",
+              "imageAlt2": "پشتیبانی",
+              "btnLable2": "تماس با پشتیبانی",
+              "btnLink2": "/support"
+            },
+            {
+              "title3": "آموزش تخصصی",
+              "description3": "دوره‌های آموزشی جامع برای ارتقای مهارت‌های تیم شما. از مبتدی تا پیشرفته، همه سطوح را پوشش می‌دهیم.",
+              "imageSrc": "/assets/images/org1.jpg",
+              "imageAlt3": "آموزش",
+              "btnLable3": "مشاهده دوره‌ها",
+              "btnLink3": "/training"
+            }
+          ],
+          "setting": {
+            "heading": "خدمات ما",
+            "paddingTop": "70",
+            "paddingBottom": "70",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "paddinRight": "20",
+            "paddinLeft": "20",
+            "backgroundColorBox": "#FFFFFF",
+            "headingFontSize": "40",
+            "headingFontWeight": "700",
+            "headingColor": "#485696",
+            "imageRadious": "16",
+            "imageWidth": "100%",
+            "imageHeight": "280",
+            "titleColor": "#fc7a1e",
+            "titleFontSize": "26",
+            "titleFontWeight": "700",
+            "descriptionColor": "#666666",
+            "descriptionFontSize": "16",
+            "descriptionFontWeight": "400",
+            "btnColor": "#FFFFFF",
+            "btnBackgroundColor": "#485696",
+            "btnRadius": "25",
+            "formRadius": "16",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 5,
+            "shadowBlur": 20,
+            "shadowSpread": 0,
+            "shadowColor": "#DDDDDD"
+          }
+        },
+        {
+          "type": "ImageText",
+          "blocks": {
+            "imageSrc": "/assets/images/org1.jpg",
+            "imageAlt": "درباره شرکت",
+            "heading": "بیش از ۱۰ سال تجربه",
+            "description": "ما با افتخار بیش از یک دهه است که به کسب و کارها کمک می‌کنیم تا به اهداف خود برسند. تیم متخصص ما همیشه در تلاش است تا بهترین خدمات را ارائه دهد.",
+            "btnLink": "/about",
+            "btnText": "درباره ما",
+            "setting": {
+              "headingColor": "#FFFFFF",
+              "headingFontSize": "42",
+              "headingFontWeight": "800",
+              "descriptionColor": "#e7e7e7",
+              "descriptionFontSize": "18",
+              "descriptionFontWeight": "400",
+              "btnTextColor": "#FFFFFF",
+              "btnBackgroundColor": "#fc7a1e",
+              "backgroundColorBox": "",
+              "backgroundBoxOpacity": 0.9,
+              "boxRadiuos": "24",
+              "opacityImage": 1,
+              "imageWidth": "600",
+              "imageRadius": "24",
+              "imageHeight": "500",
+              "background": "#485696",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 8,
+              "shadowBlur": 30,
+              "shadowSpread": 0,
+              "shadowColor": "#AAAAAA",
+              "btnRadiuos": "30",
+              "btnWidth": "200"
+            }
+          },
+          "setting": {
+            "paddingTop": "70",
+            "paddingBottom": "70",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddinRight": "20",
+            "paddinLeft": "20"
+          }
+        },
+        {
+          "type": "MultiRow",
+          "title": "چرا ما را انتخاب کنید؟",
+          "blocks": [
+            {
+              "heading": "تیم متخصص و با تجربه",
+              "description": "تیم ما شامل متخصصان برتر در حوزه‌های مختلف است. هر یک از اعضای تیم ما دارای سال‌ها تجربه کاری موفق هستند و آماده‌اند تا دانش خود را در اختیار شما قرار دهند. ما معتقدیم که موفقیت شما، موفقیت ماست.",
+              "btnLable": "تیم ما",
+              "btnLink": "/team",
+              "imageSrc": "/assets/images/org1.jpg",
+              "imageAlt": "تیم"
+            },
+            {
+              "heading": "راهکارهای نوآورانه و کارآمد",
+              "description": "ما همیشه به دنبال جدیدترین و بهترین راهکارها هستیم. با استفاده از فناوری‌های روز دنیا و متدولوژی‌های مدرن، راهکارهایی ارائه می‌دهیم که نه تنها مشکلات فعلی شما را حل می‌کند، بلکه برای آینده نیز شما را آماده می‌سازد.",
+              "btnLable": "راهکارها",
+              "btnLink": "/solutions",
+              "imageSrc": "/assets/images/org2.jpg",
+              "imageAlt": "راهکارها"
+            },
+            {
+              "heading": "رضایت مشتریان، اولویت ماست",
+              "description": "بیش از ۵۰۰ مشتری راضی گواه کیفیت خدمات ما هستند. ما به تعهدات خود پایبند هستیم و همیشه تلاش می‌کنیم تا فراتر از انتظارات شما عمل کنیم. رضایت شما، بزرگ‌ترین دستاورد ماست.",
+              "btnLable": "نظرات مشتریان",
+              "btnLink": "/testimonials",
+              "imageSrc": "/assets/images/org3.jpg",
+              "imageAlt": "مشتریان"
+            }
+          ],
+          "setting": {
+            "titleColor": "#485696",
+            "titleFontWeight": "700",
+            "titleFontSize": "40",
+            "paddingTop": "70",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "paddingBottom": "70",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingLeft": "20",
+            "paddingRight": "20",
+            "backgroundColorMultiRow": "#e7e7e7",
+            "backgroundColorBox": "#FFFFFF",
+            "imageWidth": "600",
+            "imageHeight": "400",
+            "imageRadius": "24",
+            "headingColor": "#fc7a1e",
+            "headingFontSize": "28",
+            "headingFontWeight": "700",
+            "descriptionColor": "#666666",
+            "descriptionFontSize": "16",
+            "descriptionFontWeight": "400",
+            "btnColor": "#FFFFFF",
+            "btnBackgroundColor": "#485696",
+            "imageAlign": "row",
+            "formRadius": "20",
+            "rowRadius": "20",
+            "btnRadius": "30",
+            "btnWidth": "200",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 5,
+            "shadowBlur": 20,
+            "shadowSpread": 0,
+            "shadowColor": "#CCCCCC"
+          }
+        },
+        {
+          "type": "ContactForm",
+          "blocks": {
+            "heading": "تماس با ما",
+            "setting": {
+              "headingColor": "#485696",
+              "headingFontSize": "38",
+              "headingFontWeight": "700",
+              "btnBackgroundColor": "#fc7a1e",
+              "btnTextColor": "#FFFFFF",
+              "formBackground": "#FFFFFF",
+              "boxRadiuos": "24",
+              "labelColor": "#666666",
+              "btnRadiuos": "30",
+              "btnWidth": "250",
+              "inputWidth": "500",
+              "inputRadiuos": "12",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 6,
+              "shadowBlur": 25,
+              "shadowSpread": 0,
+              "shadowColor": "#DDDDDD"
+            }
+          },
+          "setting": {
+            "paddingTop": "70",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "paddingBottom": "70",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingLeft": "20",
+            "paddingRight": "20"
+          }
+        }
+      ],
+      "order": [
+        "SlideBanner",
+        "RichText",
+        "MultiColumn",
+        "ImageText",
+        "MultiRow",
+        "ContactForm"
+      ]
+    },
+    "sectionFooter": {
+      "type": "Footer",
+      "blocks": {
+        "text": "شرکت ما - همراه موفقیت شما",
+        "description": "ما با ارائه خدمات مشاوره، پشتیبانی و راهکارهای نوین، همراه قابل اعتماد کسب و کار شما هستیم. بیش از ۱۰ سال تجربه در خدمت شما.",
+        "instagramLink": "#",
+        "telegramLink": "#",
+        "whatsappLink": "#",
+        "textNumber": "تماس با ما",
+        "phoneNumber": "۰۲۱-۱۲۳۴۵۶۷۸",
+        "logo": "/assets/images/logo.webp",
+        "links": [
+          {
+            "url": "/privacy-policy",
+            "label": "حریم خصوصی"
+          },
+          {
+            "url": "/terms-of-service",
+            "label": "شرایط و قوانین"
+          }
+        ],
+        "setting": {
+          "textColor": "#485696",
+          "textFontSize": "24",
+          "textFontWeight": "700",
+          "descriptionColor": "#666666",
+          "descriptionFontSize": "15",
+          "descriptionFontWeight": "400",
+          "trustIconBackground": "#fc7a1e",
+          "trustIconColor": "#FFFFFF",
+          "trustItemSize": "14",
+          "trustItemColor": "#333333",
+          "scrollButtonBg": "#fc7a1e",
+          "scrollButtonColor": "#FFFFFF",
+          "categoryColor": "#333333",
+          "linkColor": "#485696",
+          "logoWidth": "90",
+          "logoHeight": "90",
+          "logoRadius": "16",
+          "bgRadius": "16",
+          "categoryBg": "#FFFFFF",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4,
+          "shadowBlur": 20,
+          "shadowSpread": 0,
+          "shadowColor": "#DDDDDD"
+        }
+      },
+      "setting": {
+        "paddingTop": "60",
+        "paddingBottom": "40",
+        "marginTop": "0",
+        "marginBottom": "0",
+        "paddinRight": "20",
+        "paddinLeft": "20",
+        "backgroundColor": "#e7e7e7"
+      }
+    }
+  },
+  "order": ["section-header", "children", "section-footer"]
+}

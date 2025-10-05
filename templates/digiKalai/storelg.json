@@ -1,0 +1,93 @@
+{
+  "type": "store",
+  "children": {
+    "metaData": {
+      "title": "فروشگاه",
+      "description": "juju page"
+    },
+    "sections": [
+      {
+        "type": "ProductList",
+        "blocks": [
+          {
+            "productId": 1,
+            "imageSrc": "/assets/images/pro1.jpg",
+            "imageAlt": "محصول ۱",
+            "name": "محصول اول",
+            "description": "این محصول به خوبی ساخته شده است.",
+            "price": "1۰۰۰۰۰ تومان",
+            "btnText": "اضافه به سبد خرید",
+            "btnLink": "/product/1"
+          },
+          {
+            "productId": 2,
+            "imageSrc": "/assets/images/pro2.jpg",
+            "imageAlt": "محصول ۲",
+            "name": "محصول دوم",
+            "description": "این محصول به خوبی ساخته شده است.",
+            "price": "2۰۰۰۰۰ تومان",
+            "btnText": "اضافه به سبد خرید",
+            "btnLink": "/product/2"
+          },
+          {
+            "productId": 3,
+            "imageSrc": "/assets/images/pro3.jpg",
+            "imageAlt": "محصول ۳",
+            "name": "محصول سوم",
+            "description": "این محصول به خوبی ساخته شده است.",
+            "price": "3۰۰۰۰۰ تومان",
+            "btnText": "اضافه به سبد خرید",
+            "btnLink": "/product/3"
+          },
+          {
+            "productId": 4,
+            "imageSrc": "/assets/images/pro4.jpg",
+            "imageAlt": "محصول 4",
+            "name": "محصول چهارم",
+            "description": "این محصول به خوبی ساخته شده است.",
+            "price": "4۰۰۰۰۰ تومان",
+            "btnText": "اضافه به سبد خرید",
+            "btnLink": "/product/3"
+          }
+        ],
+        "setting": {
+          "gridColumns": 3,
+          "paddingTop": "100",
+          "paddingBottom": "60",
+          "paddingLeft": "20",
+          "paddingRight": "20",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "backgroundColor": "#F5F5F5",
+          "cardBackgroundColor": "#FFFFFF",
+          "filterButtonBg": "#DC143C",
+          "filterButtonTextColor": "#FFFFFF",
+          "filterRowBg": "#FFFFFF",
+          "filterNameColor": "#000000",
+          "filterCardBg": "#FFFFFF",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4,
+          "shadowBlur": 20,
+          "shadowSpread": 0,
+          "shadowColor": "#E0E0E0",
+          "cardBorderRadius": "1",
+          "cardBackground": "#ffffff",
+          "nameFontSize": "20",
+          "nameFontWeight": "700",
+          "nameColor": "#000000",
+          "descriptionFontSize": "14",
+          "descriptionFontWeight": "400",
+          "descriptionColor": "#666666",
+          "priceFontSize": "16",
+          "priceColor": "#DC143C",
+          "cartBakground": "#DC143C",
+          "cartColor": "#ffffff",
+          "cartRadius": "6"
+        }
+      }
+    ],
+    "order": ["ProductList"]
+  }
+}

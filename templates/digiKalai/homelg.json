@@ -1,0 +1,1048 @@
+{
+  "type": "layout",
+  "settings": {
+    "fontFamily": "Vazir, Tahoma, sans-serif",
+    "colorSchema": {
+      "primary": "#DC143C",
+      "secondary": "#000000",
+      "text": "#333333"
+    }
+  },
+  "sections": {
+    "sectionHeader": {
+      "blocks": {
+        "imageLogo": "/assets/images/logo.webp",
+        "imageAlt": "فروشگاه آنلاین",
+        "links": [
+          {
+            "name": "دسته‌بندی کالاها",
+            "url": "/categories",
+            "megaMenu": [
+              {
+                "title": "کالای دیجیتال",
+                "items": [
+                  {
+                    "name": "گوشی موبایل",
+                    "url": "/mobile"
+                  },
+                  {
+                    "name": "لپ تاپ و تبلت",
+                    "url": "/laptop"
+                  },
+                  {
+                    "name": "هدفون و اسپیکر",
+                    "url": "/tablet"
+                  }
+                ]
+              },
+              {
+                "title": "لوازم خانگی",
+                "items": [
+                  {
+                    "name": "یخچال و فریزر",
+                    "url": "/refrigerator",
+                    "image": "/assets/images/fridge.jpg"
+                  },
+                  {
+                    "name": "ماشین لباسشویی",
+                    "url": "/washing-machine",
+                    "image": "/assets/images/washer.jpg"
+                  }
+                ]
+              },
+              {
+                "title": "مد و پوشاک",
+                "items": [
+                  {
+                    "name": "پوشاک مردانه",
+                    "url": "/refrigerator",
+                    "image": "/assets/images/fridge.jpg"
+                  },
+                  {
+                    "name": "پوشاک زنانه",
+                    "url": "/washing-machine",
+                    "image": "/assets/images/washer.jpg"
+                  }
+                ]
+              },
+              {
+                "title": "ورزش و سفر",
+                "items": [
+                  {
+                    "name": "لوازم ورزشی",
+                    "url": "/refrigerator",
+                    "image": "/assets/images/fridge.jpg"
+                  },
+                  {
+                    "name": "کوله و چمدان",
+                    "url": "/washing-machine",
+                    "image": "/assets/images/washer.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "فروشگاه",
+            "url": "/store"
+          },
+          {
+            "name": "وبلاگ",
+            "url": "/blogs"
+          },
+          {
+            "name": "تماس با ما",
+            "url": "/contact"
+          },
+
+          {
+            "name": "درباره ما",
+            "url": "/about"
+          }
+        ],
+        "setting": {
+          "imageWidth": "70",
+          "imageHeight": "70",
+          "imageRadius": "12",
+          "itemColor": "#333333",
+          "itemHoverColor": "#DC143C",
+          "backgroundColorNavbar": "#FFFFFF",
+          "searchBarBorderColor": "#E0E0E0",
+          "searchBarBorderRadius": "25",
+          "buttonBorderColor": "#DC143C",
+          "buttonBorderRadius": "25",
+          "locationButtonBgColor": "#FFEBEE",
+          "locationButtonTextColor": "#DC143C",
+          "announcementText": "🎉 ارسال رایگان برای خریدهای بالای ۵۰۰ هزار تومان | تخفیف ویژه!",
+          "announcementBgColor": "#DC143C",
+          "announcementTextColor": "#FFFFFF",
+          "announcementFontSize": "15",
+          "bgColor": "#FFFFFF",
+          "gap": "15",
+          "megaMenuBg": "#FFFFFF",
+          "categoryItemColor": "#333333",
+          "categoryItemSize": "15",
+          "categoryItemHoverColor": "#DC143C",
+          "mobileBackground": "#FFFFFF",
+          "megaMenuRadius": "12",
+          "bgRadius": "0",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4,
+          "shadowBlur": 15,
+          "shadowSpread": 0,
+          "shadowColor": "#E0E0E0"
+        }
+      },
+      "setting": {
+        "paddingTop": "0",
+        "paddingBottom": "0",
+        "paddingLeft": "0",
+        "paddingRight": "0",
+        "marginTop": "",
+        "marginBottom": "0",
+        "navbarPosition": "fixed",
+        "bgColor": "#FFFFFF"
+      },
+      "type": "header"
+    },
+    "children": {
+      "metaData": {
+        "title": "فروشگاه آنلاین - بهترین قیمت و کیفیت",
+        "description": "خرید آنلاین انواع محصولات با بهترین قیمت، ارسال رایگان و ضمانت اصالت کالا"
+      },
+      "sections": [
+        {
+          "type": "SlideBanner",
+          "blocks": {
+            "slides": [
+              {
+                "imageSrc": "/assets/images/bannerdigi.webp",
+                "imageAlt": "حراج تابستانه ۲۰۲۴",
+                "heading": "حراج ویژه تابستان",
+                "description": "تخفیف تا ۷۰٪ روی محصولات منتخب",
+                "link": "#"
+              },
+              {
+                "imageSrc": "/assets/images/bannerdigi1.webp",
+                "imageAlt": "جدیدترین محصولات",
+                "heading": "کلکسیون جدید رسید",
+                "description": "آخرین مدل‌های لوازم دیجیتال و پوشاک",
+                "link": "#"
+              },
+              {
+                "imageSrc": "/assets/images/bannerdigi2.webp",
+                "imageAlt": "الکترونیک پرمیوم",
+                "heading": "لوازم الکترونیک پرمیوم",
+                "description": "بهترین تخفیف‌ها روی گوشی و لپ تاپ",
+                "link": "#"
+              }
+            ],
+            "setting": {
+              "autoplay": true,
+              "autoplaySpeed": 4000,
+              "slideTransition": "fade",
+              "navigationStyle": "arrows",
+              "arrowsPosition": "bottom-right",
+              "height": "550",
+              "bgArrow": "#FFFFFF",
+              "activeDotColor": "#DC143C",
+              "inactiveDotColor": "#CCCCCC",
+              "arrowHeight": "50",
+              "arrowRadius": "50",
+              "arrowWidth": "50",
+              "arrowColor": "#000000",
+              "arrowBgHover": "#DC143C",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2,
+              "shadowBlur": 10,
+              "shadowSpread": 0,
+              "shadowColor": "#CCCCCC"
+            }
+          },
+          "setting": {
+            "marginTop": "0",
+            "marginBottom": "0",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingTop": "0",
+            "paddingBottom": "0",
+            "paddingLeft": "0",
+            "paddingRight": "0"
+          }
+        },
+        {
+          "type": "Story",
+          "blocks": {
+            "stories": [
+              {
+                "id": "1",
+                "imageUrl": "/assets/images/pro1.jpg",
+                "title": "پیشنهاد شگفت‌انگیز",
+                "link": "/special-offers"
+              },
+              {
+                "id": "2",
+                "imageUrl": "/assets/images/pro2.jpg",
+                "title": "تازه‌ها",
+                "link": "/new-arrivals"
+              },
+              {
+                "id": "3",
+                "imageUrl": "/assets/images/pro3.jpg",
+                "title": "پیشنهاد روز",
+                "link": "/daily-deals"
+              },
+              {
+                "id": "4",
+                "imageUrl": "/assets/images/pro4.jpg",
+                "title": "پرفروش‌ترین‌ها",
+                "link": "/daily-deals"
+              }
+            ],
+            "setting": {
+              "storyRingColor": "#DC143C",
+              "viewedRingColor": "#E0E0E0",
+              "titleColor": "#333333",
+              "titleFontSize": "14",
+              "titleFontWeight": "600",
+              "imageRadius": "50",
+              "backgroundColor": "#FFFFFF",
+              "storyWidth": "110",
+              "storyHeight": "130",
+              "storyGap": "16",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 3,
+              "shadowBlur": 12,
+              "shadowSpread": 0,
+              "shadowColor": "#D0D0D0"
+            }
+          },
+          "setting": {
+            "paddingTop": "25",
+            "paddingRight": "20",
+            "paddingLeft": "20",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingBottom": "25",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "backgroundColor": "#F5F5F5"
+          }
+        },
+        {
+          "type": "SpecialOffer",
+          "blocks": {
+            "textHeading": "⚡ پیشنهاد ویژه - فرصت محدود",
+            "setting": {
+              "headingColor": "#FFFFFF",
+              "headingFontSize": "36",
+              "headingFontWeight": "800",
+              "productNameColor": "#333333",
+              "priceColor": "#DC143C",
+              "descriptionColor": "#666666",
+              "btnBg": "#FFFFFF",
+              "btnTextColor": "#DC143C",
+              "btnRadius": "25",
+              "cardBackground": "#FFFFFF",
+              "cardBorderRadius": "16",
+              "imageRadius": "12",
+              "gridColumns": "4",
+              "selectedCollection": "",
+              "btnBackgroundColor": "#FFFFFF",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4,
+              "shadowBlur": 20,
+              "shadowSpread": 0,
+              "shadowColor": "#DDDDDD",
+              "height": "350"
+            }
+          },
+          "setting": {
+            "paddingTop": "50",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "backgroundColor": "#DC143C",
+            "paddingBottom": "50",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingLeft": "20",
+            "paddingRight": "20"
+          }
+        },
+        {
+          "type": "Gallery",
+          "blocks": {
+            "title": "خرید بر اساس دسته‌بندی",
+            "description": "مجموعه‌های منتخب ما را در دسته‌بندی‌های مختلف کشف کنید",
+            "images": [
+              {
+                "imageSrc": "/assets/images/digi4baners.webp",
+                "imageAlt": "کالای دیجیتال",
+                "imageLink": "#"
+              },
+              {
+                "imageSrc": "/assets/images/digi 4 banners4.webp",
+                "imageAlt": "مد و پوشاک",
+                "imageLink": "#"
+              },
+              {
+                "imageSrc": "/assets/images/digi4banners2.webp",
+                "imageAlt": "خانه و آشپزخانه",
+                "imageLink": "#"
+              },
+              {
+                "imageSrc": "/assets/images/digi4banners3.webp",
+                "imageAlt": "ورزش و تفریح",
+                "imageLink": "#"
+              }
+            ],
+            "setting": {
+              "titleColor": "#000000",
+              "titleFontSize": "38",
+              "titleFontWeight": "700",
+              "descriptionColor": "#666666",
+              "descriptionFontSize": "18",
+              "descriptionFontWeight": "400",
+              "background": "#FFFFFF",
+              "imageWidth": "100%",
+              "imageHeight": "280",
+              "imageRadius": "16",
+              "gridColumns": "4",
+              "gridGap": "20",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 5,
+              "shadowBlur": 20,
+              "shadowSpread": 0,
+              "shadowColor": "#E5E5E5",
+              "Radius": "16"
+            }
+          },
+          "setting": {
+            "paddingTop": "60",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "paddingBottom": "60",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingLeft": "20",
+            "paddingRight": "20"
+          }
+        },
+        {
+          "type": "ProductsRow",
+          "blocks": {
+            "textHeading": "🔥 پرفروش‌ترین محصولات",
+            "setting": {
+              "selectedCollection": "",
+              "headingColor": "#000000",
+              "headingFontSize": "32",
+              "headingFontWeight": "700",
+              "productNameColor": "#333333",
+              "priceColor": "#DC143C",
+              "descriptionColor": "#666666",
+              "btnBg": "#DC143C",
+              "btnTextColor": "#FFFFFF",
+              "cardBackground": "#FFFFFF",
+              "cardBorderRadius": "16",
+              "imageRadius": "12",
+              "gridColumns": "4",
+              "btnBackgroundColor": "#DC143C",
+              "btnColor": "#FFFFFF",
+              "btnRadius": "25",
+              "height": "280",
+              "Radius": "16"
+            }
+          },
+          "setting": {
+            "paddingTop": "50",
+            "paddingBottom": "50",
+            "paddingLeft": "20",
+            "paddingRight": "20",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "backgroundColor": "#F5F5F5"
+          }
+        },
+        {
+          "type": "Banner",
+          "blocks": {
+            "imageSrc": "/assets/images/ban.jpg",
+            "imageAlt": "پیشنهاد ویژه",
+            "text": "فرصت محدود",
+            "description": "تخفیف‌های ویژه روی محصولات پرمیوم. همین حالا خرید کنید و تا ۶۰٪ صرفه‌جویی کنید. این فرصت را از دست ندهید!",
+            "setting": {
+              "descriptionColor": "#333333",
+              "descriptionFontSize": "16",
+              "descriptionFontWeight": "400",
+              "textColor": "#DC143C",
+              "textFontSize": "32",
+              "textFontWeight": "800",
+              "backgroundColorBox": "#FFFFFF",
+              "backgroundBoxRadious": "20",
+              "opacityImage": 1,
+              "opacityTextBox": 1,
+              "boxWidth": "450",
+              "boxHeight": "200",
+              "border": "0",
+              "borderColor": "#E0E0E0",
+              "imageRadious": "20",
+              "imageBehavior": "cover",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 6,
+              "shadowBlur": 25,
+              "shadowSpread": 0,
+              "shadowColor": "#CCCCCC"
+            }
+          },
+          "setting": {
+            "paddingTop": "0",
+            "paddingBottom": "0",
+            "paddingLeft": "0",
+            "paddingRight": "0",
+            "marginTop": "40",
+            "marginBottom": "40",
+            "marginLeft": "20",
+            "marginRight": "20"
+          }
+        },
+        {
+          "type": "SlideShow",
+          "blocks": [
+            {
+              "imageSrc": "/assets/images/banner3.jpg",
+              "imageAlt": "کیفیت برتر",
+              "text": "محصولات با کیفیت برتر",
+              "description": "ما فقط بهترین محصولات از برندهای معتبر را ارائه می‌دهیم. هر کالا با دقت انتخاب شده تا بهترین ارزش را برای شما فراهم کند. با خیال راحت خرید کنید.",
+              "btnLink": "/shop",
+              "btnText": "خرید کنید"
+            },
+            {
+              "imageSrc": "/assets/images/banner1.jpg",
+              "imageAlt": "ارسال سریع",
+              "text": "ارسال فوری و مطمئن",
+              "description": "سفارش شما را در سریع‌ترین زمان ممکن به درب منزل شما ارسال می‌کنیم. همکاری با بهترین شرکت‌های حمل و نقل برای اطمینان از ارسال ایمن. پیگیری آنلاین سفارش.",
+              "link": "/delivery",
+              "btnText": "اطلاعات بیشتر"
+            }
+          ],
+          "setting": {
+            "paddingTop": "50",
+            "paddingBottom": "50",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "marginLeft": "20",
+            "marginRight": "20",
+            "descriptionColor": "#E0E0E0",
+            "descriptionFontSize": "16",
+            "descriptionFontWeight": "400",
+            "textColor": "#FFFFFF",
+            "textFontSize": "36",
+            "textFontWeight": "700",
+            "btnTextColor": "#ffffff",
+            "btnBackgroundColor": "#000000",
+            "backgroundColorBox": "#DC143C",
+            "backgroundBoxRadius": "24",
+            "opacityImage": 1,
+            "imageWidth": "800",
+            "imageHeight": "450",
+            "imageRadious": "24",
+            "btnWidth": "200",
+            "navBg": "#FFFFFF",
+            "navColor": "#DC143C",
+            "navRadius": "50",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 6,
+            "shadowBlur": 30,
+            "shadowSpread": 0,
+            "shadowColor": "#BBBBBB"
+          }
+        },
+        {
+          "type": "MultiColumn",
+          "blocks": [
+            {
+              "title1": "ارسال رایگان",
+              "description1": "برای تمام سفارش‌های بالای ۵۰۰ هزار تومان از ارسال رایگان بهره‌مند شوید. محصولات شما با دقت و ایمنی به دست شما می‌رسد. بدون هزینه مخفی.",
+              "imageSrc1": "/assets/images/banner1.jpg",
+              "imageAlt1": "ارسال رایگان",
+              "btnLable1": "خرید کنید",
+              "btnLink1": "/shop"
+            },
+            {
+              "title2": "پرداخت امن",
+              "description2": "امنیت شما اولویت ماست. از رمزگذاری پیشرفته برای محافظت از اطلاعات پرداخت شما استفاده می‌کنیم. با اطمینان خرید کنید.",
+              "imageSrc2": "/assets/images/banner3.jpg",
+              "imageAlt2": "پرداخت امن",
+              "btnLable2": "بیشتر بدانید",
+              "btnLink2": "/security"
+            },
+            {
+              "title3": "پشتیبانی ۲۴/۷",
+              "description3": "تیم پشتیبانی ما همیشه در دسترس شماست. هر سوالی درباره محصولات یا سفارشات دارید، ما اینجا هستیم تا کمک کنیم.",
+              "imageSrc3": "/assets/images/banner.jpg",
+              "imageAlt3": "پشتیبانی مشتریان",
+              "btnLable3": "تماس با ما",
+              "btnLink3": "/contact"
+            }
+          ],
+          "setting": {
+            "heading": "چرا از ما خرید کنید؟",
+            "paddingTop": "60",
+            "paddingBottom": "60",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "paddinRight": "20",
+            "paddinLeft": "20",
+            "backgroundColorBox": "#FFFFFF",
+            "headingFontSize": "38",
+            "headingFontWeight": "700",
+            "headingColor": "#000000",
+            "imageRadious": "16",
+            "imageWidth": "100%",
+            "imageHeight": "250",
+            "titleColor": "#DC143C",
+            "titleFontSize": "24",
+            "titleFontWeight": "700",
+            "descriptionColor": "#666666",
+            "descriptionFontSize": "16",
+            "descriptionFontWeight": "400",
+            "btnColor": "#FFFFFF",
+            "btnBackgroundColor": "#000000",
+            "btnRadius": "25",
+            "formRadius": "16",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 4,
+            "shadowBlur": 20,
+            "shadowSpread": 0,
+            "shadowColor": "#E0E0E0"
+          }
+        },
+        {
+          "type": "Brands",
+          "blocks": {
+            "heading": "محبوب‌ترین برندها",
+            "description": "خرید از معتبرترین و برترین برندهای جهان، همه در یک مکان",
+            "brands": [
+              {
+                "id": 1,
+                "name": "سامسونگ",
+                "logo": "/assets/images/samsung.jpg"
+              },
+              {
+                "id": 2,
+                "name": "اپل",
+                "logo": "/assets/images/icons8-apple-logo.svg"
+              },
+              {
+                "id": 3,
+                "name": "هوآوی",
+                "logo": "/assets/images/huawei.png"
+              },
+              {
+                "id": 4,
+                "name": "شیائومی",
+                "logo": "/assets/images/mi.png"
+              },
+              {
+                "id": 6,
+                "name": "مای",
+                "logo": "/assets/images/my.png"
+              },
+              {
+                "id": 7,
+                "name": "کینگ استار",
+                "logo": "/assets/images/king.png"
+              }
+            ],
+            "setting": {
+              "headingColor": "#000000",
+              "headingFontSize": "36",
+              "headingFontWeight": "700",
+              "descriptionColor": "#666666",
+              "descriptionFontSize": "18",
+              "descriptionFontWeight": "400",
+              "brandNameColor": "#999999",
+              "brandNameFontSize": "14",
+              "brandNameFontWeight": "500",
+              "cardBackground": "#FFFFFF",
+              "cardBorderRadius": "16",
+              "cardHoverShadow": "lg",
+              "gridColumns": "6",
+              "btnColor": "#000000",
+              "btnBackgroundColor": "#FFFFFF",
+              "btnRadius": "25",
+              "logoWidth": "100",
+              "logoHeight": "100",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 3,
+              "shadowBlur": 15,
+              "shadowSpread": 0,
+              "shadowColor": "#DDDDDD"
+            }
+          },
+          "setting": {
+            "paddingTop": "60",
+            "paddingRight": "20",
+            "paddingLeft": "20",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingBottom": "60",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "backgroundColor": "#F5F5F5"
+          }
+        },
+
+        {
+          "type": "RichText",
+          "blocks": {
+            "imageSrc": "",
+            "imageAlt": "",
+            "heading": "",
+            "description": "تجربه خرید آنلاین بی‌نظیر با بهترین محصولات و قیمت‌های استثنایی همراه با خدمات درجه یک. رضایت شما تضمین ماست.",
+            "textHeading": "به فروشگاه ما خوش آمدید",
+            "btnText": "شروع خرید",
+            "btnLink": "/shop",
+            "setting": {
+              "textHeadingColor": "#FFFFFF",
+              "textHeadingFontSize": "48",
+              "textHeadingFontWeight": "800",
+              "descriptionColor": "#E0E0E0",
+              "descriptionFontSize": "18",
+              "descriptionFontWeight": "400",
+              "background": "#000000",
+              "btnTextColor": "#000000",
+              "btnBackgroundColor": "#FFFFFF",
+              "lineWidth": "120",
+              "lineHeight": "4",
+              "lineTop": "0",
+              "lineBottom": "20",
+              "lineColor": "#DC143C",
+              "btnWidth": "200",
+              "btnRadius": "30",
+              "backgroundRadius": "20",
+              "align": "center",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 8,
+              "shadowBlur": 30,
+              "shadowSpread": 0,
+              "shadowColor": "#AAAAAA"
+            }
+          },
+          "setting": {
+            "paddingTop": "80",
+            "paddingBottom": "80",
+            "marginTop": "0",
+            "marginLeft": "20",
+            "marginRight": "20",
+            "marginBottom": "40",
+            "paddingLeft": "40",
+            "paddingRight": "40"
+          }
+        },
+        {
+          "type": "MultiRow",
+          "title": "محبوب‌ترین دسته‌بندی‌ها",
+          "blocks": [
+            {
+              "heading": "محصولات دیجیتال",
+              "description": "آخرین تکنولوژی را با مجموعه منتخب ما از گوشی‌های هوشمند، لپ‌تاپ و دستگاه‌های هوشمند کشف کنید. قیمت رقابتی با گارانتی معتبر.",
+              "btnLable": "کالای دیجیتال",
+              "btnLink": "/electronics",
+              "imageSrc": "/assets/images/banner1.jpg",
+              "imageAlt": "الکترونیک"
+            },
+            {
+              "heading": "مد و پوشاک",
+              "description": "کمد لباس خود را با کلکسیون مد ما ارتقا دهید. از لباس روزمره تا لباس رسمی، برای هر مناسبتی لباس مناسب پیدا کنید. پارچه‌های باکیفیت و طرح‌های مد روز.",
+              "btnLable": "خرید پوشاک",
+              "btnLink": "/fashion",
+              "imageSrc": "/assets/images/banner3.jpg",
+              "imageAlt": "پوشاک"
+            },
+            {
+              "heading": "لوازم خانگی",
+              "description": "فضای زندگی خود را با طیف وسیعی از لوازم خانگی و دکوراسیون ما تغییر دهید. محصولات باکیفیت که عملکرد را با طراحی زیبا ترکیب می‌کنند.",
+              "btnLable": "خانه و آشپزخانه",
+              "btnLink": "/home",
+              "imageSrc": "/assets/images/banner.jpg",
+              "imageAlt": "خانه"
+            }
+          ],
+          "setting": {
+            "titleColor": "#000000",
+            "titleFontWeight": "700",
+            "titleFontSize": "38",
+            "paddingTop": "60",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "paddingBottom": "60",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingLeft": "20",
+            "paddingRight": "20",
+            "backgroundColorMultiRow": "#FFFFFF",
+            "backgroundColorBox": "#FFFFFF",
+            "imageWidth": "550",
+            "imageHeight": "380",
+            "imageRadius": "24",
+            "headingColor": "#DC143C",
+            "headingFontSize": "28",
+            "headingFontWeight": "700",
+            "descriptionColor": "#666666",
+            "descriptionFontSize": "16",
+            "descriptionFontWeight": "400",
+            "btnColor": "#FFFFFF",
+            "btnBackgroundColor": "#000000",
+            "imageAlign": "row",
+            "formRadius": "20",
+            "rowRadius": "20",
+            "btnRadius": "30",
+            "btnWidth": "200",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 6,
+            "shadowBlur": 25,
+            "shadowSpread": 0,
+            "shadowColor": "#D5D5D5"
+          }
+        },
+        {
+          "type": "CollapseFaq",
+          "blocks": [
+            {
+              "heading": "سوالات متداول",
+              "text1": "گزینه‌های ارسال شما چیست؟",
+              "content1": "ما برای سفارش‌های بالای ۵۰۰ هزار تومان ارسال رایگان ارائه می‌دهیم. ارسال سریع با هزینه ۵۰ هزار تومان و تحویل در ۲ تا ۳ روز کاری. گزینه‌های ارسال بین‌المللی نیز موجود است.",
+              "setting": {
+                "textColor1": "#000000",
+                "textFontSize1": "18px",
+                "textFontWeight1": "600",
+                "contentColor1": "#666666",
+                "contentFontSize1": "15px",
+                "contentFontWeight1": "400"
+              }
+            },
+            {
+              "text2": "سیاست بازگشت کالا چیست؟",
+              "content2": "ما ۳۰ روز ضمانت بازگشت وجه برای همه محصولات ارائه می‌دهیم. اگر کاملاً راضی نیستید، به سادگی کالا را در شرایط اولیه بازگردانید. هزینه بازگشت کالاهای معیوب رایگان است.",
+              "setting": {
+                "textColor2": "#000000",
+                "textFontSize2": "18px",
+                "textFontWeight2": "600",
+                "contentColor2": "#666666",
+                "contentFontSize2": "15px",
+                "contentFontWeight2": "400"
+              }
+            },
+            {
+              "text3": "چگونه می‌توانم سفارشم را پیگیری کنم؟",
+              "content3": "بعد از ارسال سفارش، یک کد رهگیری از طریق ایمیل دریافت می‌کنید. می‌توانید با این کد در سایت ما یا سایت پست پیگیری کنید. به‌روزرسانی‌ها در زمان واقعی ارائه می‌شود.",
+              "setting": {
+                "textColor3": "#000000",
+                "textFontSize3": "18px",
+                "textFontWeight3": "600",
+                "contentColor3": "#666666",
+                "contentFontSize3": "15px",
+                "contentFontWeight3": "400"
+              }
+            },
+            {
+              "text4": "آیا محصولات اصل هستند و گارانتی دارند؟",
+              "content4": "بله! تمام محصولات فروخته شده در پلتفرم ما ۱۰۰٪ اصل هستند و با گارانتی شرکت سازنده ارائه می‌شوند. ما نمایندگی مجاز همه برندهایی هستیم که عرضه می‌کنیم.",
+              "setting": {
+                "textColor4": "#000000",
+                "textFontSize4": "18px",
+                "textFontWeight4": "600",
+                "contentColor4": "#666666",
+                "contentFontSize4": "15px",
+                "contentFontWeight4": "400"
+              }
+            }
+          ],
+          "setting": {
+            "paddingTop": "60",
+            "paddingBottom": "60",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "paddinRight": "20",
+            "paddinLeft": "20",
+            "headingColor": "#000000",
+            "headingFontSize": "36",
+            "headingFontWeight": "700",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 4,
+            "shadowBlur": 20,
+            "shadowSpread": 0,
+            "shadowColor": "#E0E0E0",
+            "background": "#F5F5F5",
+            "borderRadious": "16"
+          }
+        },
+        {
+          "type": "ImageText",
+          "blocks": {
+            "imageSrc": "/assets/images/banner3.jpg",
+            "imageAlt": "خرید پرمیوم",
+            "heading": "کیفیت برتر تضمین شده",
+            "description": "هر محصول با دقت انتخاب و بررسی می‌شود تا کیفیت را تضمین کند",
+            "btnLink": "/quality",
+            "btnText": "بیشتر بدانید",
+            "setting": {
+              "headingColor": "#FFFFFF",
+              "headingFontSize": "42",
+              "headingFontWeight": "800",
+              "descriptionColor": "#E0E0E0",
+              "descriptionFontSize": "20",
+              "descriptionFontWeight": "400",
+              "btnTextColor": "#FFFFFF",
+              "btnBackgroundColor": "#DC143C",
+              "backgroundColorBox": "",
+              "backgroundBoxOpacity": 0.85,
+              "boxRadiuos": "24",
+              "opacityImage": 1,
+              "imageWidth": "500",
+              "imageRadius": "24",
+              "imageHeight": "500",
+              "background": "#000000",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 8,
+              "shadowBlur": 30,
+              "shadowSpread": 0,
+              "shadowColor": "#AAAAAA",
+              "btnRadiuos": "30",
+              "btnWidth": "180"
+            }
+          },
+          "setting": {
+            "paddingTop": "60",
+            "paddingBottom": "60",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddinRight": "20",
+            "paddinLeft": "20"
+          }
+        },
+
+        {
+          "type": "NewsLetter",
+          "blocks": {
+            "heading": "تخفیف‌های ویژه دریافت کنید",
+            "description": "در خبرنامه ما عضو شوید و پیشنهادات ویژه، محصولات جدید و تخفیف‌های اختصاصی را مستقیماً در ایمیل خود دریافت کنید!",
+            "btnText": "عضویت",
+            "setting": {
+              "headingColor": "#FFFFFF",
+              "headingFontSize": "36",
+              "headingFontWeight": "700",
+              "descriptionColor": "#E0E0E0",
+              "descriptionFontSize": "18",
+              "descriptionFontWeight": "400",
+              "btnBackgroundColor": "#FFFFFF",
+              "btnTextColor": "#DC143C",
+              "formBackground": "#DC143C",
+              "inputRadius": "30",
+              "formRadius": "20",
+              "inputWidth": "350",
+              "inputBackgroundColor": "#FFFFFF",
+              "inputTextColor": "#000000",
+              "btnRadius": "30",
+              "btnWidth": "180",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 8,
+              "shadowBlur": 30,
+              "shadowSpread": 0,
+              "shadowColor": "#BBBBBB"
+            }
+          },
+          "setting": {
+            "paddingTop": "60",
+            "paddingBottom": "60",
+            "marginTop": "0",
+            "marginLeft": "20",
+            "marginRight": "20",
+            "marginBottom": "40",
+            "paddingLeft": "40",
+            "paddingRight": "40"
+          }
+        },
+        {
+          "type": "ContactForm",
+          "blocks": {
+            "heading": "با ما در تماس باشید",
+            "setting": {
+              "headingColor": "#000000",
+              "headingFontSize": "36",
+              "headingFontWeight": "700",
+              "btnBackgroundColor": "#DC143C",
+              "btnTextColor": "#FFFFFF",
+              "formBackground": "#FFFFFF",
+              "boxRadiuos": "20",
+              "labelColor": "#666666",
+              "btnRadiuos": "30",
+              "btnWidth": "200",
+              "inputWidth": "100%",
+              "inputRadiuos": "12",
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 6,
+              "shadowBlur": 25,
+              "shadowSpread": 0,
+              "shadowColor": "#DDDDDD"
+            }
+          },
+          "setting": {
+            "paddingTop": "60",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "paddingBottom": "60",
+            "marginLeft": "0",
+            "marginRight": "0",
+            "paddingLeft": "20",
+            "paddingRight": "20"
+          }
+        },
+
+        {
+          "type": "CanvasEditor",
+          "setting": {
+            "paddingTop": "0",
+            "paddingBottom": "0",
+            "paddingLeft": "0",
+            "paddingRight": "0",
+            "marginTop": "0",
+            "marginBottom": "0",
+            "backgroundColor": "#FFFFFF"
+          },
+          "blocks": {
+            "elements": [],
+            "setting": {
+              "canvasWidth": "100%",
+              "canvasHeight": "400px",
+              "backgroundColor": "#FAFAFA",
+              "gridSize": 10,
+              "showGrid": false
+            }
+          }
+        }
+      ],
+      "order": [
+        "SlideBanner",
+        "Story",
+        "SpecialOffer",
+        "Gallery",
+        "ProductsRow",
+        "Banner",
+        "SlideShow",
+        "MultiColumn",
+        "Brands",
+        "RichText",
+        "MultiRow",
+        "CollapseFaq",
+        "ImageText",
+        "NewsLetter",
+        "ContactForm"
+      ]
+    },
+    "sectionFooter": {
+      "type": "Footer",
+      "blocks": {
+        "text": "فروشگاه آنلاین - همراه مطمئن خرید شما",
+        "description": "ما متعهد به ارائه بهترین تجربه خرید آنلاین هستیم. محصولات باکیفیت، قیمت‌های رقابتی و خدمات مشتریان استثنایی - این وعده ما به شماست. با اطمینان خرید کنید و از بازگشت کالا بدون دردسر بهره‌مند شوید.",
+        "instagramLink": "#",
+        "telegramLink": "#",
+        "whatsappLink": "#",
+        "textNumber": "خط ویژه خدمات مشتریان",
+        "phoneNumber": "۰۲۱-۱۲۳۴۵۶۷۸",
+        "logo": "/assets/images/logo.webp",
+        "links": [
+          {
+            "url": "/privacy-policy",
+            "label": "حریم خصوصی"
+          },
+          {
+            "url": "/terms-of-service",
+            "label": "شرایط و قوانین"
+          }
+        ],
+        "setting": {
+          "textColor": "#000000",
+          "textFontSize": "24",
+          "textFontWeight": "700",
+          "descriptionColor": "#666666",
+          "descriptionFontSize": "15",
+          "descriptionFontWeight": "400",
+          "trustIconBackground": "#DC143C",
+          "trustIconColor": "#FFFFFF",
+          "trustItemSize": "14",
+          "trustItemColor": "#333333",
+          "scrollButtonBg": "#DC143C",
+          "scrollButtonColor": "#FFFFFF",
+          "categoryColor": "#333333",
+          "linkColor": "#DC143C",
+          "logoWidth": "90",
+          "logoHeight": "90",
+          "logoRadius": "16",
+          "bgRadius": "16",
+          "categoryBg": "#FFFFFF",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4,
+          "shadowBlur": 20,
+          "shadowSpread": 0,
+          "shadowColor": "#E0E0E0"
+        }
+      },
+      "setting": {
+        "paddingTop": "60",
+        "paddingBottom": "40",
+        "marginTop": "0",
+        "marginBottom": "0",
+        "paddinRight": "20",
+        "paddinLeft": "20",
+        "backgroundColor": "#F5F5F5"
+      }
+    }
+  },
+  "order": ["section-header", "children", "section-footer"]
+}

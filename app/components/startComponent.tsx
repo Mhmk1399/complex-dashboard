@@ -16,6 +16,10 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const [hasBlogs, setHasBlogs] = useState(false);
   const [hasCollections, setHasCollections] = useState(false);
   const [hasUserInfo, setHasUserInfo] = useState(false);
+  const [selectedTemplateName, setSelectedTemplateName] = useState("");
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [fullscreenImage, setFullscreenImage] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,6 +29,34 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
       }
     }
   }, []);
+
+  const checkTemplateStatus = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    
+    try {
+      const decodedToken = jwt.decode(token);
+      const userId = typeof decodedToken === "object" && decodedToken !== null
+        ? decodedToken.sub || decodedToken.userId || decodedToken.id
+        : undefined;
+      
+      if (userId) {
+        const response = await fetch(`/api/auth/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          console.log('Template check - userData:', userData);
+          setSelectedTemplateName(userData.selctedTemplate || "");
+        }
+      }
+    } catch (error) {
+      console.error("Error checking template status:", error);
+    }
+  };
 
   const checkUserProgress = async () => {
     const token = localStorage.getItem("token");
@@ -106,9 +138,11 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
 
           if (response.ok) {
             const userData = await response.json();
-            console.log(userData);
+            console.log('User data:', userData);
+            console.log('Selected template:', userData.selctedTemplate);
             localStorage.setItem("storeId", userData.storeId);
             setUserName(userData.title);
+            setSelectedTemplateName(userData.selctedTemplate || "");
           }
         } catch (error) {
           console.error("Error fetching user details:", error);
@@ -117,12 +151,78 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
 
       fetchUserDetails();
       checkUserProgress();
+      checkTemplateStatus();
     } catch (error) {
       console.error("Error decoding token:", error);
       localStorage.removeItem("token");
       router.replace("/login");
     }
   }, [router]);
+
+  useEffect(() => {
+    checkTemplateStatus();
+  }, []);
+
+  const templates = [
+    {
+      id: 'digiKalai',
+      name: 'دیجی کالای',
+      description: 'قالب فروشگاهی مدرن',
+      previewImage: '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.02.32.jpeg',
+      images: [
+        '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.02.32.jpeg',
+        '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.03.42.jpeg',
+        '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.04.18.jpeg',
+        '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.04.50.jpeg',
+        '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.37.52.jpeg',
+        '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.43.36.jpeg'
+      ]
+    }
+  ];
+
+  const handleSelectTemplate = () => {
+    setShowTemplateModal(true);
+  };
+
+  const handleApplyTemplate = async (templateName) => {
+    const storeId = localStorage.getItem('storeId');
+    const token = localStorage.getItem('token');
+    if (!storeId || !token) return;
+    
+    try {
+      const templateResponse = await fetch('/api/template-service', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          storeId,
+          templateName
+        })
+      });
+      
+      if (templateResponse.ok) {
+        const userResponse = await fetch('/api/auth/update-template', {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            selctedTemplate: templateName
+          })
+        });
+        
+        if (userResponse.ok) {
+          setSelectedTemplateName(templateName);
+          setShowTemplateModal(false);
+          setSelectedTemplate(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error applying template:', error);
+    }
+  };
 
   const progressItems = [
     {
@@ -149,9 +249,16 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
     {
       id: 'collections',
       title: 'کالشن ها',
-      description: ' ایجاد مجموعه‌های محصولات',
+      description: ' ایجاد مجموعههای محصولات',
       completed: hasCollections,
       action: () => setSelectedMenu('collections')
+    },
+    {
+      id: 'template',
+      title: 'انتخاب قالب',
+      description: 'انتخاب قالب آماده برای فروشگاه',
+      completed: selectedTemplateName !== "",
+      action: handleSelectTemplate
     }
   ];
 
@@ -200,7 +307,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
           <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-[#0077b6] mb-2">
-                پیشرفت راه‌اندازی فروشگاه
+                پیشرفت راهاندازی فروشگاه
               </h2>
               <p className="text-gray-600">
                 {completedCount} از {progressItems.length} مرحله تکمیل شده
@@ -277,7 +384,12 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
             <div className="mt-8 pt-8 border-t border-gray-200">
               <button
                 onClick={handleRedirectToSite}
-                className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-[#0077b6] to-blue-400 text-white rounded-xl hover:shadow-lg transition-all duration-200"
+                disabled={selectedTemplateName === ""}
+                className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-200 ${
+                  selectedTemplateName !== "" 
+                    ? 'bg-gradient-to-r from-[#0077b6] to-blue-400 text-white hover:shadow-lg' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
                 <div>
                   <h3 className="font-bold mb-1">مشاهده سایت</h3>
@@ -292,6 +404,105 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
         </div>
       </div>
       <ProfileDate userName={userName} />
+      
+      {showTemplateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" dir="rtl">
+          <div className="bg-white rounded-2xl p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-[#0077b6]">
+                {selectedTemplate ? `پیشنمای ${selectedTemplate.name}` : 'انتخاب قالب'}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowTemplateModal(false);
+                  setSelectedTemplate(null);
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" />
+                </svg>
+              </button>
+            </div>
+            
+            {!selectedTemplate ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {templates.map((template) => (
+                  <div
+                    key={template.id}
+                    onClick={() => setSelectedTemplate(template)}
+                    className="border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer hover:border-[#0077b6]"
+                  >
+                    <img
+                      src={template.previewImage}
+                      alt={template.name}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold mb-2">{template.name}</h3>
+                      <p className="text-gray-600 mb-4">{template.description}</p>
+                      <div className="text-[#0077b6] font-medium">مشاهده پیشنمای →</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                  {selectedTemplate.images.map((image, index) => (
+                    <div key={index} className="border rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
+                      <img
+                        src={image}
+                        alt={`${selectedTemplate.name} preview ${index + 1}`}
+                        className="w-full h-48 object-cover"
+                        onClick={() => setFullscreenImage(image)}
+                        onError={(e) => {
+                          e.target.src = '/images/placeholder.jpg';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setSelectedTemplate(null)}
+                    className="px-6 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+                  >
+                    بازگشت
+                  </button>
+                  <button
+                    onClick={() => handleApplyTemplate(selectedTemplate.id)}
+                    className="px-6 py-3 bg-[#0077b6] text-white rounded-xl hover:bg-blue-700 transition-colors"
+                  >
+                    انتخاب این قالب
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {fullscreenImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[60]" onClick={() => setFullscreenImage(null)}>
+          <div className="relative max-w-[90vw] max-h-[90vh]">
+            <img
+              src={fullscreenImage}
+              alt="Fullscreen preview"
+              className="max-w-full max-h-full object-contain"
+            />
+            <button
+              onClick={() => setFullscreenImage(null)}
+              className="absolute top-4 right-4 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full p-2 transition-all"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -1,0 +1,277 @@
+{
+  "children": {
+    "metaData": {
+      "title": "درباره ما - شرکت ما",
+      "description": "آشنایی با شرکت ما، تاریخچه، ماموریت، چشم‌انداز و ارزش‌های سازمانی"
+    },
+    "sections": [
+      {
+        "type": "ImageText",
+        "blocks": {
+          "imageSrc": "/assets/images/org1.jpg",
+          "imageAlt": "تاریخچه شرکت",
+          "heading": "داستان ما",
+          "description": "شرکت ما در سال ۱۳۹۰ با هدف ارائه خدمات نوین به کسب و کارها آغاز به کار کرد. از آن زمان تاکنون، با تلاش مستمر و تیمی متخصص، توانسته‌ایم به یکی از پیشروان صنعت تبدیل شویم. امروز با افتخار به بیش از ۵۰۰ شرکت در سراسر کشور خدمات ارائه می‌دهیم.",
+          "btnLink": "/services",
+          "btnText": "خدمات ما",
+          "setting": {
+            "headingColor": "#FFFFFF",
+            "headingFontSize": "46",
+            "headingFontWeight": "800",
+            "descriptionColor": "#e7e7e7",
+            "descriptionFontSize": "19",
+            "descriptionFontWeight": "400",
+            "btnTextColor": "#FFFFFF",
+            "btnBackgroundColor": "#fc7a1e",
+            "backgroundColorBox": "",
+            "backgroundBoxOpacity": 0.9,
+            "boxRadiuos": "0",
+            "opacityImage": 1,
+            "imageWidth": "650",
+            "imageRadius": "24",
+            "imageHeight": "500",
+            "background": "#485696",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 8,
+            "shadowBlur": 30,
+            "shadowSpread": 0,
+            "shadowColor": "#AAAAAA",
+            "btnRadiuos": "30",
+            "btnWidth": "200"
+          }
+        },
+        "setting": {
+          "paddingTop": "100",
+          "paddingBottom": "80",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "paddinRight": "20",
+          "paddinLeft": "20"
+        }
+      },
+      {
+        "type": "RichText",
+        "blocks": {
+          "imageSrc": "",
+          "imageAlt": "",
+          "heading": "",
+          "description": "ماموریت ما ارائه راهکارهای نوآورانه و کارآمد برای رشد و توسعه کسب و کارهاست. ما معتقدیم که با تخصص، تعهد و نوآوری می‌توانیم تغییرات مثبتی در صنعت ایجاد کنیم.",
+          "textHeading": "ماموریت و چشم‌انداز ما",
+          "btnText": "تماس با ما",
+          "btnLink": "/contact",
+          "setting": {
+            "textHeadingColor": "#FFFFFF",
+            "textHeadingFontSize": "42",
+            "textHeadingFontWeight": "800",
+            "descriptionColor": "#e7e7e7",
+            "descriptionFontSize": "20",
+            "descriptionFontWeight": "400",
+            "background": "#fc7a1e",
+            "btnTextColor": "#fc7a1e",
+            "btnBackgroundColor": "#FFFFFF",
+            "lineWidth": "200",
+            "lineHeight": "4",
+            "lineTop": "0",
+            "lineBottom": "20",
+            "lineColor": "#FFFFFF",
+            "btnWidth": "200",
+            "btnRadius": "30",
+            "backgroundRadius": "0",
+            "align": "center",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 8,
+            "shadowBlur": 30,
+            "shadowSpread": 0,
+            "shadowColor": "#AAAAAA"
+          }
+        },
+        "setting": {
+          "paddingTop": "80",
+          "paddingBottom": "80",
+          "marginTop": "0",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "marginBottom": "0",
+          "paddingLeft": "40",
+          "paddingRight": "40"
+        }
+      },
+      {
+        "type": "MultiRow",
+        "title": "مسیر رشد ما",
+        "blocks": [
+          {
+            "heading": "۱۳۹۰ - آغاز یک مسیر",
+            "description": "شرکت ما با یک تیم ۵ نفره و یک رویا آغاز شد. در اولین سال فعالیت، موفق شدیم به ۲۰ مشتری خدمات ارائه دهیم و پایه‌های محکمی برای آینده بسازیم. از همان ابتدا، کیفیت و رضایت مشتری در اولویت اول ما بود.",
+            "btnLable": "",
+            "btnLink": "",
+            "imageSrc": "/assets/images/org1.jpg",
+            "imageAlt": "آغاز"
+          },
+          {
+            "heading": "۱۳۹۵ - گسترش و رشد",
+            "description": "پس از ۵ سال تلاش مستمر، تیم ما به ۵۰ نفر رسید و دفتر جدیدی در تهران افتتاح کردیم. در این دوره، محصولات و خدمات جدیدی را به سبد خدمات خود اضافه کردیم و توانستیم به بیش از ۲۰۰ شرکت خدمات ارائه دهیم.",
+            "btnLable": "",
+            "btnLink": "",
+            "imageSrc": "/assets/images/org3.jpg",
+            "imageAlt": "رشد"
+          },
+          {
+            "heading": "۱۴۰۰ تا امروز - پیشرو در صنعت",
+            "description": "امروز با بیش از ۱۲۰ کارمند متخصص، به یکی از پیشگامان صنعت تبدیل شده‌ایم. همکاری با برترین برندهای جهانی و دریافت گواهینامه‌های بین‌المللی، گواهی بر کیفیت خدمات ماست. بیش از ۵۰۰ مشتری راضی، افتخار ماست.",
+            "btnLable": "",
+            "btnLink": "",
+            "imageSrc": "/assets/images/org2.jpg",
+            "imageAlt": "امروز"
+          }
+        ],
+        "setting": {
+          "titleColor": "#485696",
+          "titleFontWeight": "700",
+          "titleFontSize": "42",
+          "paddingTop": "70",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "paddingBottom": "70",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "paddingLeft": "20",
+          "paddingRight": "20",
+          "backgroundColorMultiRow": "#FFFFFF",
+          "backgroundColorBox": "#e7e7e7",
+          "imageWidth": "600",
+          "imageHeight": "400",
+          "imageRadius": "24",
+          "headingColor": "#fc7a1e",
+          "headingFontSize": "30",
+          "headingFontWeight": "700",
+          "descriptionColor": "#666666",
+          "descriptionFontSize": "16",
+          "descriptionFontWeight": "400",
+          "btnColor": "#FFFFFF",
+          "btnBackgroundColor": "#485696",
+          "imageAlign": "row",
+          "formRadius": "20",
+          "rowRadius": "20",
+          "btnRadius": "30",
+          "btnWidth": "200",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 5,
+          "shadowBlur": 20,
+          "shadowSpread": 0,
+          "shadowColor": "#CCCCCC"
+        }
+      },
+      {
+        "type": "MultiColumn",
+        "blocks": [
+          {
+            "title1": "تعهد به کیفیت",
+            "description1": "کیفیت در تمام جنبه‌های کار ما اولویت اصلی است. از انتخاب تیم گرفته تا ارائه خدمات، همه چیز با استانداردهای بالا انجام می‌شود. ما به تعهدات خود پایبند هستیم و همیشه بیش از انتظارات مشتریان عمل می‌کنیم.",
+            "imageSrc1": "/assets/images/org1.jpg",
+            "imageAlt1": "کیفیت",
+            "btnLable1": "",
+            "btnLink1": ""
+          },
+          {
+            "title2": "نوآوری مستمر",
+            "description2": "ما به دنبال راه‌حل‌های نوین و خلاقانه و جدید هستیم. با پیگیری آخرین تکنولوژی‌ها و روش‌های روز دنیای مدرن، همیشه یک قدم جلوتر هستیم. نوآوری در DNA سازمان ما جاری است و هر روز برای بهبود تلاش می‌کنیم.",
+            "imageSrc2": "/assets/images/org3.jpg",
+            "imageAlt2": "نوآوری",
+            "btnLable2": "",
+            "btnLink2": ""
+          },
+          {
+            "title3": "مشتری‌محوری",
+            "description3": "مشتریان ما قلب تپنده سازمان ما هستند. گوش دادن به نیازها، درک چالش‌ها و ارائه راهکارهای متناسب، رویکرد ماست. رضایت و موفقیت مشتریان، معیار اصلی موفقیت ما است و همیشه در تلاشیم تا بهترین تجربه را فراهم کنیم.",
+            "imageSrc3": "/assets/images/org2.jpg",
+            "imageAlt3": "مشتری‌محوری",
+            "btnLable3": "",
+            "btnLink3": ""
+          }
+        ],
+        "setting": {
+          "heading": "ارزش‌های ما",
+          "paddingTop": "70",
+          "paddingBottom": "70",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "paddinRight": "20",
+          "paddinLeft": "20",
+          "backgroundColorBox": "#FFFFFF",
+          "headingFontSize": "42",
+          "headingFontWeight": "700",
+          "headingColor": "#485696",
+          "imageRadious": "16",
+          "imageWidth": "100%",
+          "imageHeight": "280",
+          "titleColor": "#fc7a1e",
+          "titleFontSize": "28",
+          "titleFontWeight": "700",
+          "descriptionColor": "#666666",
+          "descriptionFontSize": "16",
+          "descriptionFontWeight": "400",
+          "btnColor": "#FFFFFF",
+          "btnBackgroundColor": "#485696",
+          "btnRadius": "25",
+          "formRadius": "16",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 5,
+          "shadowBlur": 20,
+          "shadowSpread": 0,
+          "shadowColor": "#DDDDDD"
+        }
+      },
+      {
+        "type": "RichText",
+        "blocks": {
+          "imageSrc": "",
+          "imageAlt": "",
+          "heading": "",
+          "description": "تیم ما متشکل از متخصصان با تجربه و علاقه‌مند به کارشان است. ما یک خانواده هستیم که با همکاری و همدلی، هر روز برای رسیدن به اهداف مشترک تلاش می‌کنیم. فرهنگ سازمانی ما بر پایه احترام، شفافیت و یادگیری مداوم بنا شده است.",
+          "textHeading": "تیم و فرهنگ سازمانی",
+          "btnText": "فرصت‌های شغلی",
+          "btnLink": "/careers",
+          "setting": {
+            "textHeadingColor": "#FFFFFF",
+            "textHeadingFontSize": "44",
+            "textHeadingFontWeight": "700",
+            "descriptionColor": "#e7e7e7",
+            "descriptionFontSize": "19",
+            "descriptionFontWeight": "400",
+            "background": "#485696",
+            "btnTextColor": "#485696",
+            "btnBackgroundColor": "#FFFFFF",
+            "lineWidth": "180",
+            "lineHeight": "4",
+            "lineTop": "0",
+            "lineBottom": "20",
+            "lineColor": "#fc7a1e",
+            "btnWidth": "220",
+            "btnRadius": "30",
+            "backgroundRadius": "20",
+            "align": "center",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 6,
+            "shadowBlur": 25,
+            "shadowSpread": 0,
+            "shadowColor": "#AAAAAA"
+          }
+        },
+        "setting": {
+          "paddingTop": "80",
+          "paddingBottom": "80",
+          "marginTop": "0",
+          "marginLeft": "20",
+          "marginRight": "20",
+          "marginBottom": "0",
+          "paddingLeft": "40",
+          "paddingRight": "40"
+        }
+      }
+    ],
+    "order": ["ImageText", "RichText", "MultiRow", "MultiColumn"]
+  }
+}

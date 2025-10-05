@@ -28,9 +28,11 @@ import {
   FaImage,
   FaBlog,
   FaCog,
+  FaEnvelope,
 } from "react-icons/fa";
 import Contact from "./components/contact";
 import Tickets from "./components/tickets";
+import { Newsletter } from "./components/newsletter";
 import SwirlBackground from "./components/SwirlBackground";
 
 // Enhanced loading component
@@ -200,6 +202,11 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
         icon: <FaUsers />,
         color: "text-blue-600",
       },
+      newsLetter: {
+        title: "خبرنامه",
+        icon: <FaEnvelope />,
+        color: "text-green-600",
+      },
     };
 
     return (
@@ -349,6 +356,7 @@ export const Dashboard = () => {
       accountSettings: <InformationData />,
       contact: <Contact />,
       tickets: <Tickets />,
+      newsLetter: <Newsletter />,
     };
 
     const component = formComponents[selectedMenu] || formComponents.start;

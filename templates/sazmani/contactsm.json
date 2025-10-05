@@ -1,0 +1,353 @@
+{
+  "children": {
+    "metaData": {
+      "title": "تماس با ما - شرکت",
+      "description": "با ما در تماس باشید"
+    },
+    "sections": [
+      {
+        "type": "Banner",
+        "blocks": {
+          "imageSrc": "/assets/images/org1.jpg",
+          "imageAlt": "تماس با ما",
+          "text": "با ما در تماس باشید",
+          "description": "ما همیشه آماده پاسخگویی به سوالات و نیازهای شما هستیم.",
+          "setting": {
+            "descriptionColor": "#ffffff",
+            "descriptionFontSize": "14",
+            "descriptionFontWeight": "normal",
+            "textColor": "#fc7a1e",
+            "textFontSize": "24",
+            "textFontWeight": "bold",
+            "backgroundColorBox": "#485696",
+            "backgroundBoxRadious": "8",
+            "opacityImage": 0.3,
+            "opacityTextBox": 0.95,
+            "boxWidth": "340",
+            "boxHeight": "180",
+            "border": "0",
+            "borderColor": "#e7e7e7",
+            "imageRadious": "8",
+            "imageBehavior": "cover",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 4,
+            "shadowBlur": 12,
+            "shadowSpread": 0,
+            "shadowColor": "rgba(72, 86, 150, 0.15)"
+          }
+        },
+        "setting": {
+          "paddingTop": "20",
+          "paddingBottom": "20",
+          "paddingLeft": "15",
+          "paddingRight": "15",
+          "marginTop": "0",
+          "marginBottom": "20",
+          "marginLeft": "0",
+          "marginRight": "0"
+        }
+      },
+      {
+        "type": "SlideShow",
+        "blocks": [
+          {
+            "imageSrc": "/assets/images/org3.jpg",
+            "imageAlt": "دفتر مرکزی",
+            "text": "دفتر مرکزی تهران",
+            "description": "تهران، ولیعصر | تلفن: 021-12345678",
+            "btnLink": "#",
+            "btnText": "مسیریابی"
+          },
+          {
+            "imageSrc": "/assets/images/org1.jpg",
+            "imageAlt": "شعبه اصفهان",
+            "text": "شعبه اصفهان",
+            "description": "اصفهان، چهارباغ | تلفن: 031-87654321",
+            "link": "#",
+            "btnText": "مسیریابی"
+          }
+        ],
+        "setting": {
+          "paddingTop": "20",
+          "paddingBottom": "20",
+          "marginTop": "0",
+          "marginBottom": "20",
+          "marginLeft": "15",
+          "marginRight": "15",
+          "descriptionColor": "#e7e7e7",
+          "descriptionFontSize": "14",
+          "descriptionFontWeight": "normal",
+          "textColor": "#fc7a1e",
+          "textFontSize": "20",
+          "textFontWeight": "bold",
+          "btnTextColor": "#ffffff",
+          "btnBackgroundColor": "#fc7a1e",
+          "backgroundColorBox": "#485696",
+          "backgroundBoxRadius": "12",
+          "opacityImage": 0.8,
+          "imageWidth": "320",
+          "imageHeight": "200",
+          "imageRadious": "8",
+          "btnWidth": "100",
+          "navBg": "#fc7a1e",
+          "navColor": "#ffffff",
+          "navRadius": "4",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3,
+          "shadowBlur": 10,
+          "shadowSpread": 0,
+          "shadowColor": "rgba(72, 86, 150, 0.12)"
+        }
+      },
+      {
+        "type": "ContactForm",
+        "blocks": {
+          "heading": "فرم تماس با ما",
+          "setting": {
+            "headingColor": "#485696",
+            "headingFontSize": "24",
+            "headingFontWeight": "bold",
+            "btnBackgroundColor": "#fc7a1e",
+            "btnTextColor": "#ffffff",
+            "formBackground": "#e7e7e7",
+            "boxRadiuos": "12",
+            "labelColor": "#485696",
+            "btnRadiuos": "6",
+            "btnWidth": "280",
+            "inputWidth": "280",
+            "inputRadiuos": "6",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 4,
+            "shadowBlur": 12,
+            "shadowSpread": 0,
+            "shadowColor": "rgba(72, 86, 150, 0.1)"
+          }
+        },
+        "setting": {
+          "paddingTop": "25",
+          "marginTop": "0",
+          "marginBottom": "20",
+          "paddingBottom": "25",
+          "marginLeft": "15",
+          "marginRight": "15",
+          "paddingLeft": "15",
+          "paddingRight": "15"
+        }
+      },
+      {
+        "type": "Gallery",
+        "blocks": {
+          "title": "دفاتر و شعبات ما",
+          "description": "تصاویری از محیط کاری ما",
+          "images": [
+            {
+              "imageSrc": "/assets/images/org1.jpg",
+              "imageAlt": "دفتر تهران",
+              "imageLink": "#"
+            },
+            {
+              "imageSrc": "/assets/images/org3.jpg",
+              "imageAlt": "دفتر اصفهان",
+              "imageLink": "#"
+            },
+            {
+              "imageSrc": "/assets/images/org1.jpg",
+              "imageAlt": "دفتر شیراز",
+              "imageLink": "#"
+            },
+            {
+              "imageSrc": "/assets/images/org2.jpg",
+              "imageAlt": "دفتر مشهد",
+              "imageLink": "#"
+            }
+          ],
+          "setting": {
+            "titleColor": "#485696",
+            "titleFontSize": "24",
+            "titleFontWeight": "bold",
+            "descriptionColor": "#485696",
+            "descriptionFontSize": "14",
+            "descriptionFontWeight": "normal",
+            "background": "#ffffff",
+            "imageWidth": "150",
+            "imageHeight": "120",
+            "imageRadius": "8",
+            "gridColumns": "2",
+            "gridGap": "12",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 2,
+            "shadowBlur": 8,
+            "shadowSpread": 0,
+            "shadowColor": "rgba(72, 86, 150, 0.08)",
+            "Radius": "8"
+          }
+        },
+        "setting": {
+          "paddingTop": "20",
+          "marginTop": "0",
+          "marginBottom": "20",
+          "paddingBottom": "20",
+          "marginLeft": "15",
+          "marginRight": "15",
+          "paddingLeft": "15",
+          "paddingRight": "15"
+        }
+      },
+      {
+        "type": "Brands",
+        "blocks": {
+          "heading": "شرکای تجاری ما",
+          "description": "برندهای همکار",
+          "brands": [
+            {
+              "id": 1,
+              "name": "سامسونگ",
+              "logo": "/assets/images/samsung.jpg"
+            },
+            {
+              "id": 2,
+              "name": "اپل",
+              "logo": "/assets/images/icons8-apple-logo.svg"
+            },
+            {
+              "id": 3,
+              "name": "هواوی",
+              "logo": "/assets/images/huawei.png"
+            },
+            {
+              "id": 4,
+              "name": "شیائومی",
+              "logo": "/assets/images/mi.png"
+            },
+            {
+              "id": 6,
+              "name": "مای",
+              "logo": "/assets/images/my.png"
+            },
+            {
+              "id": 7,
+              "name": "کینگ استار",
+              "logo": "/assets/images/king.png"
+            }
+          ],
+          "setting": {
+            "headingColor": "#485696",
+            "headingFontSize": "24",
+            "headingFontWeight": "bold",
+            "descriptionColor": "#485696",
+            "descriptionFontSize": "14",
+            "descriptionFontWeight": "normal",
+            "brandNameColor": "#485696",
+            "brandNameFontSize": "12",
+            "brandNameFontWeight": "normal",
+            "cardBackground": "#ffffff",
+            "cardBorderRadius": "8",
+            "cardHoverShadow": "md",
+            "gridColumns": "3",
+            "btnColor": "#fc7a1e",
+            "btnBackgroundColor": "#ffffff",
+            "btnRadius": "6",
+            "logoWidth": "60",
+            "logoHeight": "60",
+            "shadowOffsetX": 0,
+            "shadowOffsetY": 2,
+            "shadowBlur": 6,
+            "shadowSpread": 0,
+            "shadowColor": "rgba(72, 86, 150, 0.06)"
+          }
+        },
+        "setting": {
+          "paddingTop": "20",
+          "paddingRight": "15",
+          "paddingLeft": "15",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "paddingBottom": "20",
+          "marginTop": "0",
+          "marginBottom": "20",
+          "backgroundColor": "#e7e7e7"
+        }
+      },
+      {
+        "type": "CollapseFaq",
+        "blocks": [
+          {
+            "heading": "سوالات متداول",
+            "text1": "ساعات کاری شرکت؟",
+            "content1": "شنبه تا چهارشنبه: 9 صبح تا 6 عصر | پنج‌شنبه: 9 صبح تا 2 ظهر",
+            "setting": {
+              "textColor1": "#fc7a1e",
+              "textFontSize1": "16px",
+              "textFontWeight1": "bold",
+              "contentColor1": "#e7e7e7",
+              "contentFontSize1": "14px",
+              "contentFontWeight1": "normal"
+            }
+          },
+          {
+            "text2": "نحوه ارسال درخواست همکاری؟",
+            "content2": "از طریق فرم تماس یا ایمیل info@company.com",
+            "setting": {
+              "textColor2": "#fc7a1e",
+              "textFontSize2": "16px",
+              "textFontWeight2": "bold",
+              "contentColor2": "#e7e7e7",
+              "contentFontSize2": "14px",
+              "contentFontWeight2": "normal"
+            }
+          },
+          {
+            "text3": "امکان بازدید حضوری؟",
+            "content3": "با هماهنگی قبلی از طریق تلفن 021-12345678",
+            "setting": {
+              "textColor3": "#fc7a1e",
+              "textFontSize3": "16px",
+              "textFontWeight3": "bold",
+              "contentColor3": "#e7e7e7",
+              "contentFontSize3": "14px",
+              "contentFontWeight3": "normal"
+            }
+          },
+          {
+            "text4": "ثبت شکایات و پیشنهادات؟",
+            "content4": "ایمیل به complaints@company.com",
+            "setting": {
+              "textColor4": "#fc7a1e",
+              "textFontSize4": "16px",
+              "textFontWeight4": "bold",
+              "contentColor4": "#e7e7e7",
+              "contentFontSize4": "14px",
+              "contentFontWeight4": "normal"
+            }
+          }
+        ],
+        "setting": {
+          "paddingTop": "20",
+          "paddingBottom": "20",
+          "marginTop": "0",
+          "marginBottom": "20",
+          "paddinRight": "15",
+          "paddinLeft": "15",
+          "headingColor": "#ffffff",
+          "headingFontSize": "22",
+          "headingFontWeight": "bold",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3,
+          "shadowBlur": 10,
+          "shadowSpread": 0,
+          "shadowColor": "rgba(72, 86, 150, 0.12)",
+          "background": "#485696",
+          "borderRadious": "12"
+        }
+      }
+    ],
+    "order": [
+      "Banner",
+      "SlideShow",
+      "ContactForm",
+      "Gallery",
+      "Brands",
+      "CollapseFaq"
+    ]
+  }
+}

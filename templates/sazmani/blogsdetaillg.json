@@ -1,0 +1,85 @@
+{
+  "children": {
+    "type": "BlogDetail",
+    "metaData": {
+      "title": "جزئیات مقاله - وبلاگ",
+      "description": "مطالعه کامل مقاله و اخبار"
+    },
+    "sections": [
+      {
+        "type": "BlogDetail",
+        "blocks": [
+          {
+            "blogId": 1,
+            "coverImage": "/assets/images/blog-cover.jpg",
+            "imageAlt": "تصویر اصلی مقاله",
+            "title": "عنوان مقاله",
+            "subtitle": "زیرعنوان مقاله",
+            "content": "محتوای کامل مقاله که شامل متن و جزئیات است",
+            "author": {
+              "name": "نام نویسنده",
+              "avatar": "/assets/images/author-avatar.jpg",
+              "bio": "توضیحات نویسنده"
+            },
+            "category": "دسته بندی مقاله",
+            "tags": ["برچسب 1", "برچسب 2", "برچسب 3"],
+            "publishDate": "1402/08/15",
+            "readTime": "10 دقیقه",
+            "id": "BLG-001",
+            "relatedPosts": [
+              {
+                "id": "BLG-002",
+                "title": "عنوان مقاله مرتبط",
+                "thumbnail": "/assets/images/related-1.jpg"
+              }
+            ],
+            "socialShare": {
+              "twitter": true,
+              "facebook": true,
+              "linkedin": true,
+              "telegram": true
+            }
+          }
+        ],
+        "setting": {
+          "coverImageWidth": "1200",
+          "coverImageHeight": "500",
+          "imageRadius": "12",
+          "titleColor": "#fc7a1e",
+          "titleFontSize": "38",
+          "titleFontWeight": "700",
+          "subtitleColor": "#fc7a1e",
+          "subtitleFontSize": "22",
+          "contentColor": "#000000",
+          "contentFontSize": "17",
+          "contentLineHeight": "30",
+          "authorNameColor": "#fc7a1e",
+          "authorNameFontSize": "16",
+          "categoryColor": "#fc7a1e",
+          "categoryFontSize": "14",
+          "tagsColor": "#485696",
+          "tagsFontSize": "13",
+          "dateColor": "#485696",
+          "dateFontSize": "14",
+          "readTimeColor": "#485696",
+          "readTimeFontSize": "14",
+          "paddingTop": "60",
+          "paddingBottom": "60",
+          "marginTop": "0",
+          "marginBottom": "40",
+          "marginRight": "20",
+          "marginLeft": "20",
+          "backgroundColor": "#e7e7e7",
+          "sectionSpacing": "35",
+          "Radius": "12",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6,
+          "shadowBlur": 20,
+          "shadowSpread": 0,
+          "shadowColor": "rgba(72, 86, 150, 0.12)"
+        }
+      }
+    ],
+    "order": ["BlogDetail"]
+  }
+}

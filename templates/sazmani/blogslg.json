@@ -1,0 +1,58 @@
+{
+  "children": {
+    "metaData": {
+      "title": "وبلاگ - مقالات و اخبار",
+      "description": "آخرین مقالات، اخبار و راهنماهای مفید در وبلاگ ما"
+    },
+    "sections": [
+      {
+        "type": "BlogList",
+        "blocks": [
+          {
+            "blogId": 1,
+            "imageSrc": "/assets/images/blog1.jpg",
+            "imageAlt": "بلاگ ۱",
+            "title": "عنوان اولین بلاگ",
+            "description": "این بلاگ درباره موضوعات جالب و خواندنی است.",
+            "author": "نویسنده ۱",
+            "date": "2024-12-01",
+            "btnText": "مطالعه بیشتر"
+          },
+          {
+            "blogId": 2,
+            "imageSrc": "/assets/images/blog2.jpg",
+            "imageAlt": "بلاگ ۲",
+            "title": "عنوان دومین بلاگ",
+            "description": "موضوعات هیجان‌انگیز در این بلاگ بررسی شده‌اند.",
+            "author": "نویسنده ۲",
+            "date": "2024-12-02",
+            "btnText": "مطالعه بیشتر"
+          }
+        ],
+        "setting": {
+          "gridColumns": 3,
+          "paddingTop": "80",
+          "paddingBottom": "50",
+          "marginTop": "0",
+          "marginBottom": "30",
+          "backgroundColor": "#e7e7e7",
+          "cardBackgroundColor": "#FFFFFF",
+          "textColor": "#485696",
+          "cardBorderRadius": 12,
+          "btnBackgroundColor": "#fc7a1e",
+          "buttonColor": "#FFFFFF",
+          "Radius": "12",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6,
+          "shadowBlur": 18,
+          "shadowSpread": 0,
+          "shadowColor": "rgba(72, 86, 150, 0.12)",
+          "titleSize": "20",
+          "descriptionSize": "15",
+          "btnRadius": "8"
+        }
+      }
+    ],
+    "order": ["BlogList"]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "children": {
+    "metaData": {
+      "title": "جزئیات محصول",
+      "description": "مشاهده جزئیات کامل محصول"
+    },
+    "sections": [
+      {
+        "type": "DetailPage",
+        "blocks": [
+          {
+            "productId": 1,
+            "imageSrc": [
+              "/assets/images/pro1-main.jpg",
+              "/assets/images/pro1-alt1.jpg",
+              "/assets/images/pro1-alt2.jpg"
+            ],
+            "imageAlt": [
+              "تصویر اصلی محصول",
+              "تصویر جانبی اول",
+              "تصویر جانبی دوم"
+            ],
+            "name": "نام محصول",
+            "description": "توضیحات کامل محصول که شامل جزئیات بیشتری است",
+            "category": "دسته بندی محصول",
+            "price": "۱۰۰,۰۰۰ تومان",
+            "status": "موجود",
+            "discount": "۲۰٪",
+            "id": "PRD-001",
+            "inventory": 150,
+            "btnText": "افزودن به سبد خرید",
+            "btnLink": "/cart/add/1"
+          }
+        ],
+        "setting": {
+          "imageWidth": "100%",
+          "imageHeight": "320",
+          "imageRadius": "12",
+          "productNameColor": "#000000",
+          "productNameFontSize": "24",
+          "productNameFontWeight": "700",
+          "priceColor": "#DC143C",
+          "statusColor": "#000000",
+          "categoryColor": "#000000",
+          "categoryFontSize": "13",
+          "statusFontSize": "13",
+          "priceFontSize": "22",
+          "descriptionColor": "#000000",
+          "descriptionFontSize": "15",
+          "descriptionFontWeight": "400",
+          "btnBackgroundColor": "#DC143C",
+          "btnTextColor": "#FFFFFF",
+          "paddingTop": "40",
+          "paddingBottom": "40",
+          "paddingLeft": "16",
+          "paddingRight": "16",
+          "marginTop": "0",
+          "marginBottom": "0",
+          "marginLeft": "0",
+          "marginRight": "0",
+          "backgroundColor": "#FFFFFF",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3,
+          "shadowBlur": 12,
+          "shadowSpread": 0,
+          "shadowColor": "#E0E0E0",
+          "Radius": "12",
+          "btnRadius": "20",
+          "propertyRadius": "10"
+        }
+      }
+    ],
+    "order": ["DetailPage"]
+  }
+}
