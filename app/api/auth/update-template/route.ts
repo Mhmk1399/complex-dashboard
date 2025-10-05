@@ -12,7 +12,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "No token provided" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload;
     const userId = decoded.sub || decoded.userId || decoded.id;
 
     const { selctedTemplate } = await request.json();

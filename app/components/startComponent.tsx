@@ -5,6 +5,14 @@ import ProfileDate from "./profileDate";
 import { FaCheck, FaPlus } from "react-icons/fa";
 import { motion } from "framer-motion";
 
+interface Template {
+  id: string;
+  name: string;
+  description: string;
+  previewImage: string;
+  images: string[];
+}
+
 interface StartComponentProps {
   setSelectedMenu: (menu: string) => void;
 }
@@ -18,8 +26,10 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
   const [hasUserInfo, setHasUserInfo] = useState(false);
   const [selectedTemplateName, setSelectedTemplateName] = useState("");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [fullscreenImage, setFullscreenImage] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -177,6 +187,20 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
         '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.37.52.jpeg',
         '/images/templates/digiiKalai/WhatsApp Image 2025-10-05 at 13.43.36.jpeg'
       ]
+    },
+    {
+      id: 'sazmani',
+      name: 'سازمانی',
+      description: 'قالب سازمانی و شرکتی',
+      previewImage: '/images/templates/sazmani/WhatsApp Image 2025-10-05 at 17.28.39.jpeg',
+      images: [
+        '/images/templates/sazmani/WhatsApp Image 2025-10-05 at 17.28.39.jpeg',
+        '/images/templates/sazmani/WhatsApp Image 2025-10-05 at 17.29.36.jpeg',
+        '/images/templates/sazmani/WhatsApp Image 2025-10-05 at 17.30.10.jpeg',
+        '/images/templates/sazmani/WhatsApp Image 2025-10-05 at 17.31.29.jpeg',
+        '/images/templates/sazmani/WhatsApp Image 2025-10-05 at 17.34.14.jpeg',
+        '/images/templates/sazmani/WhatsApp Image 2025-10-05 at 17.36.08.jpeg'
+      ]
     }
   ];
 
@@ -184,10 +208,12 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
     setShowTemplateModal(true);
   };
 
-  const handleApplyTemplate = async (templateName) => {
+  const handleApplyTemplate = async (templateName: string) => {
     const storeId = localStorage.getItem('storeId');
     const token = localStorage.getItem('token');
     if (!storeId || !token) return;
+    
+    setIsApplyingTemplate(true);
     
     try {
       const templateResponse = await fetch('/api/template-service', {
@@ -217,10 +243,14 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
           setSelectedTemplateName(templateName);
           setShowTemplateModal(false);
           setSelectedTemplate(null);
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 3000);
         }
       }
     } catch (error) {
       console.error('Error applying template:', error);
+    } finally {
+      setIsApplyingTemplate(false);
     }
   };
 
@@ -457,7 +487,7 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                         className="w-full h-48 object-cover"
                         onClick={() => setFullscreenImage(image)}
                         onError={(e) => {
-                          e.target.src = '/images/placeholder.jpg';
+                          (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
                         }}
                       />
                     </div>
@@ -473,9 +503,17 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                   </button>
                   <button
                     onClick={() => handleApplyTemplate(selectedTemplate.id)}
-                    className="px-6 py-3 bg-[#0077b6] text-white rounded-xl hover:bg-blue-700 transition-colors"
+                    disabled={isApplyingTemplate}
+                    className={`px-6 py-3 rounded-xl transition-colors flex items-center gap-2 ${
+                      isApplyingTemplate 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-[#0077b6] hover:bg-blue-700'
+                    } text-white`}
                   >
-                    انتخاب این قالب
+                    {isApplyingTemplate && (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    )}
+                    {isApplyingTemplate ? 'در حال اعمال...' : 'انتخاب این قالب'}
                   </button>
                 </div>
               </div>
@@ -501,6 +539,15 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
               </svg>
             </button>
           </div>
+        </div>
+      )}
+      
+      {showToast && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[70] flex items-center gap-2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+          </svg>
+          قالب با موفقیت اعمال شد
         </div>
       )}
     </>

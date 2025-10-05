@@ -9,6 +9,7 @@ export async function GET() {
     const newsletters = await NwesLetter.find({});
     return NextResponse.json(newsletters);
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: "Failed to fetch newsletters" }, { status: 500 });
   }
 }
@@ -23,6 +24,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(newsletter, { status: 201 });
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: "Failed to create newsletter" }, { status: 500 });
   }
 }

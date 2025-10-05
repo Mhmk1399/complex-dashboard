@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import CustomerTicket from "@/models/customerTicket";
 import connect from "@/lib/data";
 
-export async function GET( { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connect();
     const { id } = await params;

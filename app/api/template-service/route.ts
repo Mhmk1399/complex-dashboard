@@ -29,6 +29,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Remove all existing JSONs for this store
+    await Jsons.deleteMany({ storeId });
+
     // Get all template files
     const files = await fs.readdir(templatePath);
     const jsonFiles = files.filter(file => file.endsWith('.json'));
