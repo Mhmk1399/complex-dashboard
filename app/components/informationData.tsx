@@ -27,7 +27,7 @@ const menuItems = [
 export const InformationData: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState("basic");
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState({
     basic: {
@@ -73,7 +73,7 @@ export const InformationData: React.FC = () => {
 
   const validateField = (field: string, value: string): string => {
     if (!value) return '';
-    
+
     switch (field) {
       case 'email':
         return validateEmail(value) ? '' : 'فرمت ایمیل صحیح نیست';
@@ -238,7 +238,7 @@ export const InformationData: React.FC = () => {
               >
                 {formData.basic.logo ? (
                   <img
-                    src={formData.basic.logo }
+                    src={formData.basic.logo}
                     alt="Selected logo"
                     className="w-full h-full object-contain rounded-2xl"
                   />
@@ -294,11 +294,15 @@ export const InformationData: React.FC = () => {
               label="فونت"
               icon={<MdSettings />}
               options={[
-                { value: "iranSans", label: "ایران سنس" },
+                { value: "hezare", label: "هزاره " },
                 { value: "vazir", label: "وزیر" },
-                { value: "yekan", label: "یکان" },
+                { value: "esterdad", label: "استرداد" },
                 { value: "rey", label: "ری" },
                 { value: "sahel", label: "ساحل" },
+                { value: "cairo", label: "کایرو" },
+                { value: "amiri", label: "امیری" },
+                { value: "almarai", label: "المرای" },
+                { value: "markaziText", label: "مرکزی" },
               ]}
               value={formData.design.font}
               onChange={(e) =>
@@ -415,11 +419,10 @@ export const InformationData: React.FC = () => {
                   key={item.id}
                   whileHover={{ x: 4 }}
                   onClick={() => setActiveMenu(item.id)}
-                  className={` flex justify-center items-center mx-auto font-bold md:font-medium md:mx-0 gap-1 px-1 py-2 md:p-3 rounded-xl text-right transition-all whitespace-nowrap lg:w-full ${
-                    activeMenu === item.id
+                  className={` flex justify-center items-center mx-auto font-bold md:font-medium md:mx-0 gap-1 px-1 py-2 md:p-3 rounded-xl text-right transition-all whitespace-nowrap lg:w-full ${activeMenu === item.id
                       ? "bg-[#0077b6]/80 text-white text-xs md:text-lg  "
                       : "text-gray-500 hover:bg-gray-100 text-xs md:text-lg"
-                  }`}
+                    }`}
                 >
                   <span className="text-sm md:text-lg">{item.icon}</span>
                   <span>{item.title}</span>
@@ -454,7 +457,7 @@ export const InformationData: React.FC = () => {
         isOpen={isImageSelectorOpen}
         onClose={() => setIsImageSelectorOpen(false)}
         onSelectImage={(image) => {
-          const filename =  image.fileUrl;
+          const filename = image.fileUrl;
           setFormData({
             ...formData,
             basic: {
@@ -493,9 +496,8 @@ const FloatingInput: React.FC<{
       )}
       <input
         type={type}
-        className={`w-full p-4 ${
-          prefix ? "pr-12" :" "
-        } bg-gray-50 border ${error ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300`}
+        className={`w-full p-4 ${prefix ? "pr-12" : " "
+          } bg-gray-50 border ${error ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300`}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
@@ -540,7 +542,7 @@ const FloatingSelect: React.FC<{
       {icon}
       {label}
     </label>
-    <select 
+    <select
       className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300"
       value={value}
       onChange={onChange}

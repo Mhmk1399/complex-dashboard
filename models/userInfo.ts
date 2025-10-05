@@ -17,7 +17,7 @@ const UserInfoSchema = new mongoose.Schema(
     design: {
       type: {
         backgroundColor: { type: String, default: "#ffffff" },
-        font: { type: String, default: "iranSans" },
+        font: { type: String, default: "vazir" },
       },
       default: {},
     },
