@@ -25,14 +25,15 @@ export async function createIngress(config: DeploymentConfig): Promise<{
       },
       spec: {
         rules: [{
-          host: `${config.storeId}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir`,
+          // host: `${config.storeId}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir`,
+          host: `${config.storeId}.tomakdigitalagency.ir`,
           http: {
             paths: [{
               path: '/',
               pathType: 'Prefix',
               backend: {
                 service: {
-                  name: 'shared-service',
+                  name: 'userwebsite-app',
                   port: { number: 80 }
                 }
               }
@@ -66,7 +67,8 @@ export async function createIngress(config: DeploymentConfig): Promise<{
     return {
       message: 'Ingress created successfully',
       config: {
-        host: `https://${config.storeId}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir`,
+        // host: `https://${config.storeId}-9ddcd5133c-mamad.apps.ir-central1.arvancaas.ir`,
+        host: `https://${config.storeId}.tomakdigitalagency.ir`,
       },
     };
   } catch (error) {
