@@ -457,24 +457,42 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
             
             {!selectedTemplate ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {templates.map((template) => (
-                  <div
-                    key={template.id}
-                    onClick={() => setSelectedTemplate(template)}
-                    className="border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer hover:border-[#0077b6]"
-                  >
-                    <img
-                      src={template.previewImage}
-                      alt={template.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold mb-2">{template.name}</h3>
-                      <p className="text-gray-600 mb-4">{template.description}</p>
-                      <div className="text-[#0077b6] font-medium">مشاهده پیشنمای →</div>
+                {templates.map((template) => {
+                  const isCurrentTemplate = selectedTemplateName === template.id;
+                  return (
+                    <div
+                      key={template.id}
+                      onClick={() => setSelectedTemplate(template)}
+                      className={`border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer relative ${
+                        isCurrentTemplate 
+                          ? 'border-green-500 bg-green-50' 
+                          : 'hover:border-[#0077b6]'
+                      }`}
+                    >
+                      {isCurrentTemplate && (
+                        <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10">
+                          فعال
+                        </div>
+                      )}
+                      <img
+                        src={template.previewImage}
+                        alt={template.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-6">
+                        <h3 className={`text-xl font-bold mb-2 ${
+                          isCurrentTemplate ? 'text-green-600' : ''
+                        }`}>{template.name}</h3>
+                        <p className="text-gray-600 mb-4">{template.description}</p>
+                        <div className={`font-medium ${
+                          isCurrentTemplate ? 'text-green-600' : 'text-[#0077b6]'
+                        }`}>
+                          {isCurrentTemplate ? 'قالب فعال' : 'مشاهده پیشنمای →'}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div>
@@ -503,9 +521,9 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                   </button>
                   <button
                     onClick={() => handleApplyTemplate(selectedTemplate.id)}
-                    disabled={isApplyingTemplate}
+                    disabled={isApplyingTemplate || selectedTemplateName === selectedTemplate.id}
                     className={`px-6 py-3 rounded-xl transition-colors flex items-center gap-2 ${
-                      isApplyingTemplate 
+                      isApplyingTemplate || selectedTemplateName === selectedTemplate.id
                         ? 'bg-gray-400 cursor-not-allowed' 
                         : 'bg-[#0077b6] hover:bg-blue-700'
                     } text-white`}
@@ -513,7 +531,12 @@ const StartComponent: React.FC<StartComponentProps> = ({ setSelectedMenu }) => {
                     {isApplyingTemplate && (
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     )}
-                    {isApplyingTemplate ? 'در حال اعمال...' : 'انتخاب این قالب'}
+                    {isApplyingTemplate 
+                      ? 'در حال اعمال...' 
+                      : selectedTemplateName === selectedTemplate.id 
+                        ? 'قالب فعال' 
+                        : 'انتخاب این قالب'
+                    }
                   </button>
                 </div>
               </div>
