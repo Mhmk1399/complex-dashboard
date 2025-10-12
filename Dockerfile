@@ -8,9 +8,6 @@ WORKDIR /app
 ARG NEXT_PUBLIC_COMPLEX_URL
 ENV NEXT_PUBLIC_COMPLEX_URL=$NEXT_PUBLIC_COMPLEX_URL
 
-ARG NEXT_PUBLIC_MAMAD_URL=$NEXT_PUBLIC_MAMAD_URL
-ENV NEXT_PUBLIC_MAMAD_URL=$NEXT_PUBLIC_MAMAD_URL
-
 # Install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -34,6 +31,7 @@ RUN npm ci --omit=dev
 
 # Copy the build output and other necessary files from builder
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/node_modules ./node_modules

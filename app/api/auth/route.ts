@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 import User from "@/models/users";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// import { createIngress } from "@/utilities/createNewIngress";
+import { createIngress } from "@/utilities/createNewIngress";
 
 
 export async function POST(request: NextRequest) {
@@ -22,18 +22,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // const createNewDeployment = await createIngress({
-    //   namespace: process.env.NAMESPACE || "mamad",
-    //   storeId,
-    // });
+    const createNewDeployment = await createIngress({
+      namespace: process.env.NAMESPACE || "mamad",
+      storeId,
+    });
 
-    // const DeployedUrl = createNewDeployment.config?.host;
-    // const DeployedUrl = `http://localhost:3002/`;
-    // if (!DeployedUrl) throw new Error("Deployment URL missing");
-
-    // const DiskUrl = `${process.env.VPS_URL}/${storeId}`
-
-    // await initStore(storeId);
+    const DeployedUrl = createNewDeployment.config?.host;
+    if (!DeployedUrl) throw new Error("Deployment URL missing");
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -41,8 +36,7 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       password: hashedPassword,
       title,
-      // DeployedUrl,
-      // DiskUrl,
+      DeployedUrl,
       storeId,
       trialDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days trial
     });
@@ -53,8 +47,7 @@ export async function POST(request: NextRequest) {
       {
         id: newUser._id,
         storeId,
-        // DeployedUrl,
-        // DiskUrl
+        DeployedUrl,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "10000h" }
@@ -65,7 +58,7 @@ export async function POST(request: NextRequest) {
         message: "User created successfully",
         token,
         userId: newUser._id,
-        // websiteUrl: DeployedUrl,
+        websiteUrl: DeployedUrl,
       },
       { status: 201 }
     );
