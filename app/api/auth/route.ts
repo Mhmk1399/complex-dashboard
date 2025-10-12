@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         DeployedUrl,
       },
       process.env.JWT_SECRET!,
-      { expiresIn: "10000h" }
+      { expiresIn: "24h" }
     );
 
     return NextResponse.json(
