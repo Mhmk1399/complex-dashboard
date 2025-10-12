@@ -6,6 +6,8 @@ import { FiArrowLeft } from "react-icons/fi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import NetworkBackground from "../components/networkBg";
+import OTPInput from "../components/OTPInput";
+import LoadingModal from "../components/LoadingModal";
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -103,7 +105,7 @@ export default function LoginPage() {
     }
     setPhoneError("");
     try {
-      const response = await fetch("/api/auth/send-code", {
+      const response = await fetch("/api/auth/send-code-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber }),
@@ -219,7 +221,7 @@ export default function LoginPage() {
     }
     setSignupPhoneError("");
     try {
-      const response = await fetch("/api/auth/send-code", {
+      const response = await fetch("/api/auth/send-code-register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phoneNumber: signupFormData.phoneNumber }),
@@ -281,6 +283,7 @@ export default function LoginPage() {
     setSignupPasswordError("");
     setSignupErrors("");
     setShowSignupModal(true);
+    
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
@@ -290,8 +293,6 @@ export default function LoginPage() {
       const result = await response.json();
       if (response.ok) {
         localStorage.setItem("token", result.token);
-        toast.success("ثبت نام با موفقیت انجام شد");
-        setTimeout(() => router.push("/"), 1500);
       } else {
         setSignupErrors(result.message || "Registration failed");
         setShowSignupModal(false);
@@ -302,67 +303,7 @@ export default function LoginPage() {
     }
   };
 
-  const LoadingModal = () => {
-    const [currentStep] = useState(0);
-    const steps = [
-      { title: "شروع فرآیند", message: "در حال آماده سازی ساخت وبسایت شما...", icon: "🚀" },
-      { title: "ایجاد مخزن", message: "در حال ایجاد مخزن از قالب اصلی...", icon: "⚡" },
-      { title: "پیکربندی فروشگاه", message: "در حال اعمال تنظیمات فروشگاه شما...", icon: "⚙️" },
-      { title: "اتمام فرآیند", message: "وبسایت شما با موفقیت ایجاد شد!", icon: "🎉" },
-    ];
 
-    return (
-      <AnimatePresence>
-        {showSignupModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4"
-            >
-              <div className="space-y-6">
-                {steps.map((step, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ x: -50, opacity: 0 }}
-                    animate={{ x: 0, opacity: currentStep >= index ? 1 : 0.3 }}
-                    transition={{ delay: index * 0.2 }}
-                    className={`flex items-center space-x-4 ${currentStep >= index ? "text-blue-600" : "text-gray-400"}`}
-                  >
-                    <span className="text-2xl">{step.icon}</span>
-                    <div className="flex-1">
-                      <h3 className="font-bold">{step.title}</h3>
-                      <p className="text-sm">{step.message}</p>
-                    </div>
-                    {currentStep > index && (
-                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-green-500">✓</motion.div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-              {currentStep === steps.length && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 text-center">
-                  <p className="text-green-600 font-bold">آدرس مخزن شما:</p>
-                  <button
-                    onClick={() => router.push("/")}
-                    className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                  >
-                    ورود به پنل مدیریت
-                  </button>
-                </motion.div>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    );
-  };
 
   return (
     <div className="min-h-screen  flex items-center justify-center relative" dir="rtl">
@@ -470,12 +411,9 @@ export default function LoginPage() {
 
                   {step === 2 && (
                     <div className="space-y-4">
-                      <input
-                        type="text"
-                        placeholder="کد 6 رقمی"
+                      <OTPInput
                         value={verificationCode}
-                        onChange={(e) => setVerificationCode(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-center"
+                        onChange={setVerificationCode}
                       />
                       {smsExpiresAt && (
                         <div className="text-center">
@@ -636,12 +574,9 @@ export default function LoginPage() {
 
                   {signupStep === 2 && (
                     <div className="space-y-4">
-                      <input
-                        type="text"
-                        placeholder="کد 6 رقمی را وارد کنید"
+                      <OTPInput
                         value={signupVerificationCode}
-                        onChange={(e) => setSignupVerificationCode(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-center"
+                        onChange={setSignupVerificationCode}
                       />
                       {signupSmsExpiresAt && (
                         <div className="text-center">
@@ -793,12 +728,9 @@ export default function LoginPage() {
 
                   {step === 2 && (
                     <div className="space-y-4">
-                      <input
-                        type="text"
-                        placeholder="کد 6 رقمی"
+                      <OTPInput
                         value={verificationCode}
-                        onChange={(e) => setVerificationCode(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-50 rounded-lg border-2 border-gray-200 outline-none focus:border-blue-500 transition-colors text-center"
+                        onChange={setVerificationCode}
                       />
                       {smsExpiresAt && (
                         <div className="text-center">
@@ -935,12 +867,9 @@ export default function LoginPage() {
 
                   {signupStep === 2 && (
                     <div className="space-y-4">
-                      <input
-                        type="text"
-                        placeholder="کد 6 رقمی"
+                      <OTPInput
                         value={signupVerificationCode}
-                        onChange={(e) => setSignupVerificationCode(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-50 rounded-lg border-2 border-gray-200 outline-none focus:border-blue-500 transition-colors text-center"
+                        onChange={setSignupVerificationCode}
                       />
                       {signupSmsExpiresAt && (
                         <div className="text-center">
@@ -1002,7 +931,13 @@ export default function LoginPage() {
           </motion.div>
         </div>
       </div>
-      <LoadingModal />
+      <LoadingModal 
+        isOpen={showSignupModal} 
+        onComplete={() => {
+          setShowSignupModal(false);
+          toast.success("ثبت نام با موفقیت انجام شد");
+        }} 
+      />
     </div>
   );
 }

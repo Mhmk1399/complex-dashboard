@@ -13,9 +13,9 @@ html, body {
 }
 
 body {
-  background: white;
+  background: var(--background);
+  
 }
-
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
