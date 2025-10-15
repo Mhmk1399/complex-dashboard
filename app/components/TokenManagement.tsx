@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { AITokenService } from "@/lib/aiTokenService";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 interface TokenUsage {
   totalTokens: number;
@@ -96,7 +96,7 @@ export const TokenManagement = () => {
   const isLow = percentage < 20;
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border" dir="rtl">
+    <div className="bg-white rounded-xl p-6 shadow-sm border pt-11" dir="rtl">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">مدیریت توکن های هوش مصنوعی</h2>
       
       {/* Token Overview */}
