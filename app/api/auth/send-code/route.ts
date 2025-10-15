@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       expiresAt: expiresAt.toISOString()
     });
   } catch (error) {
-    console.error('Send code error:', error);
+    console.log('Send code error:', error);
     return NextResponse.json({ message: 'خطای سرور' }, { status: 500 });
   }
 }

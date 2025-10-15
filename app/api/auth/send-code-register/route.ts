@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       expiresAt: expiresAt.toISOString()
     });
   } catch (error) {
-    console.error('Send register code error:', error);
+    console.log('Send register code error:', error);
     return NextResponse.json({ message: 'خطای سرور در ثبت نام' }, { status: 500 });
   }
 }

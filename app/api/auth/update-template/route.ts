@@ -29,7 +29,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error updating template:", error);
+    console.log("Error updating template:", error);
     return NextResponse.json({ error: "Failed to update template" }, { status: 500 });
   }
 }

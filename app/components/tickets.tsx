@@ -42,7 +42,7 @@ export default function Tickets() {
         setTickets([]);
       }
     } catch (error) {
-      console.error("Failed to fetch tickets:", error);
+      console.log("Failed to fetch tickets:", error);
       setTickets([]);
     }
   };

@@ -1,8 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import {
   FiUploadCloud,
   FiEdit,
@@ -18,6 +16,7 @@ import { EditStory } from "./editStory";
 import ImageSelectorModal from "./ImageSelectorModal";
 import Image from "next/image";
 import { StorySettings } from "@/types/type";
+import toast from "react-hot-toast";
 
 export const AddStory = () => {
   const [settings, setSettings] = useState<StorySettings>({
@@ -76,7 +75,7 @@ export const AddStory = () => {
     } catch (error) {
       setSaveStatus("error");
       toast.error("خطای غیرمنتظره در ایجاد استوری");
-      console.error(error);
+      console.log(error);
     } finally {
       // Reset save status after a short delay
       setTimeout(() => setSaveStatus("idle"), 3000);
@@ -99,7 +98,7 @@ export const AddStory = () => {
   };
 
   const isFormValid = settings.title.trim() && settings.image;
-  
+
   return (
     <>
       <div
@@ -428,21 +427,6 @@ export const AddStory = () => {
           isOpen={isImageSelectorOpen}
           onClose={() => setIsImageSelectorOpen(false)}
           onSelectImage={handleImageSelect}
-        />
-
-        {/* Toast Container */}
-        <ToastContainer
-          rtl={true}
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          toastClassName="backdrop-blur-sm"
         />
       </div>
     </>

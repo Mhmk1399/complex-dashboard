@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
+import { Draggable } from "gsap/Draggable";
 import { Category } from "@/types/type";
+import toast from "react-hot-toast";
 
 const EditCategory = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -11,7 +12,15 @@ const EditCategory = () => {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set()
   );
-  const [selectedParentId, setSelectedParentId] = useState<string>("");
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const draggablesRef = useRef<Draggable[]>([]);
+
+  // Register GSAP plugin
+  useLayoutEffect(() => {
+    gsap.registerPlugin(Draggable);
+  }, []);
 
   const fetchCategories = async () => {
     try {
@@ -31,6 +40,90 @@ const EditCategory = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    // Cleanup previous draggables
+    draggablesRef.current.forEach((draggable) => draggable.kill());
+    draggablesRef.current = [];
+
+    if (!containerRef.current) return;
+
+    const leafCategories = categories.filter(
+      (category) =>
+        category.children.length === 0 && !isChildCategory(category._id)
+    );
+
+    leafCategories.forEach((category) => {
+      const el = categoryRefs.current[category._id];
+      if (el) {
+        const draggable = Draggable.create(el, {
+          type: "x,y",
+          bounds: containerRef.current,
+          edgeResistance: 0.65,
+          inertia: true,
+          onDragStart: function () {
+            gsap.to(this.target, { scale: 1.05, duration: 0.1 });
+          },
+          onDrag: function () {
+            // Highlight potential drop zones during drag
+            document.querySelectorAll(".drop-zone").forEach((zone: any) => {
+              if (this.hitTest(zone, "30%")) {
+                zone.classList.add("drag-over");
+              } else {
+                zone.classList.remove("drag-over");
+              }
+            });
+          },
+          onDragEnd: function () {
+            document.querySelectorAll(".drop-zone").forEach((zone: any) => {
+              zone.classList.remove("drag-over");
+            });
+            gsap.to(this.target, { scale: 1, duration: 0.1 });
+
+            // Check hit on any drop zone
+            const dropZones = document.querySelectorAll(".drop-zone");
+            let dropped = false;
+            dropZones.forEach((zone: any) => {
+              if (this.hitTest(zone, "50%")) {
+                const parentId = zone.dataset.parentId;
+                if (
+                  parentId &&
+                  !categories
+                    .find((cat) => cat._id === parentId)
+                    ?.children.includes(category._id)
+                ) {
+                  addToParent(parentId, category._id);
+                  dropped = true;
+                  // Animate success
+                  gsap.to(this.target, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.3,
+                    ease: "back.out(1.7)",
+                  });
+                }
+              }
+            });
+
+            if (!dropped) {
+              gsap.to(this.target, {
+                x: 0,
+                y: 0,
+                duration: 0.5,
+                ease: "elastic.out(1, 0.3)",
+              });
+            }
+          },
+        })[0];
+        draggablesRef.current.push(draggable);
+      }
+    });
+
+    return () => {
+      draggablesRef.current.forEach((draggable) => draggable.kill());
+      draggablesRef.current = [];
+    };
+  }, [categories]);
 
   const toggleExpand = (categoryId: string) => {
     const newExpanded = new Set(expandedCategories);
@@ -152,12 +245,12 @@ const EditCategory = () => {
   const handleDelete = async (categoryId: string) => {
     const categoryToDelete = categories.find((cat) => cat._id === categoryId);
 
-    if (categoryToDelete && categoryToDelete.children.length > 0) {
-      toast.error(
-        "نمی‌توانید دسته‌ای را که دارای زیر دسته است حذف کنید. ابتدا زیر دسته‌ها را حذف کنید."
-      );
-      return;
-    }
+    // if (categoryToDelete && categoryToDelete.children.length > 0) {
+    //   toast.error(
+    //     "نمی‌توانید دسته‌ای را که دارای زیر دسته است حذف کنید. ابتدا زیر دسته‌ها را حذف کنید."
+    //   );
+    //   return;
+    // }
 
     try {
       const response = await fetch("/api/category", {
@@ -204,28 +297,28 @@ const EditCategory = () => {
     return (
       <motion.div
         key={category._id}
-        className={`ml-${level * 4}`}
+        style={{ marginRight: level * 16 }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: level * 0.1 }}
       >
-        <div className="bg-white  rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 mb-4 overflow-hidden">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-200 mb-4 overflow-hidden animate-slide-up">
           {/* Category Header */}
           <div
-            className={`p-4 border-b border-gray-100 ${
+            className={`p-4 border-b border-slate-100 ${
               level === 0
-                ? "bg-gradient-to-r from-blue-50 to-indigo-50"
+                ? "bg-gradient-to-r from-slate-50 to-blue-50"
                 : "bg-gradient-to-r from-green-50 to-emerald-50"
             }`}
           >
-            <div className="flex flex-col md:flex-row gap-y-4 items-center justify-between">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex items-start sm:items-center gap-3 flex-1">
                 {/* Expand/Collapse Button - Only for parent categories */}
                 {hasChildren && level === 0 && (
                   <motion.button
                     onClick={() => toggleExpand(category._id)}
-                    className="w-8 h-8 flex flex-col mt-7 md:mt-0  md:flex-row items-center justify-center rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 transition-colors"
-                    whileHover={{ scale: 1.1 }}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-600 transition-all duration-200"
+                    whileHover={{ scale: 1.05 }}
                     animate={{ rotate: isExpanded ? 90 : 0 }}
                   >
                     <svg
@@ -246,9 +339,9 @@ const EditCategory = () => {
 
                 {/* Category Avatar */}
                 <div
-                  className={`w-10 h-10 mt-7 md:mt-0 rounded-full flex flex-col md:flex-row items-center justify-center ${
+                  className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                     level === 0
-                      ? "bg-gradient-to-br from-blue-500 to-purple-600"
+                      ? "bg-gradient-to-br from-slate-900 to-blue-900"
                       : "bg-gradient-to-br from-green-500 to-emerald-600"
                   }`}
                 >
@@ -259,14 +352,14 @@ const EditCategory = () => {
 
                 {/* Category Name or Edit Input */}
                 {editingCategory?._id === category._id ? (
-                  <div className="flex flex-col items-center gap-2">
+                  <div className="flex flex-col items-start gap-2 flex-1">
                     <motion.input
                       initial={{ width: 200 }}
-                      animate={{ width: "auto" }}
+                      animate={{ width: "100%" }}
                       type="text"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
-                      className="px-1 py-2 max-w-[100px] border-2 border-blue-300 rounded-lg focus:border-blue-500 outline-none bg-white"
+                      className="w-full p-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                       autoFocus
                       onKeyPress={(e) => {
                         if (e.key === "Enter") {
@@ -278,10 +371,10 @@ const EditCategory = () => {
                         }
                       }}
                     />
-                    <div className="flex gap-1">
+                    <div className="flex gap-2">
                       <button
                         onClick={handleUpdate}
-                        className="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center transition-colors"
+                        className="w-8 h-8 bg-gradient-to-r from-slate-900 to-blue-900 hover:from-slate-800 hover:to-blue-800 text-white rounded-lg flex items-center justify-center transition-all duration-300"
                         title="ذخیره"
                       >
                         <svg
@@ -303,7 +396,7 @@ const EditCategory = () => {
                           setEditingCategory(null);
                           setNewName("");
                         }}
-                        className="w-8 h-8 bg-gray-500 hover:bg-gray-600 text-white rounded-lg flex items-center justify-center transition-colors"
+                        className="w-8 h-8 bg-slate-500 hover:bg-slate-600 text-white rounded-lg flex items-center justify-center transition-all duration-300"
                         title="لغو"
                       >
                         <svg
@@ -323,9 +416,9 @@ const EditCategory = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <h3 className="font-semibold text-gray-800 text-lg">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-slate-900 text-base sm:text-lg truncate">
                         {category.name}
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
@@ -333,9 +426,9 @@ const EditCategory = () => {
                           className={`px-2 py-1 rounded-full text-xs font-medium ${
                             level === 0
                               ? hasChildren
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-gray-100 text-gray-800"
-                              : "bg-green-100 text-green-800"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-slate-100 text-slate-700"
+                              : "bg-green-100 text-green-700"
                           }`}
                         >
                           {level === 0
@@ -344,7 +437,7 @@ const EditCategory = () => {
                               : "دسته اصلی"
                             : `زیر دسته از ${parentCategory?.name}`}
                         </span>
-                        <span className="text-xs hidden md:block text-gray-500">
+                        <span className="text-xs text-slate-500 hidden sm:block">
                           سطح {level + 1}
                         </span>
                       </div>
@@ -355,10 +448,10 @@ const EditCategory = () => {
 
               {/* Action Buttons */}
               {editingCategory?._id !== category._id && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <button
                     onClick={() => handleEdit(category)}
-                    className="w-9 h-9 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg flex items-center justify-center transition-colors"
+                    className="w-9 h-9 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg flex items-center justify-center transition-all duration-300"
                     title="ویرایش نام"
                   >
                     <svg
@@ -377,7 +470,7 @@ const EditCategory = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(category._id)}
-                    className="w-9 h-9 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-colors"
+                    className="w-9 h-9 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all duration-300"
                     title="حذف دسته‌بندی"
                   >
                     <svg
@@ -399,55 +492,32 @@ const EditCategory = () => {
             </div>
           </div>
 
-          {/* Category Management Section - Only for categories without children (potential child categories) */}
-          {!hasChildren && level === 0 && (
-            <div className="p-4 bg-gray-50 border-t border-gray-100">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    تبدیل به زیر دسته:
-                  </label>
-                  <select
-                    value={selectedParentId || ""}
-                    onChange={(e) => setSelectedParentId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none"
+          {/* Drop Zone for Adding Children - Only for parent categories (level 0) */}
+          {level === 0 && (
+            <div className="p-4 bg-slate-50 border-t border-slate-100">
+              <div className="space-y-3">
+                <label className="  text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                  <svg
+                    className="w-4 h-4 text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <option value="">انتخاب دسته والد</option>
-                    {categories
-                      .filter((cat) => {
-                        // Only show parent categories (level 0) that are not the current category
-                        // and don't already contain this category as a child
-                        const isParentCategory = !isChildCategory(cat._id);
-                        const isNotCurrentCategory = cat._id !== category._id;
-                        const doesNotContainThisChild = !cat.children.includes(
-                          category._id
-                        );
-
-                        return (
-                          isParentCategory &&
-                          isNotCurrentCategory &&
-                          doesNotContainThisChild
-                        );
-                      })
-                      .map((cat, index) => (
-                        <option key={index} value={cat._id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-
-                <button
-                  onClick={() =>
-                    selectedParentId &&
-                    addToParent(selectedParentId, category._id)
-                  }
-                  disabled={!selectedParentId}
-                  className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg flex items-center justify-center gap-2 transition-colors"
-                  title="تبدیل به زیردسته"
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                  افزودن زیر دسته (کشیدن و رها کردن)
+                </label>
+                <div
+                  data-parent-id={category._id}
+                  className="drop-zone min-h-[80px] text-center"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="mx-auto h-6 w-6 text-slate-400 mb-2"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -459,30 +529,56 @@ const EditCategory = () => {
                       d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  افزودن
-                </button>
-              </div>
-
-              {selectedParentId && (
-                <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-800">
-                    <strong>{category.name}</strong> به عنوان زیر دسته از{" "}
-                    <strong>
-                      {categories.find((c) => c._id === selectedParentId)?.name}
-                    </strong>{" "}
-                    اضافه خواهد شد.
+                  <p className="text-sm text-slate-500">
+                    دسته‌های اصلی را از لیست بکشید و اینجا رها کنید
                   </p>
+                  {hasChildren && (
+                    <p className="text-xs text-slate-400 mt-1">
+                      فعلی: {category.children.length} زیر دسته
+                    </p>
+                  )}
                 </div>
-              )}
+                {hasChildren && (
+                  <div className="flex flex-wrap gap-1">
+                    {childCategories.map((child) => (
+                      <div
+                        key={child._id}
+                        className="chip bg-red-100 text-red-700"
+                      >
+                        <span className="text-xs">{child.name}</span>
+                        <button
+                          onClick={() => removeFromParent(child._id)}
+                          className="ml-1 text-red-500 hover:text-red-700"
+                          title="حذف زیر دسته"
+                        >
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
           {/* Remove from parent section - Only for child categories */}
-          {level === 1 && (
-            <div className="md:p-4 p-1 bg-green-50 border-t border-green-100">
-              <div className="flex flex-col md:flex-row items-center justify-between">
+          {level > 0 && (
+            <div className="p-4 bg-green-50 border-t border-green-100">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg
                       className="w-4 h-4 text-green-600"
                       fill="none"
@@ -499,18 +595,17 @@ const EditCategory = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-green-800">
-                      این دسته زیر مجموعه{" "}
-                      <strong>{parentCategory?.name}</strong> است
+                      زیر مجموعه <strong>{parentCategory?.name}</strong>
                     </p>
                     <p className="text-xs text-green-600">
-                      می‌توانید آن را به دسته اصلی تبدیل کنید
+                      برای تبدیل به دسته اصلی، جدا کنید
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => removeFromParent(category._id)}
-                  className="w-full sm:w-auto px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg flex items-center justify-center gap-2 transition-colors"
+                  className="w-full sm:w-auto bg-gradient-to-r from-slate-900 to-blue-900 hover:from-slate-800 hover:to-blue-800 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 font-medium text-sm shadow-md"
                   title="تبدیل به دسته اصلی"
                 >
                   <svg
@@ -541,14 +636,15 @@ const EditCategory = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               className="mr-8 relative"
+              style={{ marginRight: 32 }}
             >
               {/* Connection Line */}
-              <div className="absolute right-4 top-0 bottom-0 w-px bg-gradient-to-b from-green-300 to-transparent"></div>
+              <div className="absolute right-4 top-0 bottom-0 w-px bg-gradient-to-b from-blue-300 to-transparent"></div>
 
               {childCategories.map((child, index) => (
-                <div key={index} className="relative">
+                <div key={child._id} className="relative">
                   {/* Horizontal Line */}
-                  <div className="absolute right-4 top-6 w-4 h-px bg-green-300"></div>
+                  <div className="absolute right-4 top-6 w-4 h-px bg-blue-300"></div>
                   {renderCategory(child, level + 1)}
                 </div>
               ))}
@@ -574,21 +670,26 @@ const EditCategory = () => {
     ).length;
   };
 
+  const leafCategories = categories.filter(
+    (category) =>
+      category.children.length === 0 && !isChildCategory(category._id)
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen md:p-3 p-1"
+      className="min-h-screen p-3 sm:p-4 py-4 sm:py-6 bg-slate-50"
       dir="rtl"
     >
-      <div className="max-w-6xl mx-auto md:px-2 px-0">
+      <div ref={containerRef} className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl mb-6 p-2 sm:p-1">
-          <div className="flex items-center justify-between md:flex-row flex-col ">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-lg mb-4 sm:mb-6 p-4 sm:p-6 animate-slide-down">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-[#0077b6] to-blue-400 bg-clip-text text-transparent flex items-center gap-3">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-900 to-blue-900 bg-clip-text text-transparent flex items-center gap-2">
                 <svg
-                  className="h-8 w-8 text-[#0077b6]"
+                  className="h-6 w-6 sm:h-8 sm:w-8 text-slate-900"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -602,27 +703,27 @@ const EditCategory = () => {
                 </svg>
                 ویرایش دسته‌بندی‌ها (2 سطحه)
               </h2>
-              <p className="text-gray-500 mt-2">
+              <p className="text-slate-600 text-xs sm:text-sm mt-1 sm:mt-2">
                 دسته‌بندی‌های خود را در 2 سطح (اصلی و فرعی) سازماندهی کنید
               </p>
             </div>
 
             {/* Quick Stats */}
-            <div className="flex gap-4 ">
-              <div className="bg-blue-100 rounded-lg min-w-16 py-2 text-center">
-                <div className="text-2xl font-bold text-blue-600">
+            <div className="flex gap-3 sm:gap-4">
+              <div className="bg-blue-100 rounded-lg py-2 px-3 text-center min-w-[60px]">
+                <div className="text-lg sm:text-xl font-bold text-blue-600">
                   {getParentCategories().length}
                 </div>
                 <div className="text-xs text-blue-600">دسته اصلی</div>
               </div>
-              <div className="bg-green-100 rounded-lg min-w-16  px-1 py-2 text-center">
-                <div className="text-2xl font-bold text-green-600">
+              <div className="bg-green-100 rounded-lg py-2 px-3 text-center min-w-[60px]">
+                <div className="text-lg sm:text-xl font-bold text-green-600">
                   {getChildCategoriesCount()}
                 </div>
                 <div className="text-xs text-green-600">زیر دسته</div>
               </div>
-              <div className="bg-purple-100 rounded-lg min-w-16 px-1 py-2 text-center">
-                <div className="text-2xl font-bold text-purple-600">
+              <div className="bg-purple-100 rounded-lg py-2 px-3 text-center min-w-[60px]">
+                <div className="text-lg sm:text-xl font-bold text-purple-600">
                   {categories.length}
                 </div>
                 <div className="text-xs text-purple-600">کل دسته‌ها</div>
@@ -632,10 +733,10 @@ const EditCategory = () => {
         </div>
 
         {/* Instructions Card */}
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl sm:rounded-2xl shadow-xl md:p-2 p-1 text-white mb-6">
-          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+        <div className="bg-gradient-to-r from-slate-900 to-blue-900 rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 text-white mb-4 sm:mb-6 animate-slide-up">
+          <h3 className="text-base sm:text-lg font-bold mb-3 flex items-center gap-2">
             <svg
-              className="h-6 w-6"
+              className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -649,90 +750,185 @@ const EditCategory = () => {
             </svg>
             راهنمای استفاده - سیستم 2 سطحه
           </h3>
-          <div className="grid md:grid-cols-3 gap-4 text-sm">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <h4 className="font-semibold mb-2">📁 دسته‌های اصلی</h4>
+          <div className="grid sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+              <h4 className="font-semibold mb-1.5">📁 دسته‌های اصلی</h4>
               <p className="text-blue-100">
                 دسته‌های اصلی می‌توانند زیر دسته داشته باشند اما خودشان زیر دسته
                 نیستند
               </p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <h4 className="font-semibold mb-2">📄 زیر دسته‌ها</h4>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+              <h4 className="font-semibold mb-1.5">📄 زیر دسته‌ها</h4>
               <p className="text-blue-100">
                 زیر دسته‌ها نمی‌توانند خودشان زیر دسته داشته باشند (حداکثر 2
                 سطح)
               </p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <h4 className="font-semibold mb-2">🔄 تبدیل و انتقال</h4>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+              <h4 className="font-semibold mb-1.5">🔄 کشیدن و رها کردن</h4>
               <p className="text-blue-100">
-                می‌توانید دسته‌ها را بین سطح اصلی و فرعی جابجا کنید
+                دسته‌های قابل انتقال را بکشید و در ناحیه والد رها کنید
               </p>
             </div>
           </div>
         </div>
 
-        {/* Categories Tree */}
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-1">
-          <div className="flex flex-col md:flex-row items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-800">
-              ساختار دسته‌بندی‌ها (2 سطحه)
-            </h3>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  const parentIds = getParentCategories().map((cat) => cat._id);
-                  setExpandedCategories(new Set(parentIds));
-                }}
-                className="px-2 py-2 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition-colors text-sm"
-              >
-                باز کردن همه
-              </button>
-              <button
-                onClick={() => setExpandedCategories(new Set())}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors text-sm"
-              >
-                بستن همه
-              </button>
+        <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+          {/* Categories Tree */}
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden animate-slide-up">
+            <div className="bg-gradient-to-r from-slate-900 to-blue-900 p-4 sm:p-5 text-white">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold">
+                    ساختار دسته‌بندی‌ها (2 سطحه)
+                  </h3>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      const parentIds = getParentCategories().map(
+                        (cat) => cat._id
+                      );
+                      setExpandedCategories(new Set(parentIds));
+                    }}
+                    className="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-lg text-xs transition-colors hover:bg-white/30"
+                  >
+                    باز کردن همه
+                  </button>
+                  <button
+                    onClick={() => setExpandedCategories(new Set())}
+                    className="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-lg text-xs transition-colors hover:bg-white/30"
+                  >
+                    بستن همه
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 sm:p-4">
+              {categories.length > 0 ? (
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {getParentCategories().map((category) =>
+                    renderCategory(category)
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-10 sm:py-12">
+                  <svg
+                    className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-slate-300 mb-3 sm:mb-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1}
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
+                  </svg>
+                  <h3 className="text-base sm:text-lg font-medium text-slate-600 mb-2">
+                    هیچ دسته‌بندی موجود نیست
+                  </h3>
+                  <p className="text-slate-500 text-xs sm:text-sm">
+                    ابتدا دسته‌بندی‌های خود را ایجاد کنید
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
-          {categories.length > 0 ? (
-            <div className="space-y-4">
-              {getParentCategories().map((category) =>
-                renderCategory(category)
+          {/* Available Draggable Categories */}
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden animate-slide-up">
+            <div className="bg-gradient-to-r from-slate-900 to-blue-900 p-4 sm:p-5 text-white">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold">
+                    دسته‌های قابل انتقال
+                  </h3>
+                  <p className="text-blue-100 text-xs sm:text-sm mt-0.5">
+                    {leafCategories.length} دسته بدون والد
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 sm:p-4">
+              {leafCategories.length > 0 ? (
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {leafCategories.map((category, index) => (
+                    <div
+                      key={category._id}
+                      ref={(el) => { categoryRefs.current[category._id] = el; }}
+                      className="flex items-center justify-between p-2.5 sm:p-3 bg-slate-50 rounded-lg hover:bg-blue-50 transition-all duration-200 animate-slide-down draggable-item flex-shrink-0"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                    >
+                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                        <svg
+                          className="h-4 w-4 text-slate-400 cursor-grab flex-shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 8h16M4 16h16"
+                          />
+                        </svg>
+                        <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-slate-900 to-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white font-bold text-xs sm:text-sm">
+                            {category.name.charAt(0)}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-slate-900 text-xs sm:text-sm truncate">
+                            {category.name}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            آماده برای انتقال
+                          </div>
+                        </div>
+                      </div>
+                      <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                        قابل انتقال
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10 sm:py-12">
+                  <svg
+                    className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-slate-300 mb-3 sm:mb-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  <h3 className="text-base sm:text-lg font-medium text-slate-600 mb-2">
+                    هیچ دسته قابل انتقال موجود نیست
+                  </h3>
+                  <p className="text-slate-500 text-xs sm:text-sm">
+                    همه دسته‌ها در ساختار قرار دارند
+                  </p>
+                </div>
               )}
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <svg
-                className="mx-auto h-16 w-16 text-gray-300 mb-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-              <h3 className="text-lg font-medium text-gray-600 mb-2">
-                هیچ دسته‌بندی موجود نیست
-              </h3>
-              <p className="text-gray-500">
-                ابتدا دسته‌بندی‌های خود را ایجاد کنید
-              </p>
-            </div>
-          )}
+          </div>
         </div>
 
         {/* Category Hierarchy Visualization */}
         {categories.length > 0 && (
-          <div className="mt-6 bg-white rounded-2xl shadow-xl p-2">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex flex-col  items-center gap-2">
+          <div className="mt-4 sm:mt-6 bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 animate-slide-up">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
               <svg
                 className="h-5 w-5 text-blue-500"
                 fill="none"
@@ -748,19 +944,20 @@ const EditCategory = () => {
               </svg>
               نمای کلی ساختار (2 سطحه)
             </h3>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <div className="text-sm text-gray-600 space-y-3">
+            <div className="bg-slate-50 rounded-lg p-3 sm:p-4">
+              <div className="text-sm text-slate-600 space-y-3">
                 {getParentCategories().length === 0 ? (
-                  <p className="text-center text-gray-500 py-4">
+                  <p className="text-center text-slate-500 py-4">
                     هیچ دسته اصلی موجود نیست
                   </p>
                 ) : (
                   getParentCategories().map((rootCategory, index) => (
                     <div
                       key={index}
-                      className="border-l-2 border-blue-200 pl-4"
+                      className="border-r-2 border-slate-200 pr-4"
+                      style={{ paddingRight: "1rem" }}
                     >
-                      <div className="font-medium text-blue-700 flex items-center gap-2">
+                      <div className="font-medium text-slate-900 flex items-center gap-2">
                         <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                         📁 {rootCategory.name}
                         <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
@@ -768,7 +965,10 @@ const EditCategory = () => {
                         </span>
                       </div>
                       {rootCategory.children.length > 0 ? (
-                        <div className="mr-6 mt-2 space-y-1 border-l-2 border-green-200 pl-4">
+                        <div
+                          className="pl-6 mt-2 space-y-1 border-r-2 border-green-200 pr-4"
+                          style={{ paddingRight: "1rem" }}
+                        >
                           {rootCategory.children.map((childId, childIndex) => {
                             const child = categories.find(
                               (c) => c._id === childId
@@ -788,7 +988,7 @@ const EditCategory = () => {
                           })}
                         </div>
                       ) : (
-                        <div className="mr-6 mt-1 text-xs text-gray-400 italic">
+                        <div className="pl-6 mt-1 text-xs text-slate-400 italic">
                           بدون زیر دسته
                         </div>
                       )}
@@ -801,8 +1001,8 @@ const EditCategory = () => {
         )}
 
         {/* Rules and Limitations */}
-        <div className="mt-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl sm:rounded-2xl shadow-xl md:p-4 p-2 border border-amber-200">
-          <h3 className="text-lg font-bold text-amber-800 mb-4 flex items-center gap-2">
+        <div className="mt-4 sm:mt-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 border border-amber-200 animate-slide-up">
+          <h3 className="text-base sm:text-lg font-bold text-amber-800 mb-3 flex items-center gap-2">
             <svg
               className="h-5 w-5 text-amber-600"
               fill="none"
@@ -818,7 +1018,7 @@ const EditCategory = () => {
             </svg>
             قوانین و محدودیت‌ها
           </h3>
-          <div className="grid md:grid-cols-2 gap-4 text-sm">
+          <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
             <div className="space-y-2">
               <h4 className="font-semibold text-amber-800">✅ مجاز:</h4>
               <ul className="space-y-1 text-amber-700">
@@ -866,20 +1066,20 @@ const EditCategory = () => {
 
         {/* Statistics Summary */}
         {categories.length > 0 && (
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white rounded-xl shadow-lg p-2 md:p-6 border-l-4 border-blue-500">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
+          <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 animate-slide-up">
+            <div className="bg-white rounded-lg shadow-md p-3 sm:p-5 border-r-4 border-blue-500">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+                <div className="text-center sm:text-right w-full">
+                  <p className="text-xs font-medium text-slate-600 mb-1">
                     دسته‌های اصلی
                   </p>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600">
                     {getParentCategories().length}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="hidden sm:flex h-10 w-10 sm:h-12 sm:w-12 bg-blue-100 rounded-lg items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-6 h-6 text-blue-600"
+                    className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -895,19 +1095,19 @@ const EditCategory = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-4 md:p-6 border-l-4 border-green-500">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
+            <div className="bg-white rounded-lg shadow-md p-3 sm:p-5 border-r-4 border-green-500">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+                <div className="text-center sm:text-right w-full">
+                  <p className="text-xs font-medium text-slate-600 mb-1">
                     زیر دسته‌ها
                   </p>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-xl sm:text-2xl font-bold text-green-600">
                     {getChildCategoriesCount()}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <div className="hidden sm:flex h-10 w-10 sm:h-12 sm:w-12 bg-green-100 rounded-lg items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-6 h-6 text-green-600"
+                    className="h-5 w-5 sm:h-6 sm:w-6 text-green-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -923,13 +1123,13 @@ const EditCategory = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg md:p-1 p-2 border-l-4 border-purple-500">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
+            <div className="bg-white rounded-lg shadow-md p-3 sm:p-5 border-r-4 border-purple-500">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+                <div className="text-center sm:text-right w-full">
+                  <p className="text-xs font-medium text-slate-600 mb-1">
                     میانگین زیر دسته
                   </p>
-                  <p className="text-2xl font-bold text-purple-600">
+                  <p className="text-xl sm:text-2xl font-bold text-purple-600">
                     {getParentCategories().length > 0
                       ? (
                           getChildCategoriesCount() /
@@ -938,9 +1138,9 @@ const EditCategory = () => {
                       : "0"}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                <div className="hidden sm:flex h-10 w-10 sm:h-12 sm:w-12 bg-purple-100 rounded-lg items-center justify-center flex-shrink-0">
                   <svg
-                    className="w-6 h-6 text-purple-600"
+                    className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -957,6 +1157,63 @@ const EditCategory = () => {
             </div>
           </div>
         )}
+
+        <style>{`
+          .drop-zone {
+            min-height: 80px;
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+          }
+          .drop-zone.drag-over {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            transform: scale(1.02);
+          }
+          .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            margin: 0.25rem;
+            transition: all 0.2s ease;
+          }
+          .chip button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            width: 1rem;
+            height: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+          }
+          .chip button:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+          }
+          @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-slide-up { animation: slideUp 0.3s ease-out; }
+          .animate-slide-down { animation: slideDown 0.2s ease-out; }
+          @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
       </div>
     </motion.div>
   );

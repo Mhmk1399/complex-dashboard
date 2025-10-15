@@ -9,7 +9,7 @@ export async function GET() {
       headers: { 'Content-Type': client.register.contentType }
     });
   } catch (error) {
-    console.error('Error generating metrics:', error);
+    console.log('Error generating metrics:', error);
     return new NextResponse('Error generating metrics', { status: 500 });
   }
 }

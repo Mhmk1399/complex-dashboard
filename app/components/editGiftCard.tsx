@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import {
   HiOutlineGift,
@@ -8,6 +7,7 @@ import {
   HiOutlineTicket,
   HiOutlineCurrencyDollar,
 } from "react-icons/hi";
+import toast from "react-hot-toast";
 
 interface GiftCard {
   _id: string;
@@ -131,7 +131,9 @@ const EditGiftCard = () => {
                       <input
                         type="text"
                         value={editData.code}
-                        onChange={(e) => setEditData({ ...editData, code: e.target.value })}
+                        onChange={(e) =>
+                          setEditData({ ...editData, code: e.target.value })
+                        }
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
@@ -141,7 +143,9 @@ const EditGiftCard = () => {
                       </label>
                       <select
                         value={editData.type}
-                        onChange={(e) => setEditData({ ...editData, type: e.target.value })}
+                        onChange={(e) =>
+                          setEditData({ ...editData, type: e.target.value })
+                        }
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="fixed">مبلغ ثابت</option>
@@ -155,7 +159,12 @@ const EditGiftCard = () => {
                       <input
                         type="number"
                         value={editData.amount}
-                        onChange={(e) => setEditData({ ...editData, amount: Number(e.target.value) })}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            amount: Number(e.target.value),
+                          })
+                        }
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         min="1"
                         max={editData.type === "percentage" ? "100" : undefined}
@@ -193,10 +202,9 @@ const EditGiftCard = () => {
                       <div className="flex items-center gap-2 mt-1">
                         <HiOutlineCurrencyDollar className="text-gray-500" />
                         <span className="text-sm text-gray-600">
-                          {giftCard.type === "fixed" 
+                          {giftCard.type === "fixed"
                             ? `${giftCard.amount.toLocaleString()} تومان`
-                            : `${giftCard.amount}% تخفیف`
-                          }
+                            : `${giftCard.amount}% تخفیف`}
                         </span>
                       </div>
                     </div>

@@ -6,7 +6,7 @@ export async function sendVerificationCode(phone: string, code: string) {
     const result = await smsir.SendVerifyCode(phone, parseInt(process.env.SMS_IR_TEMPLATE_ID!), [{ name: 'CODE', value: code }]);
     return result.data?.status === 1;
   } catch (error: unknown) {
-    console.error('SMS send error:', error instanceof Error ? error.message : 'Unknown error');
+    console.log('SMS send error:', error instanceof Error ? error.message : 'Unknown error');
     return false;
   }
 }

@@ -140,7 +140,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json(updatedBlog, { status: 200 });
   } catch (error) {
-    console.error("PATCH_ERROR", id, error);
+    console.log("PATCH_ERROR", id, error);
     return NextResponse.json(
       { message: "Error updating blog" },
       { status: 500 }

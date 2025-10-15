@@ -1,9 +1,7 @@
 import { User } from "@/types/type";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
-
-
+import toast from "react-hot-toast";
 
 export const Costumers = () => {
   const [users, setUsers] = useState<User[]>([
@@ -70,7 +68,7 @@ export const Costumers = () => {
     toast.success(`User deleted successfully`);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>در حال بارگذاری</div>;
   if (users.length === 0)
     return (
       <div className="pb-4 mt-36">
@@ -159,7 +157,6 @@ export const Costumers = () => {
           </tbody>
         </table>
       </div>
-      <ToastContainer position="top-center" rtl={true} />
     </div>
   );
 };

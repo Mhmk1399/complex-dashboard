@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
-import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import ImageSelectorModal from "./ImageSelectorModal"; // Import the ImageSelectorModal
 import { FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa"; // Add FaTimes for close button
 import { EditStoryProps, Story } from "@/types/type";
+import toast from "react-hot-toast";
 
 export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -22,7 +22,6 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
         },
       });
       const data = await response.json();
-      console.log(data, "sssssssssssssssssssssssssss");
       setStories(data);
     } catch (error) {
       console.log(error);

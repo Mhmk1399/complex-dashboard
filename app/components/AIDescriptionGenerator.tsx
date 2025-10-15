@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DeepSeekClient } from "@/lib/DeepSeekClient";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 interface ProductData {
   name?: string;
@@ -23,27 +23,31 @@ export const AIDescriptionGenerator = ({
 }: AIDescriptionGeneratorProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const isDisabled = !productData.name?.trim() || !productData.category?.trim() || !productData.properties || Object.keys(productData.properties).length === 0;
-  
-
+  const isDisabled =
+    !productData.name?.trim() ||
+    !productData.category?.trim() ||
+    !productData.properties ||
+    Object.keys(productData.properties).length === 0;
 
   const generateDescription = async () => {
     setIsLoading(true);
     try {
       const features = [
         ...(productData.features || []),
-        ...Object.entries(productData.properties || {}).map(([key, value]) => `${key}: ${value}`)
+        ...Object.entries(productData.properties || {}).map(
+          ([key, value]) => `${key}: ${value}`
+        ),
       ];
 
       const prompt = `Act as a professional e-commerce copywriter. Generate a compelling, SEO-friendly product description for the following product.
 
-Product Name: ${productData.name || 'Product'}
-Category: ${productData.category || 'General'}
+Product Name: ${productData.name || "Product"}
+Category: ${productData.category || "General"}
 Key Features/Benefits:
-${features.map((feature, index) => `${index + 1}. ${feature}`).join('\n')}
+${features.map((feature, index) => `${index + 1}. ${feature}`).join("\n")}
 
-Target Audience: ${productData.targetAudience || 'General consumers'}
-Tone of Voice: ${productData.tone || 'Professional and trustworthy'}
+Target Audience: ${productData.targetAudience || "General consumers"}
+Tone of Voice: ${productData.tone || "Professional and trustworthy"}
 
 Output a single paragraph (3-5 sentences) that highlights the key benefits, speaks directly to the target audience, and inspires a purchase. Use persuasive language and focus on how the product improves the user's life. Return ONLY the description text without any additional formatting or explanations.`;
 
@@ -51,7 +55,7 @@ Output a single paragraph (3-5 sentences) that highlights the key benefits, spea
       onDescriptionGenerated(description.trim());
       toast.success("Description generated successfully!");
     } catch (error) {
-      console.error("AI Error:", error);
+      console.log("AI Error:", error);
       toast.error("Failed to generate description");
     } finally {
       setIsLoading(false);
@@ -59,27 +63,38 @@ Output a single paragraph (3-5 sentences) that highlights the key benefits, spea
   };
 
   return (
-    <div  className="inline-block">
+    <div className="inline-block">
       <button
         onClick={generateDescription}
         disabled={isLoading || isDisabled}
         className={`flex items-center gap-2 px-3 py-2 rounded-lg transition ${
-          isDisabled 
-            ? "bg-gray-400 text-gray-200 cursor-not-allowed" 
+          isDisabled
+            ? "bg-gray-400 text-gray-200 cursor-not-allowed"
             : "bg-purple-600 text-white hover:bg-purple-700"
         } ${isLoading ? "opacity-50" : ""}`}
       >
-      {isLoading ? (
-        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-        </svg>
-      ) : (
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-        </svg>
-      )}
-      {isLoading ? "درحال بارگذاری..." : "ایجاد توسط دستیار هوش مصنوعی"}
+        {isLoading ? (
+          <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+        ) : (
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+          </svg>
+        )}
+        {isLoading ? "درحال بارگذاری..." : "ایجاد توسط دستیار هوش مصنوعی"}
       </button>
     </div>
   );

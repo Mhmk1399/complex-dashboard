@@ -53,7 +53,7 @@ const fetchImages = async () => {
 
     setImages(imageUrls);
   } catch (error) {
-    console.error("Error fetching images:", error);
+    console.log("Error fetching images:", error);
     setError("خطا در بارگیری تصاویر");
   } finally {
     setLoading(false);

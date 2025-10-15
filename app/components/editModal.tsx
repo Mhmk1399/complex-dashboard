@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { EditModalProps, ImageFile } from "@/types/type";
 import ImageSelectorModal from "./ImageSelectorModal";
+import toast from "react-hot-toast";
 
 const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
   const [formData, setFormData] = useState({
@@ -27,7 +26,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageSelectorOpen, setIsImageSelectorOpen] = useState(false);
 
-  // Fetch categories when the modal opens
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -40,7 +38,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
         setCategories(data);
       } catch (error) {
         console.log(error);
-
         toast.error("خطا در دریافت دسته‌بندی‌ها");
       }
     };
@@ -50,7 +47,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     }
   }, [isOpen]);
 
-  // Handle form submission
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -58,7 +54,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     }));
   };
 
-  // Add new property and color
   const addProperty = () => {
     if (newProperty.name && newProperty.value) {
       setFormData((prev) => ({
@@ -69,7 +64,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     }
   };
 
-  // Add new color
   const addColor = () => {
     if (newColor.code && newColor.quantity) {
       setFormData((prev) => ({
@@ -80,14 +74,16 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     }
   };
 
-  // Handle image selection from modal
   const handleImageSelect = (image: ImageFile) => {
     setFormData((prev) => {
       if (prev.images.length >= 6) return prev;
-      const newImages = [...prev.images, { 
-        imageSrc: image.fileUrl, 
-        imageAlt: image.fileName || "Product image" 
-      }];
+      const newImages = [
+        ...prev.images,
+        {
+          imageSrc: image.fileUrl,
+          imageAlt: image.fileName || "Product image",
+        },
+      ];
       return {
         ...prev,
         images: newImages,
@@ -95,7 +91,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     });
   };
 
-  // Remove image
   const removeImage = (index: number) => {
     setFormData((prev) => ({
       ...prev,
@@ -103,11 +98,9 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     }));
   };
 
-  // Add validation function
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    // Basic Information Validation
     if (!formData.name.trim()) {
       newErrors.name = "نام محصول الزامی است";
     }
@@ -120,24 +113,20 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
       newErrors.images = "حداقل یک تصویر محصول الزامی است";
     }
 
-    // Category Validation
     if (!formData.category._id) {
       newErrors.category = "انتخاب دسته بندی الزامی است";
     }
 
-    // Price Validation
     if (!formData.price.trim()) {
       newErrors.price = "قیمت محصول الزامی است";
     } else if (isNaN(Number(formData.price)) || Number(formData.price) <= 0) {
       newErrors.price = "قیمت باید عددی مثبت باشد";
     }
 
-    // Status Validation
     if (!formData.status) {
       newErrors.status = "انتخاب وضعیت محصول الزامی است";
     }
 
-    // Colors Validation (at least one color should exist)
     if (formData.colors.length === 0) {
       newErrors.colors = "حداقل یک رنگ برای محصول الزامی است";
     }
@@ -146,14 +135,11 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form Patch submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Clear previous errors
     setErrors({});
 
-    // Validate form
     if (!validateForm()) {
       toast.error("لطفاً تمام فیلدهای الزامی را پر کنید");
       return;
@@ -180,7 +166,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
         toast.error(errorData.message || `خطا در ویرایش محصول ${product.name}`);
       }
     } catch (error) {
-      console.error("Error updating product:", error);
+      console.log("Error updating product:", error);
       toast.error(
         `خطا در ویرایش محصول: ${
           error instanceof Error ? error.message : "خطای نامشخص"
@@ -191,7 +177,6 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
     }
   };
 
-  // Handle form reset
   if (!isOpen) return null;
 
   return (
@@ -199,31 +184,31 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
       {isOpen && (
         <>
           <motion.div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
           <motion.div
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-            initial={{ scale: 0.9, opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center z-50 p-3 sm:p-4"
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+            exit={{ scale: 0.95, opacity: 0 }}
             transition={{ type: "spring", duration: 0.3, bounce: 0.1 }}
           >
-            <div className="bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-2xl w-full max-w-5xl h-[90vh] overflow-y-scroll">
+            <div className="bg-white border border-slate-200 shadow-xl rounded-lg w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 border-b border-gray-200/20">
+              <div className="bg-slate-800 px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-700 flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <motion.h2
-                    className="text-2xl font-bold text-white flex items-center gap-3"
+                    className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2"
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.1 }}
                   >
                     <svg
-                      className="w-6 h-6"
+                      className="w-5 h-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -239,12 +224,12 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                   </motion.h2>
                   <motion.button
                     onClick={onClose}
-                    className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-all duration-200"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    className="text-slate-300 hover:text-white hover:bg-slate-700 p-1.5 rounded-md transition-all"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <svg
-                      className="w-6 h-6"
+                      className="w-5 h-5 sm:w-6 sm:h-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -261,19 +246,19 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
               </div>
 
               {/* Content */}
-              <div className="overflow-y-auto max-h-[calc(95vh-140px)] custom-scrollbar">
+              <div className="flex-1 overflow-y-auto">
                 <motion.form
                   onSubmit={handleSubmit}
-                  className="p-8"
+                  className="p-4 sm:p-6 space-y-4 sm:space-y-6"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
                   {/* Basic Information Section */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-200 pb-3">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-semibold text-slate-800 mb-3 flex items-center gap-2 pb-2 border-b border-slate-200">
                       <svg
-                        className="w-5 h-5 text-blue-600"
+                        className="w-4 h-4 text-[#0077b6]"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -287,42 +272,40 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                       </svg>
                       اطلاعات پایه
                     </h3>
-                    {/* Images Section */}
-                    <div className="lg:col-span-2 space-y-4">
-                      <label className="block text-sm font-medium text-gray-700">
-                        تصاویر محصول (حداکثر 6 تصویر) <span className="text-red-500">*</span>
-                      </label>
-                      
-                      {/* Image Selection Button */}
-                      <div className="flex gap-2 mb-4">
-                        <button
-                          type="button"
-                          onClick={() => setIsImageSelectorOpen(true)}
-                          disabled={formData.images.length >= 6}
-                          className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                            formData.images.length >= 6
-                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                              : "bg-blue-600 hover:bg-blue-700 text-white"
-                          }`}
-                        >
-                          انتخاب تصویر ({formData.images.length}/6)
-                        </button>
-                      </div>
 
-                      {/* Display Selected Images */}
+                    {/* Images Section */}
+                    <div className="space-y-3 mb-4">
+                      <label className="block text-xs sm:text-sm font-medium text-slate-700">
+                        تصاویر محصول (حداکثر 6 تصویر){" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsImageSelectorOpen(true)}
+                        disabled={formData.images.length >= 6}
+                        className={`px-3 py-2 text-sm rounded-lg font-medium transition-all ${
+                          formData.images.length >= 6
+                            ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                            : "bg-[#0077b6] hover:bg-blue-700 text-white"
+                        }`}
+                      >
+                        انتخاب تصویر ({formData.images.length}/6)
+                      </button>
+
                       {formData.images.length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                           {formData.images.map((image, index) => (
                             <div key={index} className="relative group">
                               <img
                                 src={image.imageSrc}
                                 alt={image.imageAlt}
-                                className="w-full h-32 object-cover rounded-lg border transition-transform group-hover:scale-105"
+                                className="w-full aspect-square object-cover rounded-md border border-slate-200 transition-transform group-hover:scale-105"
                               />
                               <button
                                 type="button"
                                 onClick={() => removeImage(index)}
-                                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-all shadow-lg"
+                                className="absolute -top-1 -right-1 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow-sm"
                               >
                                 ×
                               </button>
@@ -330,54 +313,16 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                           ))}
                         </div>
                       )}
-                      
+
                       {errors.images && (
-                        <p className="text-red-500 text-sm">{errors.images}</p>
+                        <p className="text-red-500 text-xs">{errors.images}</p>
                       )}
                     </div>
 
-                    {/* Video Section */}
-                    <div className="lg:col-span-2 space-y-4">
-                      <label className="block text-sm font-medium text-gray-700">
-                        ویدیو محصول (اختیاری)
-                      </label>
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <input
-                          type="text"
-                          value={formData.video?.videoSrc || ""}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              video: {
-                                ...prev.video,
-                                videoSrc: e.target.value
-                              }
-                            }));
-                          }}
-                          className="w-full px-4 py-3 border rounded-xl bg-white/80 backdrop-blur-sm outline-none transition-all duration-300 placeholder-gray-400 border-gray-300 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                          placeholder="آدرس ویدیو محصول"
-                        />
-                        <input
-                          type="text"
-                          value={formData.video?.videoAlt || ""}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              video: {
-                                ...prev.video,
-                                videoAlt: e.target.value
-                              }
-                            }));
-                          }}
-                          className="w-full px-4 py-3 border rounded-xl bg-white/80 backdrop-blur-sm outline-none transition-all duration-300 placeholder-gray-400 border-gray-300 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                          placeholder="متن جایگزین ویدیو"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
+                    {/* Name & Category */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-medium text-slate-700">
                           نام محصول <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -385,26 +330,21 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                           value={formData.name}
                           onChange={(e) => {
                             handleChange("name", e.target.value);
-                            // Clear error when user starts typing
                             if (errors.name) {
                               setErrors((prev) => ({ ...prev, name: "" }));
                             }
                           }}
-                          className={`w-full px-4 py-3 border rounded-xl bg-white/80 backdrop-blur-sm outline-none transition-all duration-300 placeholder-gray-400 ${
+                          className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all placeholder-slate-400 ${
                             errors.name
                               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-gray-300 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                              : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                           }`}
                           placeholder="نام محصول"
                         />
                         {errors.name && (
-                          <motion.p
-                            className="text-red-500 text-sm flex items-center gap-1"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                          >
+                          <p className="text-red-500 text-xs flex items-center gap-1">
                             <svg
-                              className="w-4 h-4"
+                              className="w-3 h-3"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -417,11 +357,12 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                               />
                             </svg>
                             {errors.name}
-                          </motion.p>
+                          </p>
                         )}
                       </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-medium text-slate-700">
                           دسته بندی <span className="text-red-500">*</span>
                         </label>
                         <select
@@ -437,15 +378,14 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                                 name: "",
                               },
                             }));
-                            // Clear error when user selects a category
                             if (errors.category) {
                               setErrors((prev) => ({ ...prev, category: "" }));
                             }
                           }}
-                          className={`w-full px-4 py-3 border rounded-xl bg-white/80 backdrop-blur-sm outline-none transition-all duration-300 ${
+                          className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all ${
                             errors.category
                               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-gray-300 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                              : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                           }`}
                         >
                           <option value="">انتخاب دسته بندی</option>
@@ -456,13 +396,9 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                           ))}
                         </select>
                         {errors.category && (
-                          <motion.p
-                            className="text-red-500 text-sm flex items-center gap-1"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                          >
+                          <p className="text-red-500 text-xs flex items-center gap-1">
                             <svg
-                              className="w-4 h-4"
+                              className="w-3 h-3"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -475,64 +411,58 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                               />
                             </svg>
                             {errors.category}
-                          </motion.p>
+                          </p>
                         )}
                       </div>
-                      <div className="lg:col-span-2 space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                          توضیحات محصول <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                          value={formData.description}
-                          onChange={(e) => {
-                            handleChange("description", e.target.value);
-                            // Clear error when user starts typing
-                            if (errors.description) {
-                              setErrors((prev) => ({
-                                ...prev,
-                                description: "",
-                              }));
-                            }
-                          }}
-                          className={`w-full px-4 py-3 border rounded-xl bg-white/80 backdrop-blur-sm outline-none transition-all duration-300 placeholder-gray-400 resize-none ${
-                            errors.description
-                              ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-gray-300 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                          }`}
-                          rows={4}
-                          placeholder="توضیحات کامل محصول"
-                        />
-                        {errors.description && (
-                          <motion.p
-                            className="text-red-500 text-sm flex items-center gap-1"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
+                    </div>
+
+                    {/* Description */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs sm:text-sm font-medium text-slate-700">
+                        توضیحات محصول <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        value={formData.description}
+                        onChange={(e) => {
+                          handleChange("description", e.target.value);
+                          if (errors.description) {
+                            setErrors((prev) => ({ ...prev, description: "" }));
+                          }
+                        }}
+                        className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all placeholder-slate-400 resize-none ${
+                          errors.description
+                            ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                            : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        }`}
+                        rows={3}
+                        placeholder="توضیحات کامل محصول"
+                      />
+                      {errors.description && (
+                        <p className="text-red-500 text-xs flex items-center gap-1">
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                           >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                            {errors.description}
-                          </motion.p>
-                        )}
-                      </div>
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          {errors.description}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   {/* Pricing Section */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-200 pb-3">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-semibold text-slate-800 mb-3 flex items-center gap-2 pb-2 border-b border-slate-200">
                       <svg
-                        className="w-5 h-5 text-green-600"
+                        className="w-4 h-4 text-green-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -546,9 +476,10 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                       </svg>
                       قیمت گذاری
                     </h3>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-medium text-slate-700">
                           قیمت (تومان) <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -560,42 +491,23 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                               setErrors((prev) => ({ ...prev, price: "" }));
                             }
                           }}
-                          className={`w-full px-4 py-3 border rounded-xl bg-white/80 backdrop-blur-sm outline-none transition-all duration-300 placeholder-gray-400 ${
+                          className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all placeholder-slate-400 ${
                             errors.price
                               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-gray-300 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                              : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                           }`}
-                          placeholder="قیمت محصول"
-                          required
+                          placeholder="قیمت"
                         />
                         {errors.price && (
-                          <motion.p
-                            className="text-red-500 text-sm flex items-center gap-1"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                            {errors.price}
-                          </motion.p>
+                          <p className="text-red-500 text-xs">{errors.price}</p>
                         )}
                       </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-medium text-slate-700">
                           تخفیف (%)
                         </label>
-                        <div className="relative">
+                        <div className="relative pt-2">
                           <input
                             dir="rtl"
                             type="range"
@@ -603,35 +515,35 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                             onChange={(e) =>
                               handleChange("discount", e.target.value)
                             }
-                            className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
                             style={{
-                              background: `linear-gradient(to left, #ef4444 ${formData.discount}%, #e5e7eb ${formData.discount}%)`,
+                              background: `linear-gradient(to left, #ef4444 ${formData.discount}%, #e2e8f0 ${formData.discount}%)`,
                             }}
                             max={100}
                             min={0}
                           />
-                          <span className="absolute -top-8 right-0 bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
+                          <span className="absolute -top-1 right-0 bg-red-500 text-white px-2 py-0.5 rounded text-xs font-medium">
                             {formData.discount}%
                           </span>
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                          وضعیت محصول <span className="text-red-500">*</span>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-medium text-slate-700">
+                          وضعیت <span className="text-red-500">*</span>
                         </label>
                         <select
                           value={formData.status}
                           onChange={(e) => {
                             handleChange("status", e.target.value);
-                            // Clear error when user selects a status
                             if (errors.status) {
                               setErrors((prev) => ({ ...prev, status: "" }));
                             }
                           }}
-                          className={`w-full px-4 py-3 border rounded-xl bg-white/80 backdrop-blur-sm outline-none transition-all duration-300 ${
+                          className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all ${
                             errors.status
                               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-gray-300 text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                              : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                           }`}
                         >
                           <option value="">انتخاب وضعیت</option>
@@ -639,44 +551,23 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                           <option value="unavailable">ناموجود</option>
                         </select>
                         {errors.status && (
-                          <motion.p
-                            className="text-red-500 text-sm flex items-center gap-1"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
+                          <p className="text-red-500 text-xs">
                             {errors.status}
-                          </motion.p>
+                          </p>
                         )}
                       </div>
                     </div>
 
-                    {/* Price Calculation Display */}
+                    {/* Price Calculation */}
                     {Number(formData.price) > 0 &&
                       Number(formData.discount) > 0 && (
-                        <motion.div
-                          className="mt-6 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-xl p-4"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                        >
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div className="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                          <div className="grid grid-cols-2 gap-3 text-xs">
                             <div className="flex justify-between items-center">
-                              <span className="text-gray-600">
+                              <span className="text-slate-600">
                                 قیمت با تخفیف:
                               </span>
-                              <span className="text-green-600 font-bold text-lg">
+                              <span className="text-green-600 font-semibold">
                                 {(
                                   Number(formData.price) *
                                   (1 - Number(formData.discount) / 100)
@@ -685,10 +576,10 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                               </span>
                             </div>
                             <div className="flex justify-between items-center">
-                              <span className="text-gray-600">
+                              <span className="text-slate-600">
                                 میزان تخفیف:
                               </span>
-                              <span className="text-red-500 font-bold">
+                              <span className="text-red-500 font-semibold">
                                 {(
                                   Number(formData.price) *
                                   (Number(formData.discount) / 100)
@@ -697,15 +588,15 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                               </span>
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       )}
                   </div>
 
                   {/* Properties Section */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-200 pb-3">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-semibold text-slate-800 mb-3 flex items-center gap-2 pb-2 border-b border-slate-200">
                       <svg
-                        className="w-5 h-5 text-purple-600"
+                        className="w-4 h-4 text-purple-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -719,8 +610,9 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                       </svg>
                       ویژگی‌ها
                     </h3>
-                    <div className="bg-gray-50 rounded-xl p-6">
-                      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+
+                    <div className="bg-slate-50 rounded-lg p-3 space-y-3">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <input
                           type="text"
                           placeholder="نام ویژگی"
@@ -731,7 +623,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                               name: e.target.value,
                             })
                           }
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl bg-white outline-none text-gray-800 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 placeholder-gray-400"
+                          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white outline-none text-slate-800 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all placeholder-slate-400"
                         />
                         <input
                           type="text"
@@ -743,14 +635,12 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                               value: e.target.value,
                             })
                           }
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl bg-white outline-none text-gray-800 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 placeholder-gray-400"
+                          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white outline-none text-slate-800 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all placeholder-slate-400"
                         />
-                        <motion.button
+                        <button
                           type="button"
                           onClick={addProperty}
-                          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                          className="px-4 py-2 text-sm bg-[#0077b6] hover:bg-blue-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-1 whitespace-nowrap"
                         >
                           <svg
                             className="w-4 h-4"
@@ -766,66 +656,62 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                             />
                           </svg>
                           افزودن
-                        </motion.button>
+                        </button>
                       </div>
 
-                      {/* Display existing properties */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {formData.properties.map((prop, index) => (
-                          <motion.div
-                            key={index}
-                            className="flex justify-between items-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm"
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                          >
-                            <div className="flex-1">
-                              <span className="text-gray-800 font-medium">
-                                {prop.name}:
-                              </span>
-                              <span className="text-gray-600 mr-2">
-                                {prop.value}
-                              </span>
-                            </div>
-                            <motion.button
-                              type="button"
-                              onClick={() => {
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  properties: prev.properties.filter(
-                                    (_, i) => i !== index
-                                  ),
-                                }));
-                              }}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all duration-200"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
+                      {formData.properties.length > 0 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {formData.properties.map((prop, index) => (
+                            <div
+                              key={index}
+                              className="flex justify-between items-center p-2 bg-white border border-slate-200 rounded-lg shadow-sm"
                             >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                              <div className="flex-1 min-w-0">
+                                <span className="text-slate-800 font-medium text-xs sm:text-sm truncate">
+                                  {prop.name}:
+                                </span>
+                                <span className="text-slate-600 text-xs sm:text-sm mr-1 truncate">
+                                  {prop.value}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    properties: prev.properties.filter(
+                                      (_, i) => i !== index
+                                    ),
+                                  }));
+                                }}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-all flex-shrink-0"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                            </motion.button>
-                          </motion.div>
-                        ))}
-                      </div>
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   {/* Colors Section */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-200 pb-3">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-semibold text-slate-800 mb-3 flex items-center gap-2 pb-2 border-b border-slate-200">
                       <svg
-                        className="w-5 h-5 text-pink-600"
+                        className="w-4 h-4 text-pink-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -839,15 +725,15 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                       </svg>
                       رنگ‌ها و موجودی <span className="text-red-500">*</span>
                     </h3>
+
                     <div
-                      className={`bg-gray-50 rounded-xl p-6 ${
+                      className={`bg-slate-50 rounded-lg p-3 space-y-3 ${
                         errors.colors ? "border-2 border-red-200" : ""
                       }`}
                     >
-                      {" "}
-                      <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                        <div className="flex items-center gap-3">
-                          <label className="text-sm font-medium text-gray-700">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <div className="flex items-center gap-2">
+                          <label className="text-xs font-medium text-slate-700 whitespace-nowrap">
                             رنگ:
                           </label>
                           <input
@@ -856,7 +742,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                             onChange={(e) =>
                               setNewColor({ ...newColor, code: e.target.value })
                             }
-                            className="w-12 h-12 rounded-xl border-2 border-gray-300 cursor-pointer"
+                            className="w-10 h-10 rounded-lg border-2 border-slate-200 cursor-pointer"
                           />
                         </div>
                         <input
@@ -869,15 +755,13 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                               quantity: e.target.value,
                             })
                           }
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl bg-white outline-none text-gray-800 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition-all duration-300 placeholder-gray-400"
+                          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white outline-none text-slate-800 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition-all placeholder-slate-400"
                           min="0"
                         />
-                        <motion.button
+                        <button
                           type="button"
                           onClick={addColor}
-                          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                          className="px-4 py-2 text-sm bg-[#0077b6] hover:bg-blue-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-1 whitespace-nowrap"
                         >
                           <svg
                             className="w-4 h-4"
@@ -893,71 +777,65 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                             />
                           </svg>
                           افزودن
-                        </motion.button>
+                        </button>
                       </div>
-                      {/* Display existing colors */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {formData.colors.map((color, index) => (
-                          <motion.div
-                            key={index}
-                            className="flex justify-between items-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.1 }}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div
-                                className="w-8 h-8 rounded-full border-2 border-gray-300 shadow-sm"
-                                style={{ backgroundColor: color.code }}
-                              />
-                              <div>
-                                <div className="text-xs text-gray-500">
-                                  موجودی
-                                </div>
-                                <div className="font-semibold text-gray-800">
-                                  {color.quantity}
+
+                      {formData.colors.length > 0 && (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {formData.colors.map((color, index) => (
+                            <div
+                              key={index}
+                              className="flex justify-between items-center p-2 bg-white border border-slate-200 rounded-lg shadow-sm"
+                            >
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className="w-8 h-8 rounded-full border-2 border-slate-200 shadow-sm flex-shrink-0"
+                                  style={{ backgroundColor: color.code }}
+                                />
+                                <div>
+                                  <div className="text-xs text-slate-500">
+                                    موجودی
+                                  </div>
+                                  <div className="font-semibold text-slate-800 text-sm">
+                                    {color.quantity}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <motion.button
-                              type="button"
-                              onClick={() => {
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  colors: prev.colors.filter(
-                                    (_, i) => i !== index
-                                  ),
-                                }));
-                              }}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all duration-200"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    colors: prev.colors.filter(
+                                      (_, i) => i !== index
+                                    ),
+                                  }));
+                                }}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-all flex-shrink-0"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                            </motion.button>
-                          </motion.div>
-                        ))}
-                      </div>
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       {errors.colors && (
-                        <motion.p
-                          className="text-red-500 text-sm flex items-center gap-1 mt-2"
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                        >
+                        <p className="text-red-500 text-xs flex items-center gap-1">
                           <svg
-                            className="w-4 h-4"
+                            className="w-3 h-3"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -970,7 +848,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                             />
                           </svg>
                           {errors.colors}
-                        </motion.p>
+                        </p>
                       )}
                     </div>
                   </div>
@@ -978,14 +856,12 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
               </div>
 
               {/* Footer */}
-              <div className="bg-gray-50 border-t border-gray-200 px-8 py-6">
-                <div className="flex flex-col sm:flex-row justify-start gap-4">
-                  <motion.button
+              <div className="bg-slate-50 border-t border-slate-200 px-4 sm:px-6 py-3 flex-shrink-0">
+                <div className="flex flex-col sm:flex-row justify-end gap-2">
+                  <button
                     type="button"
                     onClick={onClose}
-                    className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    className="px-4 py-2 text-sm bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-1"
                   >
                     <svg
                       className="w-4 h-4"
@@ -1001,18 +877,16 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                       />
                     </svg>
                     لغو
-                  </motion.button>
-                  <motion.button
+                  </button>
+                  <button
                     type="submit"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className={`px-8 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg ${
+                    className={`px-6 py-2 text-sm rounded-lg font-medium transition-all flex items-center justify-center gap-1 shadow-sm ${
                       isSubmitting
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                        ? "bg-slate-300 cursor-not-allowed text-slate-500"
+                        : "bg-[#0077b6] hover:bg-blue-700 text-white"
                     }`}
-                    whileHover={!isSubmitting ? { scale: 1.02 } : {}}
-                    whileTap={!isSubmitting ? { scale: 0.98 } : {}}
                   >
                     {isSubmitting ? (
                       <>
@@ -1055,13 +929,12 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                         ذخیره تغییرات
                       </>
                     )}
-                  </motion.button>
+                  </button>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Image Selector Modal */}
           <ImageSelectorModal
             isOpen={isImageSelectorOpen}
             onClose={() => setIsImageSelectorOpen(false)}

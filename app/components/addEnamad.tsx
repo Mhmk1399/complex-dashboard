@@ -1,9 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import "react-toastify/dist/ReactToastify.css";
 import { EnamadSettings } from "@/types/type";
+import toast from "react-hot-toast";
 
 export const AddEnamad = () => {
   const [settings, setSettings] = useState<EnamadSettings>({
@@ -48,10 +47,10 @@ export const AddEnamad = () => {
           setSettings({ link: "", tag: "" });
         }
       } else {
-        console.error("Failed to fetch enamad data");
+        console.log("Failed to fetch enamad data");
       }
     } catch (error) {
-      console.error("Error fetching enamad data:", error);
+      console.log("Error fetching enamad data:", error);
       toast.error("خطا در دریافت اطلاعات نماد اعتماد");
     } finally {
       setIsLoading(false);
@@ -124,7 +123,7 @@ export const AddEnamad = () => {
         toast.error(errorData.message || "خطا در ایجاد نماد اعتماد");
       }
     } catch (error) {
-      console.error("Error creating enamad:", error);
+      console.log("Error creating enamad:", error);
       toast.error("خطا در ایجاد نماد اعتماد");
     } finally {
       setIsSubmitting(false);
@@ -160,7 +159,7 @@ export const AddEnamad = () => {
         toast.error(errorData.message || "خطا در حذف نماد اعتماد");
       }
     } catch (error) {
-      console.error("Error deleting enamad:", error);
+      console.log("Error deleting enamad:", error);
       toast.error("خطا در حذف نماد اعتماد");
     } finally {
       setIsDeleting(false);
@@ -382,19 +381,6 @@ export const AddEnamad = () => {
             </>
           )}
         </AnimatePresence>
-
-        <ToastContainer
-          rtl={true}
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
       </motion.div>
     );
   }
@@ -609,20 +595,6 @@ export const AddEnamad = () => {
           </div>
         </div>
       </div>
-
-      <ToastContainer
-        rtl={true}
-        position="top-center"
-        className="text-sm"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
     </motion.div>
   );
 };

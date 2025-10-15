@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiArrowLeft } from "react-icons/fi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { toast } from "react-toastify";
 import NetworkBackground from "../components/networkBg";
 import OTPInput from "../components/OTPInput";
 import LoadingModal from "../components/LoadingModal";
+import toast from "react-hot-toast";
 
 const generateStoreId = () => {
   const timestamp = Date.now().toString(36);
@@ -18,7 +18,7 @@ const generateStoreId = () => {
 export default function LoginPage() {
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
-  
+
   // Login states
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -45,7 +45,9 @@ export default function LoginPage() {
   const [signupPhoneError, setSignupPhoneError] = useState<string>("");
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [signupStep, setSignupStep] = useState(1);
-  const [signupSmsExpiresAt, setSignupSmsExpiresAt] = useState<string | null>(null);
+  const [signupSmsExpiresAt, setSignupSmsExpiresAt] = useState<string | null>(
+    null
+  );
   const [signupCountdown, setSignupCountdown] = useState<number>(0);
 
   useEffect(() => {
@@ -75,7 +77,8 @@ export default function LoginPage() {
   // Validation functions
   const validatePassword = (password: string) => {
     if (!password) return "رمز عبور را وارد کنید";
-    if (!/[a-zA-Z]/.test(password)) return "رمز عبور باید حداقل یک حرف داشته باشد";
+    if (!/[a-zA-Z]/.test(password))
+      return "رمز عبور باید حداقل یک حرف داشته باشد";
     return "";
   };
 
@@ -87,7 +90,10 @@ export default function LoginPage() {
     return "";
   };
 
-  const handlePhoneKeyUp = (e: React.KeyboardEvent<HTMLInputElement>, setError: (error: string) => void) => {
+  const handlePhoneKeyUp = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    setError: (error: string) => void
+  ) => {
     const value = e.currentTarget.value;
     if (!/^\d*$/.test(value)) {
       setError("فقط عدد وارد کنید");
@@ -113,7 +119,10 @@ export default function LoginPage() {
       const data = await response.json();
       if (response.ok) {
         setSmsExpiresAt(data.expiresAt);
-        const remaining = Math.max(0, Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000));
+        const remaining = Math.max(
+          0,
+          Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000)
+        );
         setCountdown(remaining);
         setStep(2);
       } else {
@@ -156,7 +165,11 @@ export default function LoginPage() {
       const response = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phoneNumber, code: verificationCode, newPassword }),
+        body: JSON.stringify({
+          phoneNumber,
+          code: verificationCode,
+          newPassword,
+        }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -179,9 +192,9 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const phoneValidation = validatePhoneNumber(phoneNumber);
-    
+
     if (phoneValidation) {
       setPhoneError(phoneValidation);
       return;
@@ -190,7 +203,7 @@ export default function LoginPage() {
       setPasswordError("رمز عبور را وارد کنید");
       return;
     }
-    
+
     setPhoneError("");
     setPasswordError("");
     try {
@@ -229,7 +242,10 @@ export default function LoginPage() {
       const data = await response.json();
       if (response.ok) {
         setSignupSmsExpiresAt(data.expiresAt);
-        const remaining = Math.max(0, Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000));
+        const remaining = Math.max(
+          0,
+          Math.floor((new Date(data.expiresAt).getTime() - Date.now()) / 1000)
+        );
         setSignupCountdown(remaining);
         setSignupStep(2);
       } else {
@@ -249,7 +265,10 @@ export default function LoginPage() {
       const response = await fetch("/api/auth/verify-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phoneNumber: signupFormData.phoneNumber, code: signupVerificationCode }),
+        body: JSON.stringify({
+          phoneNumber: signupFormData.phoneNumber,
+          code: signupVerificationCode,
+        }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -265,7 +284,7 @@ export default function LoginPage() {
   const submitSignupData = async () => {
     const phoneValidation = validatePhoneNumber(signupFormData.phoneNumber);
     const passwordValidation = validatePassword(signupFormData.password);
-    
+
     if (!signupFormData.title) {
       setSignupErrors("نام فروشگاه را وارد کنید");
       return;
@@ -278,12 +297,12 @@ export default function LoginPage() {
       setSignupPasswordError(passwordValidation);
       return;
     }
-    
+
     setSignupPhoneError("");
     setSignupPasswordError("");
     setSignupErrors("");
     setShowSignupModal(true);
-    
+
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
@@ -303,10 +322,11 @@ export default function LoginPage() {
     }
   };
 
-
-
   return (
-    <div className="min-h-screen  flex items-center justify-center relative" dir="rtl">
+    <div
+      className="min-h-screen  flex items-center justify-center relative"
+      dir="rtl"
+    >
       <NetworkBackground />
       <div className="w-full max-w-md lg:max-w-4xl">
         {/* Mobile Header */}
@@ -320,7 +340,7 @@ export default function LoginPage() {
         </div>
 
         {/* Desktop Layout */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
@@ -332,7 +352,7 @@ export default function LoginPage() {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             <div className="text-center text-white px-8">
-              <motion.h2 
+              <motion.h2
                 className="text-4xl font-bold mb-4"
                 key={isSignUp ? "create" : "signin"}
                 initial={{ opacity: 0, y: 20 }}
@@ -341,14 +361,14 @@ export default function LoginPage() {
               >
                 {isSignUp ? "ورود" : "ساخت حساب!"}
               </motion.h2>
-              <motion.p 
+              <motion.p
                 className="text-lg mb-8 opacity-90"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                {isSignUp 
-                  ? "با جزئیات شخصی خود وارد شوید تا از تمام امکانات سایت استفاده کنید" 
+                {isSignUp
+                  ? "با جزئیات شخصی خود وارد شوید تا از تمام امکانات سایت استفاده کنید"
                   : "اگر هنوز حساب کاربری ندارید ثبت نام کنید ..."}
               </motion.p>
               <motion.button
@@ -377,8 +397,10 @@ export default function LoginPage() {
                   <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
                     {isForgotPassword ? "فراموشی رمز عبور" : "ورود"}
                   </h2>
-                  
-                  <p className="text-center text-gray-500 mb-6">یا با شماره تلفن وارد شوید</p>
+
+                  <p className="text-center text-gray-500 mb-6">
+                    یا با شماره تلفن وارد شوید
+                  </p>
 
                   {step === 1 && (
                     <div className="space-y-4">
@@ -389,14 +411,20 @@ export default function LoginPage() {
                           value={phoneNumber}
                           maxLength={11}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
+                            const value = e.target.value.replace(/\D/g, "");
                             setPhoneNumber(value);
                             setPhoneError("");
                           }}
                           onKeyUp={(e) => handlePhoneKeyUp(e, setPhoneError)}
-                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${phoneError ? 'border-2 border-red-500' : ''}`}
+                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${
+                            phoneError ? "border-2 border-red-500" : ""
+                          }`}
                         />
-                        {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
+                        {phoneError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {phoneError}
+                          </p>
+                        )}
                       </div>
                       <motion.button
                         onClick={sendCode}
@@ -418,11 +446,23 @@ export default function LoginPage() {
                       {smsExpiresAt && (
                         <div className="text-center">
                           {countdown > 0 ? (
-                            <p className={`text-lg font-bold ${countdown > 60 ? 'text-green-600' : countdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
+                            <p
+                              className={`text-lg font-bold ${
+                                countdown > 60
+                                  ? "text-green-600"
+                                  : countdown > 30
+                                  ? "text-blue-600"
+                                  : "text-red-600"
+                              }`}
+                            >
                               {countdown} ثانیه
                             </p>
                           ) : (
-                            <motion.button onClick={sendCode} className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium" whileHover={{ scale: 1.05 }}>
+                            <motion.button
+                              onClick={sendCode}
+                              className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium"
+                              whileHover={{ scale: 1.05 }}
+                            >
                               ارسال مجدد کد
                             </motion.button>
                           )}
@@ -450,7 +490,9 @@ export default function LoginPage() {
                             setPassword(e.target.value);
                             setPasswordError("");
                           }}
-                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${passwordError ? 'border-2 border-red-500' : ''}`}
+                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${
+                            passwordError ? "border-2 border-red-500" : ""
+                          }`}
                         />
                         <button
                           type="button"
@@ -460,7 +502,11 @@ export default function LoginPage() {
                           {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                       </div>
-                      {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+                      {passwordError && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {passwordError}
+                        </p>
+                      )}
                       <motion.button
                         type="submit"
                         className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
@@ -502,13 +548,13 @@ export default function LoginPage() {
                   )}
 
                   <div className="flex justify-between items-center mt-4 text-sm">
-                    <button 
+                    <button
                       onClick={() => setIsSignUp(true)}
                       className="text-blue-500 hover:underline"
                     >
                       ثبت نام
                     </button>
-                    <button 
+                    <button
                       onClick={() => {
                         setIsForgotPassword(!isForgotPassword);
                         setStep(1);
@@ -539,9 +585,13 @@ export default function LoginPage() {
                   transition={{ duration: 0.3 }}
                   className="w-full max-w-sm"
                 >
-                  <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">خوش اومدی به سایکو</h2>
-                  
-                  <p className="text-center text-gray-500 mb-6">یا با شماره تلفن ثبت نام کنید</p>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+                    خوش اومدی به سایکو
+                  </h2>
+
+                  <p className="text-center text-gray-500 mb-6">
+                    یا با شماره تلفن ثبت نام کنید
+                  </p>
 
                   {signupStep === 1 && (
                     <div className="space-y-4">
@@ -551,14 +601,25 @@ export default function LoginPage() {
                           placeholder="شماره تلفن خود را وارد کنید"
                           maxLength={11}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
-                            setSignupFormData({ ...signupFormData, phoneNumber: value });
+                            const value = e.target.value.replace(/\D/g, "");
+                            setSignupFormData({
+                              ...signupFormData,
+                              phoneNumber: value,
+                            });
                             setSignupPhoneError("");
                           }}
-                          onKeyUp={(e) => handlePhoneKeyUp(e, setSignupPhoneError)}
-                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${signupPhoneError ? 'border-2 border-red-500' : ''}`}
+                          onKeyUp={(e) =>
+                            handlePhoneKeyUp(e, setSignupPhoneError)
+                          }
+                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${
+                            signupPhoneError ? "border-2 border-red-500" : ""
+                          }`}
                         />
-                        {signupPhoneError && <p className="text-red-500 text-sm mt-1">{signupPhoneError}</p>}
+                        {signupPhoneError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {signupPhoneError}
+                          </p>
+                        )}
                       </div>
                       <motion.button
                         onClick={sendSignupCode}
@@ -581,11 +642,23 @@ export default function LoginPage() {
                       {signupSmsExpiresAt && (
                         <div className="text-center">
                           {signupCountdown > 0 ? (
-                            <p className={`text-lg font-bold ${signupCountdown > 60 ? 'text-green-600' : signupCountdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
+                            <p
+                              className={`text-lg font-bold ${
+                                signupCountdown > 60
+                                  ? "text-green-600"
+                                  : signupCountdown > 30
+                                  ? "text-blue-600"
+                                  : "text-red-600"
+                              }`}
+                            >
                               {signupCountdown} ثانیه
                             </p>
                           ) : (
-                            <motion.button onClick={sendSignupCode} className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium" whileHover={{ scale: 1.05 }}>
+                            <motion.button
+                              onClick={sendSignupCode}
+                              className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium"
+                              whileHover={{ scale: 1.05 }}
+                            >
                               ارسال مجدد کد
                             </motion.button>
                           )}
@@ -608,7 +681,12 @@ export default function LoginPage() {
                       <input
                         type="text"
                         placeholder="اسم فروشگاهتو اینجا وارد کن"
-                        onChange={(e) => setSignupFormData({ ...signupFormData, title: e.target.value })}
+                        onChange={(e) =>
+                          setSignupFormData({
+                            ...signupFormData,
+                            title: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right"
                       />
                       <div>
@@ -616,12 +694,21 @@ export default function LoginPage() {
                           type="password"
                           placeholder="رمز عبور خود را وارد کنید"
                           onChange={(e) => {
-                            setSignupFormData({ ...signupFormData, password: e.target.value });
+                            setSignupFormData({
+                              ...signupFormData,
+                              password: e.target.value,
+                            });
                             setSignupPasswordError("");
                           }}
-                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${signupPasswordError ? 'border-2 border-red-500' : ''}`}
+                          className={`w-full px-4 py-3 bg-gray-100 rounded-lg border-none outline-none focus:bg-gray-200 transition-colors text-right ${
+                            signupPasswordError ? "border-2 border-red-500" : ""
+                          }`}
                         />
-                        {signupPasswordError && <p className="text-red-500 text-sm mt-1">{signupPasswordError}</p>}
+                        {signupPasswordError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {signupPasswordError}
+                          </p>
+                        )}
                       </div>
                       <motion.button
                         onClick={submitSignupData}
@@ -636,7 +723,11 @@ export default function LoginPage() {
                   )}
 
                   {signupErrors && (
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 mt-2 font-bold text-center">
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-red-400 mt-2 font-bold text-center"
+                    >
                       {signupErrors}
                     </motion.p>
                   )}
@@ -659,7 +750,7 @@ export default function LoginPage() {
 
         {/* Mobile Layout */}
         <div className="lg:hidden">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white/40 backdrop-blur-sm rounded-2xl shadow-xl p-6"
@@ -669,7 +760,9 @@ export default function LoginPage() {
               <button
                 onClick={() => setIsSignUp(false)}
                 className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                  !isSignUp ? 'bg-blue-500 text-white shadow-lg' : 'text-gray-600 hover:text-gray-800'
+                  !isSignUp
+                    ? "bg-blue-500 text-white shadow-lg"
+                    : "text-gray-600 hover:text-gray-800"
                 }`}
               >
                 ورود
@@ -677,7 +770,9 @@ export default function LoginPage() {
               <button
                 onClick={() => setIsSignUp(true)}
                 className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                  isSignUp ? 'bg-blue-500 text-white shadow-lg' : 'text-gray-600 hover:text-gray-800'
+                  isSignUp
+                    ? "bg-blue-500 text-white shadow-lg"
+                    : "text-gray-600 hover:text-gray-800"
                 }`}
               >
                 ثبت نام
@@ -698,7 +793,7 @@ export default function LoginPage() {
                   <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
                     {isForgotPassword ? "فراموشی رمز عبور" : "ورود به حساب"}
                   </h3>
-                  
+
                   {step === 1 && (
                     <div className="space-y-4">
                       <div>
@@ -708,14 +803,20 @@ export default function LoginPage() {
                           value={phoneNumber}
                           maxLength={11}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
+                            const value = e.target.value.replace(/\D/g, "");
                             setPhoneNumber(value);
                             setPhoneError("");
                           }}
                           onKeyUp={(e) => handlePhoneKeyUp(e, setPhoneError)}
-                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${phoneError ? 'border-red-500' : 'border-gray-200'}`}
+                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${
+                            phoneError ? "border-red-500" : "border-gray-200"
+                          }`}
                         />
-                        {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
+                        {phoneError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {phoneError}
+                          </p>
+                        )}
                       </div>
                       <button
                         onClick={sendCode}
@@ -735,11 +836,22 @@ export default function LoginPage() {
                       {smsExpiresAt && (
                         <div className="text-center">
                           {countdown > 0 ? (
-                            <p className={`text-sm font-medium ${countdown > 60 ? 'text-green-600' : countdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
+                            <p
+                              className={`text-sm font-medium ${
+                                countdown > 60
+                                  ? "text-green-600"
+                                  : countdown > 30
+                                  ? "text-blue-600"
+                                  : "text-red-600"
+                              }`}
+                            >
                               {countdown} ثانیه تا انقضا
                             </p>
                           ) : (
-                            <button onClick={sendCode} className="text-blue-500 text-sm font-medium">
+                            <button
+                              onClick={sendCode}
+                              className="text-blue-500 text-sm font-medium"
+                            >
                               ارسال مجدد کد
                             </button>
                           )}
@@ -765,7 +877,9 @@ export default function LoginPage() {
                             setPassword(e.target.value);
                             setPasswordError("");
                           }}
-                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${passwordError ? 'border-red-500' : 'border-gray-200'}`}
+                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${
+                            passwordError ? "border-red-500" : "border-gray-200"
+                          }`}
                         />
                         <button
                           type="button"
@@ -775,7 +889,11 @@ export default function LoginPage() {
                           {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                       </div>
-                      {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+                      {passwordError && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {passwordError}
+                        </p>
+                      )}
                       <button
                         type="submit"
                         className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
@@ -813,7 +931,7 @@ export default function LoginPage() {
                   )}
 
                   <div className="flex justify-center items-center mt-6 text-sm">
-                    <button 
+                    <button
                       onClick={() => {
                         setIsForgotPassword(!isForgotPassword);
                         setStep(1);
@@ -837,8 +955,10 @@ export default function LoginPage() {
                   transition={{ duration: 0.3 }}
                   className="min-h-[250px]"
                 >
-                  <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">ساخت حساب جدید</h3>
-                  
+                  <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
+                    ساخت حساب جدید
+                  </h3>
+
                   {signupStep === 1 && (
                     <div className="space-y-4">
                       <div>
@@ -847,14 +967,27 @@ export default function LoginPage() {
                           placeholder="شماره تلفن"
                           maxLength={11}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
-                            setSignupFormData({ ...signupFormData, phoneNumber: value });
+                            const value = e.target.value.replace(/\D/g, "");
+                            setSignupFormData({
+                              ...signupFormData,
+                              phoneNumber: value,
+                            });
                             setSignupPhoneError("");
                           }}
-                          onKeyUp={(e) => handlePhoneKeyUp(e, setSignupPhoneError)}
-                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${signupPhoneError ? 'border-red-500' : 'border-gray-200'}`}
+                          onKeyUp={(e) =>
+                            handlePhoneKeyUp(e, setSignupPhoneError)
+                          }
+                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${
+                            signupPhoneError
+                              ? "border-red-500"
+                              : "border-gray-200"
+                          }`}
                         />
-                        {signupPhoneError && <p className="text-red-500 text-sm mt-1">{signupPhoneError}</p>}
+                        {signupPhoneError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {signupPhoneError}
+                          </p>
+                        )}
                       </div>
                       <button
                         onClick={sendSignupCode}
@@ -874,11 +1007,22 @@ export default function LoginPage() {
                       {signupSmsExpiresAt && (
                         <div className="text-center">
                           {signupCountdown > 0 ? (
-                            <p className={`text-sm font-medium ${signupCountdown > 60 ? 'text-green-600' : signupCountdown > 30 ? 'text-blue-600' : 'text-red-600'}`}>
+                            <p
+                              className={`text-sm font-medium ${
+                                signupCountdown > 60
+                                  ? "text-green-600"
+                                  : signupCountdown > 30
+                                  ? "text-blue-600"
+                                  : "text-red-600"
+                              }`}
+                            >
                               {signupCountdown} ثانیه تا انقضا
                             </p>
                           ) : (
-                            <button onClick={sendSignupCode} className="text-blue-500 text-sm font-medium">
+                            <button
+                              onClick={sendSignupCode}
+                              className="text-blue-500 text-sm font-medium"
+                            >
                               ارسال مجدد کد
                             </button>
                           )}
@@ -898,7 +1042,12 @@ export default function LoginPage() {
                       <input
                         type="text"
                         placeholder="نام فروشگاه"
-                        onChange={(e) => setSignupFormData({ ...signupFormData, title: e.target.value })}
+                        onChange={(e) =>
+                          setSignupFormData({
+                            ...signupFormData,
+                            title: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-3 bg-gray-50 rounded-lg border-2 border-gray-200 outline-none focus:border-blue-500 transition-colors text-right"
                       />
                       <div>
@@ -906,12 +1055,23 @@ export default function LoginPage() {
                           type="password"
                           placeholder="رمز عبور"
                           onChange={(e) => {
-                            setSignupFormData({ ...signupFormData, password: e.target.value });
+                            setSignupFormData({
+                              ...signupFormData,
+                              password: e.target.value,
+                            });
                             setSignupPasswordError("");
                           }}
-                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${signupPasswordError ? 'border-red-500' : 'border-gray-200'}`}
+                          className={`w-full px-4 py-3 bg-gray-50 rounded-lg border-2 outline-none focus:border-blue-500 transition-colors text-right ${
+                            signupPasswordError
+                              ? "border-red-500"
+                              : "border-gray-200"
+                          }`}
                         />
-                        {signupPasswordError && <p className="text-red-500 text-sm mt-1">{signupPasswordError}</p>}
+                        {signupPasswordError && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {signupPasswordError}
+                          </p>
+                        )}
                       </div>
                       <button
                         onClick={submitSignupData}
@@ -923,7 +1083,9 @@ export default function LoginPage() {
                   )}
 
                   {signupErrors && (
-                    <p className="text-red-500 text-sm mt-4 text-center">{signupErrors}</p>
+                    <p className="text-red-500 text-sm mt-4 text-center">
+                      {signupErrors}
+                    </p>
                   )}
                 </motion.div>
               )}
@@ -931,12 +1093,12 @@ export default function LoginPage() {
           </motion.div>
         </div>
       </div>
-      <LoadingModal 
-        isOpen={showSignupModal} 
+      <LoadingModal
+        isOpen={showSignupModal}
         onComplete={() => {
           setShowSignupModal(false);
           toast.success("ثبت نام با موفقیت انجام شد");
-        }} 
+        }}
       />
     </div>
   );

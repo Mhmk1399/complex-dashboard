@@ -143,7 +143,7 @@ const ContactComponent: React.FC = () => {
         setContacts(contacts.filter(contact => contact._id !== contactId));
       }
     } catch (err) {
-      console.error("حذف پیام با خطا مواجه شد:", err);
+      console.log("حذف پیام با خطا مواجه شد:", err);
     }
   };
 

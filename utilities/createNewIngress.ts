@@ -46,7 +46,7 @@ export async function createIngress(config: DeploymentConfig): Promise<{
 
     if (!dnsResponse.ok) {
       const errorText = await dnsResponse.text();
-      console.error('❌ DNS creation failed:', errorText);
+      console.log('❌ DNS creation failed:', errorText);
       return { message: 'Failed to create DNS record' };
     }
 
@@ -99,7 +99,7 @@ export async function createIngress(config: DeploymentConfig): Promise<{
 
     if (!ingressResponse.ok) {
       const errorText = await ingressResponse.text();
-      console.error('❌ Error creating ingress:', errorText);
+      console.log('❌ Error creating ingress:', errorText);
       return { message: 'Failed to create ingress' };
     }
 
@@ -113,7 +113,7 @@ export async function createIngress(config: DeploymentConfig): Promise<{
       },
     };
   } catch (error) {
-    console.error('💥 Error in createIngress:', error);
+    console.log('💥 Error in createIngress:', error);
     return { message: 'Unexpected error during setup' };
   }
 }

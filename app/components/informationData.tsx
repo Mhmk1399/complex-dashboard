@@ -15,7 +15,7 @@ import {
   MdSettings,
 } from "react-icons/md";
 import ImageSelectorModal from "./ImageSelectorModal";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const menuItems = [
   { id: "basic", icon: <FaStore />, title: "اطلاعات پایه" },
@@ -58,33 +58,35 @@ export const InformationData: React.FC = () => {
 
   const validateInstagram = (username: string): boolean => {
     const instagramRegex = /^[a-zA-Z0-9._]{1,30}$/;
-    return instagramRegex.test(username.replace('@', ''));
+    return instagramRegex.test(username.replace("@", ""));
   };
 
   const validateTelegram = (username: string): boolean => {
     const telegramRegex = /^[a-zA-Z0-9_]{5,32}$/;
-    return telegramRegex.test(username.replace('@', ''));
+    return telegramRegex.test(username.replace("@", ""));
   };
 
   const validateWhatsApp = (phone: string): boolean => {
     const whatsappRegex = /^\+?[1-9]\d{1,14}$/;
-    return whatsappRegex.test(phone.replace(/\s/g, ''));
+    return whatsappRegex.test(phone.replace(/\s/g, ""));
   };
 
   const validateField = (field: string, value: string): string => {
-    if (!value) return '';
+    if (!value) return "";
 
     switch (field) {
-      case 'email':
-        return validateEmail(value) ? '' : 'فرمت ایمیل صحیح نیست';
-      case 'instagram':
-        return validateInstagram(value) ? '' : 'نام کاربری اینستاگرام صحیح نیست';
-      case 'telegram':
-        return validateTelegram(value) ? '' : 'نام کاربری تلگرام صحیح نیست';
-      case 'whatsapp':
-        return validateWhatsApp(value) ? '' : 'شماره واتساپ صحیح نیست';
+      case "email":
+        return validateEmail(value) ? "" : "فرمت ایمیل صحیح نیست";
+      case "instagram":
+        return validateInstagram(value)
+          ? ""
+          : "نام کاربری اینستاگرام صحیح نیست";
+      case "telegram":
+        return validateTelegram(value) ? "" : "نام کاربری تلگرام صحیح نیست";
+      case "whatsapp":
+        return validateWhatsApp(value) ? "" : "شماره واتساپ صحیح نیست";
       default:
-        return '';
+        return "";
     }
   };
 
@@ -103,7 +105,6 @@ export const InformationData: React.FC = () => {
       [`${section}.${field}`]: error,
     });
   };
-
 
   useEffect(() => {
     const loadExistingData = async () => {
@@ -285,7 +286,10 @@ export const InformationData: React.FC = () => {
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    design: { ...formData.design, backgroundColor: e.target.value },
+                    design: {
+                      ...formData.design,
+                      backgroundColor: e.target.value,
+                    },
                   })
                 }
               />
@@ -344,8 +348,10 @@ export const InformationData: React.FC = () => {
                 placeholder="example@domain.com"
                 type="email"
                 value={formData.contact.email}
-                error={errors['contact.email']}
-                onChange={(e) => handleFieldChange('contact', 'email', e.target.value)}
+                error={errors["contact.email"]}
+                onChange={(e) =>
+                  handleFieldChange("contact", "email", e.target.value)
+                }
               />
             </div>
             <FloatingTextarea
@@ -378,8 +384,10 @@ export const InformationData: React.FC = () => {
               placeholder="@username"
               prefix="@"
               value={formData.social.instagram}
-              error={errors['social.instagram']}
-              onChange={(e) => handleFieldChange('social', 'instagram', e.target.value)}
+              error={errors["social.instagram"]}
+              onChange={(e) =>
+                handleFieldChange("social", "instagram", e.target.value)
+              }
             />
             <FloatingInput
               label="تلگرام"
@@ -387,8 +395,10 @@ export const InformationData: React.FC = () => {
               placeholder="@username"
               prefix="@"
               value={formData.social.telegram}
-              error={errors['social.telegram']}
-              onChange={(e) => handleFieldChange('social', 'telegram', e.target.value)}
+              error={errors["social.telegram"]}
+              onChange={(e) =>
+                handleFieldChange("social", "telegram", e.target.value)
+              }
             />
             <FloatingInput
               label="واتساپ"
@@ -396,8 +406,10 @@ export const InformationData: React.FC = () => {
               placeholder="+98xxxxxxxxxx"
               prefix="+98"
               value={formData.social.whatsapp}
-              error={errors['social.whatsapp']}
-              onChange={(e) => handleFieldChange('social', 'whatsapp', e.target.value)}
+              error={errors["social.whatsapp"]}
+              onChange={(e) =>
+                handleFieldChange("social", "whatsapp", e.target.value)
+              }
             />
           </motion.div>
         );
@@ -419,10 +431,11 @@ export const InformationData: React.FC = () => {
                   key={item.id}
                   whileHover={{ x: 4 }}
                   onClick={() => setActiveMenu(item.id)}
-                  className={` flex justify-center items-center mx-auto font-bold md:font-medium md:mx-0 gap-1 px-1 py-2 md:p-3 rounded-xl text-right transition-all whitespace-nowrap lg:w-full ${activeMenu === item.id
+                  className={` flex justify-center items-center mx-auto font-bold md:font-medium md:mx-0 gap-1 px-1 py-2 md:p-3 rounded-xl text-right transition-all whitespace-nowrap lg:w-full ${
+                    activeMenu === item.id
                       ? "bg-[#0077b6]/80 text-white text-xs md:text-lg  "
                       : "text-gray-500 hover:bg-gray-100 text-xs md:text-lg"
-                    }`}
+                  }`}
                 >
                   <span className="text-sm md:text-lg">{item.icon}</span>
                   <span>{item.title}</span>
@@ -482,7 +495,16 @@ const FloatingInput: React.FC<{
   value?: string;
   error?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ label, icon, placeholder, type = "text", prefix, value, error, onChange }) => (
+}> = ({
+  label,
+  icon,
+  placeholder,
+  type = "text",
+  prefix,
+  value,
+  error,
+  onChange,
+}) => (
   <div className="relative group">
     <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
       {icon}
@@ -496,16 +518,15 @@ const FloatingInput: React.FC<{
       )}
       <input
         type={type}
-        className={`w-full p-4 ${prefix ? "pr-12" : " "
-          } bg-gray-50 border ${error ? 'border-red-500' : 'border-gray-200'} rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300`}
+        className={`w-full p-4 ${prefix ? "pr-12" : " "} bg-gray-50 border ${
+          error ? "border-red-500" : "border-gray-200"
+        } rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300`}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
       />
     </div>
-    {error && (
-      <p className="text-red-500 text-sm mt-1">{error}</p>
-    )}
+    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
   </div>
 );
 
