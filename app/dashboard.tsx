@@ -34,6 +34,7 @@ import Contact from "./components/contact";
 import Tickets from "./components/tickets";
 import { Newsletter } from "./components/newsletter";
 import SwirlBackground from "./components/SwirlBackground";
+import { TokenManagement } from "./components/TokenManagement";
 
 // Enhanced loading component
 const LoadingSpinner = () => (
@@ -195,6 +196,11 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
         title: "خبرنامه",
         icon: <FaEnvelope />,
         color: "text-green-600",
+      },
+      tokenManagement: {
+        title: "مدیریت توکن های AI",
+        icon: <FaCog />,
+        color: "text-purple-600",
       },
     };
 
@@ -371,6 +377,7 @@ export const Dashboard = () => {
       contact: <Contact />,
       tickets: <Tickets />,
       newsLetter: <Newsletter />,
+      tokenManagement: <TokenManagement />,
     };
 
     const component = formComponents[selectedMenu] || formComponents.start;

@@ -109,6 +109,7 @@ const dashboardMenuItems = [
     subMenuItems: [
       { title: "تنظیمات سایت", value: "siteSettings", icon: <FaCog /> },
       { title: "تنظیمات حساب", value: "accountSettings", icon: <FaUserCog /> },
+      { title: "مدیریت توکن های AI", value: "tokenManagement", icon: <FaCreditCard /> },
     ],
   },
 ];
