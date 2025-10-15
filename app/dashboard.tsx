@@ -423,7 +423,7 @@ export const Dashboard = () => {
 
         {/* Content */}
         <motion.main
-          className="flex-1 p-3"
+          className="flex-1 p-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}

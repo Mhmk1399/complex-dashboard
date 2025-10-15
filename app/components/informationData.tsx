@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   FaStore,
   FaImage,
@@ -167,7 +166,77 @@ export const InformationData: React.FC = () => {
     }
   };
 
+  const validateCurrentStep = (): boolean => {
+    const newErrors: { [key: string]: string } = {};
+
+    switch (activeMenu) {
+      case "basic":
+        if (!formData.basic.storeName.trim()) {
+          newErrors["basic.storeName"] = "نام فروشگاه الزامی است";
+        }
+        if (!formData.basic.logo) {
+          newErrors["basic.logo"] = "لوگو الزامی است";
+        }
+        if (!formData.basic.description.trim()) {
+          newErrors["basic.description"] = "توضیحات الزامی است";
+        }
+        break;
+
+      case "design":
+        if (!formData.design.backgroundColor) {
+          newErrors["design.backgroundColor"] = "رنگ پس زمینه الزامی است";
+        }
+        if (!formData.design.font) {
+          newErrors["design.font"] = "فونت الزامی است";
+        }
+        break;
+
+      case "contact":
+        if (!formData.contact.phone.trim()) {
+          newErrors["contact.phone"] = "شماره تماس الزامی است";
+        }
+        if (!formData.contact.email.trim()) {
+          newErrors["contact.email"] = "ایمیل الزامی است";
+        } else if (!validateEmail(formData.contact.email)) {
+          newErrors["contact.email"] = "فرمت ایمیل صحیح نیست";
+        }
+        if (!formData.contact.address.trim()) {
+          newErrors["contact.address"] = "آدرس الزامی است";
+        }
+        break;
+
+      case "social":
+        if (
+          formData.social.instagram &&
+          !validateInstagram(formData.social.instagram)
+        ) {
+          newErrors["social.instagram"] = "نام کاربری اینستاگرام صحیح نیست";
+        }
+        if (
+          formData.social.telegram &&
+          !validateTelegram(formData.social.telegram)
+        ) {
+          newErrors["social.telegram"] = "نام کاربری تلگرام صحیح نیست";
+        }
+        if (
+          formData.social.whatsapp &&
+          !validateWhatsApp(formData.social.whatsapp)
+        ) {
+          newErrors["social.whatsapp"] = "شماره واتساپ صحیح نیست";
+        }
+        break;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleNextStep = async () => {
+    if (!validateCurrentStep()) {
+      toast.error("لطفا تمام فیلدهای الزامی را تکمیل کنید");
+      return;
+    }
+
     await handleSaveStep();
     const menuOrder = ["basic", "design", "contact", "social"];
     const currentIndex = menuOrder.indexOf(activeMenu);
@@ -192,64 +261,79 @@ export const InformationData: React.FC = () => {
     }
   };
 
-  const slideVariants = {
-    enter: { x: 20, opacity: 0 },
-    center: { x: 0, opacity: 1 },
-    exit: { x: -20, opacity: 0 },
-  };
-
   const renderContent = () => {
     switch (activeMenu) {
       case "basic":
         return (
-          <motion.div
-            className="space-y-6"
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-          >
+          <div className="space-y-4 sm:space-y-5 fade-in">
             <FloatingInput
               label="نام فروشگاه"
               icon={<FaStore />}
               placeholder="نام فروشگاه خود را وارد کنید"
               value={formData.basic.storeName}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              error={errors["basic.storeName"]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setFormData({
                   ...formData,
                   basic: {
                     ...formData.basic,
                     storeName: e.target.value,
                   },
-                })
-              }
+                });
+                if (errors["basic.storeName"]) {
+                  setErrors({ ...errors, "basic.storeName": "" });
+                }
+              }}
             />
 
             <div className="relative group">
-              <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <FaImage className="text-[#000]" />
+              <label className="text-sm sm:text-base font-medium text-slate-900 mb-1.5 sm:mb-2 flex items-center gap-2">
+                <FaImage className="text-slate-900 text-sm sm:text-base" />
                 لوگو
               </label>
 
-              <motion.button
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
+              <button
+                type="button"
                 onClick={() => setIsImageSelectorOpen(true)}
-                className="w-full h-40 border-2 border-dashed border-[#0077b6] rounded-2xl hover:bg-[#0077b6]/5 transition-all duration-300"
+                className={`w-full h-32 sm:h-40 border-2 border-dashed rounded-lg hover:bg-slate-50 transition-all duration-200 ${
+                  errors["basic.logo"]
+                    ? "border-red-500"
+                    : "border-slate-300 hover:border-slate-900"
+                }`}
               >
                 {formData.basic.logo ? (
                   <img
                     src={formData.basic.logo}
                     alt="Selected logo"
-                    className="w-full h-full object-contain rounded-2xl"
+                    className="w-full h-full object-contain rounded-lg"
                   />
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full gap-3">
-                    <FaImage className="text-3xl text-[#0077b6]" />
-                    <span className="text-[#0077b6]">آپلود لوگو</span>
+                  <div className="flex flex-col items-center justify-center h-full gap-2">
+                    <FaImage className="text-2xl sm:text-3xl text-slate-900" />
+                    <span className="text-slate-600 text-sm sm:text-base">
+                      آپلود لوگو
+                    </span>
                   </div>
                 )}
-              </motion.button>
+              </button>
+              {errors["basic.logo"] && (
+                <p className="text-red-500 text-xs sm:text-sm mt-1 flex items-center gap-1">
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  {errors["basic.logo"]}
+                </p>
+              )}
             </div>
 
             <FloatingTextarea
@@ -257,43 +341,39 @@ export const InformationData: React.FC = () => {
               icon={<MdDescription />}
               placeholder="توضیحات فروشگاه خود را وارد کنید"
               value={formData.basic.description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              error={errors["basic.description"]}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 setFormData({
                   ...formData,
                   basic: {
                     ...formData.basic,
                     description: e.target.value,
                   },
-                })
-              }
+                });
+                if (errors["basic.description"]) {
+                  setErrors({ ...errors, "basic.description": "" });
+                }
+              }}
             />
-          </motion.div>
+          </div>
         );
 
       case "design":
         return (
-          <motion.div
-            className="space-y-6"
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-          >
-            <div className="grid grid-cols-2 gap-6">
-              <ColorPicker
-                label="رنگ پس زمینه صفحات سایت"
-                value={formData.design.backgroundColor}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    design: {
-                      ...formData.design,
-                      backgroundColor: e.target.value,
-                    },
-                  })
-                }
-              />
-            </div>
+          <div className="space-y-4 sm:space-y-5 fade-in">
+            <ColorPicker
+              label="رنگ پس زمینه صفحات سایت"
+              value={formData.design.backgroundColor}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  design: {
+                    ...formData.design,
+                    backgroundColor: e.target.value,
+                  },
+                })
+              }
+            />
             <FloatingSelect
               label="فونت"
               icon={<MdSettings />}
@@ -316,31 +396,29 @@ export const InformationData: React.FC = () => {
                 })
               }
             />
-          </motion.div>
+          </div>
         );
 
       case "contact":
         return (
-          <motion.div
-            className="space-y-6"
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-          >
-            <div className="grid grid-cols-2 gap-6 text-right">
+          <div className="space-y-4 sm:space-y-5 fade-in">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               <FloatingInput
                 label="شماره تماس"
                 icon={<FaPhone />}
                 placeholder="09xxxxxxxxx"
                 type="tel"
                 value={formData.contact.phone}
-                onChange={(e) =>
+                error={errors["contact.phone"]}
+                onChange={(e) => {
                   setFormData({
                     ...formData,
                     contact: { ...formData.contact, phone: e.target.value },
-                  })
-                }
+                  });
+                  if (errors["contact.phone"]) {
+                    setErrors({ ...errors, "contact.phone": "" });
+                  }
+                }}
               />
               <FloatingInput
                 label="ایمیل"
@@ -359,25 +437,23 @@ export const InformationData: React.FC = () => {
               icon={<MdDescription />}
               placeholder="آدرس کامل"
               value={formData.contact.address}
-              onChange={(e) =>
+              error={errors["contact.address"]}
+              onChange={(e) => {
                 setFormData({
                   ...formData,
                   contact: { ...formData.contact, address: e.target.value },
-                })
-              }
+                });
+                if (errors["contact.address"]) {
+                  setErrors({ ...errors, "contact.address": "" });
+                }
+              }}
             />
-          </motion.div>
+          </div>
         );
 
       case "social":
         return (
-          <motion.div
-            className="space-y-6"
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-          >
+          <div className="space-y-4 sm:space-y-5 fade-in">
             <FloatingInput
               label="اینستاگرام"
               icon={<FaInstagram />}
@@ -411,77 +487,103 @@ export const InformationData: React.FC = () => {
                 handleFieldChange("social", "whatsapp", e.target.value)
               }
             />
-          </motion.div>
+          </div>
         );
     }
   };
 
   return (
-    <div className="max-w-4xl mt-16 mx-auto p-2 sm:p-6" dir="rtl">
-      <h1 className="text-center my-4 font-bold text-[#0077b6] text-2xl">
-        اطلاعات فروشگاه
-      </h1>
-      <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-        <div className="flex flex-col lg:flex-row">
-          {/* Sidebar Menu */}
-          <div className="w-full lg:w-64 bg-gray-50 p-4 lg:p-6 border-b lg:border-l lg:border-b-0">
-            <div className="flex lg:block overflow-x-auto lg:overflow-visible space-x-2 lg:space-x-0 lg:space-y-2">
-              {menuItems.map((item) => (
-                <motion.button
-                  key={item.id}
-                  whileHover={{ x: 4 }}
-                  onClick={() => setActiveMenu(item.id)}
-                  className={` flex justify-center items-center mx-auto font-bold md:font-medium md:mx-0 gap-1 px-1 py-2 md:p-3 rounded-xl text-right transition-all whitespace-nowrap lg:w-full ${
-                    activeMenu === item.id
-                      ? "bg-[#0077b6]/80 text-white text-xs md:text-lg  "
-                      : "text-gray-500 hover:bg-gray-100 text-xs md:text-lg"
-                  }`}
-                >
-                  <span className="text-sm md:text-lg">{item.icon}</span>
-                  <span>{item.title}</span>
-                </motion.button>
-              ))}
+    <>
+      <style jsx>{`
+        .fade-in {
+          animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .slide-hover:hover {
+          transform: translateX(-4px);
+        }
+      `}</style>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8" dir="rtl">
+        <h1 className="text-center mb-4 sm:mb-6 font-bold text-slate-900 text-xl sm:text-2xl">
+          اطلاعات فروشگاه
+        </h1>
+
+        <div className="backdrop-blur-sm rounded-lg sm:rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="flex flex-col lg:flex-row">
+            {/* Sidebar Menu */}
+            <div className="w-full lg:w-56   p-3 sm:p-4 border-b lg:border-l lg:border-b-0">
+              <div className="grid grid-cols-2 lg:block overflow-x-auto lg:overflow-visible gap-2 lg:space-y-2">
+                {menuItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveMenu(item.id)}
+                    className={`flex items-center justify-center lg:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-right transition-all duration-200 whitespace-nowrap lg:w-full text-xs sm:text-sm font-medium slide-hover ${
+                      activeMenu === item.id
+                        ? "bg-slate-900 text-white shadow-sm"
+                        : "text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    <span className="text-sm sm:text-base">{item.icon}</span>
+                    <span>{item.title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1 p-4 sm:p-6 lg:p-8">
+              {renderContent()}
+
+              <button
+                type="button"
+                className="mt-6 sm:mt-8 w-full bg-slate-900 text-white py-3 sm:py-3.5 rounded-lg hover:bg-slate-600 transition-all duration-200 text-sm sm:text-base font-medium shadow-sm hover:shadow-md"
+                onClick={() => {
+                  if (activeMenu === "social") {
+                    if (validateCurrentStep()) {
+                      handleSubmitForm();
+                    } else {
+                      toast.error("لطفا خطاهای فرم را برطرف کنید");
+                    }
+                  } else {
+                    handleNextStep();
+                  }
+                }}
+              >
+                {activeMenu === "social" ? "ثبت اطلاعات" : "مرحله بعدی"}
+              </button>
             </div>
           </div>
-
-          {/* Content Area */}
-          <div className="flex-1 p-4 lg:p-8">
-            <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
-
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              className="mt-8 w-full bg-[#0077b6] text-white py-4 rounded-xl hover:bg-[#005f8f] transition-all duration-300 text-lg font-medium"
-              onClick={() => {
-                if (activeMenu === "social") {
-                  handleSubmitForm();
-                } else {
-                  handleNextStep();
-                }
-              }}
-            >
-              {activeMenu === "social" ? "ثبت اطلاعات" : "مرحله بعدی"}
-            </motion.button>
-          </div>
         </div>
-      </div>
 
-      <ImageSelectorModal
-        isOpen={isImageSelectorOpen}
-        onClose={() => setIsImageSelectorOpen(false)}
-        onSelectImage={(image) => {
-          const filename = image.fileUrl;
-          setFormData({
-            ...formData,
-            basic: {
-              ...formData.basic,
-              logo: filename,
-            },
-          });
-          setIsImageSelectorOpen(false);
-        }}
-      />
-    </div>
+        <ImageSelectorModal
+          isOpen={isImageSelectorOpen}
+          onClose={() => setIsImageSelectorOpen(false)}
+          onSelectImage={(image) => {
+            const filename = image.fileUrl;
+            setFormData({
+              ...formData,
+              basic: {
+                ...formData.basic,
+                logo: filename,
+              },
+            });
+            setIsImageSelectorOpen(false);
+          }}
+        />
+      </div>
+    </>
   );
 };
 
@@ -506,27 +608,50 @@ const FloatingInput: React.FC<{
   onChange,
 }) => (
   <div className="relative group">
-    <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
-      {icon}
+    <label className="text-sm sm:text-base font-medium text-slate-900 mb-1.5 flex items-center gap-2">
+      {icon && (
+        <span className="text-slate-900 text-sm sm:text-base">{icon}</span>
+      )}
       {label}
     </label>
     <div className="relative">
       {prefix && (
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+        <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm sm:text-base">
           {prefix}
         </span>
       )}
       <input
         type={type}
-        className={`w-full p-4 ${prefix ? "pr-12" : " "} bg-gray-50 border ${
-          error ? "border-red-500" : "border-gray-200"
-        } rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300`}
+        className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 ${
+          prefix ? "pr-10 sm:pr-12" : ""
+        } bg-slate-50 border ${
+          error
+            ? "border-red-500 focus:ring-red-500"
+            : "border-slate-300 focus:ring-slate-900"
+        } rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200 text-sm sm:text-base outline-none`}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
       />
     </div>
-    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    {error && (
+      <p className="text-red-500 text-xs sm:text-sm mt-1 flex items-center gap-1">
+        <svg
+          className="w-3.5 h-3.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        {error}
+      </p>
+    )}
   </div>
 );
 
@@ -535,19 +660,44 @@ const FloatingTextarea: React.FC<{
   icon?: React.ReactNode;
   placeholder?: string;
   value?: string;
+  error?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-}> = ({ label, icon, placeholder, value, onChange }) => (
+}> = ({ label, icon, placeholder, value, error, onChange }) => (
   <div className="relative group">
-    <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
-      {icon}
+    <label className="text-sm sm:text-base font-medium text-slate-900 mb-1.5 flex items-center gap-2">
+      {icon && (
+        <span className="text-slate-900 text-sm sm:text-base">{icon}</span>
+      )}
       {label}
     </label>
     <textarea
-      className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300 min-h-[120px]"
+      className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-50 border ${
+        error
+          ? "border-red-500 focus:ring-red-500"
+          : "border-slate-300 focus:ring-slate-900"
+      } rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200 min-h-[100px] sm:min-h-[120px] text-sm sm:text-base outline-none`}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
     />
+    {error && (
+      <p className="text-red-500 text-xs sm:text-sm mt-1 flex items-center gap-1">
+        <svg
+          className="w-3.5 h-3.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        {error}
+      </p>
+    )}
   </div>
 );
 
@@ -559,12 +709,14 @@ const FloatingSelect: React.FC<{
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }> = ({ label, icon, options, value, onChange }) => (
   <div className="relative group">
-    <label className="text-lg font-medium text-gray-700 mb-2 flex items-center gap-2">
-      {icon}
+    <label className="text-sm sm:text-base font-medium text-slate-900 mb-1.5 flex items-center gap-2">
+      {icon && (
+        <span className="text-slate-900 text-sm sm:text-base">{icon}</span>
+      )}
       {label}
     </label>
     <select
-      className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300"
+      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all duration-200 text-sm sm:text-base outline-none"
       value={value}
       onChange={onChange}
     >
@@ -583,14 +735,15 @@ const ColorPicker: React.FC<{
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }> = ({ label, value, onChange }) => (
   <div className="relative group">
-    <label className="text-lg font-medium text-gray-700 mb-2 block">
+    <label className="text-sm sm:text-base font-medium text-slate-900 mb-1.5 flex items-center gap-2">
+      <MdColorLens className="text-slate-900 text-sm sm:text-base" />
       {label}
     </label>
     <input
       type="color"
       value={value}
       onChange={onChange}
-      className="w-full h-[54px] p-1 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0077b6] transition-all duration-300"
+      className="w-full h-12 sm:h-14 p-1 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all duration-200 cursor-pointer"
     />
   </div>
 );

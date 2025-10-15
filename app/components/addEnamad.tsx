@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { EnamadSettings } from "@/types/type";
 import toast from "react-hot-toast";
 
@@ -116,7 +115,6 @@ export const AddEnamad = () => {
 
       if (response.ok) {
         toast.success("نماد اعتماد با موفقیت اضافه شد");
-        // Fetch the updated data to get the _id
         await fetchEnamadData();
       } else {
         const errorData = await response.json();
@@ -170,131 +168,195 @@ export const AddEnamad = () => {
   // Render loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <motion.div
-          className="flex flex-col items-center gap-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-200 border-solid rounded-full animate-spin">
-              <div className="absolute top-0 left-0 w-16 h-16 border-4 border-blue-600 border-solid rounded-full border-t-transparent animate-spin"></div>
-            </div>
+      <>
+        <style jsx>{`
+          .spinner {
+            animation: spin 1s linear infinite;
+          }
+
+          @keyframes spin {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
+          }
+
+          .fade-in {
+            animation: fadeIn 0.3s ease-in;
+          }
+
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+          }
+        `}</style>
+
+        <div className="flex items-center justify-center min-h-screen fade-in">
+          <div className="flex flex-col items-center gap-3 sm:gap-4">
+            <div className="spinner rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-slate-200 border-t-slate-500"></div>
+            <p className="text-slate-600 font-medium text-sm sm:text-base">
+              در حال بارگذاری...
+            </p>
           </div>
-          <p className="text-gray-600 font-medium">در حال بارگذاری...</p>
-        </motion.div>
-      </div>
+        </div>
+      </>
     );
   }
 
   // Render form if enamad exists
   if (hasEnamad) {
     return (
-      <motion.div
-        className="max-w-4xl mx-auto mt-8 p-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        dir="rtl"
-      >
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl shadow-xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+      <>
+        <style jsx>{`
+          .fade-in {
+            animation: fadeIn 0.3s ease-in;
+          }
+
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          .scale-in {
+            animation: scaleIn 0.2s ease-out;
+          }
+
+          @keyframes scaleIn {
+            from {
+              opacity: 0;
+              transform: scale(0.95);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+
+          .spinner {
+            animation: spin 1s linear infinite;
+          }
+
+          @keyframes spin {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+
+        <div
+          className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 fade-in"
+          dir="rtl"
+        >
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-slate-500 to-slate-600 px-4 sm:px-6 py-4 sm:py-5">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <h2 className="text-lg sm:text-xl font-bold text-white">
+                  نماد اعتماد شما
+                </h2>
               </div>
-              <h2 className="text-2xl font-bold text-white">نماد اعتماد شما</h2>
+            </div>
+
+            {/* Content */}
+            <div className="p-4 sm:p-6">
+              <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 sm:p-5 mb-4 sm:mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs sm:text-sm font-medium text-slate-600">
+                      لینک نماد اعتماد
+                    </label>
+                    <div className="p-3 sm:p-4 bg-white rounded-lg border border-slate-200">
+                      <p className="text-slate-800 break-all text-sm sm:text-base">
+                        {settings.link}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs sm:text-sm font-medium text-slate-600">
+                      کد نماد اعتماد
+                    </label>
+                    <div className="p-3 sm:p-4 bg-white rounded-lg border border-slate-200">
+                      <p className="text-slate-800 font-mono text-sm sm:text-base break-all">
+                        {settings.tag}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="px-5 sm:px-6 py-2.5 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md text-sm sm:text-base"
+                  disabled={isDeleting}
+                >
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  حذف نماد اعتماد
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-500">
-                    لینک نماد اعتماد
-                  </label>
-                  <div className="p-4 bg-gray-50 rounded-lg border">
-                    <p className="text-gray-800 break-all">{settings.link}</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-500">
-                    کد نماد اعتماد
-                  </label>
-                  <div className="p-4 bg-gray-50 rounded-lg border">
-                    <p className="text-gray-800 font-mono">{settings.tag}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex justify-center">
-              <motion.button
-                onClick={() => setIsDeleteModalOpen(true)}
-                className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all duration-300 flex items-center gap-2 shadow-lg"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                disabled={isDeleting}
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-                حذف نماد اعتماد
-              </motion.button>
-            </div>
-          </div>
-        </div>
-
-        {/* Delete Modal */}
-        <AnimatePresence>
+          {/* Delete Modal */}
           {isDeleteModalOpen && (
             <>
-              <motion.div
-                className="fixed inset-0 bg-black z-40"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.5 }}
-                exit={{ opacity: 0 }}
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50 z-40 fade-in"
                 onClick={() => !isDeleting && setIsDeleteModalOpen(false)}
               />
-              <motion.div
-                className="fixed inset-0 flex items-center justify-center z-50"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-              >
+              <div className="fixed inset-0 flex items-center justify-center z-50 p-4 scale-in">
                 <div
-                  className="bg-white/10 backdrop-blur-md border border-white p-10 rounded-lg shadow-lg z-10"
+                  className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-md w-full p-5 sm:p-6"
                   dir="rtl"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <div className="text-center">
-                    <div className="w-16 h-16  rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                       <svg
-                        className="w-8 h-8 text-red-600"
+                        className="w-6 h-6 sm:w-8 sm:h-8 text-red-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -307,52 +369,30 @@ export const AddEnamad = () => {
                         />
                       </svg>
                     </div>
-                    <h3 className="text-xl font-bold mb-4 text-center text-white">
+                    <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-slate-900">
                       تایید حذف
                     </h3>
-                    <p className="mb-4 text-center text-gray-200 border-b border-white pb-3">
+                    <p className="mb-4 sm:mb-5 text-sm sm:text-base text-slate-600 pb-4 border-b border-slate-200">
                       آیا از حذف نماد اعتماد اطمینان دارید؟ این عمل قابل بازگشت
                       نیست.
                     </p>
 
-                    <div className="flex gap-3 justify-center">
-                      <motion.button
+                    <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
+                      <button
                         onClick={() => setIsDeleteModalOpen(false)}
-                        className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-medium transition-all duration-300"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base"
                         disabled={isDeleting}
                       >
                         انصراف
-                      </motion.button>
-                      <motion.button
+                      </button>
+                      <button
                         onClick={handleDelete}
-                        className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all duration-300 flex items-center gap-2"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
                         disabled={isDeleting}
                       >
                         {isDeleting ? (
                           <>
-                            <svg
-                              className="animate-spin w-4 h-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              ></circle>
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
+                            <div className="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
                             در حال حذف...
                           </>
                         ) : (
@@ -373,209 +413,120 @@ export const AddEnamad = () => {
                             حذف
                           </>
                         )}
-                      </motion.button>
+                      </button>
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </>
           )}
-        </AnimatePresence>
-      </motion.div>
+        </div>
+      </>
     );
   }
 
   return (
-    <motion.div
-      className="max-w-3xl mx-auto p-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      dir="rtl"
-    >
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-white">
-              افزودن نماد اعتماد جدید
-            </h2>
-          </div>
-        </div>
+    <>
+      <style jsx>{`
+        .fade-in {
+          animation: fadeIn 0.3s ease-in;
+        }
 
-        {/* Form Content */}
-        <div className="p-8">
-          <div className="space-y-6">
-            {/* Link Input */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                لینک نماد اعتماد <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={settings.link}
-                onChange={(e) => handleChange("link", e.target.value)}
-                className={`w-full px-4 py-3 border rounded-xl bg-white outline-none transition-all duration-300 placeholder-gray-400 ${
-                  errors.link
-                    ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                    : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                }`}
-                placeholder="https://example.com/enamad-link"
-                disabled={isSubmitting}
-              />
-              {errors.link && (
-                <motion.p
-                  className="text-red-500 text-sm flex items-center gap-1"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .spinner {
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        .error-shake {
+          animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          25% {
+            transform: translateX(-5px);
+          }
+          75% {
+            transform: translateX(5px);
+          }
+        }
+      `}</style>
+
+      <div
+        className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 fade-in"
+        dir="rtl"
+      >
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-slate-500 to-slate-600 px-4 sm:px-6 py-4 sm:py-5">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  {errors.link}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Tag Input */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                کد نماد اعتماد <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                value={settings.tag}
-                onChange={(e) => {
-                  handleChange("tag", e.target.value);
-                  console.log(e.target.value);
-                }}
-                className={`w-full px-4 py-3 border rounded-xl bg-white outline-none transition-all duration-300 placeholder-gray-400 resize-none ${
-                  errors.tag
-                    ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                    : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                }`}
-                rows={4}
-                placeholder="کد HTML نماد اعتماد را اینجا وارد کنید..."
-                disabled={isSubmitting}
-              />
-              {errors.tag && (
-                <motion.p
-                  className="text-red-500 text-sm flex items-center gap-1"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  {errors.tag}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Info Box */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg
-                    className="w-4 h-4 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-blue-800 font-medium mb-1">
-                    راهنمای استفاده
-                  </h4>
-                  <p className="text-blue-700 text-sm leading-relaxed">
-                    لینک و کد نماد اعتماد را از پنل نماد اعتماد الکترونیکی
-                    دریافت کرده و در فیلدهای مربوطه وارد کنید. این اطلاعات برای
-                    نمایش نماد اعتماد در وب‌سایت شما استفاده خواهد شد.
-                  </p>
-                </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
               </div>
+              <h2 className="text-lg sm:text-xl font-bold text-white">
+                افزودن نماد اعتماد جدید
+              </h2>
             </div>
+          </div>
 
-            {/* Submit Button */}
-            <div className="pt-4">
-              <motion.button
-                className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 ${
-                  isSubmitting
-                    ? "bg-gray-400 cursor-not-allowed text-white"
-                    : " bg-blue-600  text-white shadow-lg hover:shadow-xl"
-                }`}
-                onClick={handleSave}
-                disabled={isSubmitting}
-                whileHover={!isSubmitting ? { scale: 1.02 } : {}}
-                whileTap={!isSubmitting ? { scale: 0.98 } : {}}
-              >
-                {isSubmitting ? (
-                  <>
+          {/* Form Content */}
+          <div className="p-4 sm:p-6">
+            <div className="space-y-4 sm:space-y-6">
+              {/* Link Input */}
+              <div className="space-y-1.5 sm:space-y-2">
+                <label className="block text-xs sm:text-sm font-medium text-slate-700">
+                  لینک نماد اعتماد <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={settings.link}
+                  onChange={(e) => handleChange("link", e.target.value)}
+                  className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 border rounded-lg bg-white outline-none transition-all duration-200 placeholder-slate-400 text-sm sm:text-base ${
+                    errors.link
+                      ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                      : "border-slate-300 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
+                  }`}
+                  placeholder="https://example.com/enamad-link"
+                  disabled={isSubmitting}
+                />
+                {errors.link && (
+                  <p className="text-red-500 text-xs sm:text-sm flex items-center gap-1.5 error-shake">
                     <svg
-                      className="animate-spin w-5 h-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    در حال ذخیره...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-5 h-5"
+                      className="w-3.5 h-3.5 sm:w-4 sm:h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -584,17 +535,125 @@ export const AddEnamad = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M5 13l4 4L19 7"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    ذخیره نماد اعتماد
-                  </>
+                    {errors.link}
+                  </p>
                 )}
-              </motion.button>
+              </div>
+
+              {/* Tag Input */}
+              <div className="space-y-1.5 sm:space-y-2">
+                <label className="block text-xs sm:text-sm font-medium text-slate-700">
+                  کد نماد اعتماد <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={settings.tag}
+                  onChange={(e) => {
+                    handleChange("tag", e.target.value);
+                    console.log(e.target.value);
+                  }}
+                  className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 border rounded-lg bg-white outline-none transition-all duration-200 placeholder-slate-400 resize-none text-sm sm:text-base ${
+                    errors.tag
+                      ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                      : "border-slate-300 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
+                  }`}
+                  rows={4}
+                  placeholder="کد HTML نماد اعتماد را اینجا وارد کنید..."
+                  disabled={isSubmitting}
+                />
+                {errors.tag && (
+                  <p className="text-red-500 text-xs sm:text-sm flex items-center gap-1.5 error-shake">
+                    <svg
+                      className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    {errors.tag}
+                  </p>
+                )}
+              </div>
+
+              {/* Info Box */}
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 sm:p-4">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-slate-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg
+                      className="w-3 h-3 sm:w-4 sm:h-4 text-slate-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-slate-800 font-medium mb-1 text-xs sm:text-sm">
+                      راهنمای استفاده
+                    </h4>
+                    <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
+                      لینک و کد نماد اعتماد را از پنل نماد اعتماد الکترونیکی
+                      دریافت کرده و در فیلدهای مربوطه وارد کنید. این اطلاعات
+                      برای نمایش نماد اعتماد در وب‌سایت شما استفاده خواهد شد.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-2 sm:pt-4">
+                <button
+                  className={`w-full py-3 sm:py-3.5 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 sm:gap-3 ${
+                    isSubmitting
+                      ? "bg-slate-400 cursor-not-allowed text-white"
+                      : "bg-slate-500 hover:bg-slate-600 text-white shadow-sm hover:shadow-md"
+                  }`}
+                  onClick={handleSave}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="spinner w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full"></div>
+                      در حال ذخیره...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-4 h-4 sm:w-5 sm:h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      ذخیره نماد اعتماد
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </motion.div>
+    </>
   );
 };

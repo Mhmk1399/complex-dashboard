@@ -258,7 +258,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                   <div>
                     <h3 className="text-sm sm:text-base font-semibold text-slate-800 mb-3 flex items-center gap-2 pb-2 border-b border-slate-200">
                       <svg
-                        className="w-4 h-4 text-[#0077b6]"
+                        className="w-4 h-4 text-slate-800"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -287,7 +287,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                         className={`px-3 py-2 text-sm rounded-lg font-medium transition-all ${
                           formData.images.length >= 6
                             ? "bg-slate-200 text-slate-400 cursor-not-allowed"
-                            : "bg-[#0077b6] hover:bg-blue-700 text-white"
+                            : "bg-slate-800 hover:bg-slate-700 text-white"
                         }`}
                       >
                         انتخاب تصویر ({formData.images.length}/6)
@@ -337,7 +337,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                           className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all placeholder-slate-400 ${
                             errors.name
                               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                              : "border-slate-200 text-slate-800 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
                           }`}
                           placeholder="نام محصول"
                         />
@@ -385,7 +385,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                           className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all ${
                             errors.category
                               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                              : "border-slate-200 text-slate-800 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
                           }`}
                         >
                           <option value="">انتخاب دسته بندی</option>
@@ -432,7 +432,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                         className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all placeholder-slate-400 resize-none ${
                           errors.description
                             ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                            : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                            : "border-slate-200 text-slate-800 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
                         }`}
                         rows={3}
                         placeholder="توضیحات کامل محصول"
@@ -494,7 +494,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                           className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all placeholder-slate-400 ${
                             errors.price
                               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                              : "border-slate-200 text-slate-800 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
                           }`}
                           placeholder="قیمت"
                         />
@@ -543,7 +543,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                           className={`w-full px-3 py-2 text-sm border rounded-lg bg-white outline-none transition-all ${
                             errors.status
                               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                              : "border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                              : "border-slate-200 text-slate-800 focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20"
                           }`}
                         >
                           <option value="">انتخاب وضعیت</option>
@@ -640,7 +640,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                         <button
                           type="button"
                           onClick={addProperty}
-                          className="px-4 py-2 text-sm bg-[#0077b6] hover:bg-blue-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-1 whitespace-nowrap"
+                          className="px-4 py-2 text-sm bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-1 whitespace-nowrap"
                         >
                           <svg
                             className="w-4 h-4"
@@ -761,7 +761,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                         <button
                           type="button"
                           onClick={addColor}
-                          className="px-4 py-2 text-sm bg-[#0077b6] hover:bg-blue-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-1 whitespace-nowrap"
+                          className="px-4 py-2 text-sm bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-1 whitespace-nowrap"
                         >
                           <svg
                             className="w-4 h-4"
@@ -885,7 +885,7 @@ const EditModal = ({ product, isOpen, onClose, onSave }: EditModalProps) => {
                     className={`px-6 py-2 text-sm rounded-lg font-medium transition-all flex items-center justify-center gap-1 shadow-sm ${
                       isSubmitting
                         ? "bg-slate-300 cursor-not-allowed text-slate-500"
-                        : "bg-[#0077b6] hover:bg-blue-700 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-white"
                     }`}
                   >
                     {isSubmitting ? (

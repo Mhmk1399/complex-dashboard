@@ -174,6 +174,7 @@ const AddCategory = () => {
 
     if (!containerRef.current || !dropZoneRef.current) return;
 
+    // Only categories WITHOUT children can be dragged (2-level system)
     const leafCategories = existingCategories.filter(
       (category) => category.children.length === 0
     );
@@ -285,6 +286,7 @@ const AddCategory = () => {
     }
   };
 
+  // Only categories WITHOUT children can be used as children (2-level system)
   const leafCategories = existingCategories.filter(
     (category) => category.children.length === 0
   );
@@ -298,10 +300,10 @@ const AddCategory = () => {
       <div ref={containerRef} className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="bg-white rounded-lg sm:rounded-xl shadow-lg mb-4 sm:mb-6 p-4 sm:p-6 animate-slide-down">
-          <div className="flex flex-row justify-between items-start sm:items-center gap-3">
+          <div className="flex flex-row justify-between items-center sm:items-center gap-3">
             <div>
-              <h2 className="text-xl sm:text-2xl  font-bold bg-gradient-to-r from-slate-900 to-blue-900 bg-clip-text text-transparent flex items-center gap-2">
-                <HiOutlineFolderAdd className="text-2xl sm:text-3xl md:text-4xl text-slate-900" />
+              <h2 className="text-xs text-nowrap sm:text-2xl  font-bold bg-gradient-to-r from-slate-900 to-blue-900 bg-clip-text text-transparent flex items-center gap-2">
+                <HiOutlineFolderAdd className="text-xl   md:text-3xl text-slate-900" />
                 مدیریت دسته‌بندی‌ها
               </h2>
               <p className="text-slate-600 text-xs sm:text-sm mt-1 hidden md:block sm:mt-2">
@@ -410,9 +412,9 @@ const AddCategory = () => {
           {/* Categories List */}
           <div className="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden animate-slide-up">
             <div className="bg-gradient-to-r from-slate-900 to-slate-900 p-4 sm:p-5">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-white">
+              <div className="flex  flex-row justify-between items-start sm:items-center gap-2 text-white">
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold">
+                  <h3 className="text-sm sm:text-lg font-bold">
                     دسته‌بندی‌های موجود
                   </h3>
                   <p className="text-blue-100 text-xs sm:text-sm mt-0.5 sm:mt-1">
@@ -420,7 +422,7 @@ const AddCategory = () => {
                   </p>
                 </div>
                 <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5 text-xs sm:text-sm">
-                  <span>دسته‌های اصلی: </span>
+                  <span>دسته‌های فرعی: </span>
                   <span className="font-bold">{leafCategories.length}</span>
                 </div>
               </div>
@@ -479,7 +481,7 @@ const AddCategory = () => {
                         >
                           {category.children.length === 0
                             ? "قابل انتقال"
-                            : "دارای زیر دسته"}
+                            : "اصلی"}
                         </span>
                       </div>
                     </div>
@@ -522,7 +524,7 @@ const AddCategory = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
               <div className="text-center sm:text-right w-full">
                 <p className="text-xs font-medium text-slate-600 mb-1">
-                  دسته‌های اصلی
+                  دسته‌های فرعی
                 </p>
                 <p className="text-xl sm:text-2xl font-bold text-green-600">
                   {leafCategories.length}
@@ -538,7 +540,7 @@ const AddCategory = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
               <div className="text-center sm:text-right w-full">
                 <p className="text-xs font-medium text-slate-600 mb-1">
-                  دارای زیر دسته
+                 اصلی
                 </p>
                 <p className="text-xl sm:text-2xl font-bold text-blue-600">
                   {
@@ -576,7 +578,7 @@ const AddCategory = () => {
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
               <h4 className="font-semibold mb-1.5">کشیدن و رها کردن</h4>
               <p className="text-blue-100">
-                دسته‌های اصلی (قابل انتقال) را بکشید و در ناحیه مشخص شده رها
+                دسته‌ها   (قابل انتقال) را بکشید و در ناحیه مشخص شده رها
                 کنید تا به عنوان زیر دسته اضافه شوند.
               </p>
             </div>
