@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       message: "Data saved successfully",
     });
   } catch (error) {
-    console.error("Error saving to MongoDB:", error);
+    console.log("Error saving to MongoDB:", error);
     return NextResponse.json({ error: "Failed to save data" }, { status: 500 });
   }
 }

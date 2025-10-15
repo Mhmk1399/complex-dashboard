@@ -42,7 +42,7 @@ export default function TicketStats() {
         setStats(newStats);
       }
     } catch (error) {
-      console.error("Failed to fetch ticket stats:", error);
+      console.log("Failed to fetch ticket stats:", error);
     }
   };
 

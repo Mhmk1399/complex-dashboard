@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
         const users = await StoreUsers.find({storeId: sotreId});
         return NextResponse.json({ users }, { status: 200 })
     } catch (error) {
-        console.error(error)
+        console.log(error)
         if (error instanceof Error) {
             return NextResponse.json({ error: error.message }, { status: 500 });
         }

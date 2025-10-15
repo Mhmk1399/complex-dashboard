@@ -21,7 +21,7 @@ export const Newsletter = () => {
         const data = await response.json();
         setNewsletters(data);
       } catch (error) {
-        console.error("Error fetching newsletters:", error);
+        console.log("Error fetching newsletters:", error);
       } finally {
         setLoading(false);
       }

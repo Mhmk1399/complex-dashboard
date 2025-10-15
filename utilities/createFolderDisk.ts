@@ -24,7 +24,7 @@ export async function initStore(storeId: string): Promise<{ success?: boolean; e
 
     return { success: true };
   } catch (error) {
-    console.error('Network error:', error);
+    console.log('Network error:', error);
     return { error: 'Network error' };
   }
 }

@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ userInfo }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user info:", error);
+    console.log("Error fetching user info:", error);
     return NextResponse.json(
       { message: "Error fetching user info" },
       { status: 500 }

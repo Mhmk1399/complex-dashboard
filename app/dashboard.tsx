@@ -5,7 +5,7 @@ import Form from "./form";
 import { ProductsSettings } from "./components/productsSettings";
 import { Inventory } from "./components/inventory";
 import { Collections } from "./components/collections";
-import  AddPostBlog  from "./components/addBlog";
+import AddPostBlog from "./components/addBlog";
 import { EditBlogs } from "./components/editBlogs";
 import { useRouter, useSearchParams } from "next/navigation";
 import jwt from "jsonwebtoken";
@@ -43,36 +43,25 @@ const LoadingSpinner = () => (
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
   >
-    <motion.div
-      className="text-center"
-      initial={{ scale: 0.8 }}
-      animate={{ scale: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <motion.div
-        className="relative w-24 h-24 mx-auto mb-6"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-      >
-        <div className="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
-        <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent"></div>
-      </motion.div>
-
-      <motion.h2
-        className="text-2xl font-bold text-gray-700 mb-2"
+    <motion.div className="text-center">
+      <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3">
+        <motion.div
+          className="absolute inset-0 border-4 border-blue-500/30 rounded-full"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute inset-0 border-4 border-t-blue-500 border-r-transparent border-b-transparent border-l-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+      <motion.p
+        className="text-sm sm:text-base text-gray-600 font-medium"
         animate={{ opacity: [0.5, 1, 0.5] }}
         transition={{ duration: 1.5, repeat: Infinity }}
       >
-        در حال بارگذاری...
-      </motion.h2>
-
-      <motion.p
-        className="text-gray-500"
-        initial={{ y: 10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        لطفاً صبر کنید
+        بارگذاری
       </motion.p>
     </motion.div>
   </motion.div>
@@ -226,22 +215,37 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
 
   const menuInfo = getMenuInfo(selectedMenu);
 
+  const handleResetTour = () => {
+    sessionStorage.clear();
+    window.location.reload();
+  };
+
   return (
     <motion.div
-      className="bg-white/80 backdrop-blur-sm right-20  px-6 py-4 absolute top-2 z-30"
+      className=" right-10 md:right-12  px-6 py-4 absolute top-2 z-30"
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-center gap-3" dir="rtl">
         <motion.div
-          className={`${menuInfo.color} text-xl`}
+          className={`${menuInfo.color} md:text-xl`}
           whileHover={{ scale: 1.1 }}
         >
           {menuInfo.icon}
         </motion.div>
-        <h1 className="text-2xl font-bold text-gray-800">{menuInfo.title}</h1>
-        <div className="flex-1"></div>
+        <h1 className="text-sm md:text-xl text-nowrap font-bold text-gray-800">
+          {menuInfo.title}
+        </h1>
+        <motion.button
+          onClick={handleResetTour}
+          className="text-xs bg-slate-700 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg transition-colors"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          title="راهنمای مجدد"
+        >
+          راهنما
+        </motion.button>
         <motion.div
           className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full"
           initial={{ scale: 0 }}
@@ -261,11 +265,12 @@ export const Dashboard = () => {
   const [selectedMenu, setSelectedMenu] = useState("start");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [shouldOpenSidebar, setShouldOpenSidebar] = useState(false);
 
   const updateURL = (menu: string) => {
     const url = new URL(window.location.href);
-    url.searchParams.set('section', menu);
-    window.history.pushState({}, '', url.toString());
+    url.searchParams.set("section", menu);
+    window.history.pushState({}, "", url.toString());
   };
 
   const handleMenuChange = (menu: string) => {
@@ -313,7 +318,7 @@ export const Dashboard = () => {
         throw new Error("خطا در دریافت اطلاعات کاربر");
       }
     } catch (error) {
-      console.error("Error initializing dashboard:", error);
+      console.log("Error initializing dashboard:", error);
       setError(error instanceof Error ? error.message : "خطای غیرمنتظره");
       localStorage.removeItem("token");
     } finally {
@@ -326,7 +331,7 @@ export const Dashboard = () => {
   }, [router]);
 
   useEffect(() => {
-    const section = searchParams.get('section');
+    const section = searchParams.get("section");
     if (section) {
       setSelectedMenu(section);
     }
@@ -335,18 +340,27 @@ export const Dashboard = () => {
   useEffect(() => {
     const handlePopState = () => {
       const url = new URL(window.location.href);
-      const section = url.searchParams.get('section') || 'start';
+      const section = url.searchParams.get("section") || "start";
       setSelectedMenu(section);
     };
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
+
+  const handleTourComplete = () => {
+    setShouldOpenSidebar(true);
+  };
 
   const RenderForms = () => {
     const formComponents: Record<string, React.ReactNode> = {
-      start: <StartComponent setSelectedMenu={handleMenuChange} />,
-      addProduct: <ProductsSettings setSelectedMenu={handleMenuChange}/>,
+      start: (
+        <StartComponent
+          setSelectedMenu={handleMenuChange}
+          onTourComplete={handleTourComplete}
+        />
+      ),
+      addProduct: <ProductsSettings setSelectedMenu={handleMenuChange} />,
       inventory: <Inventory setSelectedMenu={handleMenuChange} />,
       collections: <Collections />,
       addBlogs: <AddPostBlog />,
@@ -399,12 +413,14 @@ export const Dashboard = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-
       {/* Swirl Background */}
       <SwirlBackground />
       {/* Enhanced Form Component */}
       <div className=" z-20 pointer-events-auto">
-        <Form setSelectedMenu={handleMenuChange} />
+        <Form
+          setSelectedMenu={handleMenuChange}
+          shouldStartTour={shouldOpenSidebar}
+        />
       </div>
 
       {/* Main Content Area */}
@@ -414,7 +430,7 @@ export const Dashboard = () => {
 
         {/* Content */}
         <motion.main
-          className="flex-1 p-6"
+          className="flex-1 p-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -422,8 +438,6 @@ export const Dashboard = () => {
           <RenderForms />
         </motion.main>
       </div>
-
-
     </motion.div>
   );
 };

@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { TrashIcon, PencilIcon, PlusIcon, FunnelIcon } from "@heroicons/react/24/outline";
+import {
+  TrashIcon,
+  PencilIcon,
+  PlusIcon,
+  FunnelIcon,
+} from "@heroicons/react/24/outline";
 import EditModal from "./editModal";
 import Modal from "./Modal";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { InventoryProps, Product } from "@/types/type";
+import toast from "react-hot-toast";
 
 export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<{_id: string, name: string}[]>([]);
+  const [categories, setCategories] = useState<{ _id: string; name: string }[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(null);
-  
+  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
+    null
+  );
+
   // Filter states
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
@@ -26,7 +34,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
     totalPages: 0,
     totalProducts: 0,
     hasNextPage: false,
-    hasPrevPage: false
+    hasPrevPage: false,
   });
 
   const handleEdit = (product: Product) => {
@@ -57,9 +65,9 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
         });
         setProducts(products.filter((product) => product._id !== productId));
       } catch (error) {
-        console.error("Error deleting product:", error);
+        console.log("Error deleting product:", error);
       }
-      const isSuccess = true; // Replace with actual success/failure logic
+      const isSuccess = true;
 
       if (isSuccess) {
         toast.success(` محصول با شناسه ${productId} با موفقیت حذف شد`);
@@ -68,6 +76,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
       }
     }
   };
+
   let count = 0;
 
   const quantity = (product: {
@@ -85,7 +94,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
       page: currentPage.toString(),
       limit: itemsPerPage.toString(),
       ...(categoryFilter && { category: categoryFilter }),
-      ...(statusFilter && { status: statusFilter })
+      ...(statusFilter && { status: statusFilter }),
     });
 
     return fetch(`/api/products?${params}`, {
@@ -102,7 +111,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
         setIsLoading(false);
       })
       .catch((error) => {
-        console.error("Error:", error);
+        console.log("Error:", error);
         setIsLoading(false);
       });
   };
@@ -117,7 +126,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
     })
       .then((result) => result.json())
       .then((data) => setCategories(data))
-      .catch((error) => console.error("Error:", error));
+      .catch((error) => console.log("Error:", error));
   };
 
   const clearFilters = () => {
@@ -136,7 +145,10 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
 
   // Pagination logic
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, pagination.totalProducts);
+  const indexOfLastItem = Math.min(
+    currentPage * itemsPerPage,
+    pagination.totalProducts
+  );
 
   if (isLoading) {
     return (
@@ -149,27 +161,24 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
   // Empty products section
   if (!products || products.length === 0) {
     return (
-      <div
-        className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8"
-        dir="rtl"
-      >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+      <div className="min-h-screen  py-6 sm:py-8" dir="rtl">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4">
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sm:p-8">
             {/* Header */}
             <div className="mb-8 text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-[#0077b6] to-blue-400 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
                 مدیریت موجودی محصولات
               </h2>
-              <p className="text-gray-500 mt-2">
+              <p className="text-slate-500 text-sm mt-2">
                 موجودی و وضعیت محصولات خود را مدیریت کنید
               </p>
             </div>
 
             {/* Empty State */}
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="mb-8">
+            <div className="flex flex-col items-center justify-center py-12 sm:py-16">
+              <div className="mb-6">
                 <svg
-                  className="mx-auto h-32 w-32 text-gray-300"
+                  className="mx-auto h-24 w-24 sm:h-32 sm:w-32 text-slate-300"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -182,18 +191,18 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-600 mb-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-700 mb-3">
                 هیچ محصولی یافت نشد
               </h3>
-              <p className="text-gray-500 mb-8 max-w-md text-center">
+              <p className="text-slate-500 text-sm mb-6 max-w-md text-center px-4">
                 شما هنوز هیچ محصولی اضافه نکرده‌اید. برای شروع، اولین محصول خود
                 را اضافه کنید.
               </p>
               <button
                 onClick={() => setSelectedMenu("addProduct")}
-                className="bg-gradient-to-r from-[#0077b6] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg"
+                className="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md"
               >
-                <PlusIcon className="h-6 w-6" />
+                <PlusIcon className="h-5 w-5" />
                 افزودن اولین محصول
               </button>
             </div>
@@ -205,67 +214,69 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
 
   return (
     <div
-      className="px-2 md:px-4 py-4 md:py-8 min-h-screen mt-12"
+      className="px-3 sm:px-4 py-4 sm:py-6 min-h-screen mt-12 sm:mt-16  "
       dir="rtl"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header Section */}
-        <div className="bg-white rounded-2xl shadow-xl mb-4 md:mb-6 p-3 md:p-6">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-4 p-3 sm:p-4">
+          <div className="flex  flex-row justify-between sm:justify-between sm:items-center gap-3">
             <div>
-              <h2 className="text-lg md:text-3xl font-bold bg-gradient-to-r from-[#0077b6] to-blue-400 bg-clip-text text-transparent">
-                مدیریت موجودی محصولات
+              <h2 className="text-lg sm:text-2xl font-bold text-slate-800">
+                  موجودی محصولات
               </h2>
-              <p className="text-gray-500 hidden md:block mt-2">
+              <p className="text-slate-500 hidden md:block text-xs sm:text-sm mt-0.5">
                 موجودی و وضعیت محصولات خود را مدیریت کنید
               </p>
             </div>
             <button
               onClick={() => setSelectedMenu("addProduct")}
-              className="bg-gradient-to-r from-[#0077b6] to-blue-600 text-xs md:text-lg hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 md:py-3 px-3 md:px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg w-fit"
+              className="bg-[#0077b6] hover:bg-blue-700 text-white font-semibold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg transition-all flex items-center gap-2 shadow-sm text-xs text-nowrap md:text-sm w-fit"
             >
-              <PlusIcon className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="whitespace-nowrap">افزودن محصول</span>
+              <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span>افزودن محصول</span>
             </button>
           </div>
         </div>
 
         {/* Products Table */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
           {/* Filters Section */}
-          <div className="p-3 md:p-6 border-b">
-            <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
+          <div className="p-3 sm:p-4 border-b border-slate-200 bg-slate-50">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
               <div className="flex items-center gap-2">
-                <FunnelIcon className="h-4 w-4 md:h-5 md:w-5 text-[#0077b6]" />
-                <span className="font-medium text-[#0077b6] text-sm md:text-base">فیلترها:</span>
+                <FunnelIcon className="h-4 w-4 text-slate-600" />
+                <span className="font-medium text-slate-700 text-sm">
+                  فیلترها:
+                </span>
               </div>
-              
+
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#0077b6] focus:border-transparent"
+                className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
               >
                 <option value="">همه دسته‌بندی‌ها</option>
-                {categories.map(cat => (
-                  <option key={cat._id} value={cat._id}>{cat.name}</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
                 ))}
               </select>
 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#0077b6] focus:border-transparent"
+                className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
               >
                 <option value="">همه وضعیت‌ها</option>
                 <option value="available">موجود</option>
                 <option value="unavailable">ناموجود</option>
               </select>
 
-
-
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="px-3 py-2 text-sm bg-slate-700 hover:bg-slate-800 text-white rounded-lg transition-colors"
               >
                 پاک کردن فیلترها
               </button>
@@ -273,18 +284,20 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
           </div>
 
           {/* Table Header with Stats */}
-          <div className="bg-gradient-to-r from-[#0077b6] to-blue-600 p-3 md:p-6">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center text-white gap-3">
+          <div className="bg-slate-800 p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-white gap-2">
               <div>
-                <h3 className="text-base md:text-xl font-bold">لیست محصولات</h3>
-                <p className="text-blue-100 text-xs md:text-sm mt-1">
+                <h3 className="text-sm sm:text-base font-semibold">
+                  لیست محصولات
+                </h3>
+                <p className="text-slate-300 text-xs mt-0.5">
                   {pagination.totalProducts} محصول
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <div className="bg-white/20 flex items-center justify-center backdrop-blur-sm rounded-lg px-2 md:px-3 py-1 md:py-2">
-                  <span className="text-xs md:text-sm">موجود: </span>
-                  <span className="font-bold mr-1">
+              <div className="flex gap-2">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm">
+                  <span className="text-slate-300">موجود: </span>
+                  <span className="font-semibold">
                     {
                       products.filter(
                         (product) => product.status === "available"
@@ -292,9 +305,9 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                     }
                   </span>
                 </div>
-                <div className="bg-white/20 flex items-center justify-center backdrop-blur-sm rounded-lg px-2 md:px-3 py-1 md:py-2">
-                  <span className="text-xs md:text-sm">کل: </span>
-                  <span className="font-bold mr-1">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm">
+                  <span className="text-slate-300">کل: </span>
+                  <span className="font-semibold">
                     {products.reduce(
                       (total, product) => total + quantity(product),
                       0
@@ -308,84 +321,95 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
           {/* Table Content */}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-blue-50 border-b-2 border-[#0077b6]">
+              <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs text-nowrap font-semibold text-slate-700 uppercase tracking-wider">
                     محصول
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs text-nowrap font-semibold text-slate-700 uppercase tracking-wider">
                     دسته بندی
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs text-nowrap font-semibold text-slate-700 uppercase tracking-wider">
                     قیمت
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs text-nowrap font-semibold text-slate-700 uppercase tracking-wider">
                     وضعیت
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs text-nowrap font-semibold text-slate-700 uppercase tracking-wider">
                     موجودی
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
-                    عملیات‌ها
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs text-nowrap font-semibold text-slate-700 uppercase tracking-wider">
+                    عملیات
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-slate-200">
                 {products.map((product) => (
-                  <tr key={product._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-2 md:px-6 py-3 md:py-4">
-                      <div className="flex items-center">
-                        <div className="h-8 w-8 md:h-12 md:w-12 flex-shrink-0">
+                  <tr
+                    key={product._id}
+                    className="hover:bg-slate-50 transition-colors"
+                  >
+                    <td className="px-2 sm:px-4 py-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
                           <img
-                            className="h-8 w-8 md:h-12 md:w-12 rounded-lg object-cover"
-                            src={product.images?.[0]?.imageSrc || '/placeholder.jpg'}
+                            className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg object-cover border border-slate-200"
+                            src={
+                              product.images?.[0]?.imageSrc ||
+                              "/placeholder.jpg"
+                            }
                             alt={product.name}
                           />
                         </div>
-                        <div className="mr-2 md:mr-4">
-                          <div className="text-xs md:text-sm font-medium text-gray-900 truncate max-w-[100px] md:max-w-none">
+                        <div className="min-w-0">
+                          <div className="text-xs sm:text-sm font-medium text-slate-800 truncate max-w-[120px] sm:max-w-none">
                             {product.name}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-sm text-gray-900">
-                        {product.category?.name || 'بدون دسته‌بندی'}
+                    <td className="px-3 sm:px-4 py-3 text-center">
+                      <span className="text-xs sm:text-sm text-slate-700">
+                        {product.category?.name || "بدون دسته‌بندی"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-sm font-medium text-gray-900">
-                        {parseInt(product.price).toLocaleString()} تومان
+                    <td className="px-3 sm:px-4 py-3 text-center">
+                      <span className="text-xs sm:text-sm font-medium text-slate-800">
+                        {parseInt(product.price).toLocaleString()}
+                      </span>
+                      <span className="text-xs text-slate-500 mr-1">تومان</span>
+                    </td>
+                    <td className="px-3 sm:px-4 py-3 text-center">
+                      <span
+                        className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
+                          product.status === "available"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {product.status === "available" ? "موجود" : "ناموجود"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        product.status === 'available'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {product.status === 'available' ? 'موجود' : 'ناموجود'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-sm font-medium text-gray-900">
+                    <td className="px-3 sm:px-4 py-3 text-center">
+                      <span className="text-xs sm:text-sm font-medium text-slate-800">
                         {quantity(product)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <div className="flex justify-center gap-2">
+                    <td className="px-3 sm:px-4 py-3 text-center">
+                      <div className="flex justify-center gap-1 sm:gap-2">
                         <button
                           onClick={() => handleEdit(product)}
-                          className="text-blue-600 hover:text-blue-900 p-1"
+                          className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5 rounded-md transition-colors"
+                          title="ویرایش"
                         >
-                          <PencilIcon className="h-5 w-5" />
+                          <PencilIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                         </button>
                         <button
                           onClick={() => openModal(product._id)}
-                          className="text-red-600 hover:text-red-900 p-1"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-md transition-colors"
+                          title="حذف"
                         >
-                          <TrashIcon className="h-5 w-5" />
+                          <TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                         </button>
                       </div>
                     </td>
@@ -397,47 +421,57 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
 
           {/* Pagination */}
           {pagination.totalPages > 1 && (
-            <div className="px-3 md:px-6 py-3 md:py-4 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div className="text-xs md:text-sm text-gray-700 text-center md:text-right">
-                نمایش {indexOfFirstItem} تا {indexOfLastItem} از {pagination.totalProducts} محصول
+            <div className="px-3 sm:px-4 py-3 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="text-xs sm:text-sm text-slate-600 text-center sm:text-right">
+                نمایش {indexOfFirstItem} تا {indexOfLastItem} از{" "}
+                {pagination.totalProducts} محصول
               </div>
-              <div className="flex gap-1 md:gap-2 justify-center md:justify-end overflow-x-auto">
+              <div className="flex gap-1 justify-center sm:justify-end overflow-x-auto">
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={!pagination.hasPrevPage}
-                  className="px-2 md:px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-xs md:text-sm whitespace-nowrap"
+                  className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm border border-slate-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-colors bg-white"
                 >
                   قبلی
                 </button>
-                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => {
-                  let page;
-                  if (pagination.totalPages <= 5) {
-                    page = i + 1;
-                  } else if (currentPage <= 3) {
-                    page = i + 1;
-                  } else if (currentPage >= pagination.totalPages - 2) {
-                    page = pagination.totalPages - 4 + i;
-                  } else {
-                    page = currentPage - 2 + i;
+                {Array.from(
+                  { length: Math.min(pagination.totalPages, 5) },
+                  (_, i) => {
+                    let page;
+                    if (pagination.totalPages <= 5) {
+                      page = i + 1;
+                    } else if (currentPage <= 3) {
+                      page = i + 1;
+                    } else if (currentPage >= pagination.totalPages - 2) {
+                      page = pagination.totalPages - 4 + i;
+                    } else {
+                      page = currentPage - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm border rounded-md transition-colors ${
+                          currentPage === page
+                            ? "bg-[#0077b6] text-white border-[#0077b6]"
+                            : "border-slate-200 hover:bg-slate-100 bg-white"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
                   }
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-2 md:px-3 py-1 border rounded text-xs md:text-sm ${
-                        currentPage === page
-                          ? 'bg-[#0077b6] text-white'
-                          : 'hover:bg-gray-50'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  );
-                })}
+                )}
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(prev + 1, pagination.totalPages)
+                    )
+                  }
                   disabled={!pagination.hasNextPage}
-                  className="px-2 md:px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-xs md:text-sm whitespace-nowrap"
+                  className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm border border-slate-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-colors bg-white"
                 >
                   بعدی
                 </button>
@@ -463,8 +497,6 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
             onConfirm={confirmDelete}
           />
         )}
-
-        <ToastContainer position="top-right" autoClose={3000} />
       </div>
     </div>
   );

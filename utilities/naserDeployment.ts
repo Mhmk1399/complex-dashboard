@@ -73,7 +73,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
       if (!response.ok) {
         const errorText = await response.text();
         errors.push({ resource: doc.kind, error: errorText, status: response.status });
-        console.error(`Error creating ${doc.kind}:`, errorText);
+        console.log(`Error creating ${doc.kind}:`, errorText);
         continue;
       }
 
@@ -81,7 +81,7 @@ export async function createDeployment(config: DeploymentConfig): Promise<{
       console.log(result,"this is result")
       results.push({ resource: doc.kind, result, status: response.status });
     } catch (error) {
-      console.error(`Error processing ${doc.kind}:`, error);
+      console.log(`Error processing ${doc.kind}:`, error);
       errors.push({
         resource: doc.kind,
         error: error instanceof Error ? error.message : 'Unknown error',

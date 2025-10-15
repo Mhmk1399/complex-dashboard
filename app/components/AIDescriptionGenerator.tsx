@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { DeepSeekClient } from "@/lib/DeepSeekClient";
 import { AITokenService } from "@/lib/aiTokenService";
-import { toast } from "react-toastify";
 import { TokenDisplay } from "./TokenDisplay";
+import toast from "react-hot-toast";
 
 interface ProductData {
   name?: string;
@@ -62,18 +62,20 @@ export const AIDescriptionGenerator = ({
     try {
       const features = [
         ...(productData.features || []),
-        ...Object.entries(productData.properties || {}).map(([key, value]) => `${key}: ${value}`)
+        ...Object.entries(productData.properties || {}).map(
+          ([key, value]) => `${key}: ${value}`
+        ),
       ];
 
       const prompt = `Act as a professional e-commerce copywriter. Generate a compelling, SEO-friendly product description for the following product.
 
-Product Name: ${productData.name || 'Product'}
-Category: ${productData.category || 'General'}
+Product Name: ${productData.name || "Product"}
+Category: ${productData.category || "General"}
 Key Features/Benefits:
-${features.map((feature, index) => `${index + 1}. ${feature}`).join('\n')}
+${features.map((feature, index) => `${index + 1}. ${feature}`).join("\n")}
 
-Target Audience: ${productData.targetAudience || 'General consumers'}
-Tone of Voice: ${productData.tone || 'Professional and trustworthy'}
+Target Audience: ${productData.targetAudience || "General consumers"}
+Tone of Voice: ${productData.tone || "Professional and trustworthy"}
 
 Output a single paragraph (3-5 sentences) that highlights the key benefits, speaks directly to the target audience, and inspires a purchase. Use persuasive language and focus on how the product improves the user's life. Return ONLY the description text without any additional formatting or explanations.`;
 

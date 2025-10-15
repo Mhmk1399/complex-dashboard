@@ -28,13 +28,15 @@ import {
 } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { AccordionItemProps, FormProps } from "@/types/type";
+import { useEffect } from "react";
+import { useTourGuide } from "../hooks/useTourGuide";
 
 const dashboardMenuItems = [
   {
     id: "start",
     title: "خانه",
     icon: <FaHome />,
-    color: "from-blue-500 to-blue-600",
+    color: "from-gary-200 to-gary-600",
     subMenuItems: [
       {
         title: "داشبورد مدیریت",
@@ -47,7 +49,7 @@ const dashboardMenuItems = [
     id: "store",
     title: "محصولات",
     icon: <StoreIcon />,
-    color: "from-blue-500 to-blue-600",
+    color: "from-gary-200 to-gary-600",
     subMenuItems: [
       { title: "افزودن محصول", value: "addProduct", icon: <FaPlus /> },
       { title: "موجودی محصول", value: "inventory", icon: <FaBoxes /> },
@@ -60,29 +62,28 @@ const dashboardMenuItems = [
     id: "orders",
     title: "سفارشات",
     icon: <OrdersIcon />,
-    color: "from-blue-500 to-blue-600",
+    color: "from-gary-200 to-gary-600",
     subMenuItems: [
       { title: "سفارش ها", value: "orders", icon: <FaShoppingBag /> },
-    ]
+    ],
   },
   {
     id: "costumers",
     title: "کاربران",
     icon: <CustomersIcon />,
-    color: "from-blue-500 to-blue-600",
+    color: "from-gary-200 to-gary-600",
     subMenuItems: [
-    { title: "کاربران", value: "costumers", icon: <FaUsers /> },
-    {title: " درخواست ها", value: "contact", icon: <FaUserCog />},
-    {title: "تیکت های مشتریان", value: "tickets", icon: <FaUsers />},
-    {title: "خبرنامه", value: "newsLetter", icon: <FaUsers />},
-  ]
-    
+      { title: "کاربران", value: "costumers", icon: <FaUsers /> },
+      { title: " درخواست ها", value: "contact", icon: <FaUserCog /> },
+      { title: "تیکت های مشتریان", value: "tickets", icon: <FaUsers /> },
+      { title: "خبرنامه", value: "newsLetter", icon: <FaUsers /> },
+    ],
   },
   {
     id: "media",
     title: "گالری",
     icon: <MediaIcon />,
-    color: "from-blue-500 to-blue-600",
+    color: "from-gary-200 to-gary-600",
     subMenuItems: [
       { title: "افزودن تصویر", value: "addFile", icon: <FaFileUpload /> },
       { title: "مدیریت تصاویر", value: "editFile", icon: <FaImages /> },
@@ -93,10 +94,10 @@ const dashboardMenuItems = [
     id: "addBlogs",
     title: "وبلاگ",
     icon: <BlogIcon />,
-    color: "from-blue-500 to-blue-600",
+    color: "from-gary-200 to-gary-600",
     subMenuItems: [
       { title: "افزودن وبلاگ", value: "addBlogs", icon: <FaBlog /> },
-     
+
       { title: "ویرایش وبلاگ", value: "editBlogs", icon: <FaEdit /> },
     ],
   },
@@ -104,7 +105,7 @@ const dashboardMenuItems = [
     id: "settings",
     title: "تنظیمات",
     icon: <IoSettings />,
-    color: "from-blue-500 to-blue-600",
+    color: "from-gary-200 to-gary-600",
     subMenuItems: [
       { title: "تنظیمات سایت", value: "siteSettings", icon: <FaCog /> },
       { title: "تنظیمات حساب", value: "accountSettings", icon: <FaUserCog /> },
@@ -122,39 +123,23 @@ const AccordionItem: React.FC<AccordionItemProps & { color?: string }> = ({
   color = "from-blue-500 to-blue-600",
 }) => {
   return (
-    <motion.div
-      className="mb-3"
-      dir="rtl"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <motion.button
-        className={`w-full py-4 px-4 text-right bg-gradient-to-r ${color} hover:shadow-lg group transition-all duration-300 ease-in-out rounded-xl flex justify-between items-center relative overflow-hidden`}
+    <motion.div className="mb-1.5" dir="rtl">
+      <button
+        className={`w-full py-2.5 px-3 text-right bg-gradient-to-r ${color} hover:shadow-md transition-all duration-200 rounded-lg flex justify-between items-center cursor-pointer`}
         onClick={onToggle}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        type="button"
       >
-        <motion.div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-
-        <div className="flex items-center gap-3 z-10">
-          <motion.span
-            className="text-white text-xl"
-            animate={{ rotate: isOpen ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
+        <div className="flex items-center gap-2">
+          <span
+            className="text-white text-xs transition-transform duration-200"
+            style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
           >
             <FaChevronDown />
-          </motion.span>
-          <span className="text-white font-semibold text-lg">{title}</span>
+          </span>
+          <span className="text-white font-medium text-sm">{title}</span>
         </div>
-
-        <motion.span
-          className="text-white text-xl z-10"
-          whileHover={{ scale: 1.1 }}
-        >
-          {icon}
-        </motion.span>
-      </motion.button>
+        <span className="text-white text-base">{icon}</span>
+      </button>
 
       <AnimatePresence>
         {isOpen && (
@@ -162,17 +147,10 @@ const AccordionItem: React.FC<AccordionItemProps & { color?: string }> = ({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <motion.div
-              className="mt-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
-              initial={{ y: -10 }}
-              animate={{ y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              {children}
-            </motion.div>
+            <div className="mt-1 bg-white/5 rounded-lg">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -180,13 +158,65 @@ const AccordionItem: React.FC<AccordionItemProps & { color?: string }> = ({
   );
 };
 
-const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
+interface ExtendedFormProps extends FormProps {
+  shouldStartTour?: boolean;
+}
+
+const Form: React.FC<ExtendedFormProps> = ({
+  setSelectedMenu,
+  shouldStartTour = false,
+}) => {
+  const { startTour, TourOverlay } = useTourGuide();
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [shouldStartSidebarTour, setShouldStartSidebarTour] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    if (shouldStartTour && !sessionStorage.getItem("sidebarTourCompleted")) {
+      setIsOpen(true);
+      setShouldStartSidebarTour(true);
+    }
+  }, [shouldStartTour]);
+
+  useEffect(() => {
+    if (shouldStartSidebarTour && isOpen) {
+      const timer = setTimeout(() => {
+        const isMobile = window.innerWidth < 768;
+        const sidebarSteps = [
+          ...dashboardMenuItems.map((item) => ({
+            element: `#menu-item-${item.id}`,
+            popover: {
+              title: item.title,
+              description: `بخش ${item.title} - برای دسترسی به زیرمنوها کلیک کنید.`,
+              side: isMobile ? "bottom" : "left",
+              align: "start",
+            },
+          })),
+          {
+            element: ".logout-btn",
+            popover: {
+              title: "خروج از سیستم",
+              description:
+                "برای خروج از حساب کاربری خود از این دکمه استفاده کنید.",
+              side: isMobile ? "bottom" : "left",
+              align: "start",
+            },
+          },
+        ];
+
+        startTour(sidebarSteps, () => {
+          sessionStorage.setItem("sidebarTourCompleted", "true");
+          setShouldStartSidebarTour(false);
+          setIsOpen(false);
+        });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldStartSidebarTour, isOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -206,25 +236,23 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
     setSelectedMenu: (menu: string) => void
   ) => {
     return (
-      <div className="p-2">
+      <div className="p-1">
         {item.subMenuItems?.map((subItem, index) => (
           <motion.div
             dir="rtl"
             key={index}
-            className=" transition-all duration-300 ease-in-out border-b border-white/10 p-3 cursor-pointer hover:bg-white/30 text-black/70 m-1 rounded-lg flex flex-row-reverse items-center justify-between group"
+            className="cursor-pointer hover:bg-white/20 text-white/90 py-2 px-3 rounded-md flex flex-row-reverse items-center justify-between group transition-colors"
             onClick={() => {
               setSelectedMenu(subItem.value);
-              setIsOpen(false); // Close menu on mobile after selection
+              setIsOpen(false);
             }}
-            whileHover={{ x: -5 }}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
+            whileHover={{ x: -3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: index * 0.05 }}
           >
-            <span className="text-sm group-hover:scale-110 transition-transform duration-200">
-              {subItem.icon}
-            </span>
-            <span className="font-medium">{subItem.title}</span>
+            <span className="text-xs">{subItem.icon}</span>
+            <span className="text-xs font-medium">{subItem.title}</span>
           </motion.div>
         ))}
       </div>
@@ -233,140 +261,94 @@ const Form: React.FC<FormProps> = ({ setSelectedMenu }) => {
 
   return (
     <>
-      {/* Enhanced Menu Toggle Button */}
+      <TourOverlay />
+      {/* Menu Toggle Button */}
       <motion.button
         onClick={toggleMenu}
-        className={`absolute top-6 right-6 z-[50] p-4 rounded-full shadow-lg transition-all duration-300 ${
+        className={`menu-toggle-btn fixed top-4 right-4 z-[50] p-3 rounded-xl shadow-lg transition-all duration-200 ${
           isOpen
             ? "bg-red-500 hover:bg-red-600"
             : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
         }`}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
         <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
+          animate={{ rotate: isOpen ? 90 : 0 }}
+          transition={{ duration: 0.2 }}
         >
           {isOpen ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={2}
+              strokeWidth={2.5}
               stroke="currentColor"
-              className="w-6 h-6 text-white"
+              className="w-5 h-5 text-white"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           ) : (
-            <FaBars className="text-white" />
+            <FaBars className="text-white w-5 h-5" />
           )}
         </motion.div>
       </motion.button>
 
+      {/* Sidebar with Overlay */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Enhanced Overlay with improved blur */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={toggleMenu}
-              className="fixed inset-0 bg-black/40 backdrop-blur-md z-40"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
             />
 
-            {/* Enhanced Sliding Menu Panel with modern glass morphism */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               dir="rtl"
-              className="w-80 bg-white/10 backdrop-blur-xl border-l border-white/20 fixed top-0 right-0 h-full flex flex-col overflow-hidden z-50 shadow-2xl before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-white/10 before:to-transparent before:backdrop-blur-3xl"
+              className="w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 border-l border-white/10 fixed top-0 right-0 h-full flex flex-col overflow-hidden z-50 shadow-2xl"
             >
-              {/* Header Section with glass effect */}
-              <motion.div
-                className="relative p-6 border-b border-white/20 bg-gradient-to-r from-white/15 to-white/5 backdrop-blur-sm"
-                initial={{ y: -50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                dir="rtl"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-600/10 rounded-t-lg" />
-                <h2 className="relative text-2xl font-bold text-white text-center drop-shadow-lg">
-                  پنل مدیریت
-                </h2>
-              </motion.div>
-
-              {/* Menu Items with improved scrolling */}
-              <div className="flex-1 overflow-y-auto p-4 scrollbar-hide relative">
-                {/* Subtle gradient overlay for depth */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent pointer-events-none" />
-
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  dir="rtl"
-                  className="relative z-10"
-                >
-                  {dashboardMenuItems.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, x: 50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * index }}
-                      dir="rtl"
-                    >
-                      <AccordionItem
-                        title={item.title}
-                        icon={item.icon}
-                        color={item.color}
-                        isOpen={activeSection === item.id}
-                        onToggle={() =>
-                          setActiveSection(
-                            activeSection === item.id ? null : item.id
-                          )
-                        }
-                      >
-                        {renderAccordionContent(item, setSelectedMenu)}
-                      </AccordionItem>
-                    </motion.div>
-                  ))}
-                </motion.div>
+              <div className="p-4 border-b border-white/10">
+                <h2 className="text-lg font-bold text-white text-center">پنل مدیریت</h2>
               </div>
 
-              {/* Footer Section with enhanced glass effect */}
-              <motion.div
-                className="relative p-4 border-t border-white/20 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm"
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5" />
+              <div className="flex-1 overflow-y-auto p-3 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+                {dashboardMenuItems.map((item) => (
+                  <div key={item.id} id={`menu-item-${item.id}`}>
+                    <AccordionItem
+                      title={item.title}
+                      icon={item.icon}
+                      color={item.color}
+                      isOpen={activeSection === item.id}
+                      onToggle={() => setActiveSection(activeSection === item.id ? null : item.id)}
+                    >
+                      {renderAccordionContent(item, setSelectedMenu)}
+                    </AccordionItem>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-3 border-t border-white/10">
                 <motion.button
                   onClick={handleLogout}
-                  className="relative w-full py-3 px-4 text-red-600 border border-red-500 hover:bg-red-600 hover:text-white hover:border-red-300/70 backdrop-blur-sm rounded-xl flex items-center justify-center gap-3 transition-all duration-300 font-semibold group overflow-hidden"
+                  className="logout-btn w-full py-2.5 px-3 bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white rounded-lg flex items-center justify-center gap-2 transition-all duration-200 text-sm font-medium"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/10 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <FaSignOutAlt className="relative z-10" />
-                  <span className="relative z-10">خروج از سیستم</span>
+                  <FaSignOutAlt />
+                  <span>خروج از سیستم</span>
                 </motion.button>
-              </motion.div>
+              </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
-
-
     </>
   );
 };

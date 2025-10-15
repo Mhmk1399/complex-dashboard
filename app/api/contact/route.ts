@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       const contacts = await contact.find({ storeId: storeId }).sort({ createdAt: -1 });
       return NextResponse.json(contacts);
   } catch (error) {
-      console.error("Contact fetch error:", error);
+      console.log("Contact fetch error:", error);
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -63,7 +63,7 @@ export async function DELETE(request: Request) {
 
       return NextResponse.json({ message: "Contact deleted successfully" });
   } catch (error) {
-      console.error("Contact delete error:", error);
+      console.log("Contact delete error:", error);
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -39,7 +39,7 @@ export async function DELETE(
 
         return NextResponse.json({ message: "Contact deleted successfully" });
     } catch (error) {
-        console.error("Contact delete error:", error);
+        console.log("Contact delete error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

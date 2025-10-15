@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { TrashIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { CreateCollectionModal } from "./createCollectionModal";
-import { toast, ToastContainer } from "react-toastify";
 import { EditCollectionModal } from "./editCollectionModal";
 import DeleteModal from "./DeleteModal";
-import "react-toastify/dist/ReactToastify.css";
 import { Collection, ProductCollection } from "@/types/type";
+import toast from "react-hot-toast";
 
 export const Collections = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -18,7 +17,7 @@ export const Collections = () => {
   const [collectionIdToDelete, setCollectionIdToDelete] = useState<
     string | null
   >(null);
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
@@ -27,7 +26,7 @@ export const Collections = () => {
     totalPages: 0,
     currentPage: 1,
     hasNext: false,
-    hasPrev: false
+    hasPrev: false,
   });
 
   const openDeleteModal = (collectionId: string) => {
@@ -64,7 +63,7 @@ export const Collections = () => {
         toast.success("کالکشن با موفقیت ایجاد شد");
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error("خطا در ایجاد کالکشن");
     }
   };
@@ -73,7 +72,7 @@ export const Collections = () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: itemsPerPage.toString()
+        limit: itemsPerPage.toString(),
       });
 
       const response = await fetch(`/api/collections?${params}`, {
@@ -93,7 +92,6 @@ export const Collections = () => {
     }
   };
 
-  // Fetch collections on component mount and page change
   useEffect(() => {
     fetchCollections();
   }, [currentPage]);
@@ -122,7 +120,10 @@ export const Collections = () => {
 
   // Pagination logic
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, pagination.totalCollections);
+  const indexOfLastItem = Math.min(
+    currentPage * itemsPerPage,
+    pagination.totalCollections
+  );
 
   if (isLoading) {
     return (
@@ -135,24 +136,24 @@ export const Collections = () => {
   // Empty collections section
   if (!collections || collections.length === 0) {
     return (
-      <div className="min-h-screen py-4 md:py-8" dir="rtl">
-        <div className="max-w-7xl mx-auto px-2 md:px-4">
-          <div className="bg-white rounded-2xl p-4 md:p-8">
+      <div className="min-h-screen py-6 sm:py-8  " dir="rtl">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4">
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sm:p-8">
             {/* Header */}
             <div className="mb-8 text-center">
-              <h2 className="text-3xl font-bold  text-black">
-                مدیریت کالکشنها
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
+                مدیریت کالکشن ها
               </h2>
-              <p className="text-gray-500 mt-2">
-                کالکشنهای محصولات خود را مدیریت کنید
+              <p className="text-slate-500 text-sm mt-2">
+                کالکشن های محصولات خود را مدیریت کنید
               </p>
             </div>
 
             {/* Empty State */}
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="mb-8">
+            <div className="flex flex-col items-center justify-center py-12 sm:py-16">
+              <div className="mb-6">
                 <svg
-                  className="mx-auto h-32 w-32 text-gray-300"
+                  className="mx-auto h-24 w-24 sm:h-32 sm:w-32 text-slate-300"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -165,18 +166,18 @@ export const Collections = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-600 mb-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-700 mb-3">
                 هیچ کالکشنی یافت نشد
               </h3>
-              <p className="text-gray-500 mb-8 max-w-md text-center">
-                شما هنوز هیچ کالکشنی ایجاد نکردهاید. کالکشنها به شما کمک
-                میکنند محصولات مرتبط را گروهبندی کنید.
+              <p className="text-slate-500 text-sm mb-6 max-w-md text-center px-4">
+                شما هنوز هیچ کالکشنی ایجاد نکردهاید. کالکشن ها به شما کمک میکنند
+                محصولات مرتبط را گروهبندی کنید.
               </p>
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="bg-gradient-to-r from-[#0077b6] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg"
+                className="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center gap-2 shadow-sm hover:shadow-md"
               >
-                <PlusIcon className="h-6 w-6" />
+                <PlusIcon className="h-5 w-5" />
                 ایجاد اولین کالکشن
               </button>
             </div>
@@ -201,50 +202,53 @@ export const Collections = () => {
   };
 
   return (
-    <div className="px-2 md:px-4 py-4 md:py-8 min-h-screen mt-12" dir="rtl">
-      <div className="max-w-7xl mx-auto">
+    <div
+      className="px-3 sm:px-4 py-4 sm:py-6 min-h-screen mt-12 sm:mt-16  "
+      dir="rtl"
+    >
+      <div className="max-w-6xl mx-auto">
         {/* Header Section */}
-        <div className="bg-white rounded-2xl shadow-xl mb-4 md:mb-6 p-3 md:p-6">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-4 p-3 sm:p-4">
+          <div className="flex flex-row justify-between sm:items-center gap-3">
             <div>
-              <h2 className="text-lg md:text-3xl font-bold text-black">
-                مدیریت کالکشنها
+              <h2 className="text-lg sm:text-2xl font-bold text-slate-800">
+                مدیریت کالکشن ها
               </h2>
-              <p className="text-gray-500 hidden md:block text-base mt-2">
-                کالکشنهای محصولات خود را مدیریت کنید
+              <p className="text-slate-500 hidden md:block text-xs sm:text-sm mt-0.5">
+                کالکشن های محصولات خود را مدیریت کنید
               </p>
             </div>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-gradient-to-r from-[#0077b6] text-xs md:text-lg to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 md:py-3 px-3 md:px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg w-fit"
+              className="bg-[#0077b6] hover:bg-blue-700 text-white font-semibold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg transition-all flex items-center gap-2 shadow-sm text-xs md:text-sm w-fit"
             >
-              <PlusIcon className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="whitespace-nowrap">ایجاد کالکشن</span>
+              <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span>ایجاد کالکشن</span>
             </button>
           </div>
         </div>
 
         {/* Collections Table */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
           {/* Table Header with Stats */}
-          <div className="bg-gradient-to-r from-[#0077b6] to-blue-600 p-3 md:p-6">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center text-white gap-3">
+          <div className="bg-slate-800 p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-white gap-2">
               <div>
-                <h3 className="text-base md:text-xl font-bold">لیست کالکشنها</h3>
-                <p className="text-blue-100 text-xs md:text-sm mt-1">
+                <h3 className="text-sm sm:text-base font-semibold">
+                  لیست کالکشن ها
+                </h3>
+                <p className="text-slate-300 text-xs mt-0.5">
                   {pagination.totalCollections} کالکشن
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-2 md:px-3 py-1 md:py-2">
-                  <span className="text-xs md:text-sm">کل محصولات: </span>
-                  <span className="font-bold">
-                    {collections.reduce(
-                      (total, collection) => total + collection.products.length,
-                      0
-                    )}
-                  </span>
-                </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm w-fit">
+                <span className="text-slate-300">کل محصولات: </span>
+                <span className="font-semibold">
+                  {collections.reduce(
+                    (total, collection) => total + collection.products.length,
+                    0
+                  )}
+                </span>
               </div>
             </div>
           </div>
@@ -252,78 +256,69 @@ export const Collections = () => {
           {/* Table Content */}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-blue-50 border-b-2 border-[#0077b6]">
+              <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     نام کالکشن
                   </th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     تعداد محصولات
                   </th>
-                  <th className="hidden md:table-cell px-6 py-4 text-center text-sm font-bold text-[#0077b6] uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     تاریخ ایجاد
                   </th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-bold text-[#0077b6] uppercase tracking-wider">
-                    عملیاتها
+                  <th className="px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    عملیات
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-200">
                 {collections.map((collection, index) => (
                   <tr
                     key={collection._id}
-                    className={`hover:bg-blue-50 transition-all duration-200 ${
-                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    className={`hover:bg-slate-50 transition-colors ${
+                      index % 2 === 0 ? "bg-white" : "bg-slate-50/50"
                     }`}
                   >
-                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                      <div className="flex items-center justify-center">
-                        <div className="flex items-center gap-2 md:gap-3">
-                          <div className="h-8 w-8 md:h-10 md:w-10 bg-gradient-to-br from-[#0077b6] to-blue-400 rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold text-xs md:text-sm">
-                              {collection.name.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="text-xs md:text-sm font-medium text-gray-900">
-                              {collection.name}
-                            </div>
-                          </div>
+                    <td className="px-3 sm:px-4 py-3">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="text-xs sm:text-sm font-medium text-slate-800 truncate max-w-[120px] sm:max-w-none">
+                          {collection.name}
                         </div>
                       </div>
                     </td>
 
-                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
+                    <td className="px-3 sm:px-4 py-3">
                       <div className="flex items-center justify-center">
-                        <span className="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-blue-100 text-blue-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
                           {collection.products.length}
                         </span>
                       </div>
                     </td>
 
-                    <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 text-center">
+                    <td className="hidden md:table-cell px-4 py-3">
+                      <div className="text-xs text-slate-600 text-center">
                         {new Date(collection.createdAt).toLocaleDateString(
                           "fa-IR"
                         )}
                       </div>
                     </td>
 
-                    <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                      <div className="flex gap-1 md:gap-2 justify-center">
+                    <td className="px-3 sm:px-4 py-3">
+                      <div className="flex gap-1 sm:gap-2 justify-center">
                         <button
                           title="ویرایش"
                           onClick={() => handleEdit(collection)}
-                          className="inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition-colors duration-200"
+                          className="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
                         >
-                          <PencilIcon className="h-3 w-3 md:h-4 md:w-4" />
+                          <PencilIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                         <button
                           title="حذف"
                           onClick={() => openDeleteModal(collection._id)}
-                          className="inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
+                          className="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
                         >
-                          <TrashIcon className="h-3 w-3 md:h-4 md:w-4" />
+                          <TrashIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                       </div>
                     </td>
@@ -335,35 +330,57 @@ export const Collections = () => {
 
           {/* Pagination */}
           {pagination.totalPages > 1 && (
-            <div className="px-3 md:px-6 py-3 md:py-4 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div className="text-xs md:text-sm text-gray-700">
-                نمایش {indexOfFirstItem} تا {indexOfLastItem} از {pagination.totalCollections} کالکشن
+            <div className="px-3 sm:px-4 py-3 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="text-xs sm:text-sm text-slate-600 text-center sm:text-right">
+                نمایش {indexOfFirstItem} تا {indexOfLastItem} از{" "}
+                {pagination.totalCollections} کالکشن
               </div>
-              <div className="flex gap-1 md:gap-2 justify-center md:justify-end">
+              <div className="flex gap-1 justify-center sm:justify-end overflow-x-auto">
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
-                  className="px-2 md:px-3 py-1 border rounded text-xs md:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm border border-slate-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-colors bg-white"
                 >
                   قبلی
                 </button>
-                {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-2 md:px-3 py-1 border rounded text-xs md:text-sm ${
-                      currentPage === page
-                        ? 'bg-[#0077b6] text-white'
-                        : 'hover:bg-gray-50'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from(
+                  { length: Math.min(pagination.totalPages, 5) },
+                  (_, i) => {
+                    let page;
+                    if (pagination.totalPages <= 5) {
+                      page = i + 1;
+                    } else if (currentPage <= 3) {
+                      page = i + 1;
+                    } else if (currentPage >= pagination.totalPages - 2) {
+                      page = pagination.totalPages - 4 + i;
+                    } else {
+                      page = currentPage - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm border rounded-md transition-colors ${
+                          currentPage === page
+                            ? "bg-[#0077b6] text-white border-[#0077b6]"
+                            : "border-slate-200 hover:bg-slate-100 bg-white"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  }
+                )}
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(prev + 1, pagination.totalPages)
+                    )
+                  }
                   disabled={currentPage === pagination.totalPages}
-                  className="px-2 md:px-3 py-1 border rounded text-xs md:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm border border-slate-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 transition-colors bg-white"
                 >
                   بعدی
                 </button>
@@ -396,8 +413,6 @@ export const Collections = () => {
         onClose={closeDeleteModal}
         onConfirm={confirmDelete}
       />
-
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

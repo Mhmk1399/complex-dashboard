@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         await newCollection.save();
         return NextResponse.json({ message: "Collection created successfully", collection: newCollection }, { status: 201 });
     } catch (error) {
-        console.error("Error creating collection:", error);
+        console.log("Error creating collection:", error);
         return NextResponse.json({ message: "Error creating collection" }, { status: 500 });
     }
 }

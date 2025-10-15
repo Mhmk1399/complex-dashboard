@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     const enamads = await Enamad.find({ storeId: storeId });
     return NextResponse.json(enamads);
   } catch (error) {
-    console.error("Error fetching enamads:", error);
+    console.log("Error fetching enamads:", error);
     return NextResponse.json({ error: "Failed to fetch enamads" });
   }
 }
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     await enamad.save();
     return NextResponse.json(enamad);
   } catch (error) {
-    console.error("Error creating enamad:", error);
+    console.log("Error creating enamad:", error);
     return NextResponse.json({ error: "Failed to create enamad" });
   }
 }
@@ -95,7 +95,7 @@ export async function DELETE(req: NextRequest) {
     }
     return NextResponse.json(enamad);
   } catch (error) {
-    console.error("Error deleting enamad:", error);
+    console.log("Error deleting enamad:", error);
     return NextResponse.json({ error: "Failed to delete enamad" });
   }
 }

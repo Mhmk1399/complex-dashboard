@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import EditGiftCard from "./editGiftCard";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -11,6 +9,7 @@ import {
   HiOutlineViewGrid,
 } from "react-icons/hi";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
 
 interface GiftCard {
   _id: string;
@@ -138,7 +137,9 @@ const AddGiftCard = () => {
                   <input
                     type="text"
                     value={giftCardData.code}
-                    onChange={(e) => setGiftCardData({ ...giftCardData, code: e.target.value })}
+                    onChange={(e) =>
+                      setGiftCardData({ ...giftCardData, code: e.target.value })
+                    }
                     className="flex-1 p-4 rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-200 focus:border-transparent transition-all duration-300 outline-none"
                     placeholder="کد کارت هدیه را وارد کنید..."
                     required
@@ -164,7 +165,9 @@ const AddGiftCard = () => {
                 </label>
                 <select
                   value={giftCardData.type}
-                  onChange={(e) => setGiftCardData({ ...giftCardData, type: e.target.value })}
+                  onChange={(e) =>
+                    setGiftCardData({ ...giftCardData, type: e.target.value })
+                  }
                   className="w-full p-4 rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-200 focus:border-transparent transition-all duration-300 outline-none"
                 >
                   <option value="fixed">مبلغ ثابت</option>
@@ -179,14 +182,25 @@ const AddGiftCard = () => {
               >
                 <label className="text-[#0077b6] font-bold flex items-center gap-2">
                   <HiOutlineCurrencyDollar className="text-xl" />
-                  {giftCardData.type === "fixed" ? "مبلغ (تومان)" : "درصد تخفیف"}
+                  {giftCardData.type === "fixed"
+                    ? "مبلغ (تومان)"
+                    : "درصد تخفیف"}
                 </label>
                 <input
                   type="number"
                   value={giftCardData.amount}
-                  onChange={(e) => setGiftCardData({ ...giftCardData, amount: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setGiftCardData({
+                      ...giftCardData,
+                      amount: Number(e.target.value),
+                    })
+                  }
                   className="w-full p-4 rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-200 focus:border-transparent transition-all duration-300 outline-none"
-                  placeholder={giftCardData.type === "fixed" ? "مبلغ را وارد کنید..." : "درصد تخفیف را وارد کنید..."}
+                  placeholder={
+                    giftCardData.type === "fixed"
+                      ? "مبلغ را وارد کنید..."
+                      : "درصد تخفیف را وارد کنید..."
+                  }
                   min="1"
                   max={giftCardData.type === "percentage" ? "100" : undefined}
                   required
@@ -222,7 +236,7 @@ const AddGiftCard = () => {
                 <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
                   <span className="text-sm">فعال: </span>
                   <span className="font-bold">
-                    {existingGiftCards.filter(card => !card.used).length}
+                    {existingGiftCards.filter((card) => !card.used).length}
                   </span>
                 </div>
               </div>
@@ -248,10 +262,9 @@ const AddGiftCard = () => {
                             {giftCard.code}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {giftCard.type === "fixed" 
+                            {giftCard.type === "fixed"
                               ? `${giftCard.amount.toLocaleString()} تومان`
-                              : `${giftCard.amount}% تخفیف`
-                            }
+                              : `${giftCard.amount}% تخفیف`}
                           </div>
                         </div>
                       </div>
@@ -309,7 +322,7 @@ const AddGiftCard = () => {
                   کارت‌های فعال
                 </p>
                 <p className="text-2xl font-bold text-green-600">
-                  {existingGiftCards.filter(card => !card.used).length}
+                  {existingGiftCards.filter((card) => !card.used).length}
                 </p>
               </div>
               <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -321,11 +334,9 @@ const AddGiftCard = () => {
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  استفاده شده
-                </p>
+                <p className="text-sm font-medium text-gray-600">استفاده شده</p>
                 <p className="text-2xl font-bold text-red-600">
-                  {existingGiftCards.filter(card => card.used).length}
+                  {existingGiftCards.filter((card) => card.used).length}
                 </p>
               </div>
               <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -390,8 +401,6 @@ const AddGiftCard = () => {
           </>
         )}
       </AnimatePresence>
-
-      <ToastContainer rtl={true} position="top-center" />
     </div>
   );
 };

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       action: user ? 'login' : 'signup'
     });
   } catch (error) {
-    console.error('Check phone error:', error);
+    console.log('Check phone error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

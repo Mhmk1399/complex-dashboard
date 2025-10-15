@@ -273,7 +273,7 @@ export const Orders = () => {
         fetchOrders();
       }
     } catch (error) {
-      console.error("Error updating order:", error);
+      console.log("Error updating order:", error);
     }
   };
 

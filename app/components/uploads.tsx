@@ -1,9 +1,15 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "react-toastify";
-import { FiUploadCloud, FiCheckCircle, FiAlertTriangle, FiImage, FiX } from "react-icons/fi";
+import {
+  FiUploadCloud,
+  FiCheckCircle,
+  FiAlertTriangle,
+  FiImage,
+  FiX,
+} from "react-icons/fi";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 interface UploadResult {
   success: boolean;
@@ -17,9 +23,7 @@ export default function UploadPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [showImageTips, setShowImageTips] = useState(false);
-  const [, setUploadStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
+  const [, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
   const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
   const [uploadProgress, setUploadProgress] = useState<string>("");
 
@@ -28,18 +32,12 @@ export default function UploadPage() {
     const maxSize = 10 * 1024 * 1024; // 10MB in bytes
 
     if (!validTypes.includes(file.type)) {
-      toast.error(`${file.name} باید فرمت JPEG، PNG، GIF یا WEBP باشد`, {
-        position: "top-right",
-        theme: "light",
-      });
+      toast.error(`${file.name} باید فرمت JPEG، PNG، GIF یا WEBP باشد`);
       return false;
     }
 
     if (file.size > maxSize) {
-      toast.error(`${file.name} باید کمتر از 10 مگابایت باشد`, {
-        position: "top-right",
-        theme: "light",
-      });
+      toast.error(`${file.name} باید کمتر از 10 مگابایت باشد`);
       return false;
     }
 
@@ -81,7 +79,7 @@ export default function UploadPage() {
             url: data.url,
             message: data.message,
             displayName,
-            fileId
+            fileId,
           });
         } else {
           results.push({
@@ -89,7 +87,7 @@ export default function UploadPage() {
             url: "",
             message: data.error || "Upload failed",
             displayName,
-            fileId
+            fileId,
           });
         }
       } catch {
@@ -98,14 +96,14 @@ export default function UploadPage() {
           url: "",
           message: "خطا در آپلود فایل",
           displayName,
-          fileId
+          fileId,
         });
       }
     }
 
     setUploadResults(results);
-    const successCount = results.filter(r => r.success).length;
-    
+    const successCount = results.filter((r) => r.success).length;
+
     if (successCount === files.length) {
       setUploadStatus("success");
       toast.success(`همه ${files.length} فایل با موفقیت آپلود شدند`);
@@ -147,7 +145,9 @@ export default function UploadPage() {
             <FiUploadCloud className="text-3xl text-white" />
           </motion.div>
           <div className="flex items-center flex-row-reverse justify-center gap-3 relative">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">آپلود تصاویر</h2>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+              آپلود تصاویر
+            </h2>
             <div className="relative">
               <motion.div
                 whileHover={{ scale: 1.1 }}
@@ -218,7 +218,9 @@ export default function UploadPage() {
                     <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center">
                       <FiCheckCircle className="text-2xl text-emerald-600" />
                     </div>
-                    <div className="text-lg font-semibold">{files.length} فایل انتخاب شده</div>
+                    <div className="text-lg font-semibold">
+                      {files.length} فایل انتخاب شده
+                    </div>
                   </>
                 ) : (
                   <>
@@ -226,7 +228,9 @@ export default function UploadPage() {
                       <FiImage className="text-2xl text-gray-500 group-hover:text-blue-500 transition-colors" />
                     </div>
                     <div className="text-lg font-semibold">انتخاب تصاویر</div>
-                    <div className="text-sm text-gray-500">یا فایل‌ها را اینجا بکشید</div>
+                    <div className="text-sm text-gray-500">
+                      یا فایل‌ها را اینجا بکشید
+                    </div>
                   </>
                 )}
               </div>
@@ -242,7 +246,9 @@ export default function UploadPage() {
                 className="space-y-3 bg-gray-50 rounded-2xl p-4"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">فایل‌های انتخاب شده</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    فایل‌های انتخاب شده
+                  </span>
                   <button
                     type="button"
                     onClick={() => setFiles([])}
@@ -263,7 +269,9 @@ export default function UploadPage() {
                       <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                         <FiImage className="w-4 h-4 text-blue-600" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700">تصویر {index + 1}</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        تصویر {index + 1}
+                      </span>
                     </div>
                     <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
@@ -283,7 +291,9 @@ export default function UploadPage() {
                 className="text-center"
               >
                 <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
-                  <div className="text-sm font-medium text-blue-700 mb-2">{uploadProgress}</div>
+                  <div className="text-sm font-medium text-blue-700 mb-2">
+                    {uploadProgress}
+                  </div>
                   <div className="w-full bg-blue-200 rounded-full h-2">
                     <motion.div
                       className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full"
@@ -298,7 +308,9 @@ export default function UploadPage() {
           </AnimatePresence>
 
           <motion.button
-            whileHover={files.length > 0 && !loading ? { scale: 1.02, y: -2 } : {}}
+            whileHover={
+              files.length > 0 && !loading ? { scale: 1.02, y: -2 } : {}
+            }
             whileTap={files.length > 0 && !loading ? { scale: 0.98 } : {}}
             type="submit"
             disabled={files.length === 0 || loading}
@@ -355,9 +367,11 @@ export default function UploadPage() {
                     <div className="p-5">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                            result.success ? "bg-emerald-100" : "bg-red-100"
-                          }`}>
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                              result.success ? "bg-emerald-100" : "bg-red-100"
+                            }`}
+                          >
                             {result.success ? (
                               <FiCheckCircle className="text-emerald-600 text-lg" />
                             ) : (

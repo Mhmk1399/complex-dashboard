@@ -1,14 +1,12 @@
 "use client";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Tooltip } from "react-tooltip"; // Add this import
+import { Tooltip } from "react-tooltip";
 import ImageSelectorModal from "./ImageSelectorModal";
 import { ProductSettings, ImageFile } from "@/types/type";
 import { AIDescriptionGenerator } from "./AIDescriptionGenerator";
 import UploadPage from "./uploads";
-
+import toast from "react-hot-toast";
 
 interface StartComponentProps {
   setSelectedMenu: (menu: string) => void;
@@ -58,30 +56,32 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <label className="block mb-2 font-medium text-gray-700">نام دسته بندی</label>
+        <label className="block mb-2 text-sm font-medium text-slate-700">
+          نام دسته بندی
+        </label>
         <input
           type="text"
           value={categoryName}
           onChange={(e) => setCategoryName(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all"
+          className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           placeholder="نام دسته بندی را وارد کنید"
           required
         />
       </div>
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-2 pt-2">
         <button
           type="button"
           onClick={onClose}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex-1 px-4 py-2.5 text-sm border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors"
         >
           انصراف
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 px-4 py-2 bg-[#0077b6] hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-xl font-medium transition-colors"
+          className="flex-1 px-4 py-2.5 text-sm bg-[#0077b6] hover:bg-blue-700 disabled:bg-slate-300 text-white rounded-lg font-medium transition-colors"
         >
           {loading ? "در حال ذخیره..." : "ذخیره"}
         </button>
@@ -90,7 +90,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onClose, onSuccess }) => {
   );
 };
 
-export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
+export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
   const [categories, setCategories] = useState<
     Array<{ _id: string; name: string }>
   >([]);
@@ -123,14 +123,17 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
   });
 
   const handleImageSelect = (image: ImageFile) => {
-    console.log('Selected image:', image);
+    console.log("Selected image:", image);
     setSettings((prev) => {
       if (prev.blocks.images.length >= 6) return prev;
-      const newImages = [...prev.blocks.images, { 
-        imageSrc: image.fileUrl, 
-        imageAlt: image.fileName || "Product image" 
-      }];
-      console.log('New images array:', newImages);
+      const newImages = [
+        ...prev.blocks.images,
+        {
+          imageSrc: image.fileUrl,
+          imageAlt: image.fileName || "Product image",
+        },
+      ];
+      console.log("New images array:", newImages);
       return {
         ...prev,
         blocks: {
@@ -170,6 +173,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
   const [newProperty, setNewProperty] = useState({ name: "", value: "" });
   const [newColor, setNewColor] = useState({ code: "#000", quantity: "" });
   const [showPropertiesModal, setShowPropertiesModal] = useState(false);
@@ -178,11 +182,9 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    // Color validation
     if (settings.blocks.colors.length === 0) {
       newErrors.colors = "حداقل یک رنگ باید اضافه شود";
     }
-    // Properties validation
     if (settings.blocks.properties.length === 0) {
       newErrors.properties = "حداقل یک ویژگی باید اضافه شود";
     }
@@ -232,8 +234,6 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
     }
   };
 
-
-  // add property
   const addProperty = () => {
     const propertyErrors: { [key: string]: string } = {};
 
@@ -245,7 +245,6 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
       propertyErrors.propertyValue = "مقدار ویژگی الزامی است";
     }
 
-    // Check if property already exists
     const propertyExists = settings.blocks.properties.some(
       (prop) => prop.name.toLowerCase() === newProperty.name.toLowerCase()
     );
@@ -271,7 +270,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
     clearError("propertyName");
     clearError("propertyValue");
   };
-  //  Add Color
+
   const addColor = () => {
     const colorErrors: { [key: string]: string } = {};
 
@@ -283,7 +282,6 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
       colorErrors.colorQuantity = "تعداد باید بیشتر از صفر باشد";
     }
 
-    // Check if color already exists
     const colorExists = settings.blocks.colors.some(
       (color) => color.code === newColor.code
     );
@@ -309,7 +307,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
     clearError("colorCode");
     clearError("colorQuantity");
   };
-  // This function removes a color from the list of colors
+
   const removeColor = (index: number) => {
     setSettings((prev) => ({
       ...prev,
@@ -320,7 +318,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
     }));
     toast.success("رنگ حذف شد");
   };
-  // This function removes a property from the list of properties
+
   const removeProperty = (index: number) => {
     setSettings((prev) => ({
       ...prev,
@@ -331,126 +329,142 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
     }));
     toast.success("ویژگی حذف شد");
   };
-  // This modal displays the list of added properties
+
   const PropertiesModal = () => (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center mt-5 z-50"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 z-50"
       dir="rtl"
     >
-      <div className="bg-white/50 backdrop-blur-sm border border-[#0077b6] p-6 rounded-xl w-96 max-h-[80vh] overflow-y-auto">
-        <h3 className="text-xl font-bold text-white border-b pb-2 text-center mb-4">
-          ویژگیهای اضافه شده
-        </h3>
-        {settings.blocks.properties.length === 0 ? (
-          <div className="text-center text-red-500 py-4">
-            هیچ ویژگی اضافه نشده است
-          </div>
-        ) : (
-          settings.blocks.properties.map((prop, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center mb-2 p-3 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors"
-            >
-              <div className="flex items-center gap-3 flex-1">
-                <div className="flex flex-col flex-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-gray-700">{prop.name}</span>
-                    <span className="text-base text-gray-400">↔</span>
-                    <span className="text-gray-600">{prop.value}</span>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => removeProperty(index)}
-                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-full transition-all duration-200 mr-2"
-                title="حذف ویژگی"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="20px"
-                  viewBox="0 -960 960 960"
-                  width="20px"
-                  fill="currentColor"
-                >
-                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                </svg>
-              </button>
+      <div className="bg-white rounded-lg w-full max-w-md max-h-[85vh] overflow-hidden flex flex-col shadow-xl">
+        <div className="sticky top-0 bg-slate-800 px-4 py-3 border-b border-slate-700">
+          <h3 className="text-lg font-semibold text-white text-center">
+            ویژگیهای اضافه شده
+          </h3>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4">
+          {settings.blocks.properties.length === 0 ? (
+            <div className="text-center text-slate-400 py-8 text-sm">
+              هیچ ویژگی اضافه نشده است
             </div>
-          ))
-        )}
-        <button
-          onClick={() => setShowPropertiesModal(false)}
-          className="mt-4 w-full bg-rose-600 hover:bg-rose-700 font-bold text-white py-2 rounded-xl transition-colors"
-        >
-          بستن
-        </button>
+          ) : (
+            <div className="space-y-2">
+              {settings.blocks.properties.map((prop, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-lg group transition-colors"
+                >
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="font-medium text-slate-800 text-sm truncate">
+                      {prop.name}
+                    </span>
+                    <span className="text-slate-400">:</span>
+                    <span className="text-slate-600 text-sm truncate">
+                      {prop.value}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => removeProperty(index)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-md transition-all flex-shrink-0"
+                    title="حذف ویژگی"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="18px"
+                      viewBox="0 -960 960 960"
+                      width="18px"
+                      fill="currentColor"
+                    >
+                      <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="sticky bottom-0 bg-white border-t border-slate-200 p-3">
+          <button
+            onClick={() => setShowPropertiesModal(false)}
+            className="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-lg font-medium transition-colors text-sm"
+          >
+            بستن
+          </button>
+        </div>
       </div>
     </div>
   );
-  // colors modal
+
   const ColorsModal = () => (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 z-50"
       dir="rtl"
     >
-      <div className="bg-white/50 backdrop-blur-sm border border-[#0077b6] p-6 rounded-xl w-96 max-h-[80vh] overflow-y-auto">
-        <h3 className="text-xl font-bold text-white border-b pb-2 text-center mb-4">
-          رنگهای اضافه شده
-        </h3>
-        {settings.blocks.colors.length === 0 ? (
-          <div className="text-center text-gray-300 py-4">
-            هیچ رنگی اضافه نشده است
-          </div>
-        ) : (
-          settings.blocks.colors.map((color, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center mb-2 p-3 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-8 h-8 rounded-full border-2 border-gray-300 shadow-sm"
-                  style={{ backgroundColor: color.code }}
-                />
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-gray-700">
-                    {color.code}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    تعداد: {color.quantity}
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={() => removeColor(index)}
-                className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-full transition-all duration-200"
-                title="حذف رنگ"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="20px"
-                  viewBox="0 -960 960 960"
-                  width="20px"
-                  fill="currentColor"
-                >
-                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                </svg>
-              </button>
+      <div className="bg-white rounded-lg w-full max-w-md max-h-[85vh] overflow-hidden flex flex-col shadow-xl">
+        <div className="sticky top-0 bg-slate-800 px-4 py-3 border-b border-slate-700">
+          <h3 className="text-lg font-semibold text-white text-center">
+            رنگهای اضافه شده
+          </h3>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4">
+          {settings.blocks.colors.length === 0 ? (
+            <div className="text-center text-slate-400 py-8 text-sm">
+              هیچ رنگی اضافه نشده است
             </div>
-          ))
-        )}
-        <button
-          onClick={() => setShowColorsModal(false)}
-          className="mt-4 w-full bg-rose-600 hover:bg-rose-700 font-bold text-white py-2 rounded-xl transition-colors"
-        >
-          بستن
-        </button>
+          ) : (
+            <div className="space-y-2">
+              {settings.blocks.colors.map((color, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-lg group transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-lg border-2 border-white shadow-sm ring-1 ring-slate-200"
+                      style={{ backgroundColor: color.code }}
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium text-slate-700">
+                        {color.code}
+                      </span>
+                      <span className="text-xs text-slate-500">
+                        تعداد: {color.quantity}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => removeColor(index)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-md transition-all flex-shrink-0"
+                    title="حذف رنگ"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="18px"
+                      viewBox="0 -960 960 960"
+                      width="18px"
+                      fill="currentColor"
+                    >
+                      <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="sticky bottom-0 bg-white border-t border-slate-200 p-3">
+          <button
+            onClick={() => setShowColorsModal(false)}
+            className="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-lg font-medium transition-colors text-sm"
+          >
+            بستن
+          </button>
+        </div>
       </div>
     </div>
   );
 
   const storeId = localStorage.getItem("storeId");
-  // save product function
+
   const handelSave = async () => {
     if (!validateForm()) {
       toast.error("لطفاً تمام فیلدهای الزامی را پر کنید");
@@ -462,7 +476,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
         video: settings.blocks.video,
         name: settings.blocks.name,
         description: settings.blocks.description,
-        category: settings.blocks.category._id, // This will now correctly send the category ID
+        category: settings.blocks.category._id,
         price: settings.blocks.price,
         status: settings.blocks.status,
         discount: settings.blocks.discount,
@@ -474,14 +488,13 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Add this line
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(productData),
       });
 
       if (response.ok) {
         toast.success("محصول با موفقیت ایجاد شد");
-        // Reset form after successful save
         setSettings({
           type: "productDetails",
           blocks: {
@@ -510,7 +523,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
       console.log(error);
     }
   };
-  // error clearing function
+
   const clearError = (field: string) => {
     if (errors[field]) {
       setErrors((prev) => {
@@ -522,232 +535,200 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br py-1 sm:py-2 mt-4  pt-16">
-      <div className="max-w-7xl mx-auto px-3 sm:px-2">
-        <div className="bg-white rounded-2xl p-1 sm:p-1" dir="rtl">
+    <div className="min-h-screen   py-4 sm:py-6 mt-12 sm:mt-16">
+      <div className="max-w-4xl mx-auto px-1 sm:px-4">
+        <div
+          className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6"
+          dir="rtl"
+        >
           {/* Header */}
-          <div className="mb-6 sm:mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center bg-gradient-to-r from-[#0077b6] to-blue-400 bg-clip-text text-transparent">
+          <div className="mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 text-center">
               تنظیمات محصول
             </h2>
-            <p className="text-gray-500 text-center border-b pb-4 mt-2 text-sm sm:text-base">
-              اطلاعات محصول خود را وارد کنید.
+            <p className="text-slate-500 text-center text-xs sm:text-sm mt-1.5 pb-4 border-b border-slate-200">
+              اطلاعات محصول خود را وارد کنید
             </p>
           </div>
 
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             {/* Images Section */}
-            <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-              <div>
-                <label className="block mb-4 text-[#0077b6] font-bold text-lg sm:text-xl">
-                  تصاویر محصول (حداکثر 6 تصویر) *
-                </label>
-                <div className="flex flex-col sm:flex-row gap-2 mb-4">
-                  <button
-                    onClick={() => {
-                      setIsImageSelectorOpen(true);
-                      clearError("images");
-                    }}
-                    disabled={settings.blocks.images.length >= 6}
-                    className={`flex-1 sm:flex-none px-4 py-3 rounded-xl font-medium transition-all ${
-                      settings.blocks.images.length >= 6
-                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                        : "bg-white text-[#0077b6] border-2 border-blue-200 hover:bg-blue-50"
-                    }`}
-                  >
-                    انتخاب تصویر ({settings.blocks.images.length}/6)
-                  </button>
-                  <button
-                    onClick={() => setIsUploadModalOpen(true)}
-                    className="flex-1 sm:flex-none bg-[#0077b6] hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-medium transition-all"
-                  >
-                    آپلود تصویر
-                  </button>
-                </div>
-                
-                {/* Display Selected Images */}
-                <div className="mb-4">
-                  <p className="text-sm text-gray-600 mb-3">تعداد تصاویر انتخاب شده: {settings.blocks.images.length}</p>
-                  {settings.blocks.images.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                      {settings.blocks.images.map((image, index) => {
-                        console.log('Rendering image:', image.imageSrc);
-                        return (
-                          <div key={index} className="relative group aspect-square">
-                            <img
-                              src={image.imageSrc}
-                              alt={`Product ${index + 1}`}
-                              className="w-full h-full object-cover rounded-lg border-2 border-blue-200 transition-transform group-hover:scale-105"
-                              onLoad={() => console.log('Image loaded successfully:', image.imageSrc)}
-                              onError={(e) => {
-                                console.log('Image failed to load:', image.imageSrc);
-                                e.currentTarget.style.backgroundColor = '#f3f4f6';
-                                e.currentTarget.style.display = 'flex';
-                                e.currentTarget.style.alignItems = 'center';
-                                e.currentTarget.style.justifyContent = 'center';
-                                e.currentTarget.innerHTML = 'خطا در بارگیری';
-                              }}
-                            />
-                            <button
-                              onClick={() => removeImage(index)}
-                              className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-all shadow-lg"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-                
-                {errors.images && (
-                  <p className="text-red-500 text-sm mt-2">{errors.images}</p>
-                )}
+            <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <label className="block mb-3 text-slate-800 font-semibold text-sm sm:text-base">
+                تصاویر محصول (حداکثر 6 تصویر) *
+              </label>
+              <div className="flex flex-col sm:flex-row gap-2 mb-3">
+                <button
+                  onClick={() => {
+                    setIsImageSelectorOpen(true);
+                    clearError("images");
+                  }}
+                  disabled={settings.blocks.images.length >= 6}
+                  className={`flex-1 px-3 py-2.5 text-sm rounded-lg font-medium transition-all ${
+                    settings.blocks.images.length >= 6
+                      ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                      : "bg-white text-[#0077b6] border border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  انتخاب تصویر ({settings.blocks.images.length}/6)
+                </button>
+                <button
+                  onClick={() => setIsUploadModalOpen(true)}
+                  className="flex-1 bg-[#0077b6] hover:bg-blue-700 text-white px-3 py-2.5 text-sm rounded-lg font-medium transition-all"
+                >
+                  آپلود تصویر
+                </button>
               </div>
+
+              {settings.blocks.images.length > 0 && (
+                <div>
+                  <p className="text-xs text-slate-500 mb-2">
+                    {settings.blocks.images.length} تصویر انتخاب شده
+                  </p>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                    {settings.blocks.images.map((image, index) => (
+                      <div key={index} className="relative group aspect-square">
+                        <img
+                          src={image.imageSrc}
+                          alt={`Product ${index + 1}`}
+                          className="w-full h-full object-cover rounded-md border border-slate-200 transition-transform group-hover:scale-105"
+                          onLoad={() =>
+                            console.log(
+                              "Image loaded successfully:",
+                              image.imageSrc
+                            )
+                          }
+                          onError={(e) => {
+                            console.log(
+                              "Image failed to load:",
+                              image.imageSrc
+                            );
+                            e.currentTarget.style.backgroundColor = "#f1f5f9";
+                          }}
+                        />
+                        <button
+                          onClick={() => removeImage(index)}
+                          className="absolute -top-1 -right-1 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow-md"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {errors.images && (
+                <p className="text-red-500 text-xs mt-2">{errors.images}</p>
+              )}
             </div>
 
-            {/* Basic Info Section */}
-            <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-              <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-                <div>
-                  <label className="block mb-3 font-bold text-[#0077b6] text-lg">
-                    نام محصول *
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.blocks.name}
-                    onChange={(e) => {
-                      handleChange("blocks", "name", e.target.value);
-                      clearError("name");
-                    }}
-                    className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
-                      errors.name ? "border-red-500" : "border-blue-200"
-                    }`}
-                    placeholder="نام محصول را وارد کنید"
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-sm mt-2">{errors.name}</p>
-                  )}
-                </div>
+            {/* Name & Properties */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Name */}
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <label className="block mb-2 font-semibold text-slate-800 text-sm">
+                  نام محصول *
+                </label>
+                <input
+                  type="text"
+                  value={settings.blocks.name}
+                  onChange={(e) => {
+                    handleChange("blocks", "name", e.target.value);
+                    clearError("name");
+                  }}
+                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                    errors.name ? "border-red-500" : "border-slate-200"
+                  }`}
+                  placeholder="نام محصول را وارد کنید"
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1.5">{errors.name}</p>
+                )}
               </div>
 
-              {/* Properties Section */}
-              <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-                <h3 className="text-[#0077b6] font-bold text-lg sm:text-xl mb-4">
+              {/* Properties */}
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <label className="block mb-2 font-semibold text-slate-800 text-sm">
                   افزودن ویژگی *
-                </h3>
-
-                <div className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm text-gray-600 mb-2 block">نام ویژگی</label>
-                      <input
-                        type="text"
-                        placeholder="نام ویژگی"
-                        value={newProperty.name}
-                        onChange={(e) => {
-                          setNewProperty({ ...newProperty, name: e.target.value });
-                          clearError("propertyName");
-                        }}
-                        className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
-                          errors.propertyName ? "border-red-500" : "border-blue-200"
-                        }`}
-                      />
-                      {errors.propertyName && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.propertyName}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="text-sm text-gray-600 mb-2 block">مقدار</label>
-                      <input
-                        type="text"
-                        placeholder="مقدار"
-                        value={newProperty.value}
-                        onChange={(e) => {
-                          setNewProperty({ ...newProperty, value: e.target.value });
-                          clearError("propertyValue");
-                        }}
-                        className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
-                          errors.propertyValue
-                            ? "border-red-500"
-                            : "border-blue-200"
-                        }`}
-                      />
-                      {errors.propertyValue && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.propertyValue}
-                        </p>
-                      )}
-                    </div>
+                </label>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="نام ویژگی"
+                      value={newProperty.name}
+                      onChange={(e) => {
+                        setNewProperty({
+                          ...newProperty,
+                          name: e.target.value,
+                        });
+                        clearError("propertyName");
+                      }}
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                        errors.propertyName
+                          ? "border-red-500"
+                          : "border-slate-200"
+                      }`}
+                    />
+                    <input
+                      type="text"
+                      placeholder="مقدار"
+                      value={newProperty.value}
+                      onChange={(e) => {
+                        setNewProperty({
+                          ...newProperty,
+                          value: e.target.value,
+                        });
+                        clearError("propertyValue");
+                      }}
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                        errors.propertyValue
+                          ? "border-red-500"
+                          : "border-slate-200"
+                      }`}
+                    />
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="flex gap-2">
                     <button
                       onClick={addProperty}
-                      className="flex-1 sm:flex-none bg-[#0077b6] hover:bg-blue-700 text-white p-4 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                      className="flex-1 bg-[#0077b6] hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-all text-sm font-medium"
                       data-tooltip-id="add-property"
                       data-tooltip-content="افزودن ویژگی جدید"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        fill="white"
-                      >
-                        <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z" />
-                      </svg>
-                      <span className="font-medium">افزودن</span>
+                      افزودن
                     </button>
-
                     {settings.blocks.properties.length > 0 && (
                       <button
+                        onClick={() => setShowPropertiesModal(true)}
+                        className="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg transition-all text-sm font-medium"
                         data-tooltip-id="view-properties"
                         data-tooltip-content="مشاهده ویژگیها"
-                        onClick={() => setShowPropertiesModal(true)}
-                        className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-4 flex items-center justify-center rounded-xl gap-2 transition-all duration-300 transform hover:scale-105"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24px"
-                          viewBox="0 -960 960 960"
-                          width="24px"
-                          fill="#ffffff"
-                        >
-                          <path d="M120-280v-80h560v80H120Zm0-160v-80h560v80H120Zm0-160v-80h560v80H120Zm680 320q-17 0-28.5-11.5T760-320q0-17 11.5-28.5T800-360q17 0 28.5 11.5T840-320q0 17-11.5 28.5T800-280Zm0-160q-17 0-28.5-11.5T760-480q0-17 11.5-28.5T800-520q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440Zm0-160q-17 0-28.5-11.5T760-640q0-17 11.5-28.5T800-680q17 0 28.5 11.5T840-640q0 17-11.5 28.5T800-600Z" />
-                        </svg>
-                        <span className="font-medium">
-                          مشاهده ({settings.blocks.properties.length})
-                        </span>
+                        مشاهده ({settings.blocks.properties.length})
                       </button>
                     )}
                   </div>
+                  {errors.properties && (
+                    <p className="text-red-500 text-xs">{errors.properties}</p>
+                  )}
                 </div>
-                {errors.properties && (
-                  <p className="text-red-500 text-sm mt-3">{errors.properties}</p>
-                )}
               </div>
             </div>
 
-            {/* Description Section */}
-            <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
-                <label className="block font-bold text-[#0077b6] text-lg">
+            {/* Description */}
+            <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-2">
+                <label className="font-semibold text-slate-800 text-sm">
                   توضیحات *
                 </label>
-                <div 
+                <div
                   data-tooltip-id="ai-generator"
                   data-tooltip-content={
-                    !settings.blocks.name.trim() || !settings.blocks.category.name.trim() || settings.blocks.properties.length === 0
-                      ? `برای عملکرد بهتر هوش مصنوعی، لطفاً ابتدا ${[
-                          !settings.blocks.name.trim() && "نام محصول",
-                          !settings.blocks.category.name.trim() && "دسته بندی",
-                          settings.blocks.properties.length === 0 && "ویژگیها"
-                        ].filter(Boolean).join("، ")} را وارد کنید`
+                    !settings.blocks.name.trim() ||
+                    !settings.blocks.category.name.trim() ||
+                    settings.blocks.properties.length === 0
+                      ? "لطفاً ابتدا نام، دسته‌بندی و ویژگی‌ها را وارد کنید"
                       : "ایجاد توضیحات با هوش مصنوعی"
                   }
                 >
@@ -755,10 +736,13 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
                     productData={{
                       name: settings.blocks.name,
                       category: settings.blocks.category.name,
-                      properties: settings.blocks.properties.reduce((acc, prop) => {
-                        acc[prop.name] = prop.value;
-                        return acc;
-                      }, {} as Record<string, unknown>)
+                      properties: settings.blocks.properties.reduce(
+                        (acc, prop) => {
+                          acc[prop.name] = prop.value;
+                          return acc;
+                        },
+                        {} as Record<string, unknown>
+                      ),
                     }}
                     onDescriptionGenerated={(description) => {
                       handleChange("blocks", "description", description);
@@ -773,58 +757,58 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
                   handleChange("blocks", "description", e.target.value);
                   clearError("description");
                 }}
-                className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all min-h-[120px] resize-none ${
-                  errors.description ? "border-red-500" : "border-blue-200"
+                className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[100px] resize-none ${
+                  errors.description ? "border-red-500" : "border-slate-200"
                 }`}
                 placeholder="توضیحات محصول را وارد کنید"
               />
               {errors.description && (
-                <p className="text-red-500 text-sm mt-2">
+                <p className="text-red-500 text-xs mt-1.5">
                   {errors.description}
                 </p>
               )}
             </div>
 
-            {/* Category & Status Section */}
-            <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-              <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-              <div className="flex justify-between items-center mb-4">
-                  <label className="block mb-3 font-bold text-[#0077b6] text-lg">
-                  دسته بندی *
-                </label>  <button
+            {/* Category & Status */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <div className="flex justify-between items-center mb-2">
+                  <label className="font-semibold text-slate-800 text-sm">
+                    دسته بندی *
+                  </label>
+                  <button
                     onClick={() => setIsCategoryModalOpen(true)}
-                    className="w-full sm:w-auto bg-[#0077b6] hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-medium transition-all"
+                    className="bg-[#0077b6] hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
                   >
-                    افزودن دسته بندی
+                    + افزودن
                   </button>
-              </div>
-                <div className="space-y-3">
-                
-                  <select
-                    value={settings.blocks.category._id}
-                    onChange={(e) => {
-                      handleChange("blocks", "category", e.target.value);
-                      clearError("category");
-                    }}
-                    className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all appearance-none bg-white ${
-                      errors.category ? "border-red-500" : "border-blue-200"
-                    }`}
-                  >
-                    <option value="">انتخاب دسته بندی</option>
-                    {categories.map((category) => (
-                      <option key={category._id} value={category._id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.category && (
-                    <p className="text-red-500 text-sm mt-2">{errors.category}</p>
-                  )}
                 </div>
+                <select
+                  value={settings.blocks.category._id}
+                  onChange={(e) => {
+                    handleChange("blocks", "category", e.target.value);
+                    clearError("category");
+                  }}
+                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none bg-white ${
+                    errors.category ? "border-red-500" : "border-slate-200"
+                  }`}
+                >
+                  <option value="">انتخاب دسته بندی</option>
+                  {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.category && (
+                  <p className="text-red-500 text-xs mt-1.5">
+                    {errors.category}
+                  </p>
+                )}
               </div>
 
-              <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-                <label className="block mb-3 font-bold text-[#0077b6] text-lg">
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <label className="block mb-2 font-semibold text-slate-800 text-sm">
                   وضعیت
                 </label>
                 <select
@@ -832,7 +816,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
                   onChange={(e) =>
                     handleChange("blocks", "status", e.target.value)
                   }
-                  className="w-full p-4 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all appearance-none bg-white"
+                  className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none bg-white"
                 >
                   <option value="available">موجود</option>
                   <option value="unavailable">ناموجود</option>
@@ -840,115 +824,88 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
               </div>
             </div>
 
-            {/* Color Selection Section */}
-            <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-              <h3 className="text-[#0077b6] font-bold text-lg sm:text-xl mb-4">
+            {/* Colors */}
+            <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <label className="block mb-3 font-semibold text-slate-800 text-sm">
                 افزودن رنگ *
-              </h3>
-
-              <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-end">
-                <div className="flex flex-col items-center">
-                  <label className="text-sm text-gray-600 mb-2">انتخاب رنگ</label>
-                  <input
-                    type="color"
-                    value={newColor.code}
-                    onChange={(e) => {
-                      setNewColor({ ...newColor, code: e.target.value });
-                      clearError("colorCode");
-                    }}
-                    className={`w-16 h-16 rounded-2xl cursor-pointer transition-transform hover:scale-110 focus:outline-none border-4 border-white shadow-lg ${
-                      errors.colorCode ? "ring-2 ring-red-500" : ""
-                    }`}
-                    style={{ padding: 0 }}
-                  />
-                  {errors.colorCode && (
-                    <p className="text-red-500 text-xs mt-1 text-center">
-                      {errors.colorCode}
-                    </p>
-                  )}
+              </label>
+              <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end">
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-slate-600 mb-1">رنگ</span>
+                    <input
+                      type="color"
+                      value={newColor.code}
+                      onChange={(e) => {
+                        setNewColor({ ...newColor, code: e.target.value });
+                        clearError("colorCode");
+                      }}
+                      className={`w-12 h-10 rounded-lg cursor-pointer border-2 ${
+                        errors.colorCode ? "border-red-500" : "border-slate-200"
+                      }`}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-xs text-slate-600 mb-1 block">
+                      تعداد
+                    </span>
+                    <input
+                      type="number"
+                      placeholder="تعداد"
+                      value={newColor.quantity}
+                      onChange={(e) => {
+                        setNewColor({ ...newColor, quantity: e.target.value });
+                        clearError("colorQuantity");
+                      }}
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                        errors.colorQuantity
+                          ? "border-red-500"
+                          : "border-slate-200"
+                      }`}
+                      min="1"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex-1">
-                  <label className="text-sm text-gray-600 mb-2 block">تعداد</label>
-                  <input
-                    type="number"
-                    placeholder="تعداد"
-                    value={newColor.quantity}
-                    onChange={(e) => {
-                      setNewColor({ ...newColor, quantity: e.target.value });
-                      clearError("colorQuantity");
-                    }}
-                    className={`w-full p-4 rounded-xl transition-all border-2 ${
-                      errors.colorQuantity
-                        ? "border-red-500"
-                        : "border-blue-200"
-                    }`}
-                    min="1"
-                  />
-                  {errors.colorQuantity && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.colorQuantity}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex gap-2">
                   <button
                     onClick={addColor}
-                    className="bg-[#0077b6] hover:bg-blue-700 text-white p-4 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+                    className="flex-1 sm:flex-none bg-[#0077b6] hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all text-sm font-medium"
                     data-tooltip-id="add-color"
                     data-tooltip-content="افزودن رنگ جدید"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="24px"
-                      viewBox="0 -960 960 960"
-                      width="24px"
-                      fill="white"
-                    >
-                      <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z" />
-                    </svg>
+                    افزودن
                   </button>
-
                   {settings.blocks.colors.length > 0 && (
                     <button
+                      onClick={() => setShowColorsModal(true)}
+                      className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg transition-all text-sm font-medium whitespace-nowrap"
                       data-tooltip-id="view-colors"
                       data-tooltip-content="مشاهده رنگها"
-                      onClick={() => setShowColorsModal(true)}
-                      className="bg-[#0077b6] hover:bg-blue-700 text-white px-4 py-4 flex items-center rounded-xl gap-2 transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        fill="#ffffff"
-                      >
-                        <path d="M120-280v-80h560v80H120Zm0-160v-80h560v80H120Zm0-160v-80h560v80H120Zm680 320q-17 0-28.5-11.5T760-320q0-17 11.5-28.5T800-360q17 0 28.5 11.5T840-320q0 17-11.5 28.5T800-280Zm0-160q-17 0-28.5-11.5T760-480q0-17 11.5-28.5T800-520q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440Zm0-160q-17 0-28.5-11.5T760-640q0-17 11.5-28.5T800-680q17 0 28.5 11.5T840-640q0 17-11.5 28.5T800-600Z" />
-                      </svg>
-                      <span className="font-medium hidden sm:inline">
-                        ({settings.blocks.colors.length})
-                      </span>
+                      مشاهده ({settings.blocks.colors.length})
                     </button>
                   )}
                 </div>
               </div>
               {errors.colors && (
-                <p className="text-red-500 text-sm mt-3">{errors.colors}</p>
+                <p className="text-red-500 text-xs mt-2">{errors.colors}</p>
               )}
             </div>
 
-
-
-            {/* Price & Discount Section */}
-            <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-              <div className="relative p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-                <label className="block mb-3 font-bold text-[#0077b6] text-lg">
-                  قیمت *
+            {/* Price & Discount */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <label className="block mb-2 font-semibold text-slate-800 text-sm">
+                  قیمت (تومان) *
                 </label>
                 <input
                   type="text"
-                  value={settings.blocks.price ? Number(settings.blocks.price).toLocaleString() : ""}
+                  value={
+                    settings.blocks.price
+                      ? Number(settings.blocks.price).toLocaleString()
+                      : ""
+                  }
                   onChange={(e) => {
                     const value = e.target.value.replace(/,/g, "");
                     if (/^\d*$/.test(value)) {
@@ -956,23 +913,21 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
                       clearError("price");
                     }
                   }}
-                  className={`w-full p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#0077b6] transition-all ${
-                    errors.price ? "border-red-500" : "border-blue-200"
+                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                    errors.price ? "border-red-500" : "border-slate-200"
                   }`}
-                  placeholder="قیمت به تومان"
+                  placeholder="0"
                 />
                 {errors.price && (
-                  <p className="text-red-500 text-sm mt-2">{errors.price}</p>
+                  <p className="text-red-500 text-xs mt-1.5">{errors.price}</p>
                 )}
                 {Number(settings.blocks.price) > 0 &&
                   Number(settings.blocks.discount) > 0 && (
-                    <div className="mt-4 bg-white shadow-lg rounded-xl p-4 border border-blue-100">
-                      <div className="space-y-2">
+                    <div className="mt-3 bg-white rounded-lg p-3 border border-slate-200">
+                      <div className="space-y-1.5 text-xs">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">
-                            قیمت با تخفیف:
-                          </span>
-                          <span className="font-bold text-green-500">
+                          <span className="text-slate-600">قیمت با تخفیف:</span>
+                          <span className="font-semibold text-green-600">
                             {(
                               Number(settings.blocks.price) *
                               (1 - Number(settings.blocks.discount) / 100)
@@ -981,10 +936,8 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">
-                            میزان تخفیف:
-                          </span>
-                          <span className="font-bold text-red-500">
+                          <span className="text-slate-600">میزان تخفیف:</span>
+                          <span className="font-semibold text-red-500">
                             {(
                               Number(settings.blocks.price) *
                               (Number(settings.blocks.discount) / 100)
@@ -997,98 +950,107 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({  }) => {
                   )}
               </div>
 
-              <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0077b6]/5 to-blue-50 rounded-xl border border-blue-100">
-                <label className="block mb-3 font-bold text-[#0077b6] text-lg">
-                  تخفیف
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <label className="block mb-2 font-semibold text-slate-800 text-sm">
+                  تخفیف (%)
                 </label>
-                <div className="space-y-4">
-                  <input
-                    dir="rtl"
-                    type="range"
-                    value={settings.blocks.discount}
-                    onChange={(e) =>
-                      handleChange("blocks", "discount", e.target.value)
-                    }
-                    className="w-full h-3 bg-gray-200 rounded-lg cursor-pointer"
-                    style={{
-                      background: `linear-gradient(to left, #0077b6 ${settings.blocks.discount}%, #e5e7eb ${settings.blocks.discount}%)`,
-                    }}
-                    max={100}
-                    min={0}
-                  />
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">0%</span>
-                    <span className="inline-block px-4 py-2 bg-[#0077b6] text-white rounded-full text-lg font-bold">
-                      {settings.blocks.discount}%
-                    </span>
-                    <span className="text-sm text-gray-500">100%</span>
-                  </div>
+                <input
+                  dir="rtl"
+                  type="range"
+                  value={settings.blocks.discount}
+                  onChange={(e) =>
+                    handleChange("blocks", "discount", e.target.value)
+                  }
+                  className="w-full h-2 bg-slate-200 rounded-lg cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to left, #0077b6 ${settings.blocks.discount}%, #e2e8f0 ${settings.blocks.discount}%)`,
+                  }}
+                  max={100}
+                  min={0}
+                />
+                <div className="flex justify-between items-center mt-3">
+                  <span className="text-xs text-slate-500">0%</span>
+                  <span className="inline-block px-3 py-1.5 bg-[#0077b6] text-white rounded-full text-sm font-semibold">
+                    {settings.blocks.discount}%
+                  </span>
+                  <span className="text-xs text-slate-500">100%</span>
                 </div>
               </div>
             </div>
 
             {/* Save Button */}
-            <div className="mt-6 sm:mt-8">
-              <button
-                onClick={handelSave}
-                className="w-full bg-gradient-to-r from-[#0077b6] to-blue-600 hover:from-blue-700 hover:to-blue-800 text-white text-lg font-bold py-4 sm:py-5 rounded-xl transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-blue-200 shadow-lg hover:shadow-xl"
-              >
-                ذخیره تغییرات
-              </button>
-            </div>
+            <button
+              onClick={handelSave}
+              className="w-full bg-slate-800 hover:bg-slate-900 text-white text-sm sm:text-base font-semibold py-3 rounded-lg transition-all focus:outline-none focus:ring-4 focus:ring-slate-300 shadow-sm hover:shadow-md"
+            >
+              ذخیره تغییرات
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Modals */}
       <ImageSelectorModal
         isOpen={isImageSelectorOpen}
         onClose={() => setIsImageSelectorOpen(false)}
         onSelectImage={handleImageSelect}
       />
 
-      {/* Upload Modal */}
       {isUploadModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 scrollbar-hide" dir="rtl">
-          <div className="bg-white rounded-2xl p-2 w-full max-w-md  max-h-[90vh] overflow-y-auto scrollbar-hide">
-            <div className="flex flex-row-reverse items-center ">
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3"
+          dir="rtl"
+        >
+          <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-slate-200 p-3 flex justify-between items-center">
+              <h3 className="font-semibold text-slate-800">آپلود تصویر</h3>
               <button
                 onClick={() => setIsUploadModalOpen(false)}
-                className="text-gray-500 text-2xl hover:text-gray-700 p-2"
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
               >
                 ×
               </button>
             </div>
-            <UploadPage />
+            <div className="p-3">
+              <UploadPage />
+            </div>
           </div>
         </div>
       )}
 
-      {/* Category Modal */}
       {isCategoryModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" dir="rtl">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-[#0077b6]">افزودن دسته بندی</h3>
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3"
+          dir="rtl"
+        >
+          <div className="bg-white rounded-lg w-full max-w-md shadow-xl">
+            <div className="border-b border-slate-200 p-4 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-slate-800">
+                افزودن دسته بندی
+              </h3>
               <button
                 onClick={() => setIsCategoryModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 p-2"
+                className="text-slate-400 hover:text-slate-600 text-xl"
               >
                 ×
               </button>
             </div>
-            <CategoryForm 
-              onClose={() => setIsCategoryModalOpen(false)} 
-              onSuccess={() => {
-                setIsCategoryModalOpen(false);
-                fetchCategories();
-              }}
-            />
+            <div className="p-4">
+              <CategoryForm
+                onClose={() => setIsCategoryModalOpen(false)}
+                onSuccess={() => {
+                  setIsCategoryModalOpen(false);
+                  fetchCategories();
+                }}
+              />
+            </div>
           </div>
         </div>
       )}
 
-      <ToastContainer rtl={true} position="top-center" autoClose={3000} />
       {showPropertiesModal && <PropertiesModal />}
       {showColorsModal && <ColorsModal />}
+
       <Tooltip id="add-property" place="top" />
       <Tooltip id="view-properties" place="top" />
       <Tooltip id="add-color" place="top" />

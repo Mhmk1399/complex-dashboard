@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
     const contentType = request.headers.get("content-type");
     if (!contentType || !contentType.includes("multipart/form-data")) {
-      console.error("Invalid content-type:", contentType);
+      console.log("Invalid content-type:", contentType);
       return NextResponse.json({ message: "Invalid content type, expected multipart/form-data" }, { status: 400 });
     }
 
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     try {
       formData = await request.formData();
     } catch (error) {
-      console.error("FormData parsing error:", error);
+      console.log("FormData parsing error:", error);
       return NextResponse.json({ message: "Failed to parse form data" }, { status: 400 });
     }
 
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error uploading file:", error);
+    console.log("Error uploading file:", error);
     return NextResponse.json({ message: "Upload failed", error: String(error) }, { status: 500 });
   }
 }
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error("Error fetching images from Flask:", error);
+    console.log("Error fetching images from Flask:", error);
     return NextResponse.json({ message: "Internal server error", error: String(error) }, { status: 500 });
   }
 }
@@ -191,7 +191,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ message: "File deleted successfully" }, { status: 200 });
   } catch (error) {
-    console.error("Error deleting file:", error);
+    console.log("Error deleting file:", error);
     return NextResponse.json({ message: "Delete failed", error: String(error) }, { status: 500 });
   }
 }

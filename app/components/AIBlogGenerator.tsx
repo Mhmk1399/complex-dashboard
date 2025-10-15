@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { DeepSeekClient } from "@/lib/DeepSeekClient";
 import { AITokenService } from "@/lib/aiTokenService";
-import { toast } from "react-toastify";
 import { TokenDisplay } from "./TokenDisplay";
+import toast from "react-hot-toast";
 
 interface BlogData {
   title?: string;
@@ -40,7 +40,11 @@ export const AIBlogGenerator = ({
   };
 
   const generateBlog = async () => {
-    if (!blogData.title?.trim() || !blogData.seoTitle?.trim() || !blogData.description?.trim()) {
+    if (
+      !blogData.title?.trim() ||
+      !blogData.seoTitle?.trim() ||
+      !blogData.description?.trim()
+    ) {
       toast.error("لطفاً ابتدا عنوان، عنوان سئو و توضیحات را وارد کنید");
       return;
     }

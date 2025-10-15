@@ -53,7 +53,7 @@ export default function ImageSelectorModal({
 
       setImages(imageUrls);
     } catch (error) {
-      console.error("Error fetching images:", error);
+      console.log("Error fetching images:", error);
       setImages([]);
     } finally {
       setIsLoading(false);

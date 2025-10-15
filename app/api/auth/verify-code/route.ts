@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: 'Code verified successfully' });
   } catch (error) {
-    console.error('Verify code error:', error);
+    console.log('Verify code error:', error);
     return NextResponse.json({ message: 'Server error' }, { status: 500 });
   }
 }

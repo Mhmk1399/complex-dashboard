@@ -15,11 +15,10 @@ import { motion } from "framer-motion";
 import { CustomEditor } from "@/types/editor";
 import Image from "@tiptap/extension-image";
 import { TextSelection } from "prosemirror-state";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Blog, ImageFile } from "@/types/type";
 import ImageSelectorModal from "./ImageSelectorModal";
 import { AIBlogGenerator } from "./AIBlogGenerator";
+import toast from "react-hot-toast";
 
 const MenuButton = ({
   onClick,
@@ -174,7 +173,7 @@ export default function AddPostBlog() {
       toast.error("حداکثر 5 تصویر میتوانید اضافه کنید");
       return;
     }
-    setImages(prev => [...prev, image.fileUrl]);
+    setImages((prev) => [...prev, image.fileUrl]);
   };
 
   const validateForm = () => {
@@ -255,7 +254,8 @@ export default function AddPostBlog() {
     ],
     editorProps: {
       attributes: {
-        class: "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&_h4]:text-lg [&_h4]:font-bold [&_h5]:text-base [&_h5]:font-bold [&_h6]:text-sm [&_h6]:font-bold",
+        class:
+          "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&_h4]:text-lg [&_h4]:font-bold [&_h5]:text-base [&_h5]:font-bold [&_h6]:text-sm [&_h6]:font-bold",
       },
     },
     onUpdate: ({ editor }: { editor: CustomEditor }) => {
@@ -319,7 +319,7 @@ export default function AddPostBlog() {
 
     const content = editor?.getHTML();
     const storeId = localStorage.getItem("storeId");
-    
+
     try {
       const blogData = {
         id: isEditMode ? editId : crypto.randomUUID(),
@@ -355,7 +355,7 @@ export default function AddPostBlog() {
         setTags([]);
         editor?.commands.clearContent();
       }
-      
+
       toast.success(
         isEditMode ? "بلاگ با موفقیت بروزرسانی شد" : "وبلاگ با موفقیت ایجاد شد"
       );
@@ -367,7 +367,6 @@ export default function AddPostBlog() {
 
   return (
     <>
-      <ToastContainer position="top-center" autoClose={3000} rtl={true} />
       <div className="max-w-4xl mx-6 md:mt-36 my-16 lg:mx-auto">
         <motion.h2
           initial={{ y: -20, opacity: 0 }}
@@ -417,7 +416,7 @@ export default function AddPostBlog() {
                 </motion.span>
               )}
             </div>
-            
+
             <label className="block text-sm font-medium text-gray-700 text-right mb-2">
               عنوان سئو
             </label>
@@ -494,7 +493,9 @@ export default function AddPostBlog() {
                     {tag}
                     <button
                       type="button"
-                      onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                      onClick={() =>
+                        setTags(tags.filter((_, i) => i !== index))
+                      }
                       className="hover:text-red-500 transition-colors"
                     >
                       <i className="fas fa-times"></i>
@@ -511,7 +512,7 @@ export default function AddPostBlog() {
             animate={{ x: 0, opacity: 1 }}
             className="bg-blue-50/50 rounded-xl p-6 border border-blue-100"
           >
-            <label className="block mb-4 text-xl font-bold text-blue-700 flex items-center gap-2">
+            <label className="  mb-4 text-xl font-bold text-blue-700 flex items-center gap-2">
               <i className="fas fa-images" />
               تصاویر بلاگ (حداکثر 5 تصویر)
             </label>
@@ -597,14 +598,14 @@ export default function AddPostBlog() {
                 blogData={{
                   title,
                   seoTitle,
-                  description
+                  description,
                 }}
                 onBlogGenerated={(content) => {
                   editor?.commands.setContent(content);
                 }}
               />
             </div>
-            
+
             <div className="border border-gray-300 rounded-lg">
               <div className="bg-gray-50 p-2 border-b border-gray-300 flex flex-wrap gap-2">
                 <MenuButton
@@ -786,7 +787,7 @@ export default function AddPostBlog() {
                   </p>
                 )}
               </div>
-              
+
               <div className="mt-2 text-sm text-gray-500 text-right border-t p-2">
                 تعداد کلمات: {wordCount}
               </div>

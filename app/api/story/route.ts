@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     const stories = await Story.find({ storeId: storeId });
     return NextResponse.json(stories);
   } catch (error) {
-    console.error("Error fetching stories:", error);
+    console.log("Error fetching stories:", error);
     return NextResponse.json({ error: "Failed to fetch stories" });
   }
 }
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     await story.save();
     return NextResponse.json({ message: "Story created successfully" }, { status: 201 });
   } catch (error) {
-    console.error("Error creating story:", error);
+    console.log("Error creating story:", error);
     return NextResponse.json({ error: "Failed to create story" });
   }
 }
@@ -74,7 +74,7 @@ export async function PATCH(req: NextRequest) {
     const result = await Story.findByIdAndUpdate(body._id, body);
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error updating story:", error);
+    console.log("Error updating story:", error);
     return NextResponse.json({ error: "Failed to update story" });
   }
 }
@@ -89,7 +89,7 @@ export async function DELETE(req: NextRequest) {
     const result = await Story.findByIdAndDelete(body._id);
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error deleting story:", error);
+    console.log("Error deleting story:", error);
     return NextResponse.json({ error: "Failed to delete story" });
   }
 }

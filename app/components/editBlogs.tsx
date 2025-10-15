@@ -9,13 +9,11 @@ import TextAlign from "@tiptap/extension-text-align";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import Heading from "@tiptap/extension-heading";
-import { toast, ToastContainer } from "react-toastify";
 import { Blog, ImageFile } from "@/types/type";
 import ImageSelectorModal from "./ImageSelectorModal";
 import Image from "@tiptap/extension-image";
 import { AIBlogGenerator } from "./AIBlogGenerator";
-
-
+import toast from "react-hot-toast";
 
 export const EditBlogs = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -50,7 +48,7 @@ export const EditBlogs = () => {
       toast.error("حداکثر 5 تصویر میتوانید اضافه کنید");
       return;
     }
-    setImages(prev => [...prev, image.fileUrl]);
+    setImages((prev) => [...prev, image.fileUrl]);
   };
 
   const ColorPickerDropdown = ({
@@ -227,7 +225,8 @@ export const EditBlogs = () => {
     content: "",
     editorProps: {
       attributes: {
-        class: "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&_h4]:text-lg [&_h4]:font-bold [&_h5]:text-base [&_h5]:font-bold [&_h6]:text-sm [&_h6]:font-bold",
+        class:
+          "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&_h4]:text-lg [&_h4]:font-bold [&_h5]:text-base [&_h5]:font-bold [&_h6]:text-sm [&_h6]:font-bold",
       },
     },
     onUpdate: ({ editor }) => {
@@ -282,16 +281,7 @@ export const EditBlogs = () => {
         setSelectedBlog(null);
         setTitle("");
         editor?.commands.setContent("");
-        toast.success("بلاگ با موفقیت حذف شد", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.success("بلاگ با موفقیت حذف شد");
       } else {
         throw new Error("Failed to delete blog");
       }
@@ -334,31 +324,13 @@ export const EditBlogs = () => {
             blog._id === selectedBlog._id ? updatedBlog : blog
           )
         );
-        toast.success("بلاگ با موفقیت به روز رسانی شد", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.success("بلاگ با موفقیت به روز رسانی شد");
       } else {
         throw new Error("Failed to update blog");
       }
     } catch (error) {
-      console.error("Error updating blog:", error);
-      toast.error(" خطا در به روز رسانی بلاگ", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      console.log("Error updating blog:", error);
+      toast.error(" خطا در به روز رسانی بلاگ");
     }
   };
 
@@ -384,7 +356,6 @@ export const EditBlogs = () => {
 
   return (
     <>
-      <ToastContainer position="top-center" rtl={true} />
       {loading ? (
         <div>
           <div className="flex justify-center items-center h-screen">
@@ -456,7 +427,7 @@ export const EditBlogs = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   <label className="block text-sm font-medium text-gray-700 text-right mb-2">
                     عنوان سئو
                   </label>
@@ -467,7 +438,7 @@ export const EditBlogs = () => {
                     className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
                     placeholder="عنوان سئو را وارد کنید..."
                   />
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 text-right my-2">
                       توضیحات کوتاه
@@ -488,7 +459,8 @@ export const EditBlogs = () => {
                         value={tagInput}
                         onChange={(e) => setTagInput(e.target.value)}
                         onKeyPress={(e) =>
-                          e.key === "Enter" && (e.preventDefault(), handleAddTag())
+                          e.key === "Enter" &&
+                          (e.preventDefault(), handleAddTag())
                         }
                         className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
                         placeholder="برچسبها را وارد کنید..."
@@ -511,7 +483,9 @@ export const EditBlogs = () => {
                           {tag}
                           <button
                             type="button"
-                            onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                            onClick={() =>
+                              setTags(tags.filter((_, i) => i !== index))
+                            }
                             className="hover:text-red-500 transition-colors"
                           >
                             <i className="fas fa-times"></i>
@@ -524,7 +498,7 @@ export const EditBlogs = () => {
 
                 {/* Images Section */}
                 <div className="bg-blue-50/50 rounded-xl p-6 border border-blue-100 mb-6">
-                  <label className="block mb-4 text-xl font-bold text-blue-700 flex items-center gap-2">
+                  <label className="  mb-4 text-xl font-bold text-blue-700 flex items-center gap-2">
                     <i className="fas fa-images" />
                     تصاویر بلاگ (حداکثر 5 تصویر)
                   </label>
@@ -559,7 +533,9 @@ export const EditBlogs = () => {
                           <button
                             type="button"
                             onClick={() =>
-                              setImages((prev) => prev.filter((_, i) => i !== index))
+                              setImages((prev) =>
+                                prev.filter((_, i) => i !== index)
+                              )
                             }
                             className="absolute top-1 left-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                           >
@@ -591,7 +567,7 @@ export const EditBlogs = () => {
                     blogData={{
                       title,
                       seoTitle,
-                      description
+                      description,
                     }}
                     onBlogGenerated={(content) => {
                       editor?.commands.setContent(content);
@@ -781,7 +757,7 @@ export const EditBlogs = () => {
           )}
         </div>
       )}
-      
+
       <ImageSelectorModal
         isOpen={isImageSelectorOpen}
         onClose={() => setIsImageSelectorOpen(false)}
