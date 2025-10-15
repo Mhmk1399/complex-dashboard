@@ -1,6 +1,7 @@
 import connect from "@/lib/data";
 import { NextResponse, NextRequest } from "next/server";
 import User from "@/models/users";
+import { AIUsage } from "@/models/aiUsage";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { createIngress } from "@/utilities/createNewIngress";
@@ -42,6 +43,15 @@ export async function POST(request: NextRequest) {
     });
 
     await newUser.save();
+
+    // Create AI usage record for new user
+    const aiUsage = new AIUsage({
+      storeId,
+      totalTokens: 1000,
+      usedTokens: 0,
+      remainingTokens: 1000
+    });
+    await aiUsage.save();
 
     const token = jwt.sign(
       {

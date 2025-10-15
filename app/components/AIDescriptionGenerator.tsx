@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DeepSeekClient } from "@/lib/DeepSeekClient";
+import { AITokenService } from "@/lib/aiTokenService";
 import { toast } from "react-toastify";
+import { TokenDisplay } from "./TokenDisplay";
 
 interface ProductData {
   name?: string;
@@ -22,12 +24,40 @@ export const AIDescriptionGenerator = ({
   onDescriptionGenerated,
 }: AIDescriptionGeneratorProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [hasTokens, setHasTokens] = useState(true);
+  const [remainingTokens, setRemainingTokens] = useState(0);
 
   const isDisabled = !productData.name?.trim() || !productData.category?.trim() || !productData.properties || Object.keys(productData.properties).length === 0;
+
+  useEffect(() => {
+    checkTokens();
+  }, []);
+
+  const checkTokens = async () => {
+    const storeId = localStorage.getItem("storeId");
+    if (!storeId) return;
+    
+    const usage = await AITokenService.getTokenUsage(storeId);
+    if (usage) {
+      setRemainingTokens(usage.remainingTokens);
+      setHasTokens(usage.remainingTokens >= AITokenService.getEstimatedTokens());
+    }
+  };
   
 
 
   const generateDescription = async () => {
+    const storeId = localStorage.getItem("storeId");
+    if (!storeId) {
+      toast.error("خطا در احراز هویت");
+      return;
+    }
+
+    if (!hasTokens) {
+      toast.error(`توکن کافی ندارید. باقیمانده: ${remainingTokens}`);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const features = [
@@ -47,24 +77,31 @@ Tone of Voice: ${productData.tone || 'Professional and trustworthy'}
 
 Output a single paragraph (3-5 sentences) that highlights the key benefits, speaks directly to the target audience, and inspires a purchase. Use persuasive language and focus on how the product improves the user's life. Return ONLY the description text without any additional formatting or explanations.`;
 
-      const description = await DeepSeekClient.sendPrompt(prompt);
+      const description = await DeepSeekClient.sendPrompt(prompt, storeId, "product-description");
       onDescriptionGenerated(description.trim());
-      toast.success("Description generated successfully!");
-    } catch (error) {
+      toast.success("توضیحات با موفقیت تولید شد!");
+      await checkTokens(); // Refresh token count
+    } catch (error: any) {
       console.error("AI Error:", error);
-      toast.error("Failed to generate description");
+      if (error.message.includes("Insufficient tokens")) {
+        toast.error("توکن کافی ندارید");
+        await checkTokens();
+      } else {
+        toast.error("خطا در تولید توضیحات");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div  className="inline-block">
+    <div className="flex flex-col gap-3">
+      <TokenDisplay />
       <button
         onClick={generateDescription}
-        disabled={isLoading || isDisabled}
+        disabled={isLoading || isDisabled || !hasTokens}
         className={`flex items-center gap-2 px-3 py-2 rounded-lg transition ${
-          isDisabled 
+          isDisabled || !hasTokens
             ? "bg-gray-400 text-gray-200 cursor-not-allowed" 
             : "bg-purple-600 text-white hover:bg-purple-700"
         } ${isLoading ? "opacity-50" : ""}`}
@@ -79,7 +116,7 @@ Output a single paragraph (3-5 sentences) that highlights the key benefits, spea
           <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
         </svg>
       )}
-      {isLoading ? "درحال بارگذاری..." : "ایجاد توسط دستیار هوش مصنوعی"}
+      {isLoading ? "درحال بارگذاری..." : !hasTokens ? "توکن کافی نیست" : "ایجاد توسط دستیار هوش مصنوعی"}
       </button>
     </div>
   );

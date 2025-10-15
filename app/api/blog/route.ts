@@ -4,7 +4,6 @@ import Blog from "@/models/blogs";
 import blogs from "@/models/blogs";
 import Jwt, { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
-
 interface CustomJwtPayload extends JwtPayload {
   storeId: string;
 }
