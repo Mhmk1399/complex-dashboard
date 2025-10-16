@@ -102,6 +102,15 @@ const dashboardMenuItems = [
     ],
   },
   {
+    id: "wallet",
+    title: "کیف پول",
+    icon: <FaCreditCard />,
+    color: "from-green-500 to-green-600",
+    subMenuItems: [
+      { title: "کیف پول", value: "wallet", icon: <FaCreditCard /> },
+    ],
+  },
+  {
     id: "settings",
     title: "تنظیمات",
     icon: <IoSettings />,

@@ -1,0 +1,15 @@
+/* Basic UI component styles */
+.bg-card { @apply bg-white; }
+.text-card-foreground { @apply text-gray-900; }
+.bg-background { @apply bg-white; }
+.border-input { @apply border-gray-300; }
+.text-muted-foreground { @apply text-gray-500; }
+.bg-primary { @apply bg-blue-600; }
+.text-primary-foreground { @apply text-white; }
+.hover\\:bg-primary\\/90:hover { @apply bg-blue-500; }
+.bg-popover { @apply bg-white; }
+.text-popover-foreground { @apply text-gray-900; }
+.hover\\:bg-accent:hover { @apply bg-gray-100; }
+.hover\\:text-accent-foreground:hover { @apply text-gray-900; }
+.ring-ring { @apply ring-blue-500; }
+.ring-offset-background { @apply ring-offset-white; }
