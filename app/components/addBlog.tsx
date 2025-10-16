@@ -420,7 +420,7 @@ export default function AddPostBlog() {
         }
       `}</style>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-12 mt-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-12 mt-20">
         <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-slate-900">
           {isEditMode ? "ویرایش بلاگ" : "افزودن بلاگ جدید"}
         </h2>

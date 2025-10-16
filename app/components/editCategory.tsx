@@ -56,19 +56,22 @@ const EditCategory = () => {
             });
           },
           onDrag: function () {
-            document.querySelectorAll(".drop-zone").forEach((zone: any) => {
-              zone.classList.toggle("drag-over", this.hitTest(zone, "25%"));
+            document.querySelectorAll(".drop-zone").forEach((zone) => {
+              const element = zone as HTMLElement;
+              element.classList.toggle("drag-over", this.hitTest(zone, "25%"));
             });
           },
           onDragEnd: function () {
-            document.querySelectorAll(".drop-zone").forEach((zone: any) => {
-              zone.classList.remove("drag-over");
+            document.querySelectorAll(".drop-zone").forEach((zone) => {
+              const element = zone as HTMLElement;
+              element.classList.remove("drag-over");
             });
 
             let dropped = false;
-            document.querySelectorAll(".drop-zone").forEach((zone: any) => {
+            document.querySelectorAll(".drop-zone").forEach((zone) => {
               if (this.hitTest(zone, "40%")) {
-                const parentId = zone.dataset.parentId;
+                const element = zone as HTMLElement;
+                const parentId = element.dataset.parentId;
                 if (parentId) {
                   addToParent(parentId, category._id);
                   dropped = true;

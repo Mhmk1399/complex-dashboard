@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface OTPInputProps {
   value: string;
@@ -7,7 +7,11 @@ interface OTPInputProps {
   length?: number;
 }
 
-export default function OTPInput({ value, onChange, length = 6 }: OTPInputProps) {
+export default function OTPInput({
+  value,
+  onChange,
+  length = 6,
+}: OTPInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -16,10 +20,10 @@ export default function OTPInput({ value, onChange, length = 6 }: OTPInputProps)
 
   const handleChange = (index: number, digit: string) => {
     if (!/^\d*$/.test(digit)) return;
-    
-    const newValue = value.split('');
+
+    const newValue = value.split("");
     newValue[index] = digit;
-    onChange(newValue.join(''));
+    onChange(newValue.join(""));
 
     if (digit && index < length - 1) {
       inputRefs.current[index + 1]?.focus();
@@ -27,16 +31,19 @@ export default function OTPInput({ value, onChange, length = 6 }: OTPInputProps)
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !value[index] && index > 0) {
+    if (e.key === "Backspace" && !value[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, length);
+    const pastedData = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, length);
     onChange(pastedData);
-    
+
     const nextIndex = Math.min(pastedData.length, length - 1);
     inputRefs.current[nextIndex]?.focus();
   };
@@ -46,10 +53,12 @@ export default function OTPInput({ value, onChange, length = 6 }: OTPInputProps)
       {Array.from({ length }, (_, index) => (
         <input
           key={index}
-          ref={(el) => (inputRefs.current[index] = el)}
+          ref={(el) => {
+            inputRefs.current[index] = el;
+          }}
           type="text"
           maxLength={1}
-          value={value[index] || ''}
+          value={value[index] || ""}
           onChange={(e) => handleChange(index, e.target.value)}
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={handlePaste}

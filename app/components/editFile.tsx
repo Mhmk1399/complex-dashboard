@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { FaTrash, FaExpand } from "react-icons/fa";
-import { FiImage, FiCheckCircle, FiAlertTriangle } from "react-icons/fi";
+import { FiImage, FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
 import { ImageFile } from "@/types/type";
+import toast from "react-hot-toast";
 
 // CSS animations
 const styles = `
@@ -53,9 +54,7 @@ export default function ImageGallery() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [deleteStatus, setDeleteStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
+
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
     imageId: "",
@@ -104,7 +103,6 @@ export default function ImageGallery() {
 
   const initiateDelete = (id: string) => {
     setDeleteModal({ isOpen: true, imageId: id });
-    setDeleteStatus("idle");
   };
 
   const confirmDelete = async () => {
@@ -112,7 +110,6 @@ export default function ImageGallery() {
       const token = localStorage.getItem("token");
       const image = images.find((img) => img._id === deleteModal.imageId);
       if (!image) {
-        setDeleteStatus("error");
         return;
       }
 
@@ -129,16 +126,16 @@ export default function ImageGallery() {
 
       if (response.ok) {
         setImages(images.filter((img) => img._id !== deleteModal.imageId));
-        setDeleteStatus("success");
+        toast.success("عکس با موفقیت حذف شد");
         setTimeout(() => {
           setDeleteModal({ isOpen: false, imageId: "" });
-          setDeleteStatus("idle");
         }, 1500);
       } else {
-        setDeleteStatus("error");
+        toast.error("خطا در حذف عکس");
       }
-    } catch {
-      setDeleteStatus("error");
+    } catch (error) {
+      toast.error("خطا در حذف عکس");
+      console.log("Error deleting image:", error);
     }
   };
 
@@ -151,19 +148,19 @@ export default function ImageGallery() {
   }) => {
     return (
       <div
-        className="fixed inset-0 z-50   flex items-center justify-center p-3 sm:p-4 animate-fade-in"
+        className="fixed inset-0 z-50 bg-black/20 backdrop-blur-xl flex items-center justify-center p-4 animate-fade-in"
         onClick={onClose}
       >
         <div
-          className="relative max-w-7xl max-h-[90vh] w-full h-full animate-zoom-in"
+          className="relative max-w-[95vw] max-h-[95vh] w-auto h-auto animate-zoom-in"
           onClick={(e) => e.stopPropagation()}
         >
           <button
             onClick={onClose}
-            className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 p-2 sm:p-3 bg-white/90 hover:bg-white rounded-full text-slate-900 transition-colors shadow-lg"
+            className="absolute -top-12 left-0 z-10 p-3 bg-slate-900/80 hover:bg-white/30 rounded-full text-white transition-colors shadow-lg"
           >
             <svg
-              className="w-5 h-5 sm:w-6 sm:h-6"
+              className="w-6 h-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -179,8 +176,13 @@ export default function ImageGallery() {
           <Image
             src={image.fileUrl}
             alt={image.fileName}
-            fill
-            style={{ objectFit: "contain" }}
+            width={1200}
+            height={800}
+            style={{
+              objectFit: "contain",
+              maxWidth: "95vw",
+              maxHeight: "95vh",
+            }}
             className="rounded-lg"
             priority
           />
@@ -190,13 +192,10 @@ export default function ImageGallery() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 py-6 sm:py-8 mt-20 animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 py-6 sm:py-8 mt-10 animate-fade-in">
       <div className="w-full max-w-6xl backdrop-blur-sm  rounded-lg sm:rounded-xl shadow-xl p-4 sm:p-6 md:p-8 border border-slate-200 animate-scale-in">
         {/* Header */}
         <div className="text-center mb-4 sm:mb-6">
-          <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-gradient-to-r from-slate-900 to-slate-900 rounded-xl flex items-center justify-center">
-            <FiImage className="text-2xl sm:text-3xl md:text-4xl text-white" />
-          </div>
           <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-900 bg-clip-text text-transparent">
             گالری تصاویر
           </h2>
@@ -250,7 +249,10 @@ export default function ImageGallery() {
           </div>
         ) : (
           /* Image Grid */
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 animate-slide-up">
+          <div
+            dir="rtl"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 items-center justify-end gap-3 sm:gap-4 animate-slide-up"
+          >
             {images.map((image, index) => (
               <div
                 key={image._id}
@@ -268,7 +270,7 @@ export default function ImageGallery() {
                 </div>
 
                 {/* Overlay with actions */}
-                <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-all duration-300 flex items-center justify-center opacity-70 md:opacity-0 md:group-hover:opacity-100">
                   <div className="flex gap-2 sm:gap-3">
                     <button
                       className="p-2 sm:p-3 bg-white/90 hover:bg-white rounded-full text-red-500 hover:text-red-600 transition-all shadow-lg hover:scale-110"
@@ -300,40 +302,22 @@ export default function ImageGallery() {
             ))}
           </div>
         )}
-
-        {/* Stats Footer */}
-        {images.length > 0 && (
-          <div className="mt-6 bg-gradient-to-r from-slate-900 to-slate-900 rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 text-white">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 text-xs sm:text-sm">
-              <div className="flex items-center gap-2">
-                <FiImage className="text-base sm:text-lg" />
-                <span>
-                  مجموع تصاویر: <strong>{images.length}</strong>
-                </span>
-              </div>
-              <button
-                onClick={fetchImages}
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-xs sm:text-sm font-medium"
-              >
-                بروزرسانی
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Lightbox */}
-        {isLightboxOpen && selectedImage && (
-          <ImageLightbox
-            image={selectedImage}
-            onClose={() => setIsLightboxOpen(false)}
-          />
-        )}
+        <div className="">
+          {" "}
+          {/* Lightbox */}
+          {isLightboxOpen && selectedImage && (
+            <ImageLightbox
+              image={selectedImage}
+              onClose={() => setIsLightboxOpen(false)}
+            />
+          )}
+        </div>
 
         {/* Upload Modal */}
         {isUploadModalOpen && (
           <div
             dir="rtl"
-            className="fixed inset-0  z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           >
             <div className="bg-white rounded-xl p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
@@ -443,7 +427,7 @@ export default function ImageGallery() {
         {/* Delete Confirmation Modal */}
         {deleteModal.isOpen && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 animate-fade-in">
-            <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8 w-full max-w-md border border-slate-200 shadow-2xl animate-scale-in">
+            <div className="bg-white backdrop-blur-md rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8 w-full max-w-md border border-slate-200 shadow-2xl animate-scale-in">
               <div className="text-center">
                 {/* Icon */}
                 <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-red-100 rounded-full flex items-center justify-center">
@@ -474,20 +458,6 @@ export default function ImageGallery() {
                     حذف
                   </button>
                 </div>
-
-                {/* Status Messages */}
-                {deleteStatus === "success" && (
-                  <div className="mt-4 flex items-center justify-center text-green-600 text-sm sm:text-base animate-slide-up">
-                    <FiCheckCircle className="ml-2" />
-                    تصویر با موفقیت حذف شد
-                  </div>
-                )}
-                {deleteStatus === "error" && (
-                  <div className="mt-4 flex items-center justify-center text-red-600 text-sm sm:text-base animate-slide-up">
-                    <FiAlertTriangle className="ml-2" />
-                    خطا در حذف تصویر
-                  </div>
-                )}
               </div>
             </div>
           </div>

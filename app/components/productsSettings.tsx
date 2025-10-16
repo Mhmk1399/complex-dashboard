@@ -715,60 +715,6 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                 </div>
               </div>
             </div>
-
-            {/* Description */}
-            <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-2">
-                <label className="font-semibold text-slate-800 text-sm">
-                  توضیحات *
-                </label>
-                <div
-                  data-tooltip-id="ai-generator"
-                  data-tooltip-content={
-                    !settings.blocks.name.trim() ||
-                    !settings.blocks.category.name.trim() ||
-                    settings.blocks.properties.length === 0
-                      ? "لطفاً ابتدا نام، دسته‌بندی و ویژگی‌ها را وارد کنید"
-                      : "ایجاد توضیحات با هوش مصنوعی"
-                  }
-                >
-                  <AIDescriptionGenerator
-                    productData={{
-                      name: settings.blocks.name,
-                      category: settings.blocks.category.name,
-                      properties: settings.blocks.properties.reduce(
-                        (acc, prop) => {
-                          acc[prop.name] = prop.value;
-                          return acc;
-                        },
-                        {} as Record<string, unknown>
-                      ),
-                    }}
-                    onDescriptionGenerated={(description) => {
-                      handleChange("blocks", "description", description);
-                      clearError("description");
-                    }}
-                  />
-                </div>
-              </div>
-              <textarea
-                value={settings.blocks.description}
-                onChange={(e) => {
-                  handleChange("blocks", "description", e.target.value);
-                  clearError("description");
-                }}
-                className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all min-h-[100px] resize-none ${
-                  errors.description ? "border-red-500" : "border-slate-200"
-                }`}
-                placeholder="توضیحات محصول را وارد کنید"
-              />
-              {errors.description && (
-                <p className="text-red-500 text-xs mt-1.5">
-                  {errors.description}
-                </p>
-              )}
-            </div>
-
             {/* Category & Status */}
             <div className="grid md:grid-cols-2 gap-4">
               <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
@@ -822,6 +768,58 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                   <option value="unavailable">ناموجود</option>
                 </select>
               </div>
+            </div>
+            {/* Description */}
+            <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-2">
+                <label className="font-semibold text-slate-800 text-sm">
+                  توضیحات *
+                </label>
+                <div
+                  data-tooltip-id="ai-generator"
+                  data-tooltip-content={
+                    !settings.blocks.name.trim() ||
+                    !settings.blocks.category.name.trim() ||
+                    settings.blocks.properties.length === 0
+                      ? "لطفاً ابتدا نام، دسته‌بندی و ویژگی‌ها را وارد کنید"
+                      : "ایجاد توضیحات با هوش مصنوعی"
+                  }
+                >
+                  <AIDescriptionGenerator
+                    productData={{
+                      name: settings.blocks.name,
+                      category: settings.blocks.category.name,
+                      properties: settings.blocks.properties.reduce(
+                        (acc, prop) => {
+                          acc[prop.name] = prop.value;
+                          return acc;
+                        },
+                        {} as Record<string, unknown>
+                      ),
+                    }}
+                    onDescriptionGenerated={(description) => {
+                      handleChange("blocks", "description", description);
+                      clearError("description");
+                    }}
+                  />
+                </div>
+              </div>
+              <textarea
+                value={settings.blocks.description}
+                onChange={(e) => {
+                  handleChange("blocks", "description", e.target.value);
+                  clearError("description");
+                }}
+                className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all min-h-[100px] resize-none ${
+                  errors.description ? "border-red-500" : "border-slate-200"
+                }`}
+                placeholder="توضیحات محصول را وارد کنید"
+              />
+              {errors.description && (
+                <p className="text-red-500 text-xs mt-1.5">
+                  {errors.description}
+                </p>
+              )}
             </div>
 
             {/* Colors */}

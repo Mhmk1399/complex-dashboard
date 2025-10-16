@@ -170,8 +170,8 @@ export const Collections = () => {
                 هیچ کالکشنی یافت نشد
               </h3>
               <p className="text-slate-500 text-sm mb-6 max-w-md text-center px-4">
-                شما هنوز هیچ کالکشنی ایجاد نکردهاید. کالکشن ها به شما کمک میکنند
-                محصولات مرتبط را گروهبندی کنید.
+                شما هنوز هیچ کالکشنی ایجاد نکرده اید. کالکشن ها به شما کمک می کنند
+                محصولات مرتبط را گروه بندی کنید.
               </p>
               <button
                 onClick={() => setIsCreateModalOpen(true)}

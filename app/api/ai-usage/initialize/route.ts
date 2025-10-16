@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       usage: newUsage
     });
   } catch (error) {
-    console.error("Error initializing AI usage:", error);
+    console.log("Error initializing AI usage:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

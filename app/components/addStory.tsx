@@ -1,14 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import {
   FiUploadCloud,
   FiEdit,
   FiSave,
   FiImage,
   FiType,
-  FiPlus,
-  FiCheck,
+   FiCheck,
   FiX,
   FiEye,
 } from "react-icons/fi";
@@ -37,7 +35,6 @@ export const AddStory = () => {
   };
 
   const handleSave = async () => {
-    // Validate inputs
     if (!settings.title.trim()) {
       toast.error("لطفا عنوان استوری را وارد کنید");
       return;
@@ -77,7 +74,6 @@ export const AddStory = () => {
       toast.error("خطای غیرمنتظره در ایجاد استوری");
       console.log(error);
     } finally {
-      // Reset save status after a short delay
       setTimeout(() => setSaveStatus("idle"), 3000);
     }
   };
@@ -98,95 +94,165 @@ export const AddStory = () => {
   };
 
   const isFormValid = settings.title.trim() && settings.image;
+  const completionPercentage =
+    (Object.values(settings).filter(Boolean).length / 2) * 100;
 
   return (
     <>
+      <style jsx>{`
+        .fade-in {
+          animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .slide-in-left {
+          animation: slideInLeft 0.5s ease-out;
+        }
+
+        @keyframes slideInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .slide-in-right {
+          animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .scale-in {
+          animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .spinner {
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        .hover-lift:hover {
+          transform: translateY(-2px);
+        }
+
+        .hover-scale:hover {
+          transform: scale(1.02);
+        }
+
+        .progress-bar {
+          transition: width 0.5s ease-out;
+        }
+      `}</style>
+
       <div
         dir="rtl"
-        className="min-h-screen  p-4 flex items-center justify-center"
+        className="min-h-screen p-4 sm:p-6 flex items-center justify-center mt-20"
       >
         <div className="w-full max-w-4xl">
           {/* Header Section */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-8"
-          >
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4 shadow-lg">
-              <FiPlus className="text-3xl text-white" />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          <div className="text-center mb-6 sm:mb-8 fade-in">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-2">
               افزودن استوری جدید
             </h1>
-            <p className="text-gray-600 text-lg">
+            <p className="text-slate-600 text-sm sm:text-base md:text-lg">
               استوری جذاب خود را ایجاد کنید و با مخاطبان به اشتراک بگذارید
             </p>
-          </motion.div>
+          </div>
 
           {/* Main Form Card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
-          >
+          <div className="scale-in backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
             {/* Progress Indicator */}
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+            <div className="bg-gradient-to-r from-slate-700 to-slate-800 p-4 sm:p-6">
               <div className="flex items-center justify-between text-white">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                       settings.image ? "bg-white/20" : "bg-white/40"
                     }`}
                   >
-                    <FiImage className="text-sm" />
+                    <FiImage className="text-xs sm:text-sm" />
                   </div>
-                  <span className="text-sm font-medium">انتخاب تصویر</span>
+                  <span className="text-xs sm:text-sm font-medium hidden sm:inline">
+                    انتخاب تصویر
+                  </span>
                 </div>
 
-                <div className="w-16 h-1 bg-white/20 rounded-full mx-4">
+                <div className="flex-1 h-1 bg-white/20 rounded-full mx-2 sm:mx-4 max-w-[100px] sm:max-w-[150px]">
                   <div
-                    className="h-full bg-white rounded-full transition-all duration-500"
-                    style={{
-                      width: `${
-                        (Object.values(settings).filter(Boolean).length / 2) *
-                        100
-                      }%`,
-                    }}
+                    className="progress-bar h-full bg-white rounded-full"
+                    style={{ width: `${completionPercentage}%` }}
                   />
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                       settings.title ? "bg-white/20" : "bg-white/40"
                     }`}
                   >
-                    <FiType className="text-sm" />
+                    <FiType className="text-xs sm:text-sm" />
                   </div>
-                  <span className="text-sm font-medium">عنوان</span>
+                  <span className="text-xs sm:text-sm font-medium hidden sm:inline">
+                    عنوان
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="p-8 space-y-8">
+            <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
               {/* Image Selection Section */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="space-y-4"
-              >
-                <label className="flex items-center gap-3 text-xl font-semibold text-gray-800 mb-4">
-                  <FiImage className="text-blue-500" />
+              <div className="space-y-3 sm:space-y-4 slide-in-left">
+                <label className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl font-semibold text-slate-900">
+                  <FiImage className="text-slate-500 text-base sm:text-xl" />
                   تصویر استوری
                 </label>
 
                 {settings.image ? (
                   /* Image Preview */
                   <div className="relative group">
-                    <div className="relative w-full h-64 rounded-2xl overflow-hidden shadow-lg border-4 border-blue-100">
+                    <div className="relative w-full h-48 sm:h-56 md:h-64 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border-2 sm:border-4 border-slate-100">
                       <Image
                         src={settings.image}
                         alt="Selected story image"
@@ -197,61 +263,54 @@ export const AddStory = () => {
                     </div>
 
                     {/* Image Actions */}
-                    <div className="absolute top-4 right-4 flex gap-2">
+                    <div className="absolute top-2 sm:top-4 right-2 sm:right-4 flex gap-2">
                       <button
                         onClick={() => setIsImageSelectorOpen(true)}
-                        className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-300 group"
+                        className="p-1.5 sm:p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 hover-scale"
                       >
-                        <FiEdit className="text-blue-500 group-hover:scale-110 transition-transform" />
+                        <FiEdit className="text-slate-500 text-sm sm:text-base" />
                       </button>
                       <button
                         onClick={clearImage}
-                        className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-300 group"
+                        className="p-1.5 sm:p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 hover-scale"
                       >
-                        <FiX className="text-red-500 group-hover:scale-110 transition-transform" />
+                        <FiX className="text-red-500 text-sm sm:text-base" />
                       </button>
                     </div>
 
                     {/* Success Indicator */}
-                    <div className="absolute bottom-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg">
+                    <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 bg-green-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 shadow-lg">
                       <FiCheck className="text-xs" />
                       تصویر انتخاب شد
                     </div>
                   </div>
                 ) : (
                   /* Image Upload Area */
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                  <div
                     onClick={() => setIsImageSelectorOpen(true)}
-                    className="relative w-full h-64 border-3 border-dashed border-blue-300 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 cursor-pointer group"
+                    className="relative w-full h-48 sm:h-56 md:h-64 border-2 sm:border-3 border-dashed border-slate-300 rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-200 transition-all duration-200 cursor-pointer group hover-scale"
                   >
-                    <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
-                      <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <FiUploadCloud className="text-2xl text-white" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center space-y-3 sm:space-y-4">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-slate-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200 shadow-lg">
+                        <FiUploadCloud className="text-xl sm:text-2xl text-white" />
                       </div>
-                      <div className="text-center">
-                        <p className="text-lg font-semibold text-gray-700 mb-1">
+                      <div className="text-center px-4">
+                        <p className="text-base sm:text-lg font-semibold text-slate-700 mb-1">
                           برای انتخاب تصویر کلیک کنید
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs sm:text-sm text-slate-500">
                           تصویر استوری خود را از گالری انتخاب کنید
                         </p>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
+              </div>
 
               {/* Title Input Section */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="space-y-4"
-              >
-                <label className="flex items-center gap-3 text-xl font-semibold text-gray-800 mb-4">
-                  <FiType className="text-blue-500" />
+              <div className="space-y-3 sm:space-y-4 slide-in-right">
+                <label className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl font-semibold text-slate-900">
+                  <FiType className="text-slate-500 text-base sm:text-xl" />
                   عنوان استوری
                 </label>
 
@@ -260,103 +319,87 @@ export const AddStory = () => {
                     type="text"
                     value={settings.title}
                     onChange={(e) => handleChange("title", e.target.value)}
-                    className="w-full p-4 pr-12 text-lg border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-gray-50 hover:bg-white"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-4 pr-10 sm:pr-12 text-sm sm:text-base md:text-lg border-2 border-slate-300 rounded-xl sm:rounded-2xl focus:outline-none focus:ring-4 focus:ring-slate-500/20 focus:border-slate-500 transition-all duration-200 bg-slate-50 hover:bg-white"
                     placeholder="عنوان جذاب برای استوری خود بنویسید..."
+                    maxLength={100}
                     dir="rtl"
                   />
-                  <FiType className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <FiType className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm sm:text-base" />
 
                   {/* Character Counter */}
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-sm text-gray-400">
+                  <div className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-xs sm:text-sm text-slate-400">
                     {settings.title.length}/100
                   </div>
                 </div>
 
                 {/* Title Preview */}
                 {settings.title && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200"
-                  >
+                  <div className="fade-in p-3 sm:p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg sm:rounded-xl border border-slate-200">
                     <div className="flex items-center gap-2 mb-2">
-                      <FiEye className="text-blue-500" />
-                      <span className="text-sm font-medium text-blue-700">
+                      <FiEye className="text-slate-500 text-sm sm:text-base" />
+                      <span className="text-xs sm:text-sm font-medium text-slate-700">
                         پیش‌نمایش عنوان:
                       </span>
                     </div>
-                    <p className="text-gray-800 font-medium">
+                    <p className="text-slate-800 font-medium text-sm sm:text-base">
                       {settings.title}
                     </p>
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
+              </div>
 
               {/* Action Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200"
-              >
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6 border-t border-slate-200">
                 {/* Save Button */}
-                <motion.button
-                  whileHover={{ scale: isFormValid ? 1.02 : 1 }}
-                  whileTap={{ scale: isFormValid ? 0.98 : 1 }}
+                <button
                   onClick={handleSave}
                   disabled={!isFormValid || saveStatus === "saving"}
                   className={`
-                    flex-1 py-4 px-6 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-lg
+                    flex-1 py-3 sm:py-4 px-4 sm:px-6 rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base md:text-lg transition-all duration-200 flex items-center justify-center gap-2 sm:gap-3 shadow-md
                     ${
                       isFormValid && saveStatus !== "saving"
-                        ? "bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 hover:shadow-xl transform hover:-translate-y-1"
-                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        ? "bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 hover:shadow-lg hover-lift"
+                        : "bg-slate-200 text-slate-400 cursor-not-allowed"
                     }
                   `}
                 >
                   {saveStatus === "saving" ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="spinner w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full" />
                       در حال ذخیره...
                     </>
                   ) : (
                     <>
-                      <FiSave className="text-xl" />
+                      <FiSave className="text-lg sm:text-xl" />
                       ذخیره استوری
                     </>
                   )}
-                </motion.button>
+                </button>
 
                 {/* Manage Stories Button */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
                   onClick={() => setIsEditModalOpen(true)}
-                  className="flex-1 py-4 px-6 rounded-2xl font-semibold text-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="flex-1 py-3 sm:py-4 px-4 sm:px-6 rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base md:text-lg bg-gradient-to-r from-slate-500 to-slate-600 text-white hover:from-slate-600 hover:to-slate-700 transition-all duration-200 flex items-center justify-center gap-2 sm:gap-3 shadow-md hover:shadow-lg hover-lift"
                 >
-                  <FiEdit className="text-xl" />
+                  <FiEdit className="text-lg sm:text-xl" />
                   مدیریت استوری‌ها
-                </motion.button>
-              </motion.div>
+                </button>
+              </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Form Validation Helper */}
           {!isFormValid && (settings.title || settings.image) && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <FiX className="text-white text-xs" />
+            <div className="fade-in mt-4 sm:mt-6 p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg sm:rounded-xl">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <FiX className="text-white text-xs sm:text-sm" />
                 </div>
                 <div>
-                  <p className="font-medium text-amber-800 mb-1">
+                  <p className="font-medium text-amber-800 mb-1 text-sm sm:text-base">
                     برای ادامه، موارد زیر را تکمیل کنید:
                   </p>
-                  <ul className="text-sm text-amber-700 space-y-1">
+                  <ul className="text-xs sm:text-sm text-amber-700 space-y-1">
                     {!settings.title && (
                       <li className="flex items-center gap-2">
                         <div className="w-1 h-1 bg-amber-600 rounded-full" />
@@ -372,49 +415,48 @@ export const AddStory = () => {
                   </ul>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* Tips Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
-            <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/50 shadow-lg">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <FiImage className="text-blue-600 text-xl" />
+          <div className="fade-in mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+            <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-sm">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                <FiImage className="text-slate-600 text-lg sm:text-xl" />
               </div>
-              <h3 className="font-semibold text-gray-800 mb-2">
+              <h3 className="font-semibold text-slate-900 mb-1 sm:mb-2 text-sm sm:text-base">
                 تصویر باکیفیت
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs sm:text-sm text-slate-600">
                 برای بهترین نتیجه، تصاویر با کیفیت بالا و ابعاد مناسب انتخاب
                 کنید
               </p>
             </div>
 
-            <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/50 shadow-lg">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <FiType className="text-green-600 text-xl" />
+            <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-sm">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                <FiType className="text-green-600 text-lg sm:text-xl" />
               </div>
-              <h3 className="font-semibold text-gray-800 mb-2">عنوان جذاب</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-slate-900 mb-1 sm:mb-2 text-sm sm:text-base">
+                عنوان جذاب
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600">
                 عنوان کوتاه و جذاب انتخاب کنید که توجه مخاطبان را جلب کند
               </p>
             </div>
 
-            <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/50 shadow-lg">
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                <FiEye className="text-purple-600 text-xl" />
+            <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-sm sm:col-span-2 md:col-span-1">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                <FiEye className="text-purple-600 text-lg sm:text-xl" />
               </div>
-              <h3 className="font-semibold text-gray-800 mb-2">پیش‌نمایش</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-slate-900 mb-1 sm:mb-2 text-sm sm:text-base">
+                پیش‌نمایش
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600">
                 قبل از انتشار، از پیش‌نمایش استوری خود اطمینان حاصل کنید
               </p>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Modals */}

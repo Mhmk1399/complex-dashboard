@@ -25,7 +25,7 @@ export const TokenDisplay = () => {
       const usage = await AITokenService.getTokenUsage(storeId);
       setTokenUsage(usage);
     } catch (error) {
-      console.error("Error fetching token usage:", error);
+      console.log("Error fetching token usage:", error);
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,7 @@ export const TokenDisplay = () => {
       isLow ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200'
     }`}>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-700">توکن های AI</span>
+        <span className="text-sm font-medium text-gray-700">توکن</span>
         <span className={`text-xs px-2 py-1 rounded-full ${
           isLow ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
         }`}>
@@ -67,9 +67,9 @@ export const TokenDisplay = () => {
         ></div>
       </div>
       
-      <div className="text-xs text-gray-600">
+      {/* <div className="text-xs text-gray-600">
         {tokenUsage.usedTokens} از {tokenUsage.totalTokens} استفاده شده
-      </div>
+      </div> */}
     </div>
   );
 };

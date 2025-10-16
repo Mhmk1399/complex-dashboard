@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { FaCheck, FaPlus } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTourGuide } from "../../hooks/useTourGuide";
+import { useUserProgress } from "../../hooks/useUserProgress";
 
 interface Template {
   id: string;
@@ -25,10 +26,11 @@ const StartComponent: React.FC<StartComponentProps> = ({
   const { tourCompleted, startTour, TourOverlay } = useTourGuide();
   const router = useRouter();
   const [userName, setUserName] = useState("کاربر");
-  const [hasProducts, setHasProducts] = useState(false);
-  const [hasBlogs, setHasBlogs] = useState(false);
-  const [hasCollections, setHasCollections] = useState(false);
-  const [hasUserInfo, setHasUserInfo] = useState(false);
+  const { progress } = useUserProgress();
+  const hasProducts = progress?.hasProducts || false;
+  const hasBlogs = progress?.hasBlogs || false;
+  const hasCollections = progress?.hasCollections || false;
+  const hasUserInfo = progress?.hasUserInfo || false;
   const [selectedTemplateName, setSelectedTemplateName] = useState("");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
@@ -37,8 +39,8 @@ const StartComponent: React.FC<StartComponentProps> = ({
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [showCompleted, setShowCompleted] = useState(false);
   const [showProgressForTour, setShowProgressForTour] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -75,56 +77,6 @@ const StartComponent: React.FC<StartComponentProps> = ({
       }
     } catch (error) {
       console.log("Error checking template status:", error);
-    }
-  };
-
-  const checkUserProgress = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const productsRes = await fetch("/api/products", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (productsRes.ok) {
-        const data = await productsRes.json();
-        setHasProducts(data.products && data.products.length > 0);
-      }
-
-      const blogsRes = await fetch("/api/blog", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (blogsRes.ok) {
-        const data = await blogsRes.json();
-        setHasBlogs(data.blogs && data.blogs.length > 0);
-      }
-
-      const collectionsRes = await fetch("/api/collections", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (collectionsRes.ok) {
-        const data = await collectionsRes.json();
-        setHasCollections(data.collections && data.collections.length > 0);
-      }
-
-      const userInfoRes = await fetch("/api/userInfo", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (userInfoRes.ok) {
-        setHasUserInfo(true);
-      } else {
-        setHasUserInfo(false);
-      }
-    } catch (error) {
-      console.log("Error checking progress:", error);
     }
   };
 
@@ -170,7 +122,6 @@ const StartComponent: React.FC<StartComponentProps> = ({
       };
 
       fetchUserDetails();
-      checkUserProgress();
       checkTemplateStatus();
     } catch (error) {
       console.log("Error decoding token:", error);
@@ -291,7 +242,7 @@ const StartComponent: React.FC<StartComponentProps> = ({
     {
       id: "collections",
       title: "کالشن ها",
-      description: " ایجاد مجموعههای محصولات",
+      description: " ایجاد مجموعه های محصولات",
       completed: hasCollections,
       action: () => setSelectedMenu("collections"),
     },
@@ -309,7 +260,6 @@ const StartComponent: React.FC<StartComponentProps> = ({
     if (!tourCompleted && progressItems.length > 0) {
       const timer = setTimeout(() => {
         if (completedCount === progressItems.length) {
-          setShowCompleted(true);
           setShowProgressForTour(true);
         }
 
@@ -361,7 +311,7 @@ const StartComponent: React.FC<StartComponentProps> = ({
   const getProgressColor = () => {
     if (progressPercentage < 40) return "text-red-500";
     if (progressPercentage < 80) return "text-yellow-500";
-    return "text-green-500";
+    return "text-blue-500";
   };
 
   const handleRedirectToSite = async () => {
@@ -391,9 +341,10 @@ const StartComponent: React.FC<StartComponentProps> = ({
     <>
       <TourOverlay />
       <div className="min-h-screen   py-8 lg:py-12" dir="rtl">
-        <div className="max-w-5xl mx-auto mb-8 lg:mb-12 mt-20 text-center border-b-2 pb-2 ">
+        <div className="max-w-5xl mx-auto mb-8 lg:mb-12 mt-20 text-center   ">
           <h1 className="text-xl lg:text-4xl font-bold text-slate-700 mb-4 lg:mb-6">
-            {userName} , به داشبورد مدیریت خوش آمدید
+            <strong className="text-blue-500">{userName}</strong> , به داشبورد
+            مدیریت خوش آمدید
           </h1>
           <p className="text-sm sm:text-base text-slate-500 max-w-2xl mx-auto">
             برای شروع کار با سیستم، لطفاً مراحل زیر را به ترتیب تکمیل نمایید.
@@ -402,26 +353,28 @@ const StartComponent: React.FC<StartComponentProps> = ({
 
         <div className="max-w-7xl mx-auto">
           {(progressPercentage < 100 || showProgressForTour) && (
-            <div className="progress-section bg-slate-800 backdrop-blur-sm border border-slate-700 rounded-xl shadow-lg p-4 lg:p-5 mb-4 lg:mb-6 mx-4">
+            <div className="progress-section bg-white/80 backdrop-blur-sm border border-slate-700 rounded-xl shadow-lg p-4 lg:p-5 mb-4 lg:mb-6 mx-4">
               <div className="flex items-center justify-between gap-4 mb-3">
                 <div className="flex-1">
-                  <h2 className="text-base lg:text-lg font-bold text-white mb-1">
+                  <h2 className="text-base lg:text-lg font-bold text-slate-800 mb-1">
                     پیشرفت راه اندازی
                   </h2>
-                  <p className="text-xs text-slate-200">
+                  <p className="text-xs text-slate-600">
                     {completedCount}/{progressItems.length} مرحله
                   </p>
                 </div>
                 <div className="flex-shrink-0">
-                  <div className={`text-xl lg:text-2xl font-bold ${getProgressColor()}`}>
+                  <div
+                    className={`text-xl lg:text-2xl font-bold ${getProgressColor()}`}
+                  >
                     {Math.round(progressPercentage)}%
                   </div>
                 </div>
               </div>
 
-              <div className="w-full bg-slate-700 rounded-full h-2">
+              <div className="w-full bg-slate-100 rounded-full h-2">
                 <motion.div
-                  className="bg-gradient-to-r from-blue-500 to-blue-400 h-2 rounded-full"
+                  className="bg-gradient-to-l from-slate-300 via-slate-500 to-slate-900 h-2 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${progressPercentage}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}
@@ -430,142 +383,117 @@ const StartComponent: React.FC<StartComponentProps> = ({
             </div>
           )}
 
-          <div className="bg-slate-800 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl p-6 lg:p-8">
-            <div className="relative">
-              <div className="absolute right-6 top-0 bottom-0 w-0.5 bg-slate-700" />
-              {progressItems
-                .filter((item) => !item.completed)
-                .map((item, index) => (
-                  <motion.div
-                    key={item.id}
-                    id={`progress-item-${item.id}`}
-                    className="relative flex items-start sm:items-center mb-6 sm:mb-8 last:mb-0"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.2 }}
-                  >
-                    <div
-                      className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        item.completed
-                          ? "bg-green-500 text-white"
-                          : "bg-slate-700 text-slate-400"
-                      } transition-all duration-300`}
-                    >
-                      {item.completed ? (
-                        <FaCheck className="text-base" />
-                      ) : (
-                        <FaPlus className="text-base" />
-                      )}
-                    </div>
-
-                    <div className="mr-6 flex-1">
-                      <button
-                        onClick={item.action}
-                        className="w-full text-right p-4 rounded-xl hover:bg-slate-700/50 transition-all duration-200 group"
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="flex-1">
-                            <h3
-                              className={`text-lg font-bold mb-2 ${
-                                item.completed ? "text-green-400" : "text-white"
-                              } group-hover:text-blue-400 transition-colors`}
-                            >
-                              {item.title}
-                            </h3>
-                            <p className="text-slate-300 text-sm">
-                              {item.description}
-                            </p>
-                            {item.completed && (
-                              <span className="inline-block mt-2 px-3 py-1 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30">
-                                تکمیل شده
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                            >
-                              <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
-
-              {completedCount > 0 && (
-                <div className="mt-4 mr-2">
-                  <button
-                    onClick={() => setShowCompleted(!showCompleted)}
-                    className="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors"
-                  >
-                    <motion.svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      animate={{ rotate: showCompleted ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
-                    </motion.svg>
-                    <span>{completedCount} مرحله تکمیل شده</span>
-                  </button>
-
-                  <AnimatePresence>
-                    {showCompleted && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden mt-4 mr-6"
-                      >
-                        {progressItems
-                          .filter((item) => item.completed)
-                          .map((item, index) => (
-                            <motion.div
-                              key={item.id}
-                              id={`progress-item-${item.id}`}
-                              className="relative flex items-center mb-4 last:mb-0"
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.1 }}
-                            >
-                              <div className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-green-500/20 text-green-400 border border-green-500/30">
-                                <FaCheck className="text-sm" />
-                              </div>
-                              <div className="mr-4 flex-1">
-                                <h3 className="text-sm font-medium text-green-400">
-                                  {item.title}
-                                </h3>
-                              </div>
-                            </motion.div>
-                          ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              )}
+          <div className="bg-white/80 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl p-6 lg:p-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-slate-800">
+                مراحل راه اندازی
+              </h2>
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg transition-all text-sm font-medium text-slate-700"
+              >
+                <motion.svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  animate={{ rotate: isExpanded ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                </motion.svg>
+                {isExpanded ? "جمع کردن" : "باز کردن"}
+              </button>
             </div>
 
-            <div className="mt-8 pt-8 border-t border-slate-700">
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="relative">
+                    <div className="absolute right-5 top-3 bottom-3 w-0.5 bg-slate-700" />
+                    {progressItems.map((item, index) => (
+                      <motion.div
+                        key={item.id}
+                        id={`progress-item-${item.id}`}
+                        className="relative flex items-start sm:items-center mb-4 last:mb-0"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <div
+                          className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                            item.completed
+                              ? "bg-blue-500 text-white"
+                              : "bg-slate-700 text-slate-400"
+                          } transition-all duration-300`}
+                        >
+                          {item.completed ? (
+                            <FaCheck className="text-sm" />
+                          ) : (
+                            <FaPlus className="text-sm" />
+                          )}
+                        </div>
+
+                        <div className="mr-4 flex-1">
+                          <button
+                            onClick={item.action}
+                            className={`w-full text-right p-3 rounded-lg transition-all duration-200 group ${
+                              item.completed ? "bg-white/5" : "bg-white/50 "
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex-1">
+                                <h3
+                                  className={`text-sm font-semibold mb-1 ${
+                                    item.completed
+                                      ? "text-blue-400"
+                                      : "text-black"
+                                  } group-hover:text-slate-800 transition-colors`}
+                                >
+                                  {item.title}
+                                </h3>
+                                <p className="text-slate-400  text-xs">
+                                  {item.description}
+                                </p>
+                              </div>
+                              {item.completed && (
+                                <span className="px-2 py-0.5 bg-blue-500/80 text-blue-100 text-xs rounded-full border border-blue-500/30 flex-shrink-0">
+                                  ✓
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div
+              className={`${
+                isExpanded ? "mt-8 pt-8 border-t border-slate-700" : "mt-4"
+              }`}
+            >
               <button
                 onClick={handleRedirectToSite}
                 disabled={selectedTemplateName === ""}
                 className={`site-view-button w-full flex items-center justify-between p-5 rounded-xl transition-all duration-200 ${
                   selectedTemplateName !== ""
-                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg hover:shadow-blue-500/50"
-                    : "bg-slate-700 text-slate-500 cursor-not-allowed"
+                    ? "bg-gradient-to-r from-slate-600 to-slate-900 text-white hover:shadow-lg hover:shadow-blue-500/50"
+                    : "bg-slate-700 text-slate-100 cursor-not-allowed"
                 }`}
               >
                 <div className="text-right">
                   <h3 className="text-base font-bold mb-1">مشاهده سایت</h3>
-                  <p className="text-blue-100 text-sm">
+                  <p className="text-slate-400 text-sm">
                     دسترسی به سایت عمومی شما
                   </p>
                 </div>
@@ -625,12 +553,12 @@ const StartComponent: React.FC<StartComponentProps> = ({
                       onClick={() => setSelectedTemplate(template)}
                       className={`border rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer relative ${
                         isCurrentTemplate
-                          ? "border-green-500 bg-green-500/10"
+                          ? "border-blue-500 bg-blue-500/10"
                           : "border-slate-700 hover:border-blue-500"
                       }`}
                     >
                       {isCurrentTemplate && (
-                        <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10">
+                        <div className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10">
                           فعال
                         </div>
                       )}
@@ -642,7 +570,7 @@ const StartComponent: React.FC<StartComponentProps> = ({
                       <div className="p-4 lg:p-6">
                         <h3
                           className={`text-lg lg:text-xl font-bold mb-2 ${
-                            isCurrentTemplate ? "text-green-400" : "text-white"
+                            isCurrentTemplate ? "text-blue-400" : "text-white"
                           }`}
                         >
                           {template.name}
@@ -653,7 +581,7 @@ const StartComponent: React.FC<StartComponentProps> = ({
                         <div
                           className={`text-sm font-medium ${
                             isCurrentTemplate
-                              ? "text-green-400"
+                              ? "text-blue-400"
                               : "text-blue-400"
                           }`}
                         >
@@ -751,7 +679,7 @@ const StartComponent: React.FC<StartComponentProps> = ({
       )}
 
       {showToast && (
-        <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[70] flex items-center gap-2 text-base">
+        <div className="fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-[70] flex items-center gap-2 text-base">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
           </svg>
