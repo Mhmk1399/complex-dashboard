@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
-import { motion } from "framer-motion";
 import Image from "next/image";
-import ImageSelectorModal from "./ImageSelectorModal"; // Import the ImageSelectorModal
-import { FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa"; // Add FaTimes for close button
+import ImageSelectorModal from "./ImageSelectorModal";
+import { FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa";
 import { EditStoryProps, Story } from "@/types/type";
 import toast from "react-hot-toast";
 
@@ -97,18 +96,15 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // Handle image selection from ImageSelectorModal
   const handleImageSelect = (selectedImage: { fileUrl: string }) => {
     setImage(selectedImage.fileUrl);
     setIsImageSelectorOpen(false);
   };
 
-  // Handle closing image selector
   const handleCloseImageSelector = () => {
     setIsImageSelectorOpen(false);
   };
 
-  // Handle cancel edit
   const handleCancelEdit = () => {
     setSelectedStory(null);
     setTitle("");
@@ -117,59 +113,125 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
+      <style jsx>{`
+        .modal-backdrop {
+          animation: fadeIn 0.2s ease-in;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        .modal-content {
+          animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+
+        .slide-in-right {
+          animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .fade-in-up {
+          animation: fadeInUp 0.3s ease-out backwards;
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(15px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .story-card {
+          animation: fadeInUp 0.4s ease-out backwards;
+        }
+
+        .hover-lift:hover {
+          transform: translateY(-4px);
+        }
+
+        .hover-scale:hover {
+          transform: scale(1.02);
+        }
+
+        .image-zoom:hover img {
+          transform: scale(1.1);
+        }
+      `}</style>
+
       <Dialog
         open={isOpen && !isImageSelectorOpen}
         onClose={onClose}
         className="fixed inset-0 z-40 overflow-y-auto"
         dir="rtl"
       >
-        <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="flex items-center justify-center min-h-screen p-3 sm:p-4">
           {/* Backdrop */}
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" />
+          <div className="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm" />
 
           {/* Modal Content */}
-          <motion.div
-            className="relative bg-white/95 backdrop-blur-xl rounded-2xl p-8 border border-white/30 max-w-6xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto"
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-          >
+          <div className="modal-content relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-slate-200 max-w-6xl w-full mx-auto shadow-2xl max-h-[90vh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-6 sm:mb-8 pb-3 sm:pb-4 border-b border-slate-200">
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-full transition-colors order-1"
               >
-                <FaTimes className="text-gray-500 text-xl" />
+                <FaTimes className="text-slate-500 text-lg sm:text-xl" />
               </button>
-              <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <FaPlus className="text-blue-500" />
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 flex items-center gap-2 sm:gap-3 order-2">
                 مدیریت استوری‌ها
               </h2>
-              <div className="w-10" /> {/* Spacer for centering */}
+              <div className="w-8 sm:w-10 order-3" />
             </div>
 
             {selectedStory ? (
               /* Edit Form */
-              <motion.form
+              <form
                 onSubmit={handleUpdate}
-                className="space-y-8"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
+                className="space-y-6 sm:space-y-8 slide-in-right"
               >
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                   {/* Title Input */}
                   <div className="space-y-2">
-                    <label className="block text-gray-700 text-lg font-semibold">
+                    <label className="block text-slate-700 text-sm sm:text-base md:text-lg font-semibold">
                       عنوان استوری
                     </label>
                     <input
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full p-4 rounded-xl bg-gray-50 text-gray-800 border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl bg-slate-50 text-slate-800 border border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base outline-none"
                       placeholder="عنوان استوری را وارد کنید"
                       required
                     />
@@ -177,40 +239,35 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
 
                   {/* Image Selection */}
                   <div className="space-y-2">
-                    <label className="block text-gray-700 text-lg font-semibold">
+                    <label className="block text-slate-700 text-sm sm:text-base md:text-lg font-semibold">
                       تصویر استوری
                     </label>
                     <div className="flex flex-col space-y-3">
-                      <div className="flex items-center space-x-3 space-x-reverse">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                         <input
                           type="text"
                           value={image}
                           readOnly
-                          className="flex-grow p-4 rounded-xl bg-gray-100 text-gray-600 border border-gray-200 cursor-not-allowed"
+                          className="flex-grow px-3 sm:px-4 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl bg-slate-100 text-slate-600 border border-slate-200 cursor-not-allowed text-xs sm:text-sm"
                           placeholder="تصویر انتخاب شده نمایش داده می‌شود"
                         />
                         <button
                           type="button"
                           onClick={() => setIsImageSelectorOpen(true)}
-                          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                          className="bg-slate-500 text-white px-4 sm:px-6 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl hover:bg-slate-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg text-sm sm:text-base whitespace-nowrap"
                         >
-                          <FaEdit className="text-sm" />
+                          <FaEdit className="text-xs sm:text-sm" />
                           انتخاب تصویر
                         </button>
                       </div>
 
                       {/* Image Preview */}
                       {image && (
-                        <motion.div
-                          className="mt-4 p-4 bg-gray-50 rounded-xl"
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <p className="text-sm text-gray-600 mb-2">
+                        <div className="fade-in-up p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
+                          <p className="text-xs sm:text-sm text-slate-600 mb-2">
                             پیش‌نمایش تصویر:
                           </p>
-                          <div className="relative w-full h-48 rounded-lg overflow-hidden shadow-md">
+                          <div className="relative w-full h-40 sm:h-48 rounded-lg overflow-hidden shadow-md">
                             <Image
                               src={image}
                               alt="Selected Story Image"
@@ -218,76 +275,69 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
                               className="object-cover"
                             />
                           </div>
-                        </motion.div>
+                        </div>
                       )}
                     </div>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-center gap-4 pt-6 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 md:gap-4 pt-4 sm:pt-6 border-t border-slate-200">
                   <button
                     type="submit"
-                    className="px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="px-6 sm:px-8 py-2.5 sm:py-3 bg-green-500 text-white rounded-lg sm:rounded-xl hover:bg-green-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg text-sm sm:text-base order-2 sm:order-1"
                   >
-                    <FaEdit className="text-sm" />
+                    <FaEdit className="text-xs sm:text-sm" />
                     بروزرسانی استوری
                   </button>
                   <button
                     type="button"
                     onClick={handleCancelEdit}
-                    className="px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="px-6 sm:px-8 py-2.5 sm:py-3 bg-slate-500 text-white rounded-lg sm:rounded-xl hover:bg-slate-600 transition-all duration-200 shadow-md hover:shadow-lg text-sm sm:text-base order-1 sm:order-2"
                   >
                     انصراف
                   </button>
                 </div>
-              </motion.form>
+              </form>
             ) : (
               /* Stories Grid */
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {stories.length === 0 ? (
-                  <motion.div
-                    className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <FaPlus className="mx-auto text-6xl text-gray-400 mb-4" />
-                    <p className="text-gray-600 text-xl font-medium">
+                  <div className="fade-in-up text-center py-12 sm:py-16 bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg sm:rounded-xl border-2 border-dashed border-slate-300">
+                    <FaPlus className="mx-auto text-4xl sm:text-5xl md:text-6xl text-slate-400 mb-3 sm:mb-4" />
+                    <p className="text-slate-600 text-base sm:text-lg md:text-xl font-medium">
                       هیچ استوری اضافه نشده است
                     </p>
-                    <p className="text-gray-500 text-sm mt-2">
+                    <p className="text-slate-500 text-xs sm:text-sm mt-2">
                       برای شروع، اولین استوری خود را اضافه کنید
                     </p>
-                  </motion.div>
+                  </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                     {stories.map((story, idx) => (
-                      <motion.div
+                      <div
                         key={story._id}
-                        className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.1 }}
-                        whileHover={{ scale: 1.02 }}
+                        className="story-card bg-white rounded-lg sm:rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 hover-lift"
+                        style={{ animationDelay: `${idx * 0.05}s` }}
                       >
                         {/* Image */}
-                        <div className="relative h-48 overflow-hidden">
+                        <div className="relative h-36 sm:h-40 md:h-48 overflow-hidden image-zoom">
                           <Image
                             src={story.image}
                             alt={story.title}
                             fill
-                            className="object-cover transition-transform duration-300 hover:scale-110"
+                            className="object-cover transition-transform duration-300"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                         </div>
 
                         {/* Content */}
-                        <div className="p-4 space-y-4">
-                          <h3 className="text-gray-800 font-bold text-lg line-clamp-2">
+                        <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
+                          <h3 className="text-slate-800 font-bold text-sm sm:text-base md:text-lg line-clamp-2">
                             {story.title}
                           </h3>
 
-                          <div className="text-xs text-gray-500 space-y-1">
+                          <div className="text-xs text-slate-500 space-y-1">
                             <p>
                               تاریخ ایجاد:{" "}
                               {new Date(story.createdAt).toLocaleDateString(
@@ -306,31 +356,31 @@ export const EditStory: React.FC<EditStoryProps> = ({ isOpen, onClose }) => {
                           <div className="flex gap-2 pt-2">
                             <button
                               onClick={() => handleEdit(story)}
-                              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm py-2 px-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                              className="flex-1 bg-slate-500 text-white text-xs sm:text-sm py-2 px-2 sm:px-3 rounded-lg hover:bg-slate-600 transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm hover:shadow-md"
                             >
                               <FaEdit className="text-xs" />
                               ویرایش
                             </button>
                             <button
                               onClick={() => handleDelete(story._id)}
-                              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm py-2 px-3 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                              className="flex-1 bg-red-500 text-white text-xs sm:text-sm py-2 px-2 sm:px-3 rounded-lg hover:bg-red-600 transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm hover:shadow-md"
                             >
                               <FaTrash className="text-xs" />
                               حذف
                             </button>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 )}
               </div>
             )}
-          </motion.div>
+          </div>
         </div>
       </Dialog>
 
-      {/* Image Selector Modal - Higher z-index */}
+      {/* Image Selector Modal */}
       <ImageSelectorModal
         isOpen={isImageSelectorOpen}
         onClose={handleCloseImageSelector}

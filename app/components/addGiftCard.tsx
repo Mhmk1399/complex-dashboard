@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import EditGiftCard from "./editGiftCard";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   HiOutlineGift,
   HiOutlineTicket,
@@ -10,6 +9,37 @@ import {
 } from "react-icons/hi";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
+
+// CSS animations
+const styles = `
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+  .animate-slide-up { animation: slideUp 0.3s ease-out; }
+  .animate-slide-down { animation: slideDown 0.2s ease-out; }
+  .animate-scale-in { animation: scaleIn 0.2s ease-out; }
+`;
+
+// Inject styles
+if (typeof document !== "undefined") {
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
 
 interface GiftCard {
   _id: string;
@@ -88,49 +118,54 @@ const AddGiftCard = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 py-8" dir="rtl">
+    <div className="min-h-screen p-3 sm:p-4 py-4 sm:py-6 mt-10" dir="rtl">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="bg-white rounded-2xl shadow-xl mb-6 mt-6 p-6">
-          <div className="flex justify-between items-center">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-lg mb-4 sm:mb-6 p-4 sm:p-6 animate-slide-down">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-              <h2 className="md:text-3xl font-bold bg-gradient-to-r from-[#0077b6] to-blue-400 bg-clip-text text-transparent flex items-center gap-3">
-                <HiOutlineGift className="text-4xl text-[#0077b6]" />
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-900 bg-clip-text text-transparent flex items-center gap-2">
+                <HiOutlineGift className="text-2xl sm:text-3xl md:text-4xl text-slate-900" />
                 مدیریت کارت‌های هدیه
               </h2>
-              <p className="text-gray-500 hidden md:block mt-2">
+              <p className="text-slate-600 text-xs sm:text-sm mt-1 sm:mt-2">
                 کارت‌های هدیه فروشگاه خود را ایجاد و مدیریت کنید
               </p>
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-gradient-to-r text-sm md:text-lg from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg"
+              className="w-full sm:w-auto bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white font-medium text-xs sm:text-sm py-2 sm:py-2.5 px-4 sm:px-5 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md"
             >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
               ویرایش کارت‌های هدیه
             </button>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Add Gift Card Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <motion.h3
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="text-xl font-bold mb-6 text-[#0077b6] flex items-center gap-3"
-            >
-              <PlusIcon className="h-6 w-6" />
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 animate-slide-up">
+            <h3 className="text-base sm:text-lg font-bold mb-4 text-slate-900 flex items-center gap-2">
+              <PlusIcon className="h-5 w-5 text-slate-600" />
               افزودن کارت هدیه جدید
-            </motion.h3>
+            </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <motion.div
-                initial={{ x: -50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                className="space-y-4"
-              >
-                <label className="text-[#0077b6] font-bold flex items-center gap-2">
-                  <HiOutlineTicket className="text-xl" />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-slate-900 font-medium text-xs sm:text-sm flex items-center gap-1.5">
+                  <HiOutlineTicket className="text-base sm:text-lg text-slate-600" />
                   کد کارت هدیه
                 </label>
                 <div className="flex gap-2">
@@ -140,27 +175,23 @@ const AddGiftCard = () => {
                     onChange={(e) =>
                       setGiftCardData({ ...giftCardData, code: e.target.value })
                     }
-                    className="flex-1 p-4 rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-200 focus:border-transparent transition-all duration-300 outline-none"
-                    placeholder="کد کارت هدیه را وارد کنید..."
+                    className="flex-1 p-2.5 sm:p-3 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all outline-none"
+                    placeholder="کد کارت هدیه..."
                     required
                   />
                   <button
                     type="button"
                     onClick={generateCode}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
+                    className="px-3 sm:px-4 py-2 bg-slate-600 text-white text-xs sm:text-sm rounded-lg hover:bg-slate-700 transition-colors whitespace-nowrap"
                   >
                     تولید خودکار
                   </button>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ x: 50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                className="space-y-4"
-              >
-                <label className="text-[#0077b6] font-bold flex items-center gap-2">
-                  <HiOutlineCurrencyDollar className="text-xl" />
+              <div className="space-y-2">
+                <label className="text-slate-900 font-medium text-xs sm:text-sm flex items-center gap-1.5">
+                  <HiOutlineCurrencyDollar className="text-base sm:text-lg text-slate-600" />
                   نوع کارت هدیه
                 </label>
                 <select
@@ -168,20 +199,16 @@ const AddGiftCard = () => {
                   onChange={(e) =>
                     setGiftCardData({ ...giftCardData, type: e.target.value })
                   }
-                  className="w-full p-4 rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-200 focus:border-transparent transition-all duration-300 outline-none"
+                  className="w-full p-2.5 sm:p-3 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all outline-none"
                 >
                   <option value="fixed">مبلغ ثابت</option>
                   <option value="percentage">درصدی</option>
                 </select>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ x: -50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                className="space-y-4"
-              >
-                <label className="text-[#0077b6] font-bold flex items-center gap-2">
-                  <HiOutlineCurrencyDollar className="text-xl" />
+              <div className="space-y-2">
+                <label className="text-slate-900 font-medium text-xs sm:text-sm flex items-center gap-1.5">
+                  <HiOutlineCurrencyDollar className="text-base sm:text-lg text-slate-600" />
                   {giftCardData.type === "fixed"
                     ? "مبلغ (تومان)"
                     : "درصد تخفیف"}
@@ -195,7 +222,7 @@ const AddGiftCard = () => {
                       amount: Number(e.target.value),
                     })
                   }
-                  className="w-full p-4 rounded-xl border border-blue-100 focus:ring-2 focus:ring-blue-200 focus:border-transparent transition-all duration-300 outline-none"
+                  className="w-full p-2.5 sm:p-3 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all outline-none"
                   placeholder={
                     giftCardData.type === "fixed"
                       ? "مبلغ را وارد کنید..."
@@ -205,36 +232,34 @@ const AddGiftCard = () => {
                   max={giftCardData.type === "percentage" ? "100" : undefined}
                   required
                 />
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="flex justify-center"
-              >
+              <div className="flex justify-center pt-2">
                 <button
                   type="submit"
-                  className="flex items-center gap-3 bg-gradient-to-r from-[#0077b6] to-blue-600 text-white px-8 py-4 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 font-bold"
+                  className="flex items-center gap-2 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg transition-all duration-300 font-medium text-sm shadow-md hover:shadow-lg"
                 >
-                  <HiOutlineSave className="text-xl" />
+                  <HiOutlineSave className="text-base sm:text-lg" />
                   ذخیره کارت هدیه
                 </button>
-              </motion.div>
+              </div>
             </form>
           </div>
 
           {/* Gift Cards List */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="bg-gradient-to-r from-[#0077b6] to-blue-600 p-6">
-              <div className="flex justify-between items-center text-white">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden animate-slide-up">
+            <div className="bg-gradient-to-r from-slate-900 to-slate-900 p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-white">
                 <div>
-                  <h3 className="text-xl font-bold">کارت‌های هدیه موجود</h3>
-                  <p className="text-blue-100 mt-1">
+                  <h3 className="text-base sm:text-lg font-bold">
+                    کارت‌های هدیه موجود
+                  </h3>
+                  <p className="text-slate-100 text-xs sm:text-sm mt-0.5 sm:mt-1">
                     مجموع {existingGiftCards.length} کارت هدیه
                   </p>
                 </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                  <span className="text-sm">فعال: </span>
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1.5 text-xs sm:text-sm">
+                  <span>فعال: </span>
                   <span className="font-bold">
                     {existingGiftCards.filter((card) => !card.used).length}
                   </span>
@@ -242,53 +267,51 @@ const AddGiftCard = () => {
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-3 sm:p-4">
               {existingGiftCards.length > 0 ? (
-                <div className="space-y-3 max-h-96 overflow-y-auto">
+                <div className="space-y-2 max-h-80 sm:max-h-96 overflow-y-auto">
                   {existingGiftCards.map((giftCard, index) => (
-                    <motion.div
+                    <div
                       key={giftCard._id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-200"
+                      className="flex items-center justify-between p-2.5 sm:p-3 bg-slate-50 rounded-lg hover:bg-slate-50 transition-all duration-200 animate-slide-down"
+                      style={{ animationDelay: `${index * 0.05}s` }}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 bg-gradient-to-br from-[#0077b6] to-blue-400 rounded-full flex items-center justify-center">
-                          <HiOutlineGift className="text-white text-lg" />
+                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                        <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-slate-900 to-slate-900 rounded-full flex items-center justify-center flex-shrink-0">
+                          <HiOutlineGift className="text-white text-sm sm:text-base" />
                         </div>
-                        <div>
-                          <div className="font-medium text-gray-900">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-slate-900 text-xs sm:text-sm truncate">
                             {giftCard.code}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-xs text-slate-500">
                             {giftCard.type === "fixed"
                               ? `${giftCard.amount.toLocaleString()} تومان`
                               : `${giftCard.amount}% تخفیف`}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-xs font-medium ${
                             !giftCard.used
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-red-100 text-red-700"
                           }`}
                         >
                           {!giftCard.used ? "فعال" : "استفاده شده"}
                         </span>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <HiOutlineGift className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-600 mb-2">
+                <div className="text-center py-10 sm:py-12">
+                  <HiOutlineGift className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-slate-300 mb-3 sm:mb-4" />
+                  <h3 className="text-base sm:text-lg font-medium text-slate-600 mb-2">
                     هیچ کارت هدیه‌ای موجود نیست
                   </h3>
-                  <p className="text-gray-500">
+                  <p className="text-slate-500 text-xs sm:text-sm">
                     اولین کارت هدیه خود را ایجاد کنید
                   </p>
                 </div>
@@ -298,109 +321,133 @@ const AddGiftCard = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  کل کارت‌های هدیه
+        <div className="mt-4 sm:mt-6 grid grid-cols-3 gap-3 sm:gap-4 animate-slide-up">
+          <div className="bg-white rounded-lg shadow-md p-3 sm:p-5">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+              <div className="text-center sm:text-right w-full">
+                <p className="text-xs font-medium text-slate-600 mb-1">
+                  کل کارت‌ها
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xl sm:text-2xl font-bold text-slate-900">
                   {existingGiftCards.length}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <HiOutlineGift className="h-6 w-6 text-blue-600" />
+              <div className="hidden sm:flex h-10 w-10 sm:h-12 sm:w-12 bg-slate-100 rounded-lg items-center justify-center flex-shrink-0">
+                <HiOutlineGift className="h-5 w-5 sm:h-6 sm:w-6 text-slate-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  کارت‌های فعال
-                </p>
-                <p className="text-2xl font-bold text-green-600">
+          <div className="bg-white rounded-lg shadow-md p-3 sm:p-5">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+              <div className="text-center sm:text-right w-full">
+                <p className="text-xs font-medium text-slate-600 mb-1">فعال</p>
+                <p className="text-xl sm:text-2xl font-bold text-green-600">
                   {existingGiftCards.filter((card) => !card.used).length}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <HiOutlineTicket className="h-6 w-6 text-green-600" />
+              <div className="hidden sm:flex h-10 w-10 sm:h-12 sm:w-12 bg-green-100 rounded-lg items-center justify-center flex-shrink-0">
+                <HiOutlineTicket className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">استفاده شده</p>
-                <p className="text-2xl font-bold text-red-600">
+          <div className="bg-white rounded-lg shadow-md p-3 sm:p-5">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+              <div className="text-center sm:text-right w-full">
+                <p className="text-xs font-medium text-slate-600 mb-1">
+                  استفاده شده
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600">
                   {existingGiftCards.filter((card) => card.used).length}
                 </p>
               </div>
-              <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <HiOutlineViewGrid className="h-6 w-6 text-red-600" />
+              <div className="hidden sm:flex h-10 w-10 sm:h-12 sm:w-12 bg-red-100 rounded-lg items-center justify-center flex-shrink-0">
+                <HiOutlineViewGrid className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Card */}
+        <div className="mt-4 sm:mt-6 bg-gradient-to-r from-slate-900 to-slate-900 rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 text-white animate-slide-up">
+          <h3 className="text-sm sm:text-base font-bold mb-3 flex items-center gap-2">
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            نکات مهم
+          </h3>
+          <div className="grid sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+              <h4 className="font-semibold mb-1.5">💳 کارت ثابت</h4>
+              <p className="text-slate-100">
+                مبلغ مشخصی از هزینه خرید کسر می‌شود (مثلاً 50,000 تومان)
+              </p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+              <h4 className="font-semibold mb-1.5">📊 کارت درصدی</h4>
+              <p className="text-slate-100">
+                درصدی از هزینه خرید کسر می‌شود (مثلاً 10%)
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Edit Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black z-40"
-              onClick={() => setIsModalOpen(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.75 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.75 }}
-              className="fixed inset-4 z-50 overflow-auto"
-            >
-              <div className="min-h-full flex items-center justify-center p-4">
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-auto">
-                  <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center rounded-t-2xl">
-                    <h3 className="text-xl font-bold text-gray-900">
-                      ویرایش کارت‌های هدیه
-                    </h3>
-                    <button
-                      onClick={() => {
-                        setIsModalOpen(false);
-                        fetchGiftCards();
-                      }}
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+      {isModalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 animate-fade-in"
+            onClick={() => setIsModalOpen(false)}
+          />
+          <div className="fixed inset-0 z-50 overflow-auto p-2 sm:p-4 animate-scale-in">
+            <div className="min-h-full flex items-center justify-center">
+              <div className="bg-white rounded-lg sm:rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                <div className="sticky top-0 bg-white border-b border-slate-200 p-4 sm:p-6 flex justify-between items-center z-10">
+                  <h3 className="text-base sm:text-xl font-bold text-slate-900">
+                    ویرایش کارت‌های هدیه
+                  </h3>
+                  <button
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      fetchGiftCards();
+                    }}
+                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                  >
+                    <svg
+                      className="h-5 w-5 sm:h-6 sm:w-6 text-slate-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      <svg
-                        className="h-6 w-6 text-gray-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="p-6">
-                    <EditGiftCard />
-                  </div>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+                  <EditGiftCard />
                 </div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

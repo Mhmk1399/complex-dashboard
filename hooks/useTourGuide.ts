@@ -53,6 +53,7 @@ export const useTourGuide = () => {
     setIsActive(false);
     sessionStorage.setItem("tourCompleted", "true");
     setTourCompleted(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
     if (onCompleteCallback) onCompleteCallback();
   };
 

@@ -48,7 +48,7 @@ export const EditCollectionModal = ({
   >([]);
   const [allProducts, setAllProducts] = useState<ProductCollection[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
+  // const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
   const [selectedPriceRange, setSelectedPriceRange] = useState({
     min: 0,
     max: 0,
@@ -61,8 +61,7 @@ export const EditCollectionModal = ({
       const prices = allProducts.map((p) => parseFloat(p.price));
       const min = Math.min(...prices);
       const max = Math.max(...prices);
-      setPriceRange({ min, max });
-      setSelectedPriceRange({ min, max });
+       setSelectedPriceRange({ min, max });
     }
   }, [allProducts]);
 

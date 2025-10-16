@@ -47,12 +47,12 @@ const LoadingSpinner = () => (
     <motion.div className="text-center">
       <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3">
         <motion.div
-          className="absolute inset-0 border-4 border-blue-500/30 rounded-full"
+          className="absolute inset-0 border-4 border-slate-500/30 rounded-full"
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         />
         <motion.div
-          className="absolute inset-0 border-4 border-t-blue-500 border-r-transparent border-b-transparent border-l-transparent rounded-full"
+          className="absolute inset-0 border-4 border-t-slate-500 border-r-transparent border-b-transparent border-l-transparent rounded-full"
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
         />
@@ -100,7 +100,7 @@ const ErrorComponent = ({
 
       <motion.button
         onClick={onRetry}
-        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
+        className="px-6 py-3 bg-gradient-to-r from-slate-500 to-slate-600 text-white rounded-lg font-semibold hover:from-slate-600 hover:to-slate-700 transition-all duration-300"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
@@ -117,7 +117,7 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
       string,
       { title: string; icon: React.ReactNode; color: string }
     > = {
-      start: { title: "داشبورد", icon: <FaHome />, color: "text-blue-600" },
+      start: { title: "داشبورد", icon: <FaHome />, color: "text-slate-600" },
       addProduct: {
         title: "افزودن محصول",
         icon: <FaStore />,
@@ -191,7 +191,7 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
       tickets: {
         title: "تیکت های مشتریان",
         icon: <FaUsers />,
-        color: "text-blue-600",
+        color: "text-slate-600",
       },
       newsLetter: {
         title: "خبرنامه",
@@ -214,7 +214,7 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
       menuMap[menuValue] || {
         title: "صفحه اصلی",
         icon: <FaHome />,
-        color: "text-blue-600",
+        color: "text-slate-600",
       }
     );
   };
@@ -437,7 +437,7 @@ export const Dashboard = () => {
 
         {/* Content */}
         <motion.main
-          className="flex-1 p-3"
+          className="flex-1 p-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}

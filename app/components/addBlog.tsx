@@ -11,7 +11,6 @@ import TextAlign from "@tiptap/extension-text-align";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import Heading from "@tiptap/extension-heading";
-import { motion } from "framer-motion";
 import { CustomEditor } from "@/types/editor";
 import Image from "@tiptap/extension-image";
 import { TextSelection } from "prosemirror-state";
@@ -19,6 +18,7 @@ import { Blog, ImageFile } from "@/types/type";
 import ImageSelectorModal from "./ImageSelectorModal";
 import { AIBlogGenerator } from "./AIBlogGenerator";
 import toast from "react-hot-toast";
+import { FiImage, FiX } from "react-icons/fi";
 
 const MenuButton = ({
   onClick,
@@ -33,8 +33,10 @@ const MenuButton = ({
     aria-label="addblog"
     type="button"
     onClick={onClick}
-    className={`p-2 rounded-md transition-colors ${
-      active ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 text-gray-600"
+    className={`p-1.5 sm:p-2 rounded-lg text-sm transition-all duration-200 ${
+      active
+        ? "bg-slate-500 text-white shadow-sm"
+        : "hover:bg-slate-100 text-slate-700"
     }`}
   >
     {children}
@@ -76,13 +78,13 @@ const ColorPickerDropdown = ({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute mt-2 p-2 bg-white rounded-lg shadow-xl border z-50 w-48">
+    <div className="absolute mt-1 p-2 backdrop-blur-sm rounded-lg shadow-lg border border-slate-200 z-50 w-44">
       <div className="grid grid-cols-10 gap-1">
         {colors.map((color) => (
           <button
             key={color}
             aria-label="color"
-            className="w-6 h-6 rounded-sm border border-gray-200 hover:scale-110 transition-transform"
+            className="w-5 h-5 rounded border border-slate-200 hover:scale-110 transition-transform"
             style={{ backgroundColor: color }}
             onClick={() => {
               onColorSelect(color);
@@ -117,6 +119,10 @@ export default function AddPostBlog() {
     title: "",
     content: "",
   });
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
 
   const handleAddTag = () => {
     if (tags.length >= 3) {
@@ -238,7 +244,7 @@ export default function AddPostBlog() {
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: "text-blue-500 underline hover:text-blue-700",
+          class: "text-slate-500 underline hover:text-slate-700",
         },
       }),
       TextAlign.configure({
@@ -255,7 +261,7 @@ export default function AddPostBlog() {
     editorProps: {
       attributes: {
         class:
-          "prose prose-lg max-w-none focus:outline-none min-h-[200px] rtl [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&_h4]:text-lg [&_h4]:font-bold [&_h5]:text-base [&_h5]:font-bold [&_h6]:text-sm [&_h6]:font-bold",
+          "prose prose-sm sm:prose-base max-w-none focus:outline-none min-h-[150px] sm:min-h-[200px] rtl [&_h1]:text-2xl sm:[&_h1]:text-3xl [&_h1]:font-bold [&_h2]:text-xl sm:[&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-lg sm:[&_h3]:text-xl [&_h3]:font-bold [&_h4]:text-base sm:[&_h4]:text-lg [&_h4]:font-bold [&_h5]:text-sm sm:[&_h5]:text-base [&_h5]:font-bold [&_h6]:text-xs sm:[&_h6]:text-sm [&_h6]:font-bold",
       },
     },
     onUpdate: ({ editor }: { editor: CustomEditor }) => {
@@ -367,181 +373,227 @@ export default function AddPostBlog() {
 
   return (
     <>
-      <div className="max-w-4xl mx-6 md:mt-36 my-16 lg:mx-auto">
-        <motion.h2
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text"
-        >
-          {isEditMode ? "ویرایش بلاگ" : "افزودن بلاگ جدید"}
-        </motion.h2>
+      <style jsx>{`
+        .fade-in {
+          animation: fadeIn 0.3s ease-in;
+        }
 
-        <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .slide-in-right {
+          animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .scale-in {
+          animation: scaleIn 0.2s ease-out;
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      `}</style>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-12 mt-20">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-slate-900">
+          {isEditMode ? "ویرایش بلاگ" : "افزودن بلاگ جدید"}
+        </h2>
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 sm:space-y-6"
+          dir="rtl"
+        >
           {/* SEO Section */}
-          <motion.div
-            initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="bg-blue-50/50 rounded-xl p-6 border border-blue-100"
-          >
+          <div className="backdrop-blur-sm rounded-lg  sm:rounded-xl p-4 sm:p-6 border border-slate-200 shadow-sm">
             <div className="relative">
-              <h1
-                className="text-xl text-right mb-4 flex items-center justify-start gap-2"
+              <h3
+                className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 flex items-center justify-start gap-2"
                 onMouseEnter={() => setShowSeoTips(true)}
                 onMouseLeave={() => setShowSeoTips(false)}
               >
                 بخش سئو
-                <i className="fas fa-info-circle cursor-help text-blue-400 hover:text-blue-600 transition-colors" />
-              </h1>
+                <i className="fas fa-info-circle cursor-help text-slate-500 hover:text-slate-600 transition-colors text-sm" />
+              </h3>
 
               {showSeoTips && (
-                <motion.span
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="absolute z-10 bg-blue-600 backdrop-blur-md border-2 border-white/50 rounded-xl shadow-lg p-5 right-0 mt-1 text-sm text-white"
-                >
-                  <ul className="text-right space-y-2">
+                <span className="fade-in absolute z-10 bg-slate-900 rounded-lg shadow-xl p-4 right-0 mt-1 text-xs sm:text-sm text-white w-64 sm:w-auto">
+                  <ul className="text-right space-y-1.5 sm:space-y-2">
                     <li className="flex items-center gap-2">
-                      <i className="fas fa-check-circle" />
+                      <i className="fas fa-check-circle text-slate-400" />
                       عنوان سئو باید کوتاه و گویا باشد
                     </li>
                     <li className="flex items-center gap-2">
-                      <i className="fas fa-check-circle" />
+                      <i className="fas fa-check-circle text-slate-400" />
                       از کلمات کلیدی مرتبط استفاده کنید
                     </li>
                     <li className="flex items-center gap-2">
-                      <i className="fas fa-check-circle" />
+                      <i className="fas fa-check-circle text-slate-400" />
                       توضیحات کوتاه را در 160 کاراکتر بنویسید
                     </li>
                   </ul>
-                </motion.span>
+                </span>
               )}
             </div>
 
-            <label className="block text-sm font-medium text-gray-700 text-right mb-2">
-              عنوان سئو
-            </label>
-            <input
-              type="text"
-              value={seoTitle}
-              onChange={(e) => setSeoTitle(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-              placeholder="عنوان سئو را وارد کنید..."
-            />
-            {errors.seoTitle && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-red-500 text-sm mt-2 flex items-center gap-2"
-              >
-                <i className="fas fa-exclamation-circle" />
-                {errors.seoTitle}
-              </motion.p>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 text-right my-2">
-                توضیحات کوتاه
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 min-h-[100px]"
-                placeholder="توضیحات کوتاه را وارد کنید..."
-              />
-              {errors.description && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-red-500 text-sm mt-2 flex items-center gap-2"
-                >
-                  <i className="fas fa-exclamation-circle" />
-                  {errors.description}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Tags Section */}
-            <div className="space-y-4 mt-5">
-              <div className="flex gap-2">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  عنوان سئو
+                </label>
                 <input
                   type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={(e) =>
-                    e.key === "Enter" && (e.preventDefault(), handleAddTag())
-                  }
-                  className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-                  placeholder="برچسبها را وارد کنید..."
+                  value={seoTitle}
+                  onChange={(e) => setSeoTitle(e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
+                  placeholder="عنوان سئو را وارد کنید..."
                 />
-                <button
-                  type="button"
-                  onClick={handleAddTag}
-                  className="bg-blue-500 text-white px-6 rounded-xl hover:bg-blue-600 transition-all duration-300"
-                >
-                  <i className="fas fa-plus"></i>
-                </button>
+                {errors.seoTitle && (
+                  <p className="text-red-500 text-xs sm:text-sm mt-1.5 flex items-center gap-1.5">
+                    <i className="fas fa-exclamation-circle" />
+                    {errors.seoTitle}
+                  </p>
+                )}
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag, index) => (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    key={index}
-                    className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full flex items-center gap-2 font-medium"
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  توضیحات کوتاه
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all min-h-[80px] sm:min-h-[100px]"
+                  placeholder="توضیحات کوتاه را وارد کنید..."
+                />
+                {errors.description && (
+                  <p className="text-red-500 text-xs sm:text-sm mt-1.5 flex items-center gap-1.5">
+                    <i className="fas fa-exclamation-circle" />
+                    {errors.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Tags Section */}
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-slate-700">
+                  برچسب‌ها (حداکثر 3)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), handleAddTag())
+                    }
+                    className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
+                    placeholder="برچسبها را وارد کنید..."
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddTag}
+                    className="bg-slate-500 text-white px-4 sm:px-6 rounded-lg hover:bg-slate-600 transition-colors"
                   >
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setTags(tags.filter((_, i) => i !== index))
-                      }
-                      className="hover:text-red-500 transition-colors"
-                    >
-                      <i className="fas fa-times"></i>
-                    </button>
-                  </motion.span>
-                ))}
+                    <i className="fas fa-plus text-sm"></i>
+                  </button>
+                </div>
+
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="scale-in bg-slate-50 text-slate-700 px-3 py-1.5 rounded-full flex items-center gap-2 text-xs sm:text-sm font-medium border border-slate-200"
+                      >
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setTags(tags.filter((_, i) => i !== index))
+                          }
+                          className="hover:text-red-500 transition-colors"
+                        >
+                          <i className="fas fa-times text-xs"></i>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Images Section */}
-          <motion.div
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="bg-blue-50/50 rounded-xl p-6 border border-blue-100"
-          >
-            <label className="  mb-4 text-xl font-bold text-blue-700 flex items-center gap-2">
-              <i className="fas fa-images" />
+          <div className="backdrop-blur-sm rounded-lg sm:rounded-xl p-4 sm:p-6 border border-slate-200 shadow-sm">
+            <label className="  mb-3 sm:mb-4 text-base sm:text-lg font-semibold text-slate-900 flex items-center gap-2">
+              <i className="fas fa-images text-slate-500" />
               تصاویر بلاگ (حداکثر 5 تصویر)
             </label>
 
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setIsImageSelectorOpen(true)}
                 disabled={images.length >= 5}
-                className={`px-4 py-3 rounded-xl font-medium transition-all ${
+                className={`px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg font-medium transition-all ${
                   images.length >= 5
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-blue-600 border-2 border-blue-200 hover:bg-blue-50"
+                    ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                    : "bg-slate-500 text-white hover:bg-slate-600"
                 }`}
               >
                 انتخاب تصویر ({images.length}/5)
               </button>
+              <button
+                type="button"
+                onClick={() => setIsUploadModalOpen(true)}
+                disabled={images.length >= 5}
+                className={`px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg font-medium transition-all ${
+                  images.length >= 5
+                    ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white"
+                }`}
+              >
+                آپلود تصویر
+              </button>
             </div>
 
             {images.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 mt-4">
                 {images.map((image, index) => (
                   <div key={index} className="relative group">
                     <img
                       src={image}
                       alt={`تصویر ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
+                      className="w-full h-20 sm:h-24 object-cover rounded-lg border border-slate-200"
                     />
-                    <div className="absolute top-1 right-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                    <div className="absolute top-1 right-1 bg-slate-500 text-white text-xs px-2 py-0.5 rounded">
                       {index === 0 ? "اصلی" : index + 1}
                     </div>
                     <button
@@ -549,7 +601,7 @@ export default function AddPostBlog() {
                       onClick={() =>
                         setImages((prev) => prev.filter((_, i) => i !== index))
                       }
-                      className="absolute top-1 left-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1 left-1 bg-red-500 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       ×
                     </button>
@@ -557,41 +609,33 @@ export default function AddPostBlog() {
                 ))}
               </div>
             )}
-          </motion.div>
+          </div>
 
           {/* Title Section */}
-          <motion.div
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="space-y-4"
-          >
-            <label className="text-sm font-medium text-blue-700 mb-2 flex items-center gap-2">
-              <i className="fas fa-pen-fancy" />
+          <div className="backdrop-blur-sm rounded-lg sm:rounded-xl p-4 sm:p-6 border border-slate-200 shadow-sm">
+            <label className="  text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-2">
+              <i className="fas fa-pen-fancy text-slate-500 text-sm" />
               عنوان بلاگ
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-blue-200 outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+              className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
               placeholder="عنوان اصلی بلاگ را وارد کنید..."
             />
             {errors.title && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-red-500 text-sm mt-2 flex items-center gap-2"
-              >
+              <p className="text-red-500 text-xs sm:text-sm mt-1.5 flex items-center gap-1.5">
                 <i className="fas fa-exclamation-circle" />
                 {errors.title}
-              </motion.p>
+              </p>
             )}
-          </motion.div>
+          </div>
 
           {/* Content Section */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="block text-sm font-medium text-gray-700 text-right">
+          <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 border border-slate-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 sm:gap-0 mb-3">
+              <label className="block text-sm font-medium text-slate-700">
                 محتوای بلاگ
               </label>
               <AIBlogGenerator
@@ -606,8 +650,8 @@ export default function AddPostBlog() {
               />
             </div>
 
-            <div className="border border-gray-300 rounded-lg">
-              <div className="bg-gray-50 p-2 border-b border-gray-300 flex flex-wrap gap-2">
+            <div className="border border-slate-300 rounded-lg overflow-hidden">
+              <div className="bg-slate-50 p-2 border-b border-slate-300 flex flex-wrap gap-1 sm:gap-1.5">
                 <MenuButton
                   onClick={() => editor?.chain().focus().toggleBold().run()}
                   active={editor?.isActive("bold")}
@@ -633,7 +677,6 @@ export default function AddPostBlog() {
                   <i className="fas fa-unlink"></i>
                 </MenuButton>
 
-                {/* Heading Buttons */}
                 <MenuButton
                   onClick={() => editor && toggleHeadingOnSelection(editor, 1)}
                   active={editor?.isActive("heading", { level: 1 })}
@@ -746,58 +789,55 @@ export default function AddPostBlog() {
                   <i className="fas fa-list-ol"></i>
                 </MenuButton>
 
-                {/* Image Insertion Dropdown */}
                 {images.length > 0 && (
-                  <div className="relative">
-                    <select
-                      onChange={async (e) => {
-                        if (!e.target.value) return;
-                        const imageUrl = e.target.value;
-                        const imageIndex = images.indexOf(imageUrl);
+                  <select
+                    onChange={async (e) => {
+                      if (!e.target.value) return;
+                      const imageUrl = e.target.value;
+                      const imageIndex = images.indexOf(imageUrl);
 
-                        editor
-                          ?.chain()
-                          .focus()
-                          .setImage({
-                            src: imageUrl,
-                            alt: `تصویر ${imageIndex + 1}`,
-                          })
-                          .run();
+                      editor
+                        ?.chain()
+                        .focus()
+                        .setImage({
+                          src: imageUrl,
+                          alt: `تصویر ${imageIndex + 1}`,
+                        })
+                        .run();
 
-                        e.target.value = "";
-                      }}
-                      className="px-3 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-700"
-                    >
-                      <option value="">درج تصویر</option>
-                      {images.map((image, index) => (
-                        <option key={index} value={image}>
-                          تصویر {index + 1} {index === 0 ? "(اصلی)" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      e.target.value = "";
+                    }}
+                    className="px-2 py-1.5 text-xs sm:text-sm border border-slate-300 rounded-lg backdrop-blur-sm text-slate-700"
+                  >
+                    <option value="">درج تصویر</option>
+                    {images.map((image, index) => (
+                      <option key={index} value={image}>
+                        تصویر {index + 1} {index === 0 ? "(اصلی)" : ""}
+                      </option>
+                    ))}
+                  </select>
                 )}
               </div>
 
-              <div className="p-4 bg-white">
+              <div className="p-3 sm:p-4 backdrop-blur-sm">
                 <EditorContent editor={editor} />
                 {errors.content && (
-                  <p className="text-red-500 text-sm mt-1 text-right">
+                  <p className="text-red-500 text-xs sm:text-sm mt-2">
                     {errors.content}
                   </p>
                 )}
               </div>
 
-              <div className="mt-2 text-sm text-gray-500 text-right border-t p-2">
+              <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-slate-600 bg-slate-50 border-t border-slate-200">
                 تعداد کلمات: {wordCount}
               </div>
             </div>
           </div>
 
-          <div className="text-right pt-4">
+          <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors font-medium shadow-sm hover:shadow-md"
+              className="bg-slate-500 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg hover:bg-slate-600 transition-all font-medium shadow-sm hover:shadow-md text-sm sm:text-base"
             >
               {isEditMode ? "بروزرسانی بلاگ" : "انتشار بلاگ"}
             </button>
@@ -810,6 +850,91 @@ export default function AddPostBlog() {
         onClose={() => setIsImageSelectorOpen(false)}
         onSelectImage={handleImageSelect}
       />
+
+      {/* Upload Modal */}
+      {isUploadModalOpen && (
+        <div dir="rtl" className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-slate-900">آپلود تصاویر</h3>
+              <button
+                onClick={() => {
+                  setIsUploadModalOpen(false);
+                  setUploadFiles([]);
+                }}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            <input
+              type="file"
+              id="blogUploadInput"
+              onChange={(e) => setUploadFiles(Array.from(e.target.files || []))}
+              multiple
+              accept=".jpeg,.jpg,.png,.gif,.webp"
+              className="hidden"
+            />
+            <label
+              htmlFor="blogUploadInput"
+              className={`w-full block border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+                uploadFiles.length > 0
+                  ? "border-emerald-400 bg-emerald-50"
+                  : "border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+              }`}
+            >
+              <FiImage className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+              <div className="text-base font-semibold text-slate-700">
+                {uploadFiles.length > 0 ? `${uploadFiles.length} فایل انتخاب شده` : "انتخاب تصاویر"}
+              </div>
+            </label>
+
+            {uploadProgress && (
+              <div className="mt-4 bg-slate-50 rounded-lg p-4">
+                <div className="text-sm font-medium text-slate-700 mb-2">{uploadProgress}</div>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div className="bg-slate-600 h-2 rounded-full animate-progress" />
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={async () => {
+                if (uploadFiles.length === 0) return;
+                setUploading(true);
+                const uploadedUrls: string[] = [];
+                for (let i = 0; i < uploadFiles.length; i++) {
+                  setUploadProgress(`آپلود ${i + 1} از ${uploadFiles.length}`);
+                  const formData = new FormData();
+                  formData.append("file", uploadFiles[i]);
+                  try {
+                    const res = await fetch("/api/upload", {
+                      method: "POST",
+                      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                      body: formData,
+                    });
+                    const data = await res.json();
+                    if (data.success) uploadedUrls.push(data.url);
+                  } catch (error) {
+                    console.log(error);
+                  }
+                }
+                setImages((prev) => [...prev, ...uploadedUrls].slice(0, 5));
+                setUploading(false);
+                setUploadProgress("");
+                setUploadFiles([]);
+                setIsUploadModalOpen(false);
+                toast.success(`${uploadedUrls.length} تصویر آپلود شد`);
+              }}
+              disabled={uploadFiles.length === 0 || uploading}
+              className="w-full mt-4 py-3 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white rounded-lg font-medium transition-all disabled:bg-slate-300 disabled:cursor-not-allowed"
+            >
+              {uploading ? "در حال آپلود..." : "آپلود تصاویر"}
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

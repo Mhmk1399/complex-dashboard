@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       usageHistory: usage.usageHistory.slice(-10) // Last 10 usage records
     });
   } catch (error) {
-    console.error("Error fetching AI usage:", error);
+    console.log("Error fetching AI usage:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       remainingTokens: usage.remainingTokens
     });
   } catch (error) {
-    console.error("Error adding tokens:", error);
+    console.log("Error adding tokens:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

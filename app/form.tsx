@@ -129,12 +129,12 @@ const AccordionItem: React.FC<AccordionItemProps & { color?: string }> = ({
   isOpen,
   onToggle,
   icon,
-  color = "from-blue-500 to-blue-600",
+  color = "from-slate-500 to-slate-600",
 }) => {
   return (
     <motion.div className="mb-1.5" dir="rtl">
       <button
-        className={`w-full py-2.5 px-3 text-right bg-gradient-to-r ${color} hover:shadow-md transition-all duration-200 rounded-lg flex justify-between items-center cursor-pointer`}
+        className={`w-full py-4 px-3 text-right bg-gradient-to-r ${color} hover:shadow-md transition-all duration-200 rounded-lg flex justify-between items-center cursor-pointer`}
         onClick={onToggle}
         type="button"
       >
@@ -277,7 +277,7 @@ const Form: React.FC<ExtendedFormProps> = ({
         className={`menu-toggle-btn fixed top-4 right-4 z-[50] p-3 rounded-xl shadow-lg transition-all duration-200 ${
           isOpen
             ? "bg-red-500 hover:bg-red-600"
-            : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+            : "bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700"
         }`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

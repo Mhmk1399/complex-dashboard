@@ -20,7 +20,7 @@ export class AITokenService {
       if (!response.ok) return null;
       return await response.json();
     } catch (error) {
-      console.error('Error fetching token usage:', error);
+      console.log('Error fetching token usage:', error);
       return null;
     }
   }
@@ -39,7 +39,7 @@ export class AITokenService {
       });
       return response.ok;
     } catch (error) {
-      console.error('Error consuming tokens:', error);
+      console.log('Error consuming tokens:', error);
       return false;
     }
   }

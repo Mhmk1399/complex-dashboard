@@ -136,9 +136,9 @@ export const Collections = () => {
   // Empty collections section
   if (!collections || collections.length === 0) {
     return (
-      <div className="min-h-screen py-6 sm:py-8  " dir="rtl">
+      <div className="min-h-screen py-6 sm:py-8 mt-10 " dir="rtl">
         <div className="max-w-6xl mx-auto px-3 sm:px-4">
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sm:p-8">
+          <div className="backdrop-blur-sm rounded-lg shadow-sm border border-slate-200 p-6 sm:p-8">
             {/* Header */}
             <div className="mb-8 text-center">
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
@@ -170,8 +170,8 @@ export const Collections = () => {
                 هیچ کالکشنی یافت نشد
               </h3>
               <p className="text-slate-500 text-sm mb-6 max-w-md text-center px-4">
-                شما هنوز هیچ کالکشنی ایجاد نکردهاید. کالکشن ها به شما کمک میکنند
-                محصولات مرتبط را گروهبندی کنید.
+                شما هنوز هیچ کالکشنی ایجاد نکرده اید. کالکشن ها به شما کمک می کنند
+                محصولات مرتبط را گروه بندی کنید.
               </p>
               <button
                 onClick={() => setIsCreateModalOpen(true)}

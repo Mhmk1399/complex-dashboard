@@ -44,6 +44,7 @@
     "react-tooltip": "^5.28.0",
     "sanitize-filename": "^1.6.3",
     "sms-typescript": "^1.0.2",
+    "swr": "^2.3.6",
     "three": "^0.180.0",
     "uuid": "^11.0.3"
   },

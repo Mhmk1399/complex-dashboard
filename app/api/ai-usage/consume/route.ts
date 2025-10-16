@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       usedTokens: usage.usedTokens
     });
   } catch (error) {
-    console.error("Error consuming tokens:", error);
+    console.log("Error consuming tokens:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

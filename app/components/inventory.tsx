@@ -29,7 +29,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(10);
   const [pagination, setPagination] = useState({
     totalPages: 0,
     totalProducts: 0,
@@ -93,9 +93,10 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
     const params = new URLSearchParams({
       page: currentPage.toString(),
       limit: itemsPerPage.toString(),
-      ...(categoryFilter && { category: categoryFilter }),
-      ...(statusFilter && { status: statusFilter }),
     });
+
+    if (categoryFilter) params.append("category", categoryFilter);
+    if (statusFilter) params.append("status", statusFilter);
 
     return fetch(`/api/products?${params}`, {
       method: "GET",
@@ -106,12 +107,18 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
     })
       .then((result) => result.json())
       .then((data) => {
-        setProducts(data.products);
-        setPagination(data.pagination);
+        setProducts(data.products || []);
+        setPagination(data.pagination || {
+          totalPages: 0,
+          totalProducts: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+        });
         setIsLoading(false);
       })
       .catch((error) => {
         console.log("Error:", error);
+        setProducts([]);
         setIsLoading(false);
       });
   };
@@ -150,6 +157,8 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
     pagination.totalProducts
   );
 
+  const hasActiveFilters = categoryFilter || statusFilter;
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -158,12 +167,11 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
     );
   }
 
-  // Empty products section
-  if (!products || products.length === 0) {
+  if (!products || (products.length === 0 && !hasActiveFilters)) {
     return (
-      <div className="min-h-screen  py-6 sm:py-8" dir="rtl">
+      <div className="min-h-screen mt-10 py-6 sm:py-8" dir="rtl">
         <div className="max-w-6xl mx-auto px-3 sm:px-4">
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sm:p-8">
+          <div className=" backdrop-blur-sm rounded-lg shadow-sm border border-slate-200 p-6 sm:p-8">
             {/* Header */}
             <div className="mb-8 text-center">
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
@@ -219,11 +227,11 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
     >
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-4 p-3 sm:p-4">
+        <div className="backdrop-blur-sm rounded-lg shadow-sm border border-slate-200 mb-4 p-3 sm:p-4">
           <div className="flex  flex-row justify-between sm:justify-between sm:items-center gap-3">
             <div>
               <h2 className="text-lg sm:text-2xl font-bold text-slate-800">
-                  موجودی محصولات
+                موجودی محصولات
               </h2>
               <p className="text-slate-500 hidden md:block text-xs sm:text-sm mt-0.5">
                 موجودی و وضعیت محصولات خود را مدیریت کنید
@@ -231,7 +239,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
             </div>
             <button
               onClick={() => setSelectedMenu("addProduct")}
-              className="bg-[#0077b6] hover:bg-blue-700 text-white font-semibold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg transition-all flex items-center gap-2 shadow-sm text-xs text-nowrap md:text-sm w-fit"
+              className="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg transition-all flex items-center gap-2 shadow-sm text-xs text-nowrap md:text-sm w-fit"
             >
               <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>افزودن محصول</span>
@@ -253,7 +261,10 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
 
               <select
                 value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
+                onChange={(e) => {
+                  setCategoryFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
               >
                 <option value="">همه دسته‌بندی‌ها</option>
@@ -266,7 +277,10 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
 
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
               >
                 <option value="">همه وضعیت‌ها</option>
@@ -285,7 +299,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
 
           {/* Table Header with Stats */}
           <div className="bg-slate-800 p-3 sm:p-4">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-white gap-2">
+            <div className="flex justify-between items-center text-white gap-2">
               <div>
                 <h3 className="text-sm sm:text-base font-semibold">
                   لیست محصولات
@@ -295,7 +309,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                 </p>
               </div>
               <div className="flex gap-2">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm">
+                <div className="  backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm">
                   <span className="text-slate-300">موجود: </span>
                   <span className="font-semibold">
                     {
@@ -305,7 +319,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                     }
                   </span>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm">
+                <div className="  backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm">
                   <span className="text-slate-300">کل: </span>
                   <span className="font-semibold">
                     {products.reduce(
@@ -344,7 +358,28 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
-                {products.map((product) => (
+                {products.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center">
+                        <FunnelIcon className="h-12 w-12 text-slate-300 mb-3" />
+                        <h3 className="text-lg font-semibold text-slate-700 mb-2">
+                          محصولی با این فیلتر یافت نشد
+                        </h3>
+                        <p className="text-slate-500 text-sm mb-4">
+                          لطفا فیلترهای دیگری را امتحان کنید
+                        </p>
+                        <button
+                          onClick={clearFilters}
+                          className="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm"
+                        >
+                          پاک کردن فیلترها
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  products.map((product) => (
                   <tr
                     key={product._id}
                     className="hover:bg-slate-50 transition-colors"
@@ -414,7 +449,8 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -455,7 +491,7 @@ export const Inventory: React.FC<InventoryProps> = ({ setSelectedMenu }) => {
                         onClick={() => setCurrentPage(page)}
                         className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm border rounded-md transition-colors ${
                           currentPage === page
-                            ? "bg-[#0077b6] text-white border-[#0077b6]"
+                            ? "bg-slate-800 text-white border-slate-800"
                             : "border-slate-200 hover:bg-slate-100 bg-white"
                         }`}
                       >

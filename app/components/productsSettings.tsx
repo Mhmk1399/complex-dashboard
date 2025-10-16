@@ -65,7 +65,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onClose, onSuccess }) => {
           type="text"
           value={categoryName}
           onChange={(e) => setCategoryName(e.target.value)}
-          className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+          className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all"
           placeholder="نام دسته بندی را وارد کنید"
           required
         />
@@ -81,7 +81,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onClose, onSuccess }) => {
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 px-4 py-2.5 text-sm bg-[#0077b6] hover:bg-blue-700 disabled:bg-slate-300 text-white rounded-lg font-medium transition-colors"
+          className="flex-1 px-4 py-2.5 text-sm bg-slate-800 hover:bg-slate-700 disabled:bg-slate-300 text-white rounded-lg font-medium transition-colors"
         >
           {loading ? "در حال ذخیره..." : "ذخیره"}
         </button>
@@ -538,7 +538,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
     <div className="min-h-screen   py-4 sm:py-6 mt-12 sm:mt-16">
       <div className="max-w-4xl mx-auto px-1 sm:px-4">
         <div
-          className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6"
+          className="backdrop-blur-sm rounded-lg shadow-sm border border-slate-200 p-4 sm:p-6"
           dir="rtl"
         >
           {/* Header */}
@@ -567,14 +567,14 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                   className={`flex-1 px-3 py-2.5 text-sm rounded-lg font-medium transition-all ${
                     settings.blocks.images.length >= 6
                       ? "bg-slate-200 text-slate-400 cursor-not-allowed"
-                      : "bg-white text-[#0077b6] border border-slate-200 hover:bg-slate-50"
+                      : "bg-white text-slate-800 border border-slate-200 hover:bg-slate-50"
                   }`}
                 >
                   انتخاب تصویر ({settings.blocks.images.length}/6)
                 </button>
                 <button
                   onClick={() => setIsUploadModalOpen(true)}
-                  className="flex-1 bg-[#0077b6] hover:bg-blue-700 text-white px-3 py-2.5 text-sm rounded-lg font-medium transition-all"
+                  className="flex-1 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2.5 text-sm rounded-lg font-medium transition-all"
                 >
                   آپلود تصویر
                 </button>
@@ -636,7 +636,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                     handleChange("blocks", "name", e.target.value);
                     clearError("name");
                   }}
-                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all ${
                     errors.name ? "border-red-500" : "border-slate-200"
                   }`}
                   placeholder="نام محصول را وارد کنید"
@@ -664,7 +664,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                         });
                         clearError("propertyName");
                       }}
-                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all ${
                         errors.propertyName
                           ? "border-red-500"
                           : "border-slate-200"
@@ -681,7 +681,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                         });
                         clearError("propertyValue");
                       }}
-                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all ${
                         errors.propertyValue
                           ? "border-red-500"
                           : "border-slate-200"
@@ -692,7 +692,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                   <div className="flex gap-2">
                     <button
                       onClick={addProperty}
-                      className="flex-1 bg-[#0077b6] hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-all text-sm font-medium"
+                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg transition-all text-sm font-medium"
                       data-tooltip-id="add-property"
                       data-tooltip-content="افزودن ویژگی جدید"
                     >
@@ -715,7 +715,60 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                 </div>
               </div>
             </div>
+            {/* Category & Status */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <div className="flex justify-between items-center mb-2">
+                  <label className="font-semibold text-slate-800 text-sm">
+                    دسته بندی *
+                  </label>
+                  <button
+                    onClick={() => setIsCategoryModalOpen(true)}
+                    className="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                  >
+                    + افزودن
+                  </button>
+                </div>
+                <select
+                  value={settings.blocks.category._id}
+                  onChange={(e) => {
+                    handleChange("blocks", "category", e.target.value);
+                    clearError("category");
+                  }}
+                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all appearance-none bg-white ${
+                    errors.category ? "border-red-500" : "border-slate-200"
+                  }`}
+                >
+                  <option value="">انتخاب دسته بندی</option>
+                  {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.category && (
+                  <p className="text-red-500 text-xs mt-1.5">
+                    {errors.category}
+                  </p>
+                )}
+              </div>
 
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <label className="block mb-2 font-semibold text-slate-800 text-sm">
+                  وضعیت
+                </label>
+                <select
+                  value={settings.blocks.status}
+                  onChange={(e) =>
+                    handleChange("blocks", "status", e.target.value)
+                  }
+                  className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all appearance-none bg-white"
+                >
+                  <option value="available">موجود</option>
+                  <option value="unavailable">ناموجود</option>
+                </select>
+              </div>
+            </div>
             {/* Description */}
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-2">
@@ -757,7 +810,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                   handleChange("blocks", "description", e.target.value);
                   clearError("description");
                 }}
-                className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[100px] resize-none ${
+                className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all min-h-[100px] resize-none ${
                   errors.description ? "border-red-500" : "border-slate-200"
                 }`}
                 placeholder="توضیحات محصول را وارد کنید"
@@ -767,61 +820,6 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                   {errors.description}
                 </p>
               )}
-            </div>
-
-            {/* Category & Status */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <div className="flex justify-between items-center mb-2">
-                  <label className="font-semibold text-slate-800 text-sm">
-                    دسته بندی *
-                  </label>
-                  <button
-                    onClick={() => setIsCategoryModalOpen(true)}
-                    className="bg-[#0077b6] hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                  >
-                    + افزودن
-                  </button>
-                </div>
-                <select
-                  value={settings.blocks.category._id}
-                  onChange={(e) => {
-                    handleChange("blocks", "category", e.target.value);
-                    clearError("category");
-                  }}
-                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none bg-white ${
-                    errors.category ? "border-red-500" : "border-slate-200"
-                  }`}
-                >
-                  <option value="">انتخاب دسته بندی</option>
-                  {categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.category && (
-                  <p className="text-red-500 text-xs mt-1.5">
-                    {errors.category}
-                  </p>
-                )}
-              </div>
-
-              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <label className="block mb-2 font-semibold text-slate-800 text-sm">
-                  وضعیت
-                </label>
-                <select
-                  value={settings.blocks.status}
-                  onChange={(e) =>
-                    handleChange("blocks", "status", e.target.value)
-                  }
-                  className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none bg-white"
-                >
-                  <option value="available">موجود</option>
-                  <option value="unavailable">ناموجود</option>
-                </select>
-              </div>
             </div>
 
             {/* Colors */}
@@ -857,7 +855,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                         setNewColor({ ...newColor, quantity: e.target.value });
                         clearError("colorQuantity");
                       }}
-                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all ${
                         errors.colorQuantity
                           ? "border-red-500"
                           : "border-slate-200"
@@ -870,7 +868,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                 <div className="flex gap-2">
                   <button
                     onClick={addColor}
-                    className="flex-1 sm:flex-none bg-[#0077b6] hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all text-sm font-medium"
+                    className="flex-1 sm:flex-none bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-all text-sm font-medium"
                     data-tooltip-id="add-color"
                     data-tooltip-content="افزودن رنگ جدید"
                   >
@@ -913,7 +911,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                       clearError("price");
                     }
                   }}
-                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all ${
                     errors.price ? "border-red-500" : "border-slate-200"
                   }`}
                   placeholder="0"
@@ -970,7 +968,7 @@ export const ProductsSettings: React.FC<StartComponentProps> = ({}) => {
                 />
                 <div className="flex justify-between items-center mt-3">
                   <span className="text-xs text-slate-500">0%</span>
-                  <span className="inline-block px-3 py-1.5 bg-[#0077b6] text-white rounded-full text-sm font-semibold">
+                  <span className="inline-block px-3 py-1.5 bg-slate-800 text-white rounded-full text-sm font-semibold">
                     {settings.blocks.discount}%
                   </span>
                   <span className="text-xs text-slate-500">100%</span>

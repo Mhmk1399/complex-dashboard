@@ -1,9 +1,44 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { FaTrash, FaExpand } from "react-icons/fa";
-import { FiImage, FiCheckCircle, FiAlertTriangle } from "react-icons/fi";
+import { FiImage, FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
 import { ImageFile } from "@/types/type";
+import toast from "react-hot-toast";
+
+// CSS animations
+const styles = `
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+  .animate-slide-up { animation: slideUp 0.3s ease-out; }
+  .animate-scale-in { animation: scaleIn 0.2s ease-out; }
+  .animate-spin { animation: spin 1s linear infinite; }
+  .animate-zoom-in { animation: zoomIn 0.3s ease-out; }
+`;
+
+// Inject styles
+if (typeof document !== "undefined") {
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
 
 interface ImageResponse {
   id: string;
@@ -19,100 +54,90 @@ export default function ImageGallery() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [deleteStatus, setDeleteStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
+
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
     imageId: "",
   });
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
 
-const fetchImages = async () => {
-  try {
-    setLoading(true);
-    setError(null);
-    const token = localStorage.getItem("token");
-    const response = await fetch(`/api/upload`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const fetchImages = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem("token");
+      const response = await fetch(`/api/upload`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch images");
+      if (!response.ok) {
+        throw new Error("Failed to fetch images");
+      }
+
+      const data = await response.json();
+      const imageUrls = data.images.map((image: ImageResponse) => ({
+        _id: image.id,
+        fileName: image.filename,
+        storeId: image.id,
+        fileUrl: image.url,
+      }));
+
+      setImages(imageUrls);
+    } catch (error) {
+      console.log("Error fetching images:", error);
+      setError("خطا در بارگیری تصاویر");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const data = await response.json();
-    const imageUrls = data.images.map((image: ImageResponse) => ({
-      _id: image.id,
-      fileName: image.filename,
-      storeId: image.id,
-      fileUrl: image.url
-    }));
+  useEffect(() => {
+    fetchImages();
+  }, []);
 
-    setImages(imageUrls);
-  } catch (error) {
-    console.log("Error fetching images:", error);
-    setError("خطا در بارگیری تصاویر");
-  } finally {
-    setLoading(false);
-  }
-};
+  const initiateDelete = (id: string) => {
+    setDeleteModal({ isOpen: true, imageId: id });
+  };
 
-useEffect(() => {
-  fetchImages();
-}, []);
+  const confirmDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const image = images.find((img) => img._id === deleteModal.imageId);
+      if (!image) {
+        return;
+      }
 
+      const response = await fetch("/api/upload", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          fileId: image._id,
+        }),
+      });
 
-  
-
-
-
-const initiateDelete = (id: string) => {
-  setDeleteModal({ isOpen: true, imageId: id });
-  setDeleteStatus("idle");
-};
-
-const confirmDelete = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const image = images.find((img) => img._id === deleteModal.imageId);
-    if (!image) {
-      setDeleteStatus("error");
-      return;
+      if (response.ok) {
+        setImages(images.filter((img) => img._id !== deleteModal.imageId));
+        toast.success("عکس با موفقیت حذف شد");
+        setTimeout(() => {
+          setDeleteModal({ isOpen: false, imageId: "" });
+        }, 1500);
+      } else {
+        toast.error("خطا در حذف عکس");
+      }
+    } catch (error) {
+      toast.error("خطا در حذف عکس");
+      console.log("Error deleting image:", error);
     }
-
-    const response = await fetch("/api/upload", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        fileId: image._id,
-      }),
-    });
-
-    if (response.ok) {
-      setImages(images.filter((img) => img._id !== deleteModal.imageId));
-      setDeleteStatus("success");
-      setTimeout(() => {
-        setDeleteModal({ isOpen: false, imageId: "" });
-        setDeleteStatus("idle");
-      }, 1500);
-    } else {
-      setDeleteStatus("error");
-    }
-  } catch {
-    setDeleteStatus("error");
-  }
-};
-
-
-
-
-
+  };
 
   const ImageLightbox = ({
     image,
@@ -122,224 +147,322 @@ const confirmDelete = async () => {
     onClose: () => void;
   }) => {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+      <div
+        className="fixed inset-0 z-50 bg-black/20 backdrop-blur-xl flex items-center justify-center p-4 animate-fade-in"
         onClick={onClose}
       >
-        <motion.div
-          initial={{ scale: 0.5 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0.5 }}
-          className="relative max-w-7xl max-h-[90vh] w-full h-full"
+        <div
+          className="relative max-w-[95vw] max-h-[95vh] w-auto h-auto animate-zoom-in"
           onClick={(e) => e.stopPropagation()}
         >
+          <button
+            onClick={onClose}
+            className="absolute -top-12 left-0 z-10 p-3 bg-slate-900/80 hover:bg-white/30 rounded-full text-white transition-colors shadow-lg"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
           <Image
             src={image.fileUrl}
             alt={image.fileName}
-            fill
-            style={{ objectFit: "contain" }}
+            width={1200}
+            height={800}
+            style={{
+              objectFit: "contain",
+              maxWidth: "95vw",
+              maxHeight: "95vh",
+            }}
             className="rounded-lg"
             priority
           />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     );
   };
 
   return (
-    <div className="min-h-screen mt-20 md:mt-0 flex items-center justify-center p-4 ">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-8 border-2 mt-10 border-[#0077b6]"
-      >
-        <div className="text-center mb-6">
-          <FiImage className="mx-auto text-5xl text-[#0077b6] mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800">گالری تصاویر</h2>
-          <p className="text-gray-500 mt-2">مدیریت و مشاهده تصاویر آپلود شده</p>
-          {/* <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={fetchImages}
-            className="mt-4 px-4 py-2 bg-[#0077b6] text-white rounded-lg text-sm hover:bg-[#005a8b] transition-colors"
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 py-6 sm:py-8 mt-10 animate-fade-in">
+      <div className="w-full max-w-6xl backdrop-blur-sm  rounded-lg sm:rounded-xl shadow-xl p-4 sm:p-6 md:p-8 border border-slate-200 animate-scale-in">
+        {/* Header */}
+        <div className="text-center mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-900 bg-clip-text text-transparent">
+            گالری تصاویر
+          </h2>
+          <p className="text-slate-600 text-xs sm:text-sm mt-1 sm:mt-2">
+            مدیریت و مشاهده تصاویر آپلود شده
+          </p>
+          <div className="mt-3 sm:mt-4 flex flex-row-reverse items-center justify-center gap-2 text-xs sm:text-sm">
+            <span className="text-slate-500">تعداد تصاویر</span>
+            <span className="font-bold text-slate-600">{images.length}</span>
+          </div>
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="mt-4 px-6 py-2.5 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white rounded-lg transition-all shadow-lg text-sm font-medium"
           >
-            بروزرسانی
-          </motion.button> */}
+            آپلود تصویر جدید
+          </button>
         </div>
 
+        {/* Loading State */}
         {loading ? (
-          <motion.div
-            className="flex flex-col items-center justify-center h-[60vh]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              className="w-12 h-12 border-4 border-[#0077b6] border-t-transparent rounded-full mb-4"
-            />
-            <p className="text-gray-500">در حال بارگیری تصاویر...</p>
-          </motion.div>
+          <div className="flex flex-col items-center justify-center h-[50vh] sm:h-[60vh]">
+            <div className="w-12 h-12 border-4 border-slate-600 border-t-transparent rounded-full mb-4 animate-spin" />
+            <p className="text-slate-500 text-sm sm:text-base">
+              در حال بارگیری تصاویر...
+            </p>
+          </div>
         ) : error ? (
-          <motion.div
-            className="flex flex-col items-center justify-center h-[60vh] border-2 border-dashed border-red-300 rounded-lg"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <FiAlertTriangle className="w-32 h-32 text-red-400 mb-4" />
-            <h2 className="text-2xl font-semibold text-red-600 mb-2">{error}</h2>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          /* Error State */
+          <div className="flex flex-col items-center justify-center h-[50vh] sm:h-[60vh] border-2 border-dashed border-red-300 rounded-lg animate-slide-up">
+            <FiAlertTriangle className="w-20 h-20 sm:w-32 sm:h-32 text-red-400 mb-3 sm:mb-4" />
+            <h2 className="text-lg sm:text-2xl font-semibold text-red-600 mb-2">
+              {error}
+            </h2>
+            <button
               onClick={fetchImages}
-              className="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              className="mt-3 sm:mt-4 px-4 sm:px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm sm:text-base"
             >
               تلاش مجدد
-            </motion.button>
-          </motion.div>
+            </button>
+          </div>
         ) : images.length === 0 ? (
-          <motion.div
-            className="flex flex-col items-center justify-center h-[60vh] border-2 border-dashed border-[#0077b6] rounded-lg"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <FiImage className="w-32 h-32 text-[#0077b6]/50 mb-4" />
-            <h2 className="text-2xl font-semibold text-[#0077b6] mb-2">
+          /* Empty State */
+          <div className="flex flex-col items-center justify-center h-[50vh] sm:h-[60vh] border-2 border-dashed border-slate-300 rounded-lg animate-slide-up">
+            <FiImage className="w-20 h-20 sm:w-32 sm:h-32 text-slate-300 mb-3 sm:mb-4" />
+            <h2 className="text-lg sm:text-2xl font-semibold text-slate-700 mb-2">
               تصاویری بارگذاری نشده است
             </h2>
-            <p className="text-gray-500 text-center max-w-md">
+            <p className="text-slate-500 text-center max-w-md text-xs sm:text-sm px-4">
               برای بارگذاری تصاویر، از بخش آپلود استفاده کنید
             </p>
-          </motion.div>
+          </div>
         ) : (
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ staggerChildren: 0.1 }}
+          /* Image Grid */
+          <div
+            dir="rtl"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 items-center justify-end gap-3 sm:gap-4 animate-slide-up"
           >
-            {images.map((image) => (
-              <motion.div
+            {images.map((image, index) => (
+              <div
                 key={image._id}
-                className="group relative bg-white rounded-xl overflow-hidden shadow-md border border-[#0077b6]/20"
-                whileHover={{ scale: 1.05 }}
-                layout
+                className="group relative bg-white rounded-lg sm:rounded-xl overflow-hidden shadow-md border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all duration-300 animate-scale-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <Image
-                  src={image.fileUrl}
-                  alt={image.fileName}
-                  width={300}
-                  height={300}
-                  className="object-cover w-full h-48"
-                />
+                <div className="relative aspect-square">
+                  <Image
+                    src={image.fileUrl}
+                    alt={image.fileName}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                  />
+                </div>
 
-                <motion.div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 group-hover:backdrop-blur-sm transition-opacity duration-300 flex items-center justify-center"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                >
-                  <div className="flex space-x-4">
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-3 bg-white/70 rounded-full text-rose-500"
+                {/* Overlay with actions */}
+                <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-all duration-300 flex items-center justify-center opacity-70 md:opacity-0 md:group-hover:opacity-100">
+                  <div className="flex gap-2 sm:gap-3">
+                    <button
+                      className="p-2 sm:p-3 bg-white/90 hover:bg-white rounded-full text-red-500 hover:text-red-600 transition-all shadow-lg hover:scale-110"
                       onClick={() => initiateDelete(image._id)}
+                      title="حذف تصویر"
                     >
-                      <FaTrash />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-3 bg-white/70 rounded-full text-blue-500"
+                      <FaTrash className="text-sm sm:text-base" />
+                    </button>
+                    <button
+                      className="p-2 sm:p-3 bg-white/90 hover:bg-white rounded-full text-slate-600 hover:text-slate-700 transition-all shadow-lg hover:scale-110"
                       onClick={() => {
                         setSelectedImage(image);
                         setIsLightboxOpen(true);
                       }}
+                      title="مشاهده تصویر"
                     >
-                      <FaExpand />
-                    </motion.button>
+                      <FaExpand className="text-sm sm:text-base" />
+                    </button>
                   </div>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
+                </div>
 
-        {/* Lightbox */}
-        <AnimatePresence>
+                {/* Image name tooltip */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <p className="text-white text-xs truncate">
+                    {image.fileName}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="">
+          {" "}
+          {/* Lightbox */}
           {isLightboxOpen && selectedImage && (
             <ImageLightbox
               image={selectedImage}
               onClose={() => setIsLightboxOpen(false)}
             />
           )}
-        </AnimatePresence>
+        </div>
+
+        {/* Upload Modal */}
+        {isUploadModalOpen && (
+          <div
+            dir="rtl"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <div className="bg-white rounded-xl p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-slate-900">
+                  آپلود تصاویر
+                </h3>
+                <button
+                  onClick={() => {
+                    setIsUploadModalOpen(false);
+                    setUploadFiles([]);
+                  }}
+                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <input
+                type="file"
+                id="uploadInput"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  setUploadFiles(files);
+                }}
+                multiple
+                accept=".jpeg,.jpg,.png,.gif,.webp"
+                className="hidden"
+              />
+              <label
+                htmlFor="uploadInput"
+                className={`w-full block border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+                  uploadFiles.length > 0
+                    ? "border-emerald-400 bg-emerald-50"
+                    : "border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+                }`}
+              >
+                <FiImage className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+                <div className="text-base font-semibold text-slate-700">
+                  {uploadFiles.length > 0
+                    ? `${uploadFiles.length} فایل انتخاب شده`
+                    : "انتخاب تصاویر"}
+                </div>
+              </label>
+
+              {uploadProgress && (
+                <div className="mt-4 bg-slate-50 rounded-lg p-4">
+                  <div className="text-sm font-medium text-slate-700 mb-2">
+                    {uploadProgress}
+                  </div>
+                  <div className="w-full bg-slate-200 rounded-full h-2">
+                    <div className="bg-slate-600 h-2 rounded-full animate-progress" />
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={async () => {
+                  if (uploadFiles.length === 0) return;
+                  setUploading(true);
+                  for (let i = 0; i < uploadFiles.length; i++) {
+                    setUploadProgress(
+                      `آپلود ${i + 1} از ${uploadFiles.length}`
+                    );
+                    const formData = new FormData();
+                    formData.append("file", uploadFiles[i]);
+                    try {
+                      await fetch("/api/upload", {
+                        method: "POST",
+                        headers: {
+                          Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                          )}`,
+                        },
+                        body: formData,
+                      });
+                    } catch (error) {
+                      console.log(error);
+                    }
+                  }
+                  setUploading(false);
+                  setUploadProgress("");
+                  setUploadFiles([]);
+                  setIsUploadModalOpen(false);
+                  fetchImages();
+                }}
+                disabled={uploadFiles.length === 0 || uploading}
+                className="w-full mt-4 py-3 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white rounded-lg font-medium transition-all disabled:bg-slate-300 disabled:cursor-not-allowed"
+              >
+                {uploading ? "در حال آپلود..." : "آپلود تصاویر"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Delete Confirmation Modal */}
-        <AnimatePresence>
-          {deleteModal.isOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
-            >
-              <motion.div
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.9 }}
-                className="bg-white rounded-2xl p-8 w-96 border-2 border-[#0077b6] shadow-xl"
-              >
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-[#0077b6] mb-4">
-                    حذف تصویر
-                  </h3>
-                  <p className="text-gray-600 mb-8">
-                    آیا از حذف این تصویر اطمینان دارید؟
-                  </p>
-
-                  <div className="flex justify-center space-x-4">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg"
-                      onClick={() => setDeleteModal({ isOpen: false, imageId: "" })}
-                    >
-                      لغو
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 bg-red-500 text-white rounded-lg"
-                      onClick={confirmDelete}
-                    >
-                      حذف
-                    </motion.button>
-                  </div>
-
-                  {deleteStatus === "success" && (
-                    <div className="mt-4 flex items-center justify-center text-green-600">
-                      <FiCheckCircle className="mr-2" />
-                      تصویر با موفقیت حذف شد
-                    </div>
-                  )}
-                  {deleteStatus === "error" && (
-                    <div className="mt-4 flex items-center justify-center text-red-600">
-                      <FiAlertTriangle className="mr-2" />
-                      خطا در حذف تصویر
-                    </div>
-                  )}
+        {deleteModal.isOpen && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 animate-fade-in">
+            <div className="bg-white backdrop-blur-md rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8 w-full max-w-md border border-slate-200 shadow-2xl animate-scale-in">
+              <div className="text-center">
+                {/* Icon */}
+                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                  <FaTrash className="text-red-600 text-lg sm:text-xl" />
                 </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 mb-2 sm:mb-4">
+                  حذف تصویر
+                </h3>
+                <p className="text-slate-600 text-sm sm:text-base mb-6 sm:mb-8">
+                  آیا از حذف این تصویر اطمینان دارید؟
+                </p>
+
+                {/* Buttons */}
+                <div className="flex flex-col-reverse sm:flex-row justify-center gap-2 sm:gap-3">
+                  <button
+                    className="w-full sm:w-auto px-5 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors font-medium text-sm"
+                    onClick={() =>
+                      setDeleteModal({ isOpen: false, imageId: "" })
+                    }
+                  >
+                    لغو
+                  </button>
+                  <button
+                    className="w-full sm:w-auto px-5 py-2 sm:py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium text-sm shadow-md"
+                    onClick={confirmDelete}
+                  >
+                    حذف
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
