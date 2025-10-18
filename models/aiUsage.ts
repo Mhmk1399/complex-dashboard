@@ -8,7 +8,7 @@ const aiUsageSchema = new mongoose.Schema({
   },
   totalTokens: {
     type: Number,
-    default: 1000, // Default 1000 tokens for new users
+    default: 500, // Default 1000 tokens for new users
     min: 0
   },
   usedTokens: {
@@ -18,7 +18,7 @@ const aiUsageSchema = new mongoose.Schema({
   },
   remainingTokens: {
     type: Number,
-    default: 1000,
+    default: 500,
     min: 0
   },
   lastUsed: {
