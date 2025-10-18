@@ -36,7 +36,7 @@ const aiUsageSchema = new mongoose.Schema({
     },
     feature: {
       type: String,
-      enum: ['blog-generation', 'product-description'],
+      enum: ['blog-generation', 'product-description', 'ai-modal-generation'],
       required: true
     },
     prompt: {

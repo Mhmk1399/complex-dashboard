@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import payment from './payment';
 
 export interface IWallet extends Document {
   userId: mongoose.Types.ObjectId;
@@ -12,7 +13,7 @@ export interface IWalletTransaction extends Document {
   walletId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   paymentId?: mongoose.Types.ObjectId;
-  type: 'charge' | 'debit';
+  type: 'charge' | 'debit' | 'payment';
   amount: number;
   description: string;
   status: 'pending' | 'completed' | 'failed';
@@ -58,7 +59,7 @@ const WalletTransactionSchema: Schema = new Schema({
   },
   type: {
     type: String,
-    enum: ['charge', 'debit'],
+    enum: ['charge', 'debit', 'payment'],
     required: true,
   },
   amount: {

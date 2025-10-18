@@ -108,6 +108,7 @@ const dashboardMenuItems = [
     color: "from-green-500 to-green-600",
     subMenuItems: [
       { title: "کیف پول", value: "wallet", icon: <FaCreditCard /> },
+      { title: "خرید اشتراک", value: "subscription", icon: <FaCreditCard /> },
     ],
   },
   {

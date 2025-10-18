@@ -40,33 +40,48 @@ export const TokenManagement = () => {
     }
   };
 
-  const addTokens = async () => {
+  const TOKEN_PACKAGES = {
+    10: { tokens: 10, price: 20000 },
+    50: { tokens: 50, price: 100000 },
+    100: { tokens: 100, price: 200000 }
+  };
+
+  const purchaseTokens = async (packageKey: keyof typeof TOKEN_PACKAGES) => {
     const storeId = localStorage.getItem("storeId");
-    if (!storeId || !tokensToAdd || Number(tokensToAdd) <= 0) {
-      toast.error("لطفاً تعداد توکن معتبر وارد کنید");
+    const token = localStorage.getItem("token");
+    
+    if (!storeId || !token) {
+      toast.error("لطفاً وارد شوید");
       return;
     }
 
+    const tokenPackage = TOKEN_PACKAGES[packageKey];
+    
     try {
-      const response = await fetch("/api/ai-usage", {
+      const response = await fetch("/api/tokens/purchase", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           storeId,
-          tokensToAdd: Number(tokensToAdd),
+          tokens: tokenPackage.tokens,
+          amount: tokenPackage.price
         }),
       });
 
+      const data = await response.json();
+      
       if (response.ok) {
-        toast.success("توکن با موفقیت اضافه شد");
-        setTokensToAdd("");
+        toast.success(`${tokenPackage.tokens} توکن با موفقیت خریداری شد`);
         await fetchTokenUsage();
       } else {
-        toast.error("خطا در اضافه کردن توکن");
+        toast.error(data.error || "خطا در خرید توکن");
       }
     } catch (error) {
-      console.log("Error adding tokens:", error);
-      toast.error("خطا در اضافه کردن توکن");
+      console.log("Error purchasing tokens:", error);
+      toast.error("خطا در خرید توکن");
     }
   };
 
@@ -262,36 +277,30 @@ export const TokenManagement = () => {
           )}
         </div>
 
-        {/* Add Tokens */}
+        {/* Purchase Tokens */}
         <div className="bg-slate-50 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 border border-slate-200">
           <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2 sm:mb-3">
-            افزودن توکن
+            خرید توکن از کیف پول
           </h3>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <input
-              type="number"
-              value={tokensToAdd}
-              onChange={(e) => setTokensToAdd(e.target.value)}
-              placeholder="تعداد توکن"
-              className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-              min="1"
-            />
-            <button
-              onClick={addTokens}
-              className="px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md whitespace-nowrap"
-            >
-              افزودن
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-2 mt-2 sm:mt-3">
-            {[100, 500, 1000].map((amount) => (
-              <button
-                key={amount}
-                onClick={() => setTokensToAdd(amount.toString())}
-                className="px-3 py-1.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-md hover:bg-slate-100 hover:border-slate-400 transition-all duration-200 font-medium"
-              >
-                {amount.toLocaleString()}
-              </button>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {Object.entries(TOKEN_PACKAGES).map(([key, pkg]) => (
+              <div key={key} className="bg-white rounded-lg p-4 border border-slate-200 hover:border-blue-300 transition-all">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600 mb-1">
+                    {pkg.tokens}
+                  </div>
+                  <div className="text-sm text-slate-600 mb-2">توکن</div>
+                  <div className="text-lg font-semibold text-slate-900 mb-3">
+                    {pkg.price.toLocaleString()} تومان
+                  </div>
+                  <button
+                    onClick={() => purchaseTokens(Number(key) as keyof typeof TOKEN_PACKAGES)}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 font-medium text-sm"
+                  >
+                    خرید
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </div>
