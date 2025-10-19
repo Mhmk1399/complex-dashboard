@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 
 interface SubscriptionCardProps {
   className?: string;
+  onSubscriptionPurchased?: () => void;
 }
 
 interface Subscription {
@@ -43,7 +44,7 @@ const PLANS = [
   }
 ];
 
-export default function SubscriptionCard({ className }: SubscriptionCardProps) {
+export default function SubscriptionCard({ className, onSubscriptionPurchased }: SubscriptionCardProps) {
   const [loading, setLoading] = useState<string | null>(null);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
@@ -86,6 +87,7 @@ export default function SubscriptionCard({ className }: SubscriptionCardProps) {
       if (data.success) {
         toast.success('اشتراک با موفقیت خریداری شد!');
         fetchSubscriptions();
+        onSubscriptionPurchased?.();
       } else {
         if (data.error === 'Insufficient balance') {
           toast.error('موجودی کافی نیست');
@@ -107,7 +109,8 @@ export default function SubscriptionCard({ className }: SubscriptionCardProps) {
     const planMap: { [key: string]: string } = {
       '1month': '1 ماه',
       '6months': '6 ماه', 
-      '1year': '1 سال'
+      '1year': '1 سال',
+      'trial': 'آزمایشی (7 روز)'
     };
     return planMap[plan] || plan;
   };

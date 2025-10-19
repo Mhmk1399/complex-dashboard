@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface ISubscription extends Document {
   userId: mongoose.Types.ObjectId;
   storeId: string;
-  plan: '1month' | '6months' | '1year';
+  plan: '1month' | '6months' | '1year' | 'trial';
   amount: number;
   startDate: Date;
   endDate: Date;
@@ -25,7 +25,7 @@ const SubscriptionSchema: Schema = new Schema({
   },
   plan: {
     type: String,
-    enum: ['1month', '6months', '1year'],
+    enum: ['1month', '6months', '1year', 'trial'],
     required: true,
   },
   amount: {

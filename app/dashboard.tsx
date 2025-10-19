@@ -38,6 +38,8 @@ import SwirlBackground from "./components/SwirlBackground";
 import { TokenManagement } from "./components/TokenManagement";
 import WalletCard from "./components/wallet/WalletCard";
 import SubscriptionCard from "./components/subscription/SubscriptionCard";
+import { SubscriptionProvider, useSubscription } from "./contexts/SubscriptionContext";
+import { SubscriptionExpiredModal } from "./components/SubscriptionExpiredModal";
 
 // Enhanced loading component
 const LoadingSpinner = () => (
@@ -272,13 +274,15 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
   );
 };
 
-export const Dashboard = () => {
+const DashboardContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedMenu, setSelectedMenu] = useState("start");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shouldOpenSidebar, setShouldOpenSidebar] = useState(false);
+  const [showExpiredModal, setShowExpiredModal] = useState(false);
+  const { hasActiveSubscription, loading: subscriptionLoading, checkSubscription } = useSubscription();
 
   const updateURL = (menu: string) => {
     const url = new URL(window.location.href);
@@ -287,6 +291,11 @@ export const Dashboard = () => {
   };
 
   const handleMenuChange = (menu: string) => {
+    // Only allow wallet and subscription tabs if subscription is expired
+    if (!hasActiveSubscription && menu !== 'wallet' && menu !== 'subscription') {
+      setShowExpiredModal(true);
+      return;
+    }
     setSelectedMenu(menu);
     updateURL(menu);
   };
@@ -338,6 +347,20 @@ export const Dashboard = () => {
       setLoading(false);
     }
   };
+
+  // Show expired modal when subscription expires
+  useEffect(() => {
+    if (!subscriptionLoading && !hasActiveSubscription && selectedMenu !== 'wallet' && selectedMenu !== 'subscription') {
+      setShowExpiredModal(true);
+    }
+  }, [hasActiveSubscription, subscriptionLoading, selectedMenu]);
+
+  // Close modal and allow navigation when subscription becomes active
+  useEffect(() => {
+    if (hasActiveSubscription && showExpiredModal) {
+      setShowExpiredModal(false);
+    }
+  }, [hasActiveSubscription, showExpiredModal]);
 
   useEffect(() => {
     initializeDashboard();
@@ -392,7 +415,7 @@ export const Dashboard = () => {
       newsLetter: <Newsletter />,
       tokenManagement: <TokenManagement />,
       wallet: <WalletCard />,
-      subscription: <SubscriptionCard />,
+      subscription: <SubscriptionCard onSubscriptionPurchased={checkSubscription} />,
     };
 
     const component = formComponents[selectedMenu] || formComponents.start;
@@ -435,6 +458,7 @@ export const Dashboard = () => {
         <Form
           setSelectedMenu={handleMenuChange}
           shouldStartTour={shouldOpenSidebar}
+          hasActiveSubscription={hasActiveSubscription}
         />
       </div>
 
@@ -453,6 +477,20 @@ export const Dashboard = () => {
           <RenderForms />
         </motion.main>
       </div>
+
+      {/* Subscription Expired Modal */}
+      <SubscriptionExpiredModal 
+        isOpen={showExpiredModal} 
+        onClose={() => setShowExpiredModal(false)} 
+      />
     </motion.div>
+  );
+};
+
+export const Dashboard = () => {
+  return (
+    <SubscriptionProvider>
+      <DashboardContent />
+    </SubscriptionProvider>
   );
 };

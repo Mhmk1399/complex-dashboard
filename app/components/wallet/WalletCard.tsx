@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+
 
 interface WalletCardProps {
   className?: string;
@@ -111,78 +111,107 @@ export default function WalletCard({ className }: WalletCardProps) {
     }
   };
 
-  const presetAmounts = [10000, 50000, 100000, 200000, 500000];
+  const presetAmounts = [ 100000, 200000, 500000,1000000];
 
   return (
-    <div className={`space-y-6 ${className || ''}`}>
-      <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-xl">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-3 text-gray-800">
-            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-              💳
+    <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 ${className || ''}`} dir="rtl">
+      <Card className="bg-white/20 backdrop-blur-sm shadow-xl rounded-3xl overflow-hidden border-0">
+        <CardHeader className=" bg-gray-100/30 backdrop-blur-sm p-6">
+          <CardTitle className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+              <span className="text-3xl">💳</span>
             </div>
             <div>
-              <h2 className="text-xl font-bold">کیف پول</h2>
-              <p className="text-sm text-gray-600 font-normal">مدیریت موجودی حساب</p>
+              <h1 className="text-2xl font-bold">کیف پول</h1>
+              <p className=" text-sm">مدیریت مالی هوشمند</p>
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="text-center bg-white p-6 rounded-xl shadow-sm border">
-            <p className="text-sm text-gray-600 mb-2">موجودی فعلی</p>
-            <p className="text-3xl font-bold text-green-600 mb-1">{balance.toLocaleString()}</p>
-            <p className="text-sm text-gray-500">تومان</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">مبلغ شارژ</label>
-              <Input
-                type="number"
-                placeholder="مبلغ را وارد کنید"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="border-gray-300 focus:border-blue-500"
-              />
+        <CardContent className="p-0">
+          <div className="flex flex-col md:flex-row">
+            {/* Balance Section */}
+            <div className="flex-1 p-8 bg-white/30 backdrop-blur-sm border-b md:border-b-0 md:border-l border-gray-200">
+              <div className="text-center">
+                <div className="inline-flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 bg-green-500/30 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm">💰</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">موجودی حساب</h3>
+                </div>
+                <div className="mb-4">
+                  <p className="text-4xl font-bold text-green-600 mb-1">{balance.toLocaleString()}</p>
+                  <p className="text-green-600 font-medium">تومان</p>
+                </div>
+                <Button 
+                  onClick={() => setShowHistory(!showHistory)}
+                  className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-colors"
+                >
+                  {showHistory ? 'مخفی کردن تاریخچه' : 'مشاهده تاریخچه'}
+                </Button>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">مبالغ پیشنهادی</label>
-              <Select onValueChange={setAmount}>
-                <SelectTrigger className="border-gray-300 focus:border-blue-500">
-                  <SelectValue placeholder="انتخاب مبلغ" />
-                </SelectTrigger>
-                <SelectContent>
-                  {presetAmounts.map((preset) => (
-                    <SelectItem key={preset} value={preset.toString()}>
-                      {preset.toLocaleString()} تومان
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+            {/* Charge Section */}
+            <div className="flex-1 p-8">
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-800 mb-2">شارژ کیف پول</h3>
+                <p className="text-gray-600 text-sm">موجودی خود را افزایش دهید</p>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    مبلغ مورد نظر
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="مبلغ را به تومان وارد کنید"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                  />
+                </div>
 
-          <div className="flex gap-3">
-            <Button 
-              onClick={handleCharge} 
-              disabled={!amount || loading}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-xl font-medium"
-            >
-              {loading ? '🔄 در حال پردازش...' : '💳 شارژ کیف پول'}
-            </Button>
-            <Button 
-              onClick={() => setShowHistory(!showHistory)}
-              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-xl"
-            >
-              📋
-            </Button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    مبالغ پیشنهادی
+                  </label>
+                  <select
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full px-4 py-1 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-white"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>انتخاب کنید</option>
+                    {presetAmounts.map((preset) => (
+                      <option key={preset} value={preset.toString()}>
+                        {preset.toLocaleString()} تومان
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <Button 
+                  onClick={handleCharge} 
+                  disabled={!amount || loading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="animate-spin">🔄</span>
+                      در حال پردازش...
+                    </span>
+                  ) : (
+                    'شارژ کیف پول'
+                  )}
+                </Button>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {showHistory && (
-        <Card className="bg-white shadow-lg">
+        <Card className="bg-white/90 backdrop-blur-md border border-white/30 shadow-2xl rounded-2xl overflow-hidden ">
           <CardHeader>
             <CardTitle className="text-lg text-gray-800">تاریخچه تراکنش‌ها</CardTitle>
           </CardHeader>
@@ -232,7 +261,7 @@ export default function WalletCard({ className }: WalletCardProps) {
                   const info = getTransactionInfo(transaction.type, transaction.description);
                   
                   return (
-                    <div key={transaction._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div key={transaction._id} className="flex items-center justify-between p-4 bg-gray-50/30 rounded-lg">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${info.bgColor}`}>
                           {info.icon}

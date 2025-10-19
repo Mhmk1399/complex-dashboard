@@ -170,11 +170,13 @@ const AccordionItem: React.FC<AccordionItemProps & { color?: string }> = ({
 
 interface ExtendedFormProps extends FormProps {
   shouldStartTour?: boolean;
+  hasActiveSubscription?: boolean;
 }
 
 const Form: React.FC<ExtendedFormProps> = ({
   setSelectedMenu,
   shouldStartTour = false,
+  hasActiveSubscription = true,
 }) => {
   const { startTour, TourOverlay } = useTourGuide();
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -247,24 +249,37 @@ const Form: React.FC<ExtendedFormProps> = ({
   ) => {
     return (
       <div className="p-1">
-        {item.subMenuItems?.map((subItem, index) => (
-          <motion.div
-            dir="rtl"
-            key={index}
-            className="cursor-pointer hover:bg-white/20 text-white/90 py-2 px-3 rounded-md flex flex-row-reverse items-center justify-between group transition-colors"
-            onClick={() => {
-              setSelectedMenu(subItem.value);
-              setIsOpen(false);
-            }}
-            whileHover={{ x: -3 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <span className="text-xs">{subItem.icon}</span>
-            <span className="text-xs font-medium">{subItem.title}</span>
-          </motion.div>
-        ))}
+        {item.subMenuItems?.map((subItem, index) => {
+          const isDisabled = !hasActiveSubscription && subItem.value !== 'wallet' && subItem.value !== 'subscription';
+          
+          return (
+            <motion.div
+              dir="rtl"
+              key={index}
+              className={`py-2 px-3 rounded-md flex flex-row-reverse items-center justify-between group transition-colors ${
+                isDisabled 
+                  ? 'cursor-not-allowed text-white/40 bg-white/5' 
+                  : 'cursor-pointer hover:bg-white/20 text-white/90'
+              }`}
+              onClick={() => {
+                if (!isDisabled) {
+                  setSelectedMenu(subItem.value);
+                  setIsOpen(false);
+                }
+              }}
+              whileHover={!isDisabled ? { x: -3 } : {}}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <span className="text-xs">{subItem.icon}</span>
+              <span className="text-xs font-medium">{subItem.title}</span>
+              {isDisabled && (
+                <span className="text-xs text-red-400 mr-2">🔒</span>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
     );
   };
@@ -329,19 +344,35 @@ const Form: React.FC<ExtendedFormProps> = ({
               </div>
 
               <div className="flex-1 overflow-y-auto p-3 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
-                {dashboardMenuItems.map((item) => (
-                  <div key={item.id} id={`menu-item-${item.id}`}>
-                    <AccordionItem
-                      title={item.title}
-                      icon={item.icon}
-                      color={item.color}
-                      isOpen={activeSection === item.id}
-                      onToggle={() => setActiveSection(activeSection === item.id ? null : item.id)}
-                    >
-                      {renderAccordionContent(item, setSelectedMenu)}
-                    </AccordionItem>
+                {!hasActiveSubscription && (
+                  <div className="mb-3 p-2 bg-red-500/20 border border-red-500/30 rounded-lg">
+                    <p className="text-red-300 text-xs text-center">
+                      اشتراک منقضی شده - فقط کیف پول فعال است
+                    </p>
                   </div>
-                ))}
+                )}
+                {dashboardMenuItems.map((item) => {
+                  const isWalletSection = item.id === 'wallet';
+                  const shouldDisable = !hasActiveSubscription && !isWalletSection;
+                  
+                  return (
+                    <div key={item.id} id={`menu-item-${item.id}`}>
+                      <AccordionItem
+                        title={item.title}
+                        icon={item.icon}
+                        color={shouldDisable ? 'from-gray-400 to-gray-500' : item.color}
+                        isOpen={activeSection === item.id}
+                        onToggle={() => {
+                          if (!shouldDisable) {
+                            setActiveSection(activeSection === item.id ? null : item.id);
+                          }
+                        }}
+                      >
+                        {renderAccordionContent(item, setSelectedMenu)}
+                      </AccordionItem>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="p-3 border-t border-white/10">

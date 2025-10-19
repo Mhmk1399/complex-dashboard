@@ -2,6 +2,7 @@ import connect from "@/lib/data";
 import { NextResponse, NextRequest } from "next/server";
 import User from "@/models/users";
 import { AIUsage } from "@/models/aiUsage";
+import Subscription from "@/models/subscription";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { createIngress } from "@/utilities/createNewIngress";
@@ -52,6 +53,22 @@ export async function POST(request: NextRequest) {
       remainingTokens: 1000
     });
     await aiUsage.save();
+
+    // Create trial subscription (1 week)
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7); // 7 days trial
+
+    const trialSubscription = new Subscription({
+      userId: newUser._id,
+      storeId,
+      plan: 'trial',
+      amount: 0,
+      startDate,
+      endDate,
+      status: 'active'
+    });
+    await trialSubscription.save();
 
     const token = jwt.sign(
       {
