@@ -29,13 +29,15 @@ import {
   FaBlog,
   FaCog,
   FaEnvelope,
+  FaCreditCard,
 } from "react-icons/fa";
 import Contact from "./components/contact";
 import Tickets from "./components/tickets";
 import { Newsletter } from "./components/newsletter";
 import SwirlBackground from "./components/SwirlBackground";
 import { TokenManagement } from "./components/TokenManagement";
-import WalletCard from "../components/wallet/WalletCard";
+import WalletCard from "./components/wallet/WalletCard";
+import SubscriptionCard from "./components/subscription/SubscriptionCard";
 
 // Enhanced loading component
 const LoadingSpinner = () => (
@@ -207,6 +209,11 @@ const Breadcrumb = ({ selectedMenu }: { selectedMenu: string }) => {
         title: "کیف پول",
         icon: <FaStore />,
         color: "text-green-600",
+      },
+      subscription: {
+        title: "خرید اشتراک",
+        icon: <FaCreditCard />,
+        color: "text-purple-600",
       },
     };
 
@@ -385,6 +392,7 @@ export const Dashboard = () => {
       newsLetter: <Newsletter />,
       tokenManagement: <TokenManagement />,
       wallet: <WalletCard />,
+      subscription: <SubscriptionCard />,
     };
 
     const component = formComponents[selectedMenu] || formComponents.start;

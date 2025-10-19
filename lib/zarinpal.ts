@@ -1,4 +1,4 @@
-const ZARINPAL_MERCHANT_ID = "8e3cc6e1-a0c8-4090-ba27-890f6c8a4bf0";
+const ZARINPAL_MERCHANT_ID = "b729df92-1260-46c9-8400-010e93e7b7d2";
 const ZARINPAL_REQUEST_URL =
   "https://payment.zarinpal.com/pg/v4/payment/request.json";
 const ZARINPAL_VERIFY_URL =
