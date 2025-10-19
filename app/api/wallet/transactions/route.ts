@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback') as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback') as { userId?: string, sub?: string, id?: string};
     const userId = decoded.userId || decoded.sub || decoded.id;
 
     if (mongoose.connection.readyState !== 1) {

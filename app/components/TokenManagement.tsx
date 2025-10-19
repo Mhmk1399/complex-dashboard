@@ -19,7 +19,6 @@ interface TokenUsage {
 export const TokenManagement = () => {
   const [tokenUsage, setTokenUsage] = useState<TokenUsage | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tokensToAdd, setTokensToAdd] = useState("");
 
   useEffect(() => {
     fetchTokenUsage();

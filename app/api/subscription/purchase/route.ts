@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback') as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback') as { userId?: string, sub?: string, id?: string};
     const userId = decoded.userId || decoded.sub || decoded.id;
 
     if (!SUBSCRIPTION_PLANS[plan as keyof typeof SUBSCRIPTION_PLANS]) {
