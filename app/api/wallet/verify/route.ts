@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Wallet verify error:', error);
+    console.log('Wallet verify error:', error);
     return NextResponse.redirect(new URL('/wallet/verify?status=failed', request.url));
   }
 }

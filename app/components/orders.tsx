@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { FunnelIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import { Order } from "@/types/type";
+import DatePicker from "react-multi-date-picker";
+import DateObject from "react-date-object";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 // CSS animations
 const styles = `
@@ -49,10 +53,6 @@ const StatusModal = ({
       />
 
       <div className="bg-white p-4 sm:p-6 rounded-lg sm:rounded-xl shadow-2xl w-full max-w-md z-50 relative border border-slate-200 animate-scale-in">
-        <div className="absolute -top-4 -right-4 bg-gradient-to-br from-slate-900 to-slate-900 w-12 h-12 rounded-lg flex items-center justify-center text-white shadow-lg">
-          📦
-        </div>
-
         <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 sm:mb-6 mt-2 text-right">
           بروزرسانی سفارش
         </h3>
@@ -73,6 +73,25 @@ const StatusModal = ({
               <option value="delivered">تحویل داده شده</option>
               <option value="cancelled">لغو شده</option>
             </select>
+            {status === "shipped" && order.status !== "shipped" && (
+              <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                <svg
+                  className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <p className="text-xs text-amber-700">
+                  با تغییر وضعیت به ارسال شده، موجودی محصولات به صورت خودکار
+                  کاهش می‌یابد
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="relative">
@@ -203,18 +222,43 @@ const OrderDetailModal = ({
             <h3 className="font-semibold mb-3 text-slate-900 text-sm sm:text-base">
               محصولات
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {order.products.map((product) => (
                 <div
                   key={product._id}
-                  className="flex justify-between items-center p-2 sm:p-2.5 hover:bg-slate-100 rounded-lg text-sm"
+                  className="p-3 bg-white rounded-lg border border-slate-200"
                 >
-                  <span className="text-slate-700">
-                    تعداد: {product.quantity}
-                  </span>
-                  <span className="font-medium text-slate-900">
-                    {product.price.toLocaleString()} تومان
-                  </span>
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-700 text-sm">
+                        تعداد: {product.quantity}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className="w-5 h-5 rounded-full border-2 border-slate-300"
+                          style={{ backgroundColor: product.colorCode }}
+                        />
+                        {/* <span className="text-xs text-slate-500">{product.colorCode}</span> */}
+                      </div>
+                    </div>
+                    <span className="font-medium text-slate-900 text-sm">
+                      {product.price.toLocaleString()} تومان
+                    </span>
+                  </div>
+                  {product.properties && product.properties.length > 0 && (
+                    <div className="mt-2 pt-2 border-t border-slate-200">
+                      <div className="flex flex-wrap gap-2">
+                        {product.properties.map((prop, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs bg-slate-100 px-2 py-1 rounded"
+                          >
+                            {prop.name}: {prop.value}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -342,12 +386,12 @@ export const Orders = () => {
   const formatPersianDate = (date: string) => {
     if (!date) return "";
     const gregorianDate = new Date(date);
-    return gregorianDate.toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      calendar: "persian",
+    const persianDate = new DateObject({
+      date: gregorianDate,
+      calendar: persian,
+      locale: persian_fa,
     });
+    return persianDate.format("YYYY/MM/DD");
   };
 
   const getDateRangeText = () => {
@@ -424,7 +468,7 @@ export const Orders = () => {
         !dateRange.end ? (
           <div className="flex flex-col mx-auto items-center justify-center backdrop-blur-sm rounded-xl p-6 sm:p-8 shadow-lg animate-slide-up">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32 mb-4 sm:mb-6">
-               <svg
+              <svg
                 className="relative z-10 w-full h-full text-slate-800"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -440,25 +484,10 @@ export const Orders = () => {
               در حال حاضر هیچ سفارشی در سیستم ثبت نشده است
             </p>
           </div>
-        ) : orders.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 text-center animate-slide-up">
-            <h3 className="text-lg sm:text-xl font-bold text-slate-600 mb-3 sm:mb-4">
-              هیچ سفارشی با این فیلترها یافت نشد
-            </h3>
-            <p className="text-slate-500 mb-4 sm:mb-6 text-sm sm:text-base">
-              لطفاً فیلترهای خود را تغییر دهید یا پاک کنید
-            </p>
-            <button
-              onClick={clearFilters}
-              className="px-5 py-2.5 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white rounded-lg transition-all text-sm font-medium shadow-md"
-            >
-              پاک کردن فیلترها
-            </button>
-          </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-slide-up">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-slide-up relative">
             {/* Filters Section */}
-            <div className="p-3 sm:p-5 border-b border-slate-200 bg-slate-50">
+            <div className="p-3 sm:p-5 border-b border-slate-200 bg-slate-50/80">
               <div className="flex flex-col md:flex-row gap-2 sm:gap-3 md:items-center">
                 <div className="flex items-center gap-2">
                   <FunnelIcon className="h-4 w-4 sm:h-5 sm:w-5 text-slate-600" />
@@ -492,69 +521,101 @@ export const Orders = () => {
                   </button>
 
                   {showDatePicker && (
-                    <div className="absolute top-full left-0 mt-2 bg-white border border-slate-300 rounded-lg shadow-xl p-3 sm:p-4 z-50 min-w-[280px] sm:min-w-[300px]">
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">
-                            از تاریخ:
-                          </label>
-                          <input
-                            type="date"
-                            value={dateRange.start}
-                            onChange={(e) =>
-                              setDateRange((prev) => ({
-                                ...prev,
-                                start: e.target.value,
-                              }))
-                            }
-                            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none"
-                          />
-                          {dateRange.start && (
-                            <p className="text-xs text-slate-500 mt-1">
-                              {formatPersianDate(dateRange.start)}
-                            </p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">
-                            تا تاریخ:
-                          </label>
-                          <input
-                            type="date"
-                            value={dateRange.end}
-                            onChange={(e) =>
-                              setDateRange((prev) => ({
-                                ...prev,
-                                end: e.target.value,
-                              }))
-                            }
-                            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none"
-                          />
-                          {dateRange.end && (
-                            <p className="text-xs text-slate-500 mt-1">
-                              {formatPersianDate(dateRange.end)}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex gap-2 pt-2">
-                          <button
-                            onClick={() => setShowDatePicker(false)}
-                            className="flex-1 px-3 py-2 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white rounded-lg text-xs sm:text-sm transition-all font-medium"
-                          >
-                            تایید
-                          </button>
-                          <button
-                            onClick={() => {
-                              setDateRange({ start: "", end: "" });
-                              setShowDatePicker(false);
-                            }}
-                            className="flex-1 px-3 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded-lg text-xs sm:text-sm transition-colors font-medium"
-                          >
-                            پاک کردن
-                          </button>
+                    <>
+                      <div
+                        className="fixed inset-0 z-[100]"
+                        onClick={() => setShowDatePicker(false)}
+                      />
+                      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] bg-white border border-slate-300 rounded-lg shadow-2xl p-4 w-[90vw] max-w-md">
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">
+                              از تاریخ:
+                            </label>
+                            <DatePicker
+                              value={
+                                dateRange.start
+                                  ? new Date(dateRange.start)
+                                  : null
+                              }
+                              onChange={(dateObj) => {
+                                setDateRange((prev) => ({
+                                  ...prev,
+                                  start: dateObj
+                                    ? dateObj
+                                        .toDate()
+                                        .toISOString()
+                                        .split("T")[0]
+                                    : "",
+                                }));
+                              }}
+                              calendar={persian}
+                              locale={persian_fa}
+                              format="YYYY/MM/DD"
+                              placeholder="انتخاب از تاریخ"
+                              containerClassName="w-full"
+                              inputClass="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 outline-none"
+                              portal
+                            />
+                            {dateRange.start && (
+                              <p className="text-xs text-slate-500 mt-1">
+                                {formatPersianDate(dateRange.start)}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">
+                              تا تاریخ:
+                            </label>
+                            <DatePicker
+                              value={
+                                dateRange.end ? new Date(dateRange.end) : null
+                              }
+                              onChange={(dateObj) => {
+                                setDateRange((prev) => ({
+                                  ...prev,
+                                  end: dateObj
+                                    ? dateObj
+                                        .toDate()
+                                        .toISOString()
+                                        .split("T")[0]
+                                    : "",
+                                }));
+                              }}
+                              calendar={persian}
+                              locale={persian_fa}
+                              format="YYYY/MM/DD"
+                              placeholder="انتخاب تا تاریخ"
+                              containerClassName="w-full"
+                              inputClass="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 outline-none"
+                              portal
+                            />
+                            {dateRange.end && (
+                              <p className="text-xs text-slate-500 mt-1">
+                                {formatPersianDate(dateRange.end)}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex gap-2 pt-2">
+                            <button
+                              onClick={() => setShowDatePicker(false)}
+                              className="flex-1 px-3 py-2 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white rounded-lg text-xs sm:text-sm transition-all font-medium"
+                            >
+                              تایید
+                            </button>
+                            <button
+                              onClick={() => {
+                                setDateRange({ start: "", end: "" });
+                                setShowDatePicker(false);
+                              }}
+                              className="flex-1 px-3 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded-lg text-xs sm:text-sm transition-colors font-medium"
+                            >
+                              پاک کردن
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </>
                   )}
                 </div>
 
@@ -606,118 +667,155 @@ export const Orders = () => {
               <table className="w-full divide-y divide-slate-200">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       شماره
                     </th>
-                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       وضعیت
                     </th>
-                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       مبلغ
                     </th>
-                    <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="hidden lg:table-cell px-4 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      رنگ
+                    </th>
+                    <th className="hidden md:table-cell px-4 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       پرداخت
                     </th>
-                    <th className="hidden lg:table-cell px-4 py-3 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="hidden lg:table-cell px-4 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       آدرس
                     </th>
-                    <th className="hidden md:table-cell px-4 py-3 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="hidden md:table-cell px-4 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       تاریخ
                     </th>
-                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-center text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       عملیات
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-200">
-                  {orders.map((order, index) => (
-                    <tr
-                      key={order._id}
-                      className={`hover:bg-slate-50 transition-colors ${
-                        index % 2 === 0 ? "bg-white" : "bg-slate-50/50"
-                      }`}
-                    >
-                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
-                        <span className="font-medium text-slate-900 text-xs sm:text-sm">
-                          #{order._id.slice(-8)}
-                        </span>
-                      </td>
-                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-xs ${getStatusColor(
-                            order.status
-                          )}`}
+                  {orders.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-4 py-12 text-center">
+                        <h3 className="text-lg sm:text-xl font-bold text-slate-600 mb-3 sm:mb-4">
+                          هیچ سفارشی با این فیلترها یافت نشد
+                        </h3>
+                        <p className="text-slate-500 mb-4 sm:mb-6 text-sm sm:text-base">
+                          لطفاً فیلترهای خود را تغییر دهید یا پاک کنید
+                        </p>
+                        <button
+                          onClick={clearFilters}
+                          className="px-5 py-2.5 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-800 hover:to-slate-800 text-white rounded-lg transition-all text-sm font-medium shadow-md"
                         >
-                          {getStatusText(order.status)}
-                        </span>
-                      </td>
-                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
-                        <span className="font-medium text-slate-900 text-xs sm:text-sm">
-                          {order.totalAmount.toLocaleString()}
-                        </span>
-                      </td>
-                      <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm">
-                          {getPaymentStatusIcon(order.paymentStatus)}
-                          <span className="text-slate-700">
-                            {order.paymentStatus === "completed"
-                              ? "پرداخت شده"
-                              : "در انتظار"}
-                          </span>
-                        </span>
-                      </td>
-                      <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap">
-                        <span className="text-slate-600 truncate max-w-xs block text-xs sm:text-sm">
-                          {order.shippingAddress.city}،{" "}
-                          {order.shippingAddress.street}
-                        </span>
-                      </td>
-                      <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap">
-                        <span className="text-slate-500 text-xs sm:text-sm">
-                          {new Date(order.createdAt).toLocaleDateString(
-                            "fa-IR"
-                          )}
-                        </span>
-                      </td>
-                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <button
-                            onClick={() => {
-                              setSelectedOrder(order);
-                              setEditModal(true);
-                            }}
-                            className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                          >
-                            <svg
-                              className="w-4 h-4 text-slate-600"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedOrder(order);
-                              setViewModal(true);
-                            }}
-                            className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                          >
-                            <svg
-                              className="w-4 h-4 text-slate-600"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          </button>
-                        </div>
+                          پاک کردن فیلترها
+                        </button>
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    orders.map((order, index) => (
+                      <tr
+                        key={order._id}
+                        className={`hover:bg-slate-50 transition-colors ${
+                          index % 2 === 0 ? "bg-white" : "bg-slate-50/50"
+                        }`}
+                      >
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
+                          <span className="font-medium text-slate-900 text-xs sm:text-sm">
+                            #{order._id.slice(-8)}
+                          </span>
+                        </td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-xs ${getStatusColor(
+                              order.status
+                            )}`}
+                          >
+                            {getStatusText(order.status)}
+                          </span>
+                        </td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
+                          <span className="font-medium text-slate-900 text-xs sm:text-sm">
+                            {order.totalAmount.toLocaleString()}
+                          </span>
+                        </td>
+                        <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap">
+                          <div className="flex items-center gap-1">
+                            {order.products.slice(0, 3).map((product, idx) => (
+                              <div
+                                key={idx}
+                                className="w-5 h-5 rounded-full border-2 border-slate-300"
+                                style={{ backgroundColor: product.colorCode }}
+                                title={product.colorCode}
+                              />
+                            ))}
+                            {order.products.length > 3 && (
+                              <span className="text-xs text-slate-500">
+                                +{order.products.length - 3}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm">
+                            {getPaymentStatusIcon(order.paymentStatus)}
+                            <span className="text-slate-700">
+                              {order.paymentStatus === "completed"
+                                ? "پرداخت شده"
+                                : "در انتظار"}
+                            </span>
+                          </span>
+                        </td>
+                        <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap">
+                          <span className="text-slate-600 truncate max-w-xs block text-xs sm:text-sm">
+                            {order.shippingAddress.city}،{" "}
+                            {order.shippingAddress.street}
+                          </span>
+                        </td>
+                        <td className="hidden md:table-cell px-4 py-3 whitespace-nowrap">
+                          <span className="text-slate-500 text-xs sm:text-sm">
+                            {formatPersianDate(order.createdAt)}
+                          </span>
+                        </td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <button
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setEditModal(true);
+                              }}
+                              className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                            >
+                              <svg
+                                className="w-4 h-4 text-blue-600"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setViewModal(true);
+                              }}
+                              className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                            >
+                              <svg
+                                className="w-4 h-4 text-green-600"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

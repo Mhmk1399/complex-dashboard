@@ -1,17 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Wallet } from '../../../../models/wallet';
-import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
+import { NextRequest, NextResponse } from "next/server";
+import { Wallet } from "../../../../models/wallet";
+import mongoose from "mongoose";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
+interface CustomJwtPayload extends JwtPayload {
+  userId?: string;
+  id?: string;
+}
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    
+    const token = request.headers.get("authorization")?.replace("Bearer ", "");
+
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback') as any;
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "fallback"
+    ) as CustomJwtPayload;
     const userId = decoded.userId || decoded.sub || decoded.id;
 
     if (mongoose.connection.readyState !== 1) {
@@ -28,9 +36,11 @@ export async function GET(request: NextRequest) {
       balance: wallet.balance,
       currency: wallet.currency,
     });
-
   } catch (error) {
-    console.error('Wallet balance error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.log("Wallet balance error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

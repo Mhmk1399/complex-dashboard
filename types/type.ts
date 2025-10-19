@@ -192,6 +192,11 @@ export interface Order {
     productId: string;
     quantity: number;
     price: number;
+    colorCode: string;
+    properties: {
+      name: string;
+      value: string;
+    }[];
     _id: string;
   }[];
   shippingAddress: {

@@ -48,7 +48,7 @@ function PaymentVerifyContent() {
 
       if (!verifyResponse.ok) {
         const errorText = await verifyResponse.text();
-        console.error("CLIENT: Error response body:", errorText);
+        console.log("CLIENT: Error response body:", errorText);
         console.log(`HTTP error! status: ${verifyResponse.status}`);
       }
 
@@ -60,7 +60,7 @@ function PaymentVerifyContent() {
         verifyResult = JSON.parse(responseText);
         console.log("CLIENT: Parsed response:", verifyResult);
       } catch {
-        console.error("CLIENT: Failed to parse response as JSON:", responseText);
+        console.log("CLIENT: Failed to parse response as JSON:", responseText);
         console.log("Server returned invalid response");
       }
 
@@ -81,7 +81,7 @@ function PaymentVerifyContent() {
       setStatus("success");
       toast.success("پرداخت با موفقیت انجام شد");
     } catch (error) {
-      console.error("Order processing error:", error);
+      console.log("Order processing error:", error);
       setStatus("failed");
       toast.error(error instanceof Error ? error.message : "خطا در پردازش سفارش");
     }

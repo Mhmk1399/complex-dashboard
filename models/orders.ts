@@ -1,58 +1,71 @@
 import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema(
-    {
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "storeUsers",
-            required: true,
-        },
-        storeId: {
-            type: String,
-            required: true,
-        },
-        products: [{
-            productId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Products",
-                required: true,
-            },
-            quantity: {
-                type: Number,
-                required: true,
-                min: 1,
-            },
-            price: {
-                type: Number,
-                required: true,
-            }
-        }],
-        status: {
-            type: String,
-            enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
-            default: "pending",
-        },
-        totalAmount: {
-            type: Number,
-            required: true,
-        },
-        shippingAddress: {
-            street: { type: String, required: true },
-            city: { type: String, required: true },
-            state: { type: String, required: true },
-            postalCode: { type: String, required: true },
-        },
-        paymentStatus: {
-            type: String,
-            enum: ["pending", "completed", "failed"],
-            default: "pending",
-        },
-        postCode: {
-            type: String}
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "storeUsers",
+      required: true,
     },
-    {
-        timestamps: true,
-    }
+    storeId: {
+      type: String,
+      required: true,
+    },
+    products: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Products",
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        colorCode: {
+          type: String,
+          required: true,
+        },
+        properties: [
+          {
+            name: { type: String },
+            value: { type: String },
+          },
+        ],
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
+      default: "pending",
+    },
+    totalAmount: {
+      type: Number,
+      required: true,
+    },
+    shippingAddress: {
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      postalCode: { type: String, required: true },
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "completed", "failed"],
+      default: "pending",
+    },
+    postCode: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
 );
 
 const Order = mongoose.models.Order || mongoose.model("Order", OrderSchema);

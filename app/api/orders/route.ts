@@ -3,6 +3,7 @@ import connect from "@/lib/data";
 import Order from "@/models/orders";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import StoreUsers from "@/models/storesUsers";
+import { decreaseProductQuantity } from "@/services/inventoryService";
 
 interface OrderType {
   _id: string;
@@ -13,6 +14,11 @@ interface OrderType {
     productId: string;
     quantity: number;
     price: number;
+    colorCode: string;
+    properties: {
+      name: string;
+      value: string;
+    }[];
     _id: string;
   }[];
   shippingAddress: {
@@ -141,6 +147,42 @@ export async function GET(req: Request) {
     );
   }
 }
+export async function DELETE(req: Request) {
+  await connect();
+  if (!connect) {
+    return NextResponse.json(
+      { error: "Database connection error" },
+      { status: 500 }
+    );
+  }
+
+  try {
+    const token = req.headers.get("Authorization");
+    if (!token)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const decodedToken = jwt.decode(token) as CustomJwtPayload;
+    if (!decodedToken)
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+
+    const storeId = decodedToken.storeId;
+    if (!storeId)
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+
+    const result = await Order.deleteMany({ storeId });
+    return NextResponse.json(
+      { message: "All orders deleted", deletedCount: result.deletedCount },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PATCH(request: Request) {
   await connect();
   if (!connect) {
@@ -157,18 +199,22 @@ export async function PATCH(request: Request) {
 }
 async function findByIdAndUpdate(orderId: string, updateData: OrderType) {
   try {
+    const currentOrder = await Order.findById(orderId).lean() as OrderType | null;
+    
+    if (!currentOrder) {
+      return NextResponse.json({ error: "order not found" }, { status: 404 });
+    }
+
+    if (updateData.status === "shipped" && currentOrder.status !== "shipped") {
+      for (const item of currentOrder.products) {
+        await decreaseProductQuantity(item.productId.toString(), item.quantity, item.colorCode);
+      }
+    }
+
     const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, {
       new: true,
     });
-    if (!orderId) {
-      return NextResponse.json({ error: "order not found" }, { status: 404 });
-    }
-    if (!updateData) {
-      return NextResponse.json(
-        { error: "update data not found" },
-        { status: 404 }
-      );
-    }
+
     if (!updatedOrder) {
       return NextResponse.json({ error: "failed to update" });
     }

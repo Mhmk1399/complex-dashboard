@@ -2,10 +2,12 @@ import mongoose from "mongoose";
 
 const ProductSchema = new mongoose.Schema(
   {
-    images: [{
-      imageSrc: { type: String, required: true },
-      imageAlt: { type: String, required: true },
-    }],
+    images: [
+      {
+        imageSrc: { type: String, required: true },
+        imageAlt: { type: String, required: true },
+      },
+    ],
     video: {
       videoSrc: { type: String, required: false },
       videoAlt: { type: String, required: false },
@@ -29,12 +31,13 @@ const ProductSchema = new mongoose.Schema(
     colors: [
       {
         code: { type: String, required: true },
-        quantity: { type: String, required: true }
-      }
+        quantity: { type: String, required: true },
+      },
     ],
     storeId: { type: String, required: true },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.Products || mongoose.model("Products", ProductSchema);
+export default mongoose.models.Products ||
+  mongoose.model("Products", ProductSchema);

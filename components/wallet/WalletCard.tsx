@@ -32,7 +32,7 @@ export default function WalletCard({ className }: WalletCardProps) {
         setBalance(data.balance);
       }
     } catch (error) {
-      console.error('Error fetching balance:', error);
+      console.log('Error fetching balance:', error);
     }
   };
 
@@ -57,7 +57,7 @@ export default function WalletCard({ className }: WalletCardProps) {
         window.location.href = data.paymentUrl;
       }
     } catch (error) {
-      console.error('Error charging wallet:', error);
+      console.log('Error charging wallet:', error);
     } finally {
       setLoading(false);
     }

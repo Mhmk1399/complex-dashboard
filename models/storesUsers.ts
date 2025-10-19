@@ -27,8 +27,7 @@ const StoresUserSchema = new mongoose.Schema(
   }
 );
 
-
-
-const StoreUsers = mongoose.models.StoreUsers || mongoose.model("StoreUsers", StoresUserSchema);
+const StoreUsers =
+  mongoose.models.StoreUsers || mongoose.model("StoreUsers", StoresUserSchema);
 
 export default StoreUsers;
